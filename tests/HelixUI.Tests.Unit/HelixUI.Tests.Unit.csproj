@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\HelixUI.Core\HelixUI.Core.csproj" />
+    <ProjectReference Include="..\..\src\HelixUI.Theme\HelixUI.Theme.csproj" />
   </ItemGroup>
 
 </Project>

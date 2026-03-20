@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelixUI.Core", "src\HelixUI.Core\HelixUI.Core.csproj", "{6AD891A8-56AB-4622-9F2F-9A7842CA8057}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelixUI.Theme", "src\HelixUI.Theme\HelixUI.Theme.csproj", "{65C97FFC-C033-4327-82ED-12B9E8540410}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelixUI.Tests.Unit", "tests\HelixUI.Tests.Unit\HelixUI.Tests.Unit.csproj", "{ACB58C5E-1C01-449A-9FFA-2EF8C4318AAA}"
 EndProject
 Global
@@ -17,6 +19,10 @@ Global
 		{6AD891A8-56AB-4622-9F2F-9A7842CA8057}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AD891A8-56AB-4622-9F2F-9A7842CA8057}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AD891A8-56AB-4622-9F2F-9A7842CA8057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65C97FFC-C033-4327-82ED-12B9E8540410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65C97FFC-C033-4327-82ED-12B9E8540410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65C97FFC-C033-4327-82ED-12B9E8540410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65C97FFC-C033-4327-82ED-12B9E8540410}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ACB58C5E-1C01-449A-9FFA-2EF8C4318AAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{ACB58C5E-1C01-449A-9FFA-2EF8C4318AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACB58C5E-1C01-449A-9FFA-2EF8C4318AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU

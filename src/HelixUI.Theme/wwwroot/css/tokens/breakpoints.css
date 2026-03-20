@@ -1,0 +1,21 @@
+/* HelixUI Breakpoint Tokens
+   Mobile-first responsive breakpoints.
+   Note: CSS custom properties can't be used in @media queries,
+   so these are documented here and mirrored in the Tailwind plugin. */
+
+/* Breakpoint values (reference only — used in Tailwind plugin and JS):
+   --helix-screen-sm:  640px
+   --helix-screen-md:  768px
+   --helix-screen-lg:  1024px
+   --helix-screen-xl:  1280px
+   --helix-screen-2xl: 1536px
+*/
+
+:root {
+  /* Container max-widths per breakpoint */
+  --helix-container-sm: 640px;
+  --helix-container-md: 768px;
+  --helix-container-lg: 1024px;
+  --helix-container-xl: 1280px;
+  --helix-container-2xl: 1536px;
+}

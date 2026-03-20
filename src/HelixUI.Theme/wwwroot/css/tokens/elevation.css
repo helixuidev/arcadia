@@ -1,0 +1,28 @@
+/* HelixUI Elevation Tokens
+   Box shadows and z-index scale for layered UI. */
+
+:root {
+  /* Box shadows */
+  --helix-shadow-none: none;
+  --helix-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --helix-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --helix-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --helix-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --helix-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --helix-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Focus ring */
+  --helix-ring-width: 2px;
+  --helix-ring-offset: 2px;
+  --helix-ring-color: var(--helix-color-focus-ring);
+
+  /* Z-index scale */
+  --helix-z-base: 0;
+  --helix-z-dropdown: 1000;
+  --helix-z-sticky: 1100;
+  --helix-z-overlay: 1200;
+  --helix-z-modal: 1300;
+  --helix-z-popover: 1400;
+  --helix-z-toast: 1500;
+  --helix-z-tooltip: 1600;
+}

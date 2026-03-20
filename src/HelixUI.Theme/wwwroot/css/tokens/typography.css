@@ -1,0 +1,37 @@
+/* HelixUI Typography Tokens
+   System font stack with configurable override. Scale in rem. */
+
+:root {
+  /* Font families */
+  --helix-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --helix-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Font sizes */
+  --helix-text-xs: 0.75rem;      /* 12px */
+  --helix-text-sm: 0.875rem;     /* 14px */
+  --helix-text-base: 1rem;       /* 16px */
+  --helix-text-lg: 1.125rem;     /* 18px */
+  --helix-text-xl: 1.25rem;      /* 20px */
+  --helix-text-2xl: 1.5rem;      /* 24px */
+  --helix-text-3xl: 1.875rem;    /* 30px */
+  --helix-text-4xl: 2.25rem;     /* 36px */
+  --helix-text-5xl: 3rem;        /* 48px */
+  --helix-text-6xl: 3.75rem;     /* 60px */
+
+  /* Font weights */
+  --helix-font-light: 300;
+  --helix-font-regular: 400;
+  --helix-font-medium: 500;
+  --helix-font-semibold: 600;
+  --helix-font-bold: 700;
+
+  /* Line heights */
+  --helix-leading-tight: 1.25;
+  --helix-leading-normal: 1.5;
+  --helix-leading-relaxed: 1.75;
+
+  /* Letter spacing */
+  --helix-tracking-tight: -0.025em;
+  --helix-tracking-normal: 0;
+  --helix-tracking-wide: 0.025em;
+}
