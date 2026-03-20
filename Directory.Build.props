@@ -16,7 +16,7 @@
     <Copyright>Copyright © 2026 HelixUI. All rights reserved.</Copyright>
     <PackageLicenseExpression>LicenseRef-Commercial</PackageLicenseExpression>
     <PackageProjectUrl>https://helixui.dev</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/helixui/helixui</RepositoryUrl>
+    <RepositoryUrl>https://github.com/helixuidev/helixui</RepositoryUrl>
     <PackageIcon>icon.png</PackageIcon>
     <PackageTags>blazor;components;ui;datagrid;forms;dashboard</PackageTags>
   </PropertyGroup>
