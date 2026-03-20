@@ -9,7 +9,7 @@
     <!-- net5.0 → 5.x, net6.0 → 6.x, net7.0 → 7.x, net8.0 → 8.x, net9.0 → 9.x -->
 
     <!-- Testing -->
-    <PackageVersion Include="bunit" Version="2.0.0" />
+    <PackageVersion Include="bunit" Version="2.0.66" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageVersion Include="xunit" Version="2.9.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
