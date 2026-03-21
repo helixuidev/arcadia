@@ -27,7 +27,17 @@
             @foreach (var tick in _layout.YTicks)
             {
                 var y = _yScale!.Scale(tick.Value);
-                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@tick.Label</SvgText>
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@(YAxisFormatString is not null ? tick.Value.ToString(YAxisFormatString, FormatProvider) : tick.Label)</SvgText>
+            }
+
+            @* Trendline *@
+            @if (_trendlinePath is not null && Trendline is not null)
+            {
+                var trendColor = Trendline.Color ?? ResolveColor(Color, 0);
+                <path d="@_trendlinePath" fill="none" stroke="@trendColor"
+                      stroke-width="@F(Trendline.StrokeWidth)"
+                      stroke-dasharray="@(Trendline.Dashed ? "8,4" : "")"
+                      opacity="0.6" class="helix-chart__trendline" />
             }
 
             @* Points *@
@@ -41,6 +51,12 @@
 
                 <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="0.7"
                         class="helix-chart__point" />
+
+                @if (ShowDataLabels)
+                {
+                    <SvgText x="@F(px)" y="@F(py - size - 4)" text-anchor="middle"
+                          class="helix-chart__data-label">@FormatDataLabel(YField(item))</SvgText>
+                }
             }
 
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"

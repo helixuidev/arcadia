@@ -27,34 +27,32 @@
             @foreach (var tick in _layout.YTicks)
             {
                 var y = _yScale!.Scale(tick.Value);
-                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@tick.Label</SvgText>
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@(YAxisFormatString is not null ? tick.Value.ToString(YAxisFormatString, FormatProvider) : tick.Label)</SvgText>
             }
 
             @* Bars *@
-            @for (var di = 0; di < Data.Count; di++)
+            @foreach (var bar in _bars)
             {
-                var category = XField(Data[di])?.ToString() ?? "";
-                var bandX = _bandScale!.Scale(category);
-                var groupWidth = _bandScale.BandWidth;
-                var barWidth = groupWidth / Series.Count;
+                <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.Width)" height="@F(bar.Height)"
+                      rx="@(Rounded ? "3" : "0")" fill="@bar.Color" class="helix-chart__bar" />
 
-                @for (var si = 0; si < Series.Count; si++)
+                @if (ShowDataLabels && bar.Height > 14)
                 {
-                    var series = Series[si];
-                    var value = series.Field(Data[di]);
-                    var color = ResolveColor(series.Color, si);
-                    var barX = bandX + si * barWidth;
-                    var barY = _yScale!.Scale(value);
-                    var baseY = _yScale.Scale(0);
-                    var barHeight = Math.Abs(baseY - barY);
-                    var barTop = Math.Min(barY, baseY);
-
-                    <rect x="@F(barX + 1)" y="@F(barTop)" width="@F(Math.Max(1, barWidth - 2))" height="@F(barHeight)"
-                          rx="@(Rounded ? "3" : "0")" fill="@color" class="helix-chart__bar" />
+                    <SvgText x="@F(bar.X + bar.Width / 2)" y="@F(bar.Y - 4)" text-anchor="middle"
+                          class="helix-chart__data-label">@FormatDataLabel(bar.Value)</SvgText>
                 }
+            }
 
-                <SvgText x="@F(bandX + groupWidth / 2)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
-                      text-anchor="middle" class="helix-chart__tick-label">@category</SvgText>
+            @* X-axis labels *@
+            @if (_bandScale is not null)
+            {
+                @for (var di = 0; di < Data.Count; di++)
+                {
+                    var category = XField(Data[di])?.ToString() ?? "";
+                    var bandCenter = _bandScale.ScaleCenter(category);
+                    <SvgText x="@F(bandCenter)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                          text-anchor="middle" class="helix-chart__tick-label">@category</SvgText>
+                }
             }
 
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"

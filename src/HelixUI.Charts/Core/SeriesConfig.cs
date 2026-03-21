@@ -25,4 +25,7 @@ public class SeriesConfig<T>
 
     /// <summary>Area fill opacity (0-1).</summary>
     public double AreaOpacity { get; set; } = 0.15;
+
+    /// <summary>Trendline configuration. If null, no trendline is shown.</summary>
+    public TrendlineConfig? Trendline { get; set; }
 }

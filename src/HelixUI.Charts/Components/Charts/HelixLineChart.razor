@@ -29,7 +29,7 @@
             @foreach (var tick in _layout.YTicks)
             {
                 var y = _yScale!.Scale(tick.Value);
-                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@tick.Label</SvgText>
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@(YAxisFormatString is not null ? tick.Value.ToString(YAxisFormatString, FormatProvider) : tick.Label)</SvgText>
             }
 
             @* X-axis labels *@
@@ -46,7 +46,7 @@
                 var series = Series[si];
                 var color = ResolveColor(series.Color, si);
 
-                @if (series.ShowArea && _paths.ContainsKey(si))
+                @if (series.ShowArea && _areaPaths.ContainsKey(si))
                 {
                     <path d="@_areaPaths[si]" fill="@color" opacity="@F(series.AreaOpacity)" />
                 }
@@ -59,14 +59,31 @@
                           class="helix-chart__line" />
                 }
 
-                @* Data points *@
-                @if (ShowPoints)
+                @* Trendline *@
+                @if (_trendlinePaths.ContainsKey(si) && series.Trendline is not null)
                 {
-                    @for (var pi = 0; pi < Data.Count; pi++)
+                    var trendColor = series.Trendline.Color ?? color;
+                    <path d="@_trendlinePaths[si]" fill="none" stroke="@trendColor"
+                          stroke-width="@F(series.Trendline.StrokeWidth)"
+                          stroke-dasharray="@(series.Trendline.Dashed ? "8,4" : "")"
+                          opacity="0.6" class="helix-chart__trendline" />
+                }
+
+                @* Data points *@
+                @if (ShowPoints && _dataPoints.ContainsKey(si))
+                {
+                    @foreach (var pt in _dataPoints[si])
                     {
-                        var px = _layout.PlotArea.X + (pi + 0.5) * (_layout.PlotArea.Width / Data.Count);
-                        var py = _yScale!.Scale(series.Field(Data[pi]));
-                        <circle cx="@F(px)" cy="@F(py)" r="3" fill="@color" class="helix-chart__point" />
+                        <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@color" class="helix-chart__point" />
+                    }
+                }
+
+                @* Data labels *@
+                @if (ShowDataLabels && _dataPoints.ContainsKey(si))
+                {
+                    @foreach (var pt in _dataPoints[si])
+                    {
+                        <SvgText x="@F(pt.X)" y="@F(pt.Y - 8)" text-anchor="middle" class="helix-chart__data-label">@FormatDataLabel(pt.Value)</SvgText>
                     }
                 }
             }

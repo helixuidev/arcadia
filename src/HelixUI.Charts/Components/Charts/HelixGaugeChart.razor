@@ -1,0 +1,52 @@
+@namespace HelixUI.Charts.Components.Charts
+@inherits HelixUI.Core.Base.HelixComponentBase
+
+<div class="helix-chart helix-gauge" style="@Style" @attributes="AdditionalAttributes">
+    <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+         role="figure" aria-label="@(AriaLabel ?? Title ?? $"Gauge: {_displayValue}")"
+         class="@CssClass">
+
+        @if (!string.IsNullOrEmpty(Title))
+        {
+            <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="helix-chart__title">@Title</SvgText>
+        }
+
+        @* Background track *@
+        <path d="@_trackPath" fill="none" stroke="@TrackColor"
+              stroke-width="@F(StrokeWidth)" stroke-linecap="round"
+              class="helix-gauge__track" />
+
+        @* Value arc *@
+        @if (!string.IsNullOrEmpty(_valuePath))
+        {
+            <path d="@_valuePath" fill="none" stroke="@_valueColor"
+                  stroke-width="@F(StrokeWidth)" stroke-linecap="round"
+                  class="helix-gauge__value" />
+        }
+
+        @* Center value text *@
+        <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy : _cy - 8)" text-anchor="middle"
+              dominant-baseline="central" class="helix-gauge__display-value">@_displayValue</SvgText>
+
+        @* Label below value *@
+        @if (!string.IsNullOrEmpty(Label))
+        {
+            <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy + 24 : _cy + 12)" text-anchor="middle"
+                  class="helix-gauge__label">@Label</SvgText>
+        }
+
+        @* Min/Max labels *@
+        @if (!FullCircle)
+        {
+            <SvgText x="@F(_cx - _radius)" y="@F(_cy + 20)" text-anchor="middle"
+                  class="helix-chart__tick-label">@Min</SvgText>
+            <SvgText x="@F(_cx + _radius)" y="@F(_cy + 20)" text-anchor="middle"
+                  class="helix-chart__tick-label">@Max</SvgText>
+        }
+    </svg>
+
+    @* Accessibility *@
+    <div class="helix-sr-only" role="status" aria-live="polite">
+        @(Title ?? "Gauge"): @_displayValue out of @Max (@(Label ?? ""))
+    </div>
+</div>

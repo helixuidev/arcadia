@@ -79,5 +79,28 @@
 .helix-chart__legend-item { display: flex; align-items: center; gap: 4px; font-size: var(--helix-text-xs, 0.75rem); color: var(--helix-color-text-muted, #64748b); }
 .helix-chart__legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
+/* Radar Chart */
+.helix-chart__radar-fill { transition: opacity var(--helix-duration-fast, 100ms); }
+.helix-chart__radar-fill:hover { opacity: 0.4; }
+.helix-chart__radar-line { transition: opacity var(--helix-duration-fast, 100ms); }
+.helix-chart__radar-line:hover { opacity: 0.9; }
+
+/* Gauge Chart */
+.helix-gauge__track { opacity: 1; }
+.helix-gauge__value { transition: stroke-dashoffset var(--helix-duration-normal, 200ms) var(--helix-ease-default, ease); }
+.helix-gauge__display-value { font-size: var(--helix-text-2xl, 1.5rem); font-weight: var(--helix-font-bold, 700); fill: var(--helix-color-text, #0f172a); }
+.helix-gauge__label { font-size: var(--helix-text-sm, 0.875rem); fill: var(--helix-color-text-muted, #64748b); }
+
+/* Heatmap */
+.helix-heatmap__cell { transition: opacity var(--helix-duration-fast, 100ms); cursor: default; }
+.helix-heatmap__cell:hover { opacity: 0.8; stroke: var(--helix-color-text, #0f172a); stroke-width: 1; }
+.helix-heatmap__cell-value { font-size: 10px; fill: var(--helix-color-text, #0f172a); pointer-events: none; }
+
+/* Trendline */
+.helix-chart__trendline { pointer-events: none; }
+
+/* Data Labels */
+.helix-chart__data-label { font-size: 10px; fill: var(--helix-color-text-muted, #64748b); pointer-events: none; }
+
 /* Screen reader only — chart data tables */
 .helix-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
