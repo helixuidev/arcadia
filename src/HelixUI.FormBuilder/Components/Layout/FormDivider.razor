@@ -1,0 +1,18 @@
+@namespace HelixUI.FormBuilder.Components.Layout
+@inherits HelixUI.Core.Base.HelixComponentBase
+
+<div class="@CssClass" role="separator" @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="helix-form-divider__label">@Label</span>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+
+    private string? CssClass => HelixUI.Core.Utilities.CssBuilder.Default("helix-form-divider")
+        .AddClass("helix-form-divider--labeled", !string.IsNullOrEmpty(Label))
+        .AddClass(Class)
+        .Build();
+}
