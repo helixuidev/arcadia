@@ -1,0 +1,56 @@
+@namespace HelixUI.Charts.Components.Charts
+@typeparam T
+@inherits HelixUI.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 0 && NameField is not null && ValueField is not null)
+{
+    <div class="helix-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Pie chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="24" text-anchor="middle" class="helix-chart__title">@Title</SvgText>
+            }
+
+            @* Slices *@
+            @for (var i = 0; i < _slices.Count; i++)
+            {
+                var slice = _slices[i];
+                <path d="@slice.Path" fill="@slice.Color" stroke="var(--helix-color-surface, #fff)" stroke-width="2"
+                      class="helix-chart__pie-slice" />
+
+                @if (ShowLabels && slice.Percent > 5)
+                {
+                    <SvgText x="@F(slice.LabelX)" y="@F(slice.LabelY)" text-anchor="middle"
+                          class="helix-chart__pie-label">@($"{slice.Percent:F0}%")</SvgText>
+                }
+            }
+        </svg>
+
+        @if (ShowLegend)
+        {
+            <div class="helix-chart__legend">
+                @for (var i = 0; i < _slices.Count; i++)
+                {
+                    var slice = _slices[i];
+                    <span class="helix-chart__legend-item">
+                        <span class="helix-chart__legend-swatch" style="background: @slice.Color;"></span>
+                        @slice.Name (@($"{slice.Percent:F1}%"))
+                    </span>
+                }
+            </div>
+        }
+
+        <table class="helix-sr-only" aria-label="Chart data">
+            <thead><tr><th>Category</th><th>Value</th><th>Percentage</th></tr></thead>
+            <tbody>
+                @foreach (var slice in _slices)
+                {
+                    <tr><td>@slice.Name</td><td>@slice.Value</td><td>@($"{slice.Percent:F1}%")</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\src\HelixUI.Theme\HelixUI.Theme.csproj" />
     <ProjectReference Include="..\..\src\HelixUI.Notifications\HelixUI.Notifications.csproj" />
     <ProjectReference Include="..\..\src\HelixUI.FormBuilder\HelixUI.FormBuilder.csproj" />
+    <ProjectReference Include="..\..\src\HelixUI.Charts\HelixUI.Charts.csproj" />
   </ItemGroup>
 
 </Project>

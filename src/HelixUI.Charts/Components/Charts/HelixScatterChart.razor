@@ -1,0 +1,64 @@
+@namespace HelixUI.Charts.Components.Charts
+@typeparam T
+@inherits HelixUI.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 0 && XField is not null && YField is not null)
+{
+    <div class="helix-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Scatter chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="helix-chart__title">@Title</SvgText>
+            }
+
+            @if (ShowGrid)
+            {
+                @foreach (var tick in _layout.YTicks)
+                {
+                    var y = _yScale!.Scale(tick.Value);
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="var(--helix-color-border, #e2e8f0)" stroke-width="1" stroke-dasharray="4,4" />
+                }
+            }
+
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@tick.Label</SvgText>
+            }
+
+            @* Points *@
+            @for (var i = 0; i < Data.Count; i++)
+            {
+                var item = Data[i];
+                var px = _xScale!.Scale(XField(item));
+                var py = _yScale!.Scale(YField(item));
+                var size = SizeField is not null ? Math.Max(3, Math.Sqrt(SizeField(item)) * 2) : PointSize;
+                var color = ResolveColor(Color, 0);
+
+                <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="0.7"
+                        class="helix-chart__point" />
+            }
+
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--helix-color-border, #cbd5e1)" stroke-width="1" />
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
+                  x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--helix-color-border, #cbd5e1)" stroke-width="1" />
+        </svg>
+
+        <table class="helix-sr-only" aria-label="Chart data">
+            <thead><tr><th>X</th><th>Y</th>@if (SizeField is not null) { <th>Size</th> }</tr></thead>
+            <tbody>
+                @foreach (var item in Data)
+                {
+                    <tr><td>@XField(item)</td><td>@YField(item)</td>@if (SizeField is not null) { <td>@SizeField(item)</td> }</tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,137 @@
+@page "/charts"
+
+<PageTitle>HelixUI Demo — Charts</PageTitle>
+
+<h1>Charts & Dashboard Widgets</h1>
+<p style="color: var(--helix-color-text-muted); margin-bottom: var(--helix-spacing-lg);">
+    Dashboard analytics toolkit — pre-composed widgets and SVG charts with zero JS dependencies.
+</p>
+
+<h2>KPI Cards</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--helix-spacing-md); margin-bottom: var(--helix-spacing-xl);">
+    <HelixKpiCard Title="Monthly Revenue" Value="$142,500" Delta="+12.3%" DeltaType="DeltaType.Increase"
+                  Sparkline="@_revenueSparkline" Footer="vs last month" />
+    <HelixKpiCard Title="Active Users" Value="8,420" Delta="-2.1%" DeltaType="DeltaType.Decrease"
+                  Sparkline="@_usersSparkline" SparklineColor="danger" Footer="vs last week" />
+    <HelixKpiCard Title="Conversion Rate" Value="3.8%" Delta="+0.5%" DeltaType="DeltaType.Increase"
+                  Sparkline="@_conversionSparkline" SparklineColor="success" />
+    <HelixKpiCard Title="Avg Response Time" Value="142ms" Delta="→ 0%" DeltaType="DeltaType.Neutral"
+                  Footer="No change" />
+</div>
+
+<h2>Progress & Indicators</h2>
+<div style="max-width: 400px; display: flex; flex-direction: column; gap: var(--helix-spacing-md); margin-bottom: var(--helix-spacing-xl);">
+    <HelixProgressBar Value="73" Max="100" Label="Storage Used" Thresholds="@_storageThresholds" />
+    <HelixProgressBar Value="45" Max="100" Label="CPU Usage" Color="info" />
+    <HelixProgressBar Value="92" Max="100" Label="Memory" Thresholds="@_storageThresholds" />
+</div>
+
+<h2>Bar List</h2>
+<div style="max-width: 400px; margin-bottom: var(--helix-spacing-xl);">
+    <HelixBarList TItem="ProductSale" Data="@_topProducts" NameField="@(d => d.Name)" ValueField="@(d => d.Sales)" ValueFormat="$#,##0" Color="primary" />
+</div>
+
+<h2>Category Bar</h2>
+<div style="max-width: 500px; margin-bottom: var(--helix-spacing-xl);">
+    <HelixCategoryBar TItem="BudgetItem" Data="@_budget" NameField="@(d => d.Category)" ValueField="@(d => d.Amount)" />
+</div>
+
+<h2>Sparklines</h2>
+<div style="display: flex; gap: var(--helix-spacing-lg); align-items: center; margin-bottom: var(--helix-spacing-xl);">
+    <span>Revenue: <HelixSparkline Data="@_revenueSparkline" Color="primary" ShowArea="true" /></span>
+    <span>Users: <HelixSparkline Data="@_usersSparkline" Color="danger" /></span>
+    <span>Growth: <HelixSparkline Data="@_conversionSparkline" Color="success" ShowArea="true" /></span>
+</div>
+
+<hr style="margin: var(--helix-spacing-xl) 0; border-color: var(--helix-color-border);" />
+
+<h2>Line Chart</h2>
+<HelixLineChart TItem="MonthlySales" Data="@_monthlySales" XField="@(d => (object)d.Month)" Title="Revenue vs Target"
+                Series="@_lineSeries" ShowPoints="true" Height="320" Width="700" />
+
+<h2 style="margin-top: var(--helix-spacing-xl);">Bar Chart</h2>
+<HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales" XField="@(d => (object)d.Quarter)" Title="Quarterly Sales by Region"
+               Series="@_barSeries" Height="320" Width="700" />
+
+<h2 style="margin-top: var(--helix-spacing-xl);">Pie Chart</h2>
+<HelixPieChart TItem="BudgetItem" Data="@_budget" NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+               Title="Budget Allocation" Height="350" Width="500" />
+
+<h2 style="margin-top: var(--helix-spacing-xl);">Donut Chart</h2>
+<HelixPieChart TItem="BudgetItem" Data="@_budget" NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+               Title="Budget (Donut)" InnerRadius="70" Height="350" Width="500" />
+
+<h2 style="margin-top: var(--helix-spacing-xl);">Scatter Chart</h2>
+<HelixScatterChart TItem="DataXY" Data="@_scatterData" XField="@(d => d.X)" YField="@(d => d.Y)"
+                   Title="Height vs Weight" Height="320" Width="700" Color="primary" />
+
+@code {
+    // Data models
+    record MonthlySales(string Month, double Revenue, double Target);
+    record QuarterlySales(string Quarter, double NorthAmerica, double Europe, double Asia);
+    record ProductSale(string Name, double Sales);
+    record BudgetItem(string Category, double Amount);
+    record DataXY(double X, double Y);
+
+    // Sparkline data
+    double[] _revenueSparkline = { 42, 48, 45, 52, 49, 55, 58, 62, 59, 65, 68, 72 };
+    double[] _usersSparkline = { 85, 82, 88, 84, 80, 78, 82, 79, 76, 74, 78, 72 };
+    double[] _conversionSparkline = { 2.1, 2.3, 2.5, 2.4, 2.8, 3.0, 2.9, 3.2, 3.4, 3.5, 3.6, 3.8 };
+
+    IReadOnlyList<(double Threshold, string Color)> _storageThresholds = new[] { (60.0, "warning"), (90.0, "danger") };
+
+    // Dashboard data
+    List<ProductSale> _topProducts = new()
+    {
+        new("Enterprise Suite", 48500),
+        new("Pro License", 32000),
+        new("Starter Plan", 18200),
+        new("Add-on Pack", 12800),
+        new("Training", 5400),
+    };
+
+    List<BudgetItem> _budget = new()
+    {
+        new("Engineering", 450000),
+        new("Marketing", 180000),
+        new("Sales", 220000),
+        new("Operations", 120000),
+        new("HR", 80000),
+    };
+
+    // Chart data
+    List<MonthlySales> _monthlySales = new()
+    {
+        new("Jan", 45000, 50000), new("Feb", 52000, 50000), new("Mar", 48000, 52000),
+        new("Apr", 61000, 55000), new("May", 55000, 55000), new("Jun", 67000, 58000),
+        new("Jul", 72000, 60000), new("Aug", 68000, 62000), new("Sep", 75000, 65000),
+        new("Oct", 82000, 68000), new("Nov", 79000, 70000), new("Dec", 88000, 72000),
+    };
+
+    List<SeriesConfig<MonthlySales>> _lineSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true },
+        new() { Name = "Target", Field = d => d.Target, Color = "secondary", Dashed = true },
+    };
+
+    List<QuarterlySales> _quarterlySales = new()
+    {
+        new("Q1", 145000, 98000, 72000),
+        new("Q2", 183000, 112000, 89000),
+        new("Q3", 215000, 134000, 105000),
+        new("Q4", 268000, 156000, 128000),
+    };
+
+    List<SeriesConfig<QuarterlySales>> _barSeries = new()
+    {
+        new() { Name = "North America", Field = d => d.NorthAmerica, Color = "primary" },
+        new() { Name = "Europe", Field = d => d.Europe, Color = "success" },
+        new() { Name = "Asia", Field = d => d.Asia, Color = "warning" },
+    };
+
+    List<DataXY> _scatterData = Enumerable.Range(0, 50).Select(i =>
+    {
+        var rng = new Random(i);
+        return new DataXY(150 + rng.NextDouble() * 50, 50 + rng.NextDouble() * 60);
+    }).ToList();
+}

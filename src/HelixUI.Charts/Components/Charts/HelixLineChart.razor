@@ -1,0 +1,114 @@
+@namespace HelixUI.Charts.Components.Charts
+@typeparam T
+@inherits HelixUI.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 1 && XField is not null && Series is not null)
+{
+    <div class="helix-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Line chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="helix-chart__title">@Title</SvgText>
+            }
+
+            @* Grid lines *@
+            @if (ShowGrid)
+            {
+                @foreach (var tick in _layout.YTicks)
+                {
+                    var y = _yScale!.Scale(tick.Value);
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="var(--helix-color-border, #e2e8f0)" stroke-width="1" stroke-dasharray="4,4" />
+                }
+            }
+
+            @* Y-axis labels *@
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="helix-chart__tick-label">@tick.Label</SvgText>
+            }
+
+            @* X-axis labels *@
+            @for (var i = 0; i < _xLabels.Count; i++)
+            {
+                var x = _layout.PlotArea.X + (i + 0.5) * (_layout.PlotArea.Width / _xLabels.Count);
+                var rot = _layout.TickLabelRotation > 0 ? $" transform=\"rotate({_layout.TickLabelRotation},{F(x)},{F(_layout.PlotArea.Y + _layout.PlotArea.Height + 16)})\"" : "";
+                <SvgText x="@F(x)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                      text-anchor="@(_layout.TickLabelRotation > 0 ? "end" : "middle")"
+                      class="helix-chart__tick-label"@((Microsoft.AspNetCore.Components.MarkupString)rot)>@_xLabels[i]</SvgText>
+            }
+
+            @* Series *@
+            @for (var si = 0; si < Series.Count; si++)
+            {
+                var series = Series[si];
+                var color = ResolveColor(series.Color, si);
+
+                @if (series.ShowArea && _paths.ContainsKey(si))
+                {
+                    <path d="@_areaPaths[si]" fill="@color" opacity="@F(series.AreaOpacity)" />
+                }
+
+                @if (_paths.ContainsKey(si))
+                {
+                    <path d="@_paths[si]" fill="none" stroke="@color" stroke-width="@F(series.StrokeWidth)"
+                          stroke-linecap="round" stroke-linejoin="round"
+                          stroke-dasharray="@(series.Dashed ? "6,4" : "")"
+                          class="helix-chart__line" />
+                }
+
+                @* Data points *@
+                @if (ShowPoints)
+                {
+                    @for (var pi = 0; pi < Data.Count; pi++)
+                    {
+                        var px = _layout.PlotArea.X + (pi + 0.5) * (_layout.PlotArea.Width / Data.Count);
+                        var py = _yScale!.Scale(series.Field(Data[pi]));
+                        <circle cx="@F(px)" cy="@F(py)" r="3" fill="@color" class="helix-chart__point" />
+                    }
+                }
+            }
+
+            @* Axis lines *@
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--helix-color-border, #cbd5e1)" stroke-width="1" />
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
+                  x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--helix-color-border, #cbd5e1)" stroke-width="1" />
+        </svg>
+
+        @* Legend *@
+        @if (_layout.Legend.Visible && Series.Count > 1)
+        {
+            <div class="helix-chart__legend">
+                @for (var i = 0; i < Series.Count; i++)
+                {
+                    var color = ResolveColor(Series[i].Color, i);
+                    <span class="helix-chart__legend-item">
+                        <span class="helix-chart__legend-swatch" style="background: @color;"></span>
+                        @Series[i].Name
+                    </span>
+                }
+            </div>
+        }
+
+        @* Hidden data table for screen readers *@
+        <table class="helix-sr-only" aria-label="Chart data">
+            <thead><tr><th>@XAxisLabel</th>@foreach (var s in Series) { <th>@s.Name</th> }</tr></thead>
+            <tbody>
+                @foreach (var item in Data)
+                {
+                    <tr>
+                        <td>@XField(item)</td>
+                        @foreach (var s in Series) { <td>@s.Field(item)</td> }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

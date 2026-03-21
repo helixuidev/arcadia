@@ -54,6 +54,65 @@
     <RadioGroupField Label="Priority" Value="@_radioValue" ValueChanged="v => _radioValue = v" Options="@_radioOptions" />
 </div>
 
+<hr style="margin: var(--helix-spacing-xl) 0; border-color: var(--helix-color-border);" />
+
+<h2>Phase 2 Fields</h2>
+<p style="color: var(--helix-color-text-muted); margin-bottom: var(--helix-spacing-md); font-size: var(--helix-text-sm);">
+    New field types that no other Blazor library offers.
+</p>
+
+<div style="max-width: 640px; display: flex; flex-direction: column; gap: var(--helix-spacing-md);">
+    <PasswordField Label="Password" Value="@_passwordValue" ValueChanged="v => _passwordValue = v" Placeholder="Enter a strong password" ShowStrength="true" HelperText="Must be at least 8 characters." />
+
+    <RatingField Label="Satisfaction Rating" Value="@_ratingValue" ValueChanged="v => _ratingValue = v" MaxRating="5" />
+
+    <SliderField Label="Volume" Value="@_sliderValue" ValueChanged="v => _sliderValue = v" Min="0" Max="100" Step="5" />
+
+    <ColorField Label="Brand Color" Value="@_colorValue" ValueChanged="v => _colorValue = v" HelperText="Pick your primary brand color." />
+
+    <TimeField Label="Meeting Time" Value="@_timeValue" ValueChanged="v => _timeValue = v" />
+
+    <DateRangeField Label="Project Duration" StartDate="@_startDate" StartDateChanged="v => _startDate = v" EndDate="@_endDate" EndDateChanged="v => _endDate = v" />
+
+    <MaskedField Label="Phone (Masked)" Value="@_maskedValue" ValueChanged="v => _maskedValue = v" Mask="(###) ###-####" HelperText="Input mask auto-formats as you type." />
+
+    <CheckboxGroupField Label="Skills" Values="@_checkboxGroupValues" ValuesChanged="v => _checkboxGroupValues = v" Options="@_skillOptions" />
+
+    <MultiSelectField Label="Tags" Values="@_multiSelectValues" ValuesChanged="v => _multiSelectValues = v" Options="@_tagOptions" Placeholder="Add tags..." HelperText="Select multiple items. Click × to remove." />
+</div>
+
+<hr style="margin: var(--helix-spacing-xl) 0; border-color: var(--helix-color-border);" />
+
+<h2>Wizard / Multi-Step Form</h2>
+<p style="color: var(--helix-color-text-muted); margin-bottom: var(--helix-spacing-md); font-size: var(--helix-text-sm);">
+    First wizard form component in the Blazor ecosystem. Per-step navigation with progress bar.
+</p>
+
+<div style="max-width: 640px;">
+    <HelixWizard @bind-CurrentStep="_wizardStep" OnComplete="HandleWizardComplete">
+        <HelixWizardStep Title="Personal Info" Description="Tell us about yourself.">
+            <TextField Label="Full Name" Value="@_wizardName" ValueChanged="v => _wizardName = v" Required="true" Placeholder="Jane Doe" />
+            <div style="margin-top: var(--helix-spacing-sm);">
+                <TextField Label="Email" Value="@_wizardEmail" ValueChanged="v => _wizardEmail = v" Required="true" Placeholder="jane@example.com" />
+            </div>
+        </HelixWizardStep>
+        <HelixWizardStep Title="Preferences" Description="Customize your experience.">
+            <RatingField Label="How would you rate our product?" Value="@_wizardRating" ValueChanged="v => _wizardRating = v" />
+            <div style="margin-top: var(--helix-spacing-sm);">
+                <SliderField Label="Notification frequency" Value="@_wizardFreq" ValueChanged="v => _wizardFreq = v" Min="0" Max="10" />
+            </div>
+        </HelixWizardStep>
+        <HelixWizardStep Title="Review" Description="Confirm your choices.">
+            <div style="font-size: var(--helix-text-sm); display: flex; flex-direction: column; gap: var(--helix-spacing-xs);">
+                <div><strong>Name:</strong> @_wizardName</div>
+                <div><strong>Email:</strong> @_wizardEmail</div>
+                <div><strong>Rating:</strong> @_wizardRating / 5</div>
+                <div><strong>Frequency:</strong> @_wizardFreq</div>
+            </div>
+        </HelixWizardStep>
+    </HelixWizard>
+</div>
+
 @code {
     private FormState _contactState = new();
     private bool _submitted;
@@ -68,6 +127,42 @@
     private bool _switchValue;
     private DateTime? _dateValue;
     private string? _radioValue;
+
+    // Phase 2 field values
+    private string? _passwordValue;
+    private int _ratingValue = 3;
+    private double _sliderValue = 50;
+    private string? _colorValue = "#2563eb";
+    private TimeSpan? _timeValue = new(9, 0, 0);
+    private DateTime? _startDate = new(2026, 1, 1);
+    private DateTime? _endDate = new(2026, 6, 30);
+    private string? _maskedValue;
+    private List<string> _checkboxGroupValues = new();
+    private List<string> _multiSelectValues = new();
+
+    // Wizard state
+    private int _wizardStep;
+    private string? _wizardName;
+    private string? _wizardEmail;
+    private int _wizardRating;
+    private double _wizardFreq = 5;
+
+    private List<FieldOption> _skillOptions = new()
+    {
+        new() { Label = "C#", Value = "csharp" },
+        new() { Label = "JavaScript", Value = "js" },
+        new() { Label = "SQL", Value = "sql" },
+        new() { Label = "Python", Value = "python" },
+    };
+
+    private List<FieldOption> _tagOptions = new()
+    {
+        new() { Label = "Frontend", Value = "frontend" },
+        new() { Label = "Backend", Value = "backend" },
+        new() { Label = "DevOps", Value = "devops" },
+        new() { Label = "Design", Value = "design" },
+        new() { Label = "QA", Value = "qa" },
+    };
 
     private List<FieldOption> _selectOptions = new()
     {
@@ -113,5 +208,10 @@
     private void HandleInvalidSubmit(FormState state)
     {
         ToastService.ShowError("Please fix the errors and try again.", "Validation Error");
+    }
+
+    private void HandleWizardComplete()
+    {
+        ToastService.ShowSuccess($"Wizard completed! Name: {_wizardName}, Rating: {_wizardRating}/5", "Wizard Done");
     }
 }

@@ -59,5 +59,25 @@
 .helix-catbar__legend-item { display: flex; align-items: center; gap: 4px; font-size: var(--helix-text-xs, 0.75rem); color: var(--helix-color-text-muted, #64748b); }
 .helix-catbar__legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
+/* Charts */
+.helix-chart { position: relative; }
+.helix-chart__svg { font-family: var(--helix-font-sans, system-ui); }
+.helix-chart__title { font-size: var(--helix-text-base, 1rem); font-weight: var(--helix-font-semibold, 600); fill: var(--helix-color-text, #0f172a); }
+.helix-chart__tick-label { font-size: 11px; fill: var(--helix-color-text-muted, #64748b); }
+.helix-chart__line { transition: opacity var(--helix-duration-fast, 100ms); }
+.helix-chart__line:hover { opacity: 0.8; }
+.helix-chart__bar { transition: opacity var(--helix-duration-fast, 100ms); }
+.helix-chart__bar:hover { opacity: 0.8; filter: brightness(1.1); }
+.helix-chart__point { transition: r var(--helix-duration-fast, 100ms), opacity var(--helix-duration-fast, 100ms); }
+.helix-chart__point:hover { r: 6; opacity: 1; }
+.helix-chart__pie-slice { transition: opacity var(--helix-duration-fast, 100ms); cursor: default; }
+.helix-chart__pie-slice:hover { opacity: 0.85; }
+.helix-chart__pie-label { font-size: 11px; fill: white; font-weight: var(--helix-font-semibold, 600); pointer-events: none; }
+
+/* Chart Legend */
+.helix-chart__legend { display: flex; flex-wrap: wrap; gap: var(--helix-spacing-sm, 0.5rem); padding: var(--helix-spacing-sm, 0.5rem) 0; justify-content: center; }
+.helix-chart__legend-item { display: flex; align-items: center; gap: 4px; font-size: var(--helix-text-xs, 0.75rem); color: var(--helix-color-text-muted, #64748b); }
+.helix-chart__legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
 /* Screen reader only — chart data tables */
 .helix-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
