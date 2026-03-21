@@ -319,7 +319,334 @@ Runs in O(n²) for labels — fine for the typical case (< 100 labels). For data
 
 ---
 
-## 6. Feature Requirements by Phase
+## 6. Animation System
+
+Animations are core infrastructure, not a nice-to-have. Every chart element animates.
+
+### On-Load Animations
+| Element | Animation | Technique |
+|---|---|---|
+| Line | Draws itself left-to-right | SVG `stroke-dashoffset` transition |
+| Area | Fades in after line draws | CSS `opacity` transition with delay |
+| Bar | Grows from baseline (zero) | CSS `transform: scaleY(0→1)` with `transform-origin: bottom` |
+| Pie slice | Sweeps in clockwise | SVG `stroke-dashoffset` on arc path |
+| Donut | Sweeps in + center value counts up | Dash + JS counter |
+| Scatter points | Scale in with stagger | CSS `transform: scale(0→1)` with staggered `animation-delay` |
+| Axes/labels | Fade in | CSS `opacity` transition |
+| Legend | Fade in after chart | CSS `opacity` with delay |
+
+### Hover/Interaction Animations
+| Interaction | Animation |
+|---|---|
+| Point hover | Scale up 1.5x, drop shadow appears |
+| Bar hover | Lighten fill, subtle lift (translateY -2px) |
+| Pie slice hover | Explode outward (translate along angle) |
+| Series hover | Highlight series, dim all others to 30% opacity |
+| Legend item hover | Highlight corresponding series |
+| Tooltip appear | Fade in + slight translateY |
+
+### Data Update Animations
+When data changes, elements **morph** — they don't destroy and recreate:
+- Lines: path morphs from old coordinates to new (interpolate `d` attribute)
+- Bars: height/width transitions to new value
+- Pie: slices sweep to new angles
+- Points: translate to new positions
+- New points: scale in from zero
+- Removed points: scale out to zero, then remove from DOM
+
+### Animation Configuration
+```razor
+<HelixLineChart Data="@data" Height="300"
+                AnimateOnLoad="true"
+                AnimationDuration="600"
+                AnimationEasing="ease-out"
+                AnimateUpdates="true">
+```
+
+`prefers-reduced-motion: reduce` → all durations set to 0, no motion.
+
+### JS Interop Module (`chart-interop.js`)
+Required for:
+- `ResizeObserver` for responsive container
+- Tooltip positioning (getBoundingClientRect, viewport bounds)
+- Pan: mousedown → mousemove → mouseup tracking
+- Zoom: wheel event with delta, pinch-to-zoom on touch
+- Path morphing orchestration for data updates
+- Counter animation for KPI values
+
+Estimated size: ~10-15KB minified (single module, tree-shakeable per chart type).
+
+---
+
+## 7. Pan, Zoom & Drill-Down
+
+### Data Viewport
+Charts operate on a **viewport window** into the full dataset:
+
+```csharp
+public class DataViewport
+{
+    public double XMin { get; set; }   // Left edge of visible range
+    public double XMax { get; set; }   // Right edge of visible range
+    public double YMin { get; set; }   // Bottom edge
+    public double YMax { get; set; }   // Top edge
+    public bool AutoFitY { get; set; } // Auto-adjust Y to fit visible data
+}
+```
+
+### Zoom
+- **Mouse wheel** — zoom in/out centered on cursor position
+- **Pinch gesture** — two-finger zoom on touch devices
+- **Zoom toolbar** — +/- buttons, reset to fit all data
+- **Box zoom** — drag to select a rectangular area to zoom into
+- Zoom has min/max limits (can't zoom past individual data points or beyond full dataset)
+
+### Pan
+- **Click-drag** — pan the viewport in any direction
+- **Touch drag** — single finger pan on touch devices
+- **Keyboard** — arrow keys pan, +/- keys zoom
+- Momentum/inertia scrolling on touch (deceleration after release)
+- Pan is bounded — can't scroll past the data range
+
+### Drill-Down
+Click on a bar/point/slice fires `OnDrillDown` with context:
+```csharp
+public class DrillDownContext<T>
+{
+    public T DataItem { get; set; }         // The clicked data item
+    public string? SeriesName { get; set; } // Which series was clicked
+    public DataViewport Viewport { get; set; } // Current visible range
+}
+```
+
+### API
+```razor
+<HelixLineChart Data="@data" Height="300"
+                EnableZoom="true"
+                EnablePan="true"
+                ZoomMode="X"
+                MinZoomRange="7"
+                OnViewportChanged="HandleViewportChange"
+                OnDrillDown="HandleDrillDown">
+```
+
+`ZoomMode`: `X` (horizontal only), `Y` (vertical only), `XY` (both), `None`.
+
+---
+
+## 8. Live Data & Incremental Updates
+
+### The Problem
+Naive approach: replace `Data` property → Blazor diffs entire SVG → re-renders everything → janky.
+
+### The Solution: Incremental Update API
+
+```csharp
+// Instead of replacing the entire data list:
+chartRef.AppendPoint(new SalesRecord("Apr", 67000, 50000));
+chartRef.RemoveFirst();  // sliding window
+
+// Or batch update:
+chartRef.UpdateData(newData, animateTransition: true);
+```
+
+### How It Works Internally
+1. Each data point's SVG element uses `@key="dataPoint.Id"` so Blazor's diffing matches by identity
+2. `AppendPoint` adds one new keyed element — Blazor inserts it, doesn't re-render siblings
+3. `RemoveFirst` removes the first keyed element — Blazor removes just that node
+4. Path elements (`<path d="...">`) update their `d` attribute — Blazor patches the single attribute
+5. The viewport shifts to include the new point (if in follow mode)
+
+### Sliding Window Mode
+For streaming data (sensor feeds, stock tickers):
+```razor
+<HelixLineChart @ref="chartRef"
+                Data="@data"
+                Height="300"
+                SlidingWindow="100"
+                FollowLatest="true">
+```
+- `SlidingWindow="100"` — only render the latest 100 points, discard older ones from DOM
+- `FollowLatest="true"` — viewport auto-scrolls to show newest data
+- Old SVG elements are removed from the DOM (virtualized out)
+- New elements animate in from the right edge
+
+### SignalR Integration Pattern
+```csharp
+hubConnection.On<SensorReading>("NewReading", reading =>
+{
+    InvokeAsync(() => chartRef.AppendPoint(reading));
+});
+```
+
+### Performance Budget
+| Scenario | Target |
+|---|---|
+| Initial render, 1,000 points | < 100ms |
+| Initial render, 10,000 points (downsampled) | < 200ms |
+| Append 1 point to live chart | < 16ms (60fps) |
+| Sliding window shift (remove 1, add 1) | < 16ms |
+| Pan/zoom viewport change | < 16ms |
+| Full data replacement, 1,000 points with animation | < 300ms |
+
+---
+
+## 9. Testing Strategy for Layout Collisions
+
+### Philosophy
+Layout bugs are the most common charting issue. Our test suite must **prevent them by construction**.
+
+### Test Categories
+
+**A. Tick Label Collision Tests**
+```csharp
+[Theory]
+[InlineData(800, 12, 0)]     // Wide chart, 12 months — no rotation needed
+[InlineData(400, 12, 45)]    // Medium chart, 12 months — rotates to 45°
+[InlineData(200, 12, 90)]    // Narrow chart, 12 months — rotates to 90°
+[InlineData(300, 30, 90)]    // Narrow + many ticks — rotation + reduced count
+public void TickLabels_NeverOverlap(int width, int tickCount, int expectedRotation)
+{
+    var result = layoutEngine.Calculate(new ChartLayoutInput
+    {
+        Width = width,
+        TickLabels = GenerateMonthLabels(tickCount)
+    });
+
+    AssertNoOverlaps(result.XTicks);
+    result.TickLabelRotation.Should().Be(expectedRotation);
+}
+```
+
+**B. Margin Adequacy Tests**
+```csharp
+[Fact]
+public void LongLabels_ExpandMargins_PlotAreaNeverNegative()
+{
+    var labels = new[] { "Very Long Category Name A", "Another Extremely Long Name B" };
+    var result = layoutEngine.Calculate(input with { TickLabels = labels, Width = 300 });
+
+    result.PlotArea.Width.Should().BeGreaterThan(50); // Usable area remains
+    result.Margins.Left.Should().BeGreaterThan(0);
+}
+```
+
+**C. Legend Overflow Tests**
+```csharp
+[Theory]
+[InlineData(5, "horizontal")]   // Few items — horizontal
+[InlineData(10, "wrapped")]     // Many items — wrapped rows
+[InlineData(20, "truncated")]   // Too many — truncated with "+N more"
+public void Legend_AdaptsToItemCount(int seriesCount, string expectedLayout)
+{
+    var result = layoutEngine.Calculate(input with
+    {
+        Series = GenerateSeries(seriesCount),
+        Width = 600
+    });
+
+    result.Legend.LayoutMode.Should().Be(expectedLayout);
+}
+```
+
+**D. Pie Label Tests**
+```csharp
+[Fact]
+public void PieLabels_SmallSlices_GroupedIntoOther()
+{
+    var slices = new[] { 50.0, 30.0, 10.0, 5.0, 2.0, 1.5, 0.8, 0.7 };
+    var result = layoutEngine.CalculatePieLayout(slices, radius: 150);
+
+    result.Slices.Count(s => s.Label != "Other").Should().BeLessThan(slices.Length);
+    result.Slices.Should().Contain(s => s.Label == "Other");
+}
+
+[Fact]
+public void PieLabels_LeaderLines_NeverCross()
+{
+    var slices = new[] { 20.0, 20.0, 15.0, 15.0, 10.0, 10.0, 5.0, 5.0 };
+    var result = layoutEngine.CalculatePieLayout(slices, radius: 150);
+
+    AssertNoLeaderLineCrossings(result.LeaderLines);
+}
+```
+
+**E. Responsive Breakpoint Tests**
+```csharp
+[Theory]
+[InlineData(800, true, true, true, true)]   // Wide: all elements shown
+[InlineData(400, true, false, true, false)]  // Medium: no axis titles, no data labels
+[InlineData(250, false, false, false, false)] // Narrow: minimal
+public void Responsive_ElementVisibility(int width, bool showLegend, bool showAxisTitles, bool showGridLines, bool showDataLabels)
+{
+    var result = layoutEngine.Calculate(input with { Width = width });
+
+    result.ShowLegend.Should().Be(showLegend);
+    result.ShowAxisTitles.Should().Be(showAxisTitles);
+    result.ShowGridLines.Should().Be(showGridLines);
+    result.ShowDataLabels.Should().Be(showDataLabels);
+}
+```
+
+**F. Fuzz Testing**
+Generate random chart configurations and assert invariants always hold:
+```csharp
+[Fact]
+public void FuzzTest_NoOverlaps_AtAnySize()
+{
+    var random = new Random(42); // Deterministic seed
+    for (var i = 0; i < 1000; i++)
+    {
+        var width = random.Next(150, 1200);
+        var tickCount = random.Next(2, 50);
+        var seriesCount = random.Next(1, 15);
+
+        var result = layoutEngine.Calculate(GenerateRandomInput(random, width, tickCount, seriesCount));
+
+        AssertNoOverlaps(result.XTicks);
+        AssertNoOverlaps(result.YTicks);
+        Assert.True(result.PlotArea.Width > 0);
+        Assert.True(result.PlotArea.Height > 0);
+    }
+}
+```
+
+**G. Animation Tests**
+```csharp
+[Fact]
+public void ReducedMotion_AllDurationsZero()
+{
+    var config = new AnimationConfig { ReducedMotion = true };
+    config.OnLoadDuration.Should().Be(0);
+    config.UpdateDuration.Should().Be(0);
+    config.HoverDuration.Should().Be(0);
+}
+
+[Fact]
+public void IncrementalUpdate_OnlyNewElementsAdded()
+{
+    // Render with 5 points, then add 1
+    // Assert only 1 new SVG element created, existing 5 unchanged
+}
+```
+
+### Test Helpers
+```csharp
+static void AssertNoOverlaps(List<TickMark> ticks)
+{
+    for (int i = 0; i < ticks.Count - 1; i++)
+    {
+        var a = ticks[i].BoundingBox;
+        var b = ticks[i + 1].BoundingBox;
+        Assert.False(Overlaps(a, b),
+            $"Tick '{ticks[i].Label}' at {a} overlaps '{ticks[i+1].Label}' at {b}");
+    }
+}
+```
+
+---
+
+## 10. Feature Requirements by Phase
 
 ### Phase 1 — Core Engine + 4 Chart Types
 *Ship the foundation and most-used charts.*
@@ -364,12 +691,37 @@ Runs in O(n²) for labels — fine for the typical case (< 100 labels). For data
 - [ ] HelixGridLines — horizontal/vertical, dashed, color
 - [ ] HelixReferenceLine — horizontal/vertical reference with label
 
+**Animation (core, not optional):**
+- [ ] On-load animations: line draw, bar grow, pie sweep, scatter scale-in
+- [ ] Hover animations: point scale, bar lighten, pie explode, series dim-others
+- [ ] Data update morphing: path interpolation, bar height transition, point translate
+- [ ] Animation config: duration, easing, enable/disable, stagger delay
+- [ ] `prefers-reduced-motion` → all durations 0
+
 **Interactivity:**
 - [ ] Hover highlight (series/point)
 - [ ] Click events (OnPointClick, OnSeriesClick)
 - [ ] Tooltip with smart positioning (follows cursor, stays in bounds)
 - [ ] Legend toggle (click to show/hide series)
-- [ ] CSS transitions for smooth updates
+- [ ] Pan (click-drag, touch, keyboard arrows)
+- [ ] Zoom (mouse wheel, pinch, box select, +/- buttons)
+- [ ] DataViewport windowing (XMin/XMax/YMin/YMax)
+- [ ] Zoom mode: X, Y, XY, None
+
+**Live Data & Incremental Updates:**
+- [ ] `AppendPoint` / `RemoveFirst` API for streaming data
+- [ ] `@key` on all data point SVG elements for efficient Blazor diffing
+- [ ] Sliding window mode (keep N latest points, virtualize older ones out of DOM)
+- [ ] `FollowLatest` mode for auto-scrolling to newest data
+- [ ] Batch `UpdateData` with animated transitions
+- [ ] < 16ms per incremental update (60fps target)
+
+**JS Interop Module (~10-15KB):**
+- [ ] ResizeObserver for responsive container
+- [ ] Tooltip getBoundingClientRect positioning
+- [ ] Pan/zoom mouse + touch event handling
+- [ ] Path morph orchestration for data updates
+- [ ] Counter animation for KPI values
 
 **Accessibility:**
 - [ ] SVG `role="img"` with `aria-label` on chart container
@@ -423,17 +775,23 @@ Runs in O(n²) for labels — fine for the typical case (< 100 labels). For data
 
 ---
 
-## 6. Non-Functional Requirements
+## Non-Functional Requirements
 
-- **Zero JS for core rendering** — SVG generated entirely in C#/Blazor
-- **Minimal JS for interactivity** — resize observer, tooltip positioning, zoom/pan only
-- **Render mode agnostic** — Server, WASM, Auto, and static SSR (charts render as static SVG)
+- **SVG rendering in C#** — core chart markup generated without JS
+- **JS interop module** — ~10-15KB for resize, tooltips, pan/zoom, animations
+- **Render mode agnostic** — Server, WASM, Auto; static SSR renders non-interactive SVG
 - **Multi-target** — net5.0 through net9.0
-- **Performance** — render 10,000 data points in < 200ms; 100,000 with downsampling
-- **Bundle** — < 30KB CSS, < 5KB JS (before gzip)
+- **Performance:**
+  - Initial render, 1,000 points: < 100ms
+  - Initial render, 10,000 points (downsampled): < 200ms
+  - Incremental update (1 point): < 16ms (60fps)
+  - Pan/zoom viewport change: < 16ms
+  - Full data replacement with animation: < 300ms
+- **Bundle** — < 30KB CSS, < 15KB JS (before gzip)
 - **WCAG 2.1 AA** — all chart types
 - **Theme integration** — all colors from `--helix-*` CSS custom properties
-- **Test coverage** — ≥ 80% unit tests
+- **Test coverage** — ≥ 80% unit tests, mandatory layout collision fuzz tests
+- **No label overlaps guaranteed** — layout engine invariant, tested with 1,000+ random configs
 
 ---
 
@@ -466,10 +824,10 @@ public interface IChartData<T>
 
 ---
 
-## 9. Open Questions
+## Open Questions
 
 1. **Curve interpolation:** Ship catmull-rom (smooth), monotone, linear, step — or just linear + smooth?
-2. **Responsive strategy:** Resize observer (needs JS) vs. CSS container queries (newer browsers only)?
-3. **Animation:** CSS transitions, SMIL (deprecated but widely supported), or skip animations for v1?
-4. **Tooltip positioning:** Pure CSS (limited) or minimal JS for smart boundary detection?
-5. **Data table for accessibility:** Render as hidden `<table>` inside SVG, or as a sibling element?
+2. **Path morphing for data updates:** CSS can't animate SVG `d` attribute. Use Web Animations API (JS) or SMIL `<animate>` (deprecated but supported)?
+3. **Data table for accessibility:** Render as hidden `<table>` inside SVG, or as a sibling element?
+4. **Zoom/pan state:** Should viewport state be managed internally or exposed as a bindable parameter for URL persistence?
+5. **Live data backpressure:** If data arrives faster than 60fps, buffer and batch? Or drop intermediate frames?
