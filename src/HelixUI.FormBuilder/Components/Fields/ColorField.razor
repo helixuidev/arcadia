@@ -1,0 +1,61 @@
+@namespace HelixUI.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="helix-field__label" for="@ElementId">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="helix-field__required" aria-hidden="true">*</span> }
+    </label>
+
+    <div class="helix-field__color-wrapper">
+        <input id="@ElementId"
+               type="color"
+               class="helix-field__color-input"
+               value="@(Value ?? "#000000")"
+               disabled="@EffectiveDisabled"
+               aria-required="@(EffectiveRequired ? "true" : null)"
+               aria-invalid="@(HasErrors ? "true" : null)"
+               aria-describedby="@AriaDescribedBy"
+               @oninput="HandleInput"
+               @attributes="AdditionalAttributes" />
+        <input type="text"
+               class="helix-field__input helix-field__color-text"
+               value="@Value"
+               placeholder="#000000"
+               disabled="@EffectiveDisabled"
+               aria-label="@($"{EffectiveLabel} hex value")"
+               @oninput="HandleTextInput" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="helix-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="helix-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="helix-field__error">@error</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task HandleTextInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

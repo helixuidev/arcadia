@@ -1,0 +1,50 @@
+@namespace HelixUI.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="helix-field__label" for="@ElementId">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="helix-field__required" aria-hidden="true">*</span> }
+    </label>
+
+    <input id="@ElementId"
+           type="time"
+           class="helix-field__input"
+           value="@FormattedValue"
+           disabled="@EffectiveDisabled"
+           readonly="@ReadOnly"
+           required="@EffectiveRequired"
+           aria-required="@(EffectiveRequired ? "true" : null)"
+           aria-invalid="@(HasErrors ? "true" : null)"
+           aria-describedby="@AriaDescribedBy"
+           @onchange="HandleChange"
+           @attributes="AdditionalAttributes" />
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="helix-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="helix-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="helix-field__error">@error</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public TimeSpan? Value { get; set; }
+    [Parameter] public EventCallback<TimeSpan?> ValueChanged { get; set; }
+
+    private string? FormattedValue => Value?.ToString(@"hh\:mm");
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        Value = TimeSpan.TryParse(e.Value?.ToString(), out var time) ? time : null;
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

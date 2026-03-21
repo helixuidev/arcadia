@@ -36,5 +36,35 @@ public enum FieldType
     Autocomplete,
 
     /// <summary>Repeating section with add/remove rows.</summary>
-    Repeater
+    Repeater,
+
+    /// <summary>Multi-select dropdown with tag chips.</summary>
+    MultiSelect,
+
+    /// <summary>Multiple checkboxes bound to string[].</summary>
+    CheckboxGroup,
+
+    /// <summary>Time picker.</summary>
+    Time,
+
+    /// <summary>Date range (start/end pair).</summary>
+    DateRange,
+
+    /// <summary>Range slider with min/max/step.</summary>
+    Slider,
+
+    /// <summary>Color picker.</summary>
+    Color,
+
+    /// <summary>Password input with visibility toggle.</summary>
+    Password,
+
+    /// <summary>Masked input (phone, SSN, custom patterns).</summary>
+    Masked,
+
+    /// <summary>Star/heart rating.</summary>
+    Rating,
+
+    /// <summary>Hidden value carrier.</summary>
+    Hidden
 }
