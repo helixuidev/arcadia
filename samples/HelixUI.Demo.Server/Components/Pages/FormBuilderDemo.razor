@@ -1,0 +1,117 @@
+@page "/forms"
+@inject ToastService ToastService
+
+<PageTitle>HelixUI Demo — FormBuilder</PageTitle>
+
+<h1>FormBuilder</h1>
+<p style="color: var(--helix-color-text-muted); margin-bottom: var(--helix-spacing-lg);">
+    Dynamic schema-driven form with validation, conditional fields, and sections.
+</p>
+
+<h2>Schema-Driven Form</h2>
+<p style="color: var(--helix-color-text-muted); margin-bottom: var(--helix-spacing-md); font-size: var(--helix-text-sm);">
+    This form is rendered entirely from a <code>FormSchema</code> object — no manual field markup.
+    Try selecting "Phone" as the contact method to see the conditional phone field appear.
+</p>
+
+<div style="max-width: 640px;">
+    <HelixFormBuilder Schema="@_contactSchema"
+                      State="@_contactState"
+                      OnValidSubmit="HandleValidSubmit"
+                      OnInvalidSubmit="HandleInvalidSubmit" />
+</div>
+
+@if (_submitted)
+{
+    <div style="margin-top: var(--helix-spacing-lg); padding: var(--helix-spacing-md); background: var(--helix-color-success-subtle); border: 1px solid var(--helix-color-success); border-radius: var(--helix-radius-md);">
+        <strong>Submitted Values:</strong>
+        <pre style="font-size: var(--helix-text-sm); margin-top: var(--helix-spacing-xs);">@_submittedJson</pre>
+    </div>
+}
+
+<hr style="margin: var(--helix-spacing-xl) 0; border-color: var(--helix-color-border);" />
+
+<h2>Individual Fields</h2>
+<p style="color: var(--helix-color-text-muted); margin-bottom: var(--helix-spacing-md); font-size: var(--helix-text-sm);">
+    Each field component can also be used standalone with two-way binding.
+</p>
+
+<div style="max-width: 640px; display: flex; flex-direction: column; gap: var(--helix-spacing-md);">
+    <TextField Label="Text Field" Value="@_textValue" ValueChanged="v => _textValue = v" Placeholder="Type something..." HelperText="A basic single-line text input." />
+
+    <NumberField Label="Number Field" Value="@_numberValue" ValueChanged="v => _numberValue = v" Placeholder="Enter a number" Min="0" Max="100" HelperText="Range: 0–100" />
+
+    <TextAreaField Label="Text Area" Value="@_textAreaValue" ValueChanged="v => _textAreaValue = v" Placeholder="Write a longer message..." Rows="3" />
+
+    <SelectField Label="Select Field" Value="@_selectValue" ValueChanged="v => _selectValue = v" Placeholder="Choose one..." Options="@_selectOptions" />
+
+    <CheckboxField Label="I agree to the terms and conditions" Value="@_checkboxValue" ValueChanged="v => _checkboxValue = v" />
+
+    <SwitchField Label="Enable notifications" Value="@_switchValue" ValueChanged="v => _switchValue = v" HelperText="Toggle switch for boolean values." />
+
+    <DateField Label="Date Field" Value="@_dateValue" ValueChanged="v => _dateValue = v" HelperText="Pick a date." />
+
+    <RadioGroupField Label="Priority" Value="@_radioValue" ValueChanged="v => _radioValue = v" Options="@_radioOptions" />
+</div>
+
+@code {
+    private FormState _contactState = new();
+    private bool _submitted;
+    private string? _submittedJson;
+
+    // Standalone field values
+    private string? _textValue;
+    private double? _numberValue;
+    private string? _textAreaValue;
+    private string? _selectValue;
+    private bool _checkboxValue;
+    private bool _switchValue;
+    private DateTime? _dateValue;
+    private string? _radioValue;
+
+    private List<FieldOption> _selectOptions = new()
+    {
+        new() { Label = "Option A", Value = "a" },
+        new() { Label = "Option B", Value = "b" },
+        new() { Label = "Option C", Value = "c" },
+    };
+
+    private List<FieldOption> _radioOptions = new()
+    {
+        new() { Label = "Low", Value = "low" },
+        new() { Label = "Medium", Value = "medium" },
+        new() { Label = "High", Value = "high" },
+    };
+
+    private FormSchema _contactSchema = new()
+    {
+        Title = "Contact Form",
+        Description = "Fill out the form below and we'll get back to you within 24 hours.",
+        Columns = 1,
+        SubmitText = "Send Message",
+        CancelText = "Reset",
+        Fields = new()
+        {
+            new() { Name = "fullName", Type = FieldType.Text, Label = "Full Name", Required = true, Placeholder = "John Doe", Validation = new() { MinLength = 2, MaxLength = 100 } },
+            new() { Name = "email", Type = FieldType.Text, Label = "Email Address", Required = true, Placeholder = "john@example.com", Validation = new() { Pattern = "email" } },
+            new() { Name = "contactMethod", Type = FieldType.Select, Label = "Preferred Contact Method", Required = true, Placeholder = "Select one...", Options = new() { "Email", "Phone", "Mail" } },
+            new() { Name = "phone", Type = FieldType.Text, Label = "Phone Number", Placeholder = "+1 (555) 000-0000", Conditions = new() { new() { Field = "contactMethod", Operator = ConditionalOperator.Equals, Value = "Phone", Action = ConditionalAction.Show } } },
+            new() { Name = "subject", Type = FieldType.Select, Label = "Subject", Required = true, Placeholder = "What is this about?", Options = new() { "General Inquiry", "Technical Support", "Sales", "Partnership" } },
+            new() { Name = "message", Type = FieldType.TextArea, Label = "Message", Required = true, Placeholder = "Tell us how we can help...", Validation = new() { MinLength = 10, MaxLength = 2000 } },
+            new() { Name = "urgent", Type = FieldType.Switch, Label = "Mark as urgent" },
+            new() { Name = "terms", Type = FieldType.Checkbox, Label = "I agree to the terms and conditions", Required = true },
+        }
+    };
+
+    private void HandleValidSubmit(FormState state)
+    {
+        _submitted = true;
+        _submittedJson = string.Join("\n", state.Values.Select(kv => $"  {kv.Key}: {kv.Value}"));
+        ToastService.ShowSuccess("Form submitted successfully!", "Success");
+    }
+
+    private void HandleInvalidSubmit(FormState state)
+    {
+        ToastService.ShowError("Please fix the errors and try again.", "Validation Error");
+    }
+}
