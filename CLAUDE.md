@@ -2,7 +2,7 @@
 
 ## Project Overview
 **HelixUI** is a commercial Blazor component library targeting enterprise .NET developers.
-Multi-targets .NET 5 through .NET 9. Supports Blazor Server, WebAssembly, and Auto (net8+) render modes.
+Multi-targets .NET 5 through .NET 10. Supports Blazor Server, WebAssembly, and Auto (net8+) render modes.
 
 ## Repository Structure
 ```
@@ -57,9 +57,9 @@ Multi-targets .NET 5 through .NET 9. Supports Blazor Server, WebAssembly, and Au
 - etc.
 
 ## Target Frameworks
-- **Multi-target: net5.0, net6.0, net7.0, net8.0, net9.0**
+- **Multi-target: net5.0, net6.0, net7.0, net8.0, net9.0, net10.0**
 - Use `#if` preprocessor directives for API differences between versions
-- Common TFM conditionals: `NET5_0_OR_GREATER`, `NET6_0_OR_GREATER`, `NET7_0_OR_GREATER`, `NET8_0_OR_GREATER`, `NET9_0_OR_GREATER`
+- Common TFM conditionals: `NET5_0_OR_GREATER`, `NET6_0_OR_GREATER`, `NET7_0_OR_GREATER`, `NET8_0_OR_GREATER`, `NET9_0_OR_GREATER`, `NET10_0_OR_GREATER`
 - Blazor render modes (Server/WASM/Auto) only exist in net8.0+; for net5-7, only Server and WASM (separate hosting models)
 - Each csproj must use conditional PackageReference for Microsoft.AspNetCore.Components matching the TFM
 - Test against ALL target frameworks before committing

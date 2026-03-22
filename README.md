@@ -2,7 +2,7 @@
 
 **Premium Blazor components for enterprise .NET applications.**
 
-HelixUI is a commercial component library for Blazor, supporting .NET 5 through .NET 9. Works with Blazor Server, WebAssembly, and Auto (net8+) render modes.
+HelixUI is a commercial component library for Blazor, supporting .NET 5 through .NET 10. Works with Blazor Server, WebAssembly, and Auto (net8+) render modes.
 
 ## Components
 

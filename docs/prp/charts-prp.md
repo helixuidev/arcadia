@@ -581,7 +581,7 @@ public void FuzzTest_NoOverlaps_AtAnySize()
 - **SVG rendering in C#** — core markup generated without JS
 - **JS module** — ~10-15KB for resize, tooltips, pan/zoom, morph
 - **Render mode agnostic** — Server, WASM, Auto; static SSR renders non-interactive SVG
-- **Multi-target** — net5.0 through net9.0
+- **Multi-target** — net5.0 through net10.0
 - **Performance:** per budget table in Section 9
 - **Bundle** — < 30KB CSS, < 15KB JS (before gzip)
 - **WCAG 2.1 AA** — all chart types, auditable

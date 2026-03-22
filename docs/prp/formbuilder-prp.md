@@ -372,7 +372,7 @@ public class EmployeeForm
 - **Performance:** Form with 50 fields must render in < 100ms
 - **Bundle size:** < 50KB CSS, < 20KB JS (before gzip)
 - **Render mode agnostic:** Server, WASM, Auto (net8+)
-- **Multi-target:** net5.0 through net9.0
+- **Multi-target:** net5.0 through net10.0
 - **Zero external C# dependencies** (except optional FluentValidation adapter)
 - **WCAG 2.1 AA** for all field components
 - **Test coverage:** ≥ 80% unit tests
