@@ -15,7 +15,7 @@
     <Product>Arcadia Controls</Product>
     <Copyright>Copyright © 2026 Arcadia Controls. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://arcadiacontrols.com</PackageProjectUrl>
+    <PackageProjectUrl>https://arcadiaui.com</PackageProjectUrl>
     <RepositoryUrl>https://github.com/helixuidev/helixui</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>blazor;components;ui;charts;forms;dashboard;dotnet;aspnetcore</PackageTags>

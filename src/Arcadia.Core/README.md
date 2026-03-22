@@ -1,6 +1,6 @@
 # Arcadia.Core
 
-Core foundation for [Arcadia Controls](https://arcadiacontrols.com) — base classes, utilities, theming abstractions, and accessibility helpers for Blazor.
+Core foundation for [Arcadia Controls](https://arcadiaui.com) — base classes, utilities, theming abstractions, and accessibility helpers for Blazor.
 
 ## What's Included
 
@@ -22,6 +22,6 @@ This package is automatically included when you install any Arcadia component pa
 
 ## Links
 
-- [Documentation](https://arcadiacontrols.com/docs)
+- [Documentation](https://arcadiaui.com/docs)
 - [GitHub](https://github.com/helixuidev/helixui)
-- [Pricing](https://arcadiacontrols.com/#pricing)
+- [Pricing](https://arcadiaui.com/#pricing)

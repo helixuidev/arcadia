@@ -40,6 +40,6 @@ dotnet add package Arcadia.Charts
 
 ## Links
 
-- [Documentation](https://arcadiacontrols.com/docs/charts)
-- [Live Demo](https://arcadiacontrols.com/demo)
+- [Documentation](https://arcadiaui.com/docs/charts)
+- [Live Demo](https://arcadiaui.com/demo)
 - [GitHub](https://github.com/helixuidev/helixui)

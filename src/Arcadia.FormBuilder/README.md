@@ -38,5 +38,5 @@ dotnet add package Arcadia.FormBuilder
 
 ## Links
 
-- [Documentation](https://arcadiacontrols.com/docs/forms)
+- [Documentation](https://arcadiaui.com/docs/forms)
 - [GitHub](https://github.com/helixuidev/helixui)
