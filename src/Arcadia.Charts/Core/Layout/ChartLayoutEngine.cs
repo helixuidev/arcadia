@@ -122,10 +122,20 @@ public class ChartLayoutEngine
 
         // Build tick marks with bounding boxes
         var resolvedRotation = rotation;
+        var ticks = BuildTickMarks(labels, spacing, resolvedRotation);
+
+        // Post-build collision removal: iteratively remove overlapping ticks
+        ticks = RemoveOverlappingTicks(ticks);
+
+        return ticks;
+    }
+
+    private static List<TickMark> BuildTickMarks(List<string> labels, double spacing, double rotation)
+    {
         return labels.Select((label, i) =>
         {
             var x = spacing * i + spacing / 2;
-            var (w, h) = TextMeasure.EstimateRotated(label, DefaultFontSize, resolvedRotation);
+            var (w, h) = TextMeasure.EstimateRotated(label, DefaultFontSize, rotation);
             return new TickMark
             {
                 Label = label,
@@ -133,6 +143,23 @@ public class ChartLayoutEngine
                 BoundingBox = new LabelBox(x - w / 2, 0, w, h)
             };
         }).ToList();
+    }
+
+    private static List<TickMark> RemoveOverlappingTicks(List<TickMark> ticks)
+    {
+        if (ticks.Count <= 1) return ticks;
+
+        // Keep first and last, remove interior ticks that overlap
+        var result = new List<TickMark> { ticks[0] };
+        for (var i = 1; i < ticks.Count; i++)
+        {
+            if (!CollisionDetector.Overlaps(result[^1].BoundingBox, ticks[i].BoundingBox))
+            {
+                result.Add(ticks[i]);
+            }
+        }
+
+        return result;
     }
 
     private List<TickMark> ResolveYTicks(ChartLayoutInput input)
