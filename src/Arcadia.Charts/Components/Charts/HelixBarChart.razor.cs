@@ -181,6 +181,16 @@ public partial class HelixBarChart<T> : ChartBase<T>
 
     private static string F(double v) => v.ToString("F1");
 
+    private void ToggleSeries(int index)
+    {
+        if (Series is not null && index >= 0 && index < Series.Count)
+        {
+            Series[index].Visible = !Series[index].Visible;
+            OnParametersSet();
+            StateHasChanged();
+        }
+    }
+
     private class BarRect
     {
         public double X { get; set; }

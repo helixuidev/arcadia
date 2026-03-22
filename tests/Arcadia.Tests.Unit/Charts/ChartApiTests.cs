@@ -104,7 +104,7 @@ public class LineChartApiTests : BunitContext
             .Add(c => c.Series, multiSeries)
             .Add(c => c.ShowLegend, true));
 
-        var legendItems = cut.FindAll(".arcadia-chart__legend-item");
+        var legendItems = cut.FindAll(".arcadia-chart__legend-btn");
         legendItems.Count.Should().Be(2);
         legendItems[0].TextContent.Should().Contain("Revenue");
         legendItems[1].TextContent.Should().Contain("Target");

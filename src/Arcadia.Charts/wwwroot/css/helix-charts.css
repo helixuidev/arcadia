@@ -272,3 +272,27 @@
 
 /* Screen reader only — chart data tables */
 .arcadia-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }
+
+/* Legend toggle button */
+.arcadia-chart__legend-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--arcadia-color-text-muted, #64748b);
+  background: none; border: none; cursor: pointer; padding: 2px 6px;
+  border-radius: 4px; transition: all 0.15s ease;
+  font-family: inherit;
+}
+.arcadia-chart__legend-btn:hover { background: rgba(139,92,246,0.08); color: var(--arcadia-color-text, #0f172a); }
+.arcadia-chart__legend-btn--hidden { opacity: 0.4; text-decoration: line-through; }
+.arcadia-chart__legend-btn--hidden:hover { opacity: 0.7; }
+.arcadia-chart__legend-btn .arcadia-chart__legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; box-sizing: border-box; }
+
+/* Waterfall */
+.arcadia-waterfall__connector { stroke-dasharray: 3,3; }
+
+/* Funnel */
+.arcadia-funnel__stage { transition: opacity 0.15s ease; }
+.arcadia-funnel__stage:hover { opacity: 0.9; }
+
+/* Treemap */
+.arcadia-treemap__cell { transition: opacity 0.15s ease; }
+.arcadia-treemap__cell:hover { opacity: 0.85; filter: brightness(1.1); }

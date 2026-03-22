@@ -49,6 +49,7 @@
             @for (var si = 0; si < Series.Count; si++)
             {
                 var series = Series[si];
+                if (!series.Visible) continue;
                 var color = ResolveColor(series.Color, si);
 
                 @if (series.ShowArea && _areaPaths.ContainsKey(si))
@@ -107,17 +108,23 @@
                   stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" />
         </svg>
 
-        @* Legend *@
-        @if (_layout.Legend.Visible && Series.Count > 1)
+        @* Legend (clickable to toggle series) *@
+        @if (ShowLegend && _layout.Legend.Visible && Series.Count > 1)
         {
             <div class="arcadia-chart__legend">
                 @for (var i = 0; i < Series.Count; i++)
                 {
-                    var color = ResolveColor(Series[i].Color, i);
-                    <span class="arcadia-chart__legend-item">
-                        <span class="arcadia-chart__legend-swatch" style="background: @color;"></span>
-                        @Series[i].Name
-                    </span>
+                    var idx = i;
+                    var s = Series[i];
+                    var color = ResolveColor(s.Color, i);
+                    var hidden = !s.Visible;
+                    <button type="button"
+                            class="arcadia-chart__legend-btn @(hidden ? "arcadia-chart__legend-btn--hidden" : "")"
+                            @onclick="() => ToggleSeries(idx)"
+                            aria-label="@(hidden ? $"Show {s.Name}" : $"Hide {s.Name}")">
+                        <span class="arcadia-chart__legend-swatch" style="background: @(hidden ? "transparent" : color); border: 2px solid @color;"></span>
+                        @s.Name
+                    </button>
                 }
             </div>
         }

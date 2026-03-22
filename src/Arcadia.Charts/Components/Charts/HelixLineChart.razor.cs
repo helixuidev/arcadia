@@ -197,6 +197,16 @@ public partial class HelixLineChart<T> : ChartBase<T>
 
     internal string FormatDataLabel(double value) => FormatValue(value, DataLabelFormatString);
 
+    private void ToggleSeries(int index)
+    {
+        if (Series is not null && index >= 0 && index < Series.Count)
+        {
+            Series[index].Visible = !Series[index].Visible;
+            OnParametersSet(); // Recalculate paths
+            StateHasChanged();
+        }
+    }
+
     private static string F(double v) => v.ToString("F1");
 
     private class DataPointInfo
