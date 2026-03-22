@@ -76,10 +76,14 @@ public class ChartLayoutEngine
         if (input.XTickLabels is null || input.XTickLabels.Count == 0)
             return new List<TickMark>();
 
+        // Estimate max ticks that can fit horizontally
+        var avgLabelWidth = input.XTickLabels.Average(l => TextMeasure.EstimateWidth(l, DefaultFontSize));
+        var fitsHorizontally = (int)(input.Width / Math.Max(1, avgLabelWidth + 10));
+
         var maxTicks = tier switch
         {
-            ResponsiveTier.Wide => input.XTickLabels.Count,
-            ResponsiveTier.Medium => Math.Min(input.XTickLabels.Count, 12),
+            ResponsiveTier.Wide => Math.Min(input.XTickLabels.Count, Math.Max(fitsHorizontally, 6)),
+            ResponsiveTier.Medium => Math.Min(input.XTickLabels.Count, Math.Min(fitsHorizontally, 12)),
             ResponsiveTier.Narrow => Math.Min(input.XTickLabels.Count, 6),
             _ => 3
         };
