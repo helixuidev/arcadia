@@ -1,0 +1,35 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Heatmap
+---
+
+# Heatmap
+
+2D color grid for visualizing density, frequency, or intensity data.
+
+## Basic Usage
+
+```razor
+<HelixHeatmap TItem="HeatmapPoint" Data="@data"
+              XField="@(d => d.Day)" YField="@(d => d.Hour)"
+              ValueField="@(d => d.Count)"
+              Height="300" Width="700" />
+```
+
+## Color Scale
+
+```razor
+<HelixHeatmap LowColor="#f1f5f9" HighColor="#2563eb" ... />
+<HelixHeatmap LowColor="#fef2f2" HighColor="#dc2626" ... />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `XField` | `Func<T, string>` | — | Column category |
+| `YField` | `Func<T, string>` | — | Row category |
+| `ValueField` | `Func<T, double>` | — | Cell value |
+| `LowColor` | `string` | #f1f5f9 | Color for minimum value |
+| `HighColor` | `string` | #2563eb | Color for maximum value |
+| `ShowValues` | `bool` | false | Show values in cells |

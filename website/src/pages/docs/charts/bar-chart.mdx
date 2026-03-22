@@ -1,0 +1,45 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Bar Chart
+---
+
+# Bar Chart
+
+Vertical or horizontal bar chart with grouped and stacked modes, rounded corners, and multi-series support.
+
+## Basic Usage
+
+```razor
+<HelixBarChart TItem="SalesRecord" Data="@data"
+               XField="@(d => (object)d.Quarter)"
+               Series="@series" Height="300" />
+```
+
+## Grouped (Multi-Series)
+
+```csharp
+var series = new List<SeriesConfig<SalesRecord>>
+{
+    new() { Name = "2024", Field = d => d.Y2024, Color = "primary" },
+    new() { Name = "2025", Field = d => d.Y2025, Color = "success" },
+};
+```
+
+## Stacked
+
+```razor
+<HelixBarChart Stacked="true" ... />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `XField` | `Func<T, object>` | — | Category selector (required) |
+| `Series` | `List<SeriesConfig<T>>` | — | Series configs (required) |
+| `Rounded` | `bool` | true | Rounded bar corners |
+| `CornerRadius` | `double` | 3 | Corner radius when Rounded |
+| `Stacked` | `bool` | false | Stack bars instead of grouping |
+| `BarPadding` | `double` | 0.15 | Gap ratio between bars (0-1) |
+
+Plus all [shared ChartBase parameters](/docs/charts).

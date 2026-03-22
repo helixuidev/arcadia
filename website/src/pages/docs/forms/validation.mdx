@@ -1,0 +1,66 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Validation
+---
+
+# Validation
+
+Three validation approaches, composable together.
+
+## Built-in Rules
+
+```csharp
+new() {
+    Name = "email", Label = "Email", Required = true,
+    Validation = new()
+    {
+        Pattern = "email",     // Built-in: email, url, phone
+        MinLength = 5,
+        MaxLength = 100,
+        // For numbers:
+        Min = 0,
+        Max = 999,
+        Message = "Custom error message"
+    }
+}
+```
+
+## Cross-Field Validation
+
+```csharp
+var validator = new CrossFieldValidator()
+    .MustEqual("confirmPassword", "password", "Passwords must match")
+    .MustBeAfter("endDate", "startDate", "End must be after start")
+    .AtLeastOneRequired(new[] { "email", "phone" }, "Provide email or phone");
+
+<HelixForm Validators="@(new[] { validator })" ... />
+```
+
+## Custom Validators
+
+```csharp
+public class UniqueEmailValidator : IFieldValidator
+{
+    public IEnumerable<string> Validate(string fieldName, object? value,
+        IReadOnlyDictionary<string, object?> formValues)
+    {
+        if (fieldName == "email" && EmailExists(value?.ToString()))
+            yield return "This email is already registered.";
+    }
+}
+```
+
+## Async Validators
+
+```csharp
+public class ServerValidator : IAsyncFieldValidator
+{
+    public async Task<IEnumerable<string>> ValidateAsync(string fieldName,
+        object? value, IReadOnlyDictionary<string, object?> formValues,
+        CancellationToken ct)
+    {
+        var exists = await CheckServerAsync(value?.ToString(), ct);
+        return exists ? new[] { "Already taken" } : Array.Empty<string>();
+    }
+}
+```

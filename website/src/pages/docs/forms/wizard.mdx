@@ -1,0 +1,42 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Wizard Forms
+---
+
+# Wizard / Multi-Step Forms
+
+Step-by-step form navigation with progress tracking and per-step validation.
+
+## Basic Usage
+
+```razor
+<HelixWizard @bind-CurrentStep="step" OnComplete="HandleComplete">
+    <HelixWizardStep Title="Personal Info">
+        <TextField Label="Name" @bind-Value="name" Required />
+        <TextField Label="Email" @bind-Value="email" Required />
+    </HelixWizardStep>
+
+    <HelixWizardStep Title="Preferences">
+        <SelectField Label="Plan" @bind-Value="plan" Options="@plans" />
+    </HelixWizardStep>
+
+    <HelixWizardStep Title="Review">
+        <p>Name: @name</p>
+        <p>Email: @email</p>
+        <p>Plan: @plan</p>
+    </HelixWizardStep>
+</HelixWizard>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `CurrentStep` | `int` | 0 | Active step index (bindable) |
+| `Linear` | `bool` | true | Must complete steps in order |
+| `ShowProgress` | `bool` | true | Show progress bar |
+| `OnComplete` | `EventCallback` | — | Fired on final step completion |
+| `OnStepValidate` | `Func<int, Task<bool>>?` | null | Per-step validation callback |
+| `PreviousText` | `string` | "Previous" | Back button text |
+| `NextText` | `string` | "Next" | Next button text |
+| `CompleteText` | `string` | "Complete" | Final button text |

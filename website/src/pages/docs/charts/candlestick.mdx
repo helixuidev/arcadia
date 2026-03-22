@@ -1,0 +1,47 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Candlestick Chart
+---
+
+# Candlestick Chart
+
+Financial OHLC candlestick chart with overlay line series for indicators.
+
+## Basic Usage
+
+```razor
+<HelixCandlestickChart TItem="StockData" Data="@data"
+                        LabelField="@(d => d.Date)"
+                        OpenField="@(d => d.Open)"
+                        HighField="@(d => d.High)"
+                        LowField="@(d => d.Low)"
+                        CloseField="@(d => d.Close)"
+                        Height="400" />
+```
+
+## With Moving Average Overlay
+
+```razor
+<HelixCandlestickChart OverlaySeries="@overlays" ... />
+
+@code {
+    var overlays = new List<SeriesConfig<StockData>>
+    {
+        new() { Name = "MA(20)", Field = d => d.MA20,
+                Color = "info", StrokeWidth = 1.5 }
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `LabelField` | `Func<T, string>` | — | X-axis label |
+| `OpenField` | `Func<T, double>` | — | Open price |
+| `HighField` | `Func<T, double>` | — | High price |
+| `LowField` | `Func<T, double>` | — | Low price |
+| `CloseField` | `Func<T, double>` | — | Close price |
+| `UpColor` | `string` | success | Up candle color |
+| `DownColor` | `string` | danger | Down candle color |
+| `OverlaySeries` | `List<SeriesConfig<T>>?` | null | Overlay line series |

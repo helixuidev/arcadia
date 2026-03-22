@@ -1,0 +1,66 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Model-Driven Forms
+---
+
+# Model-Driven Forms
+
+Generate forms automatically from C# classes using DataAnnotations and Arcadia attributes.
+
+## Basic Model
+
+```csharp
+public class EmployeeForm
+{
+    [Required, StringLength(50)]
+    [Display(Name = "Full Name", Prompt = "John Doe")]
+    public string Name { get; set; }
+
+    [Required, EmailAddress]
+    public string Email { get; set; }
+
+    [Range(18, 120)]
+    public int Age { get; set; }
+
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+
+    public Priority Priority { get; set; } // enum => Select
+}
+```
+
+```csharp
+var schema = ModelFormGenerator.Generate<EmployeeForm>();
+```
+
+## Arcadia Attributes
+
+| Attribute | Purpose |
+|---|---|
+| `[HelixField]` | Override field type, placeholder, helper text, order, column span |
+| `[HelixSection("Name")]` | Group properties into named sections |
+| `[HelixCondition("field")]` | Conditional visibility based on other fields |
+| `[HelixIgnore]` | Exclude property from form generation |
+
+## Example with All Attributes
+
+```csharp
+public class OrderForm
+{
+    [HelixSection("Customer", Order = 0)]
+    [Required]
+    [HelixField(Placeholder = "jane@example.com", ColumnSpan = 6)]
+    public string Email { get; set; }
+
+    [HelixSection("Customer", Order = 0)]
+    [HelixField(Type = FieldType.Select)]
+    public string Country { get; set; }
+
+    [HelixSection("Shipping", Order = 1)]
+    [HelixCondition("Country", Equals = "US")]
+    public string State { get; set; }
+
+    [HelixIgnore]
+    public string InternalId { get; set; }
+}
+```

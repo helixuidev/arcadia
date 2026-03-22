@@ -1,0 +1,26 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Radar Chart
+---
+
+# Radar Chart
+
+Radar (spider) chart for comparing multi-dimensional data across categories.
+
+## Basic Usage
+
+```razor
+<HelixRadarChart TItem="SkillProfile" Data="@data"
+                 LabelField="@(d => d.Skill)"
+                 Series="@series" Height="380" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `LabelField` | `Func<T, string>` | — | Category label selector |
+| `Series` | `List<SeriesConfig<T>>` | — | Series configs |
+| `GridRings` | `int` | 5 | Number of concentric grid rings |
+| `ShowFill` | `bool` | true | Fill polygon area |
+| `ShowPoints` | `bool` | true | Show data point dots |

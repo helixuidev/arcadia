@@ -1,0 +1,45 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Pie & Donut Chart
+---
+
+# Pie & Donut Chart
+
+Pie chart with configurable inner radius for donut mode, label formatting, and slice animations.
+
+## Pie Chart
+
+```razor
+<HelixPieChart TItem="Segment" Data="@data"
+               NameField="@(d => d.Label)"
+               ValueField="@(d => d.Amount)"
+               Height="350" Width="500" />
+```
+
+## Donut Chart
+
+```razor
+<HelixPieChart InnerRadius="70" ... />
+```
+
+## Label Formats
+
+```razor
+<HelixPieChart LabelFormat="PieLabelFormat.Percent" />     // "45%"
+<HelixPieChart LabelFormat="PieLabelFormat.Value" />        // "$45,000"
+<HelixPieChart LabelFormat="PieLabelFormat.Name" />         // "Sales"
+<HelixPieChart LabelFormat="PieLabelFormat.NamePercent" />  // "Sales 45%"
+<HelixPieChart LabelFormat="PieLabelFormat.None" />         // No labels
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `NameField` | `Func<T, string>` | — | Category name selector |
+| `ValueField` | `Func<T, double>` | — | Value selector |
+| `InnerRadius` | `double` | 0 | Inner radius (0 = pie, >0 = donut) |
+| `LabelFormat` | `PieLabelFormat` | Percent | Label display format |
+| `MinLabelPercent` | `double` | 5 | Hide labels on slices below this % |
+| `StartAngle` | `double` | -90 | Start angle in degrees |
+| `ShowLegend` | `bool` | true | Show legend below chart |

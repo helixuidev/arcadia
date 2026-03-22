@@ -1,0 +1,41 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Tailwind Plugin
+---
+
+# Tailwind CSS Plugin
+
+Map Arcadia design tokens to Tailwind utility classes.
+
+## Installation
+
+```js
+// tailwind.config.js
+import arcadiaPlugin from 'arcadia/tailwind/plugin'
+
+export default {
+  plugins: [arcadiaPlugin]
+}
+```
+
+## Available Utilities
+
+```html
+<!-- Colors -->
+<div class="bg-arcadia-primary text-arcadia-text">
+<div class="border-arcadia-border hover:border-arcadia-primary">
+
+<!-- Spacing -->
+<div class="p-arcadia-md gap-arcadia-sm">
+
+<!-- Typography -->
+<span class="font-arcadia-sans text-arcadia-sm">
+
+<!-- Shadows -->
+<div class="shadow-arcadia-md rounded-arcadia-lg">
+
+<!-- Transitions -->
+<div class="duration-arcadia-fast ease-arcadia-default">
+```
+
+All utilities use CSS custom properties, so they automatically adapt to theme changes and density modes.

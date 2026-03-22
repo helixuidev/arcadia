@@ -1,0 +1,39 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Gauge Chart
+---
+
+# Gauge Chart
+
+Radial gauge for KPI dashboards with color thresholds.
+
+## Basic Usage
+
+```razor
+<HelixGaugeChart Value="73" Min="0" Max="100"
+                 Label="CPU Usage" Width="200" Height="160" />
+```
+
+## With Thresholds
+
+```csharp
+var thresholds = new List<GaugeThreshold>
+{
+    new() { Value = 0, Color = "var(--arcadia-color-success)" },
+    new() { Value = 60, Color = "var(--arcadia-color-warning)" },
+    new() { Value = 85, Color = "var(--arcadia-color-danger)" },
+};
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double` | — | Current gauge value |
+| `Min` | `double` | 0 | Minimum range |
+| `Max` | `double` | 100 | Maximum range |
+| `Label` | `string?` | null | Label below value |
+| `Thresholds` | `List<GaugeThreshold>?` | null | Color thresholds |
+| `FullCircle` | `bool` | false | Full 360° or semi-circle |
+| `StrokeWidth` | `double` | 20 | Arc thickness |
+| `ValueFormatString` | `string?` | null | Format for center value |

@@ -1,0 +1,80 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Schema-Driven Forms
+---
+
+# Schema-Driven Forms
+
+Define forms as `FormSchema` objects or JSON — the `HelixFormBuilder` renders them dynamically.
+
+## FormSchema Object
+
+```csharp
+var schema = new FormSchema
+{
+    Title = "Contact Form",
+    Columns = 2,
+    SubmitText = "Send Message",
+    CancelText = "Reset",
+    Fields = new()
+    {
+        new() { Name = "firstName", Type = FieldType.Text,
+                Label = "First Name", Required = true, ColumnSpan = 6 },
+        new() { Name = "lastName", Type = FieldType.Text,
+                Label = "Last Name", Required = true, ColumnSpan = 6 },
+        new() { Name = "email", Type = FieldType.Text,
+                Label = "Email", Required = true,
+                Validation = new() { Pattern = "email" } },
+    }
+};
+```
+
+```razor
+<HelixFormBuilder Schema="@schema"
+                  OnValidSubmit="HandleSubmit"
+                  OnInvalidSubmit="HandleErrors" />
+```
+
+## From JSON
+
+```csharp
+var json = """{ "title": "Survey", "fields": [...] }""";
+var schema = SchemaParser.Parse(json);
+```
+
+## Sections
+
+```csharp
+var schema = new FormSchema
+{
+    Sections = new()
+    {
+        new() {
+            Title = "Personal Info",
+            Collapsible = true,
+            Fields = new() { /* ... */ }
+        },
+        new() {
+            Title = "Contact Details",
+            Fields = new() { /* ... */ }
+        }
+    }
+};
+```
+
+## Conditional Fields
+
+```csharp
+new() {
+    Name = "phone", Type = FieldType.Text, Label = "Phone",
+    Conditions = new()
+    {
+        new() {
+            Field = "contactMethod",
+            Operator = ConditionalOperator.Equals,
+            Value = "Phone",
+            Action = ConditionalAction.Show
+        }
+    }
+}
+```

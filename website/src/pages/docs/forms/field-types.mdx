@@ -1,0 +1,71 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Field Types
+---
+
+# Field Types
+
+21 field types covering every common form input pattern.
+
+## Text Inputs
+
+```razor
+<TextField Label="Name" @bind-Value="name" Required Placeholder="John Doe" />
+<PasswordField Label="Password" @bind-Value="password" ShowStrength="true" />
+<MaskedField Label="Phone" @bind-Value="phone" Mask="(###) ###-####" />
+<TextAreaField Label="Bio" @bind-Value="bio" Rows="4" />
+```
+
+## Numeric
+
+```razor
+<NumberField Label="Age" @bind-Value="age" Min="0" Max="120" />
+<SliderField Label="Volume" @bind-Value="volume" Min="0" Max="100" Step="5" />
+```
+
+## Selection
+
+```razor
+<SelectField Label="Country" @bind-Value="country" Options="@countries" />
+<MultiSelectField Label="Skills" @bind-Values="skills" Options="@skillOptions" />
+<RadioGroupField Label="Priority" @bind-Value="priority" Options="@priorities" />
+<CheckboxGroupField Label="Languages" @bind-Values="languages" Options="@langs" />
+```
+
+## Boolean
+
+```razor
+<CheckboxField Label="I agree to terms" @bind-Value="agreed" />
+<SwitchField Label="Enable notifications" @bind-Value="enabled" />
+```
+
+## Date & Time
+
+```razor
+<DateField Label="Birthday" @bind-Value="birthday" />
+<TimeField Label="Start Time" @bind-Value="startTime" />
+<DateRangeField Label="Project Dates" @bind-StartDate="start" @bind-EndDate="end" />
+```
+
+## Special
+
+```razor
+<ColorField Label="Brand Color" @bind-Value="color" />
+<RatingField Label="Satisfaction" @bind-Value="rating" MaxRating="5" />
+<FileField Label="Attachment" @bind-Value="files" Multiple="true" Accept=".pdf,.docx" />
+<AutocompleteField Label="City" @bind-Value="city" Options="@cities" />
+```
+
+## Shared Field Parameters
+
+Every field accepts these common parameters:
+
+| Parameter | Type | Description |
+|---|---|---|
+| `Label` | `string` | Visible label text (required) |
+| `Placeholder` | `string?` | Placeholder text |
+| `HelperText` | `string?` | Help text below field |
+| `Required` | `bool` | Mark as required |
+| `Disabled` | `bool` | Disable the field |
+| `ReadOnly` | `bool` | Read-only mode |
+| `Errors` | `IReadOnlyList<string>?` | Validation errors to display |

@@ -1,0 +1,61 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Dashboard Widgets
+---
+
+# Dashboard Widgets
+
+Pre-composed, opinionated widgets for KPI dashboards. Drop in and they look great.
+
+## KPI Card
+
+```razor
+<HelixKpiCard Title="Revenue" Value="$142,500"
+              Delta="+12.3%" DeltaType="DeltaType.Increase"
+              Sparkline="@(new double[] { 42, 48, 45, 52, 55, 58, 62 })"
+              Footer="vs last month" />
+```
+
+## Sparkline
+
+```razor
+<HelixSparkline Data="@(new double[] { 4, 7, 2, 8, 5, 9, 3 })"
+                Width="120" Height="32" Color="primary" ShowArea="true" />
+```
+
+## Delta Indicator
+
+```razor
+<HelixDeltaIndicator Value="+12.3%" Type="DeltaType.Increase" />
+<HelixDeltaIndicator Value="-5.2%" Type="DeltaType.Decrease" />
+<HelixDeltaIndicator Value="0%" Type="DeltaType.Neutral" />
+```
+
+## Progress Bar
+
+```razor
+<HelixProgressBar Value="73" Max="100" Label="Storage Used"
+                  Thresholds="@(new[] { (60.0, "warning"), (90.0, "danger") })" />
+```
+
+## Bar List
+
+```razor
+<HelixBarList TItem="Product" Data="@products"
+              NameField="@(d => d.Name)"
+              ValueField="@(d => d.Sales)" ValueFormat="$#,##0" />
+```
+
+## Tracker (GitHub-style grid)
+
+```razor
+<HelixTracker Data="@activityMap" StartDate="@sixMonthsAgo" Weeks="26" />
+```
+
+## Category Bar
+
+```razor
+<HelixCategoryBar TItem="BudgetItem" Data="@budget"
+                  NameField="@(d => d.Category)"
+                  ValueField="@(d => d.Amount)" ShowLegend="true" />
+```

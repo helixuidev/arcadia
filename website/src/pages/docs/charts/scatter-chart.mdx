@@ -1,0 +1,40 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Scatter Chart
+---
+
+# Scatter Chart
+
+Scatter and bubble chart with optional trendlines and size-mapped points.
+
+## Basic Usage
+
+```razor
+<HelixScatterChart TItem="DataPoint" Data="@data"
+                   XField="@(d => d.X)"
+                   YField="@(d => d.Y)"
+                   Height="300" Color="primary" />
+```
+
+## Bubble Chart (Size-Mapped)
+
+```razor
+<HelixScatterChart SizeField="@(d => d.Population)" ... />
+```
+
+## With Trendline
+
+```razor
+<HelixScatterChart Trendline="@(new TrendlineConfig { Type = TrendlineType.Linear })" ... />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `XField` | `Func<T, double>` | — | X value selector |
+| `YField` | `Func<T, double>` | — | Y value selector |
+| `SizeField` | `Func<T, double>?` | null | Bubble size selector |
+| `PointSize` | `double` | 5 | Default point radius |
+| `Color` | `string?` | null | Point color |
+| `Trendline` | `TrendlineConfig?` | null | Trendline config |

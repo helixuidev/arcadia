@@ -1,0 +1,53 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Dark Mode
+---
+
+# Dark Mode
+
+Switch between light and dark themes at runtime. All components adapt automatically.
+
+## Basic Toggle
+
+```csharp
+@inject ThemeService ThemeService
+
+<button @onclick="Toggle">Toggle Theme</button>
+
+@code {
+    void Toggle()
+    {
+        if (ThemeService.CurrentTheme.Name == "dark")
+            ThemeService.SetTheme(new LightTheme());
+        else
+            ThemeService.SetTheme(new DarkTheme());
+    }
+}
+```
+
+## Listen for Changes
+
+```csharp
+protected override void OnInitialized()
+{
+    ThemeService.OnThemeChanged += () => InvokeAsync(StateHasChanged);
+}
+```
+
+## CSS Selectors
+
+Themes are applied via `data-arcadia-theme` attribute:
+
+```css
+[data-arcadia-theme="light"] { /* light overrides */ }
+[data-arcadia-theme="dark"]  { /* dark overrides */ }
+```
+
+## System Preference Detection
+
+Use the included JS interop to detect the user's OS preference:
+
+```javascript
+import { getSystemPreference } from './_content/Arcadia.Theme/js/theme.js';
+// Returns "light" or "dark"
+```
