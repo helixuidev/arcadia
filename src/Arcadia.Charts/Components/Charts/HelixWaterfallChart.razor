@@ -1,0 +1,64 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (HasData && CategoryField is not null && ValueField is not null)
+{
+    <div class="arcadia-chart" @ref="_containerRef" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Waterfall chart")">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                @if (ShowGrid)
+                {
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="@EffectiveGridColor" stroke-width="1" stroke-dasharray="@GridDash" />
+                }
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="arcadia-chart__tick-label">@tick.Label</SvgText>
+            }
+
+            @for (var i = 0; i < _bars.Count; i++)
+            {
+                var bar = _bars[i];
+                <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.W)" height="@F(bar.H)"
+                      rx="2" fill="@bar.Color"
+                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 60}ms;" : "")" />
+
+                @if (i > 0)
+                {
+                    <line x1="@F(_bars[i-1].X + _bars[i-1].W)" y1="@F(_bars[i-1].ConnectY)"
+                          x2="@F(bar.X)" y2="@F(_bars[i-1].ConnectY)"
+                          stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" stroke-dasharray="3,3" />
+                }
+            }
+
+            @foreach (var tick in _layout.XTicks)
+            {
+                <SvgText x="@F(tick.Position)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                      text-anchor="middle" class="arcadia-chart__tick-label">@tick.Label</SvgText>
+            }
+
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" />
+        </svg>
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Category</th><th>Value</th><th>Running Total</th></tr></thead>
+            <tbody>
+                @for (var i = 0; i < _bars.Count; i++)
+                {
+                    <tr><td>@_bars[i].Label</td><td>@_bars[i].Value</td><td>@_bars[i].RunningTotal</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

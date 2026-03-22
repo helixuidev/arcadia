@@ -1,0 +1,46 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (HasData && NameField is not null && ValueField is not null)
+{
+    <div class="arcadia-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Treemap chart")">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @for (var i = 0; i < _cells.Count; i++)
+            {
+                var cell = _cells[i];
+                <rect x="@F(cell.X)" y="@F(cell.Y)" width="@F(cell.W)" height="@F(cell.H)"
+                      rx="3" fill="@cell.Color" stroke="var(--arcadia-color-surface, #fff)" stroke-width="2"
+                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-heatmap" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 50}ms;" : "")">
+                    <title>@cell.Name: @cell.ValueDisplay</title>
+                </rect>
+
+                @if (cell.W > 50 && cell.H > 30)
+                {
+                    <SvgText x="@F(cell.X + cell.W / 2)" y="@F(cell.Y + cell.H / 2 - 4)"
+                          text-anchor="middle" style="fill: white; font-size: 11px; font-weight: 600;">@cell.Name</SvgText>
+                    <SvgText x="@F(cell.X + cell.W / 2)" y="@F(cell.Y + cell.H / 2 + 12)"
+                          text-anchor="middle" style="fill: rgba(255,255,255,0.7); font-size: 10px;">@cell.ValueDisplay</SvgText>
+                }
+            }
+        </svg>
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Category</th><th>Value</th></tr></thead>
+            <tbody>
+                @foreach (var c in _cells)
+                {
+                    <tr><td>@c.Name</td><td>@c.ValueDisplay</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

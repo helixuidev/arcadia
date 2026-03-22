@@ -1,0 +1,40 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (HasData && NameField is not null && ValueField is not null)
+{
+    <div class="arcadia-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Funnel chart")">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="24" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @for (var i = 0; i < _stages.Count; i++)
+            {
+                var s = _stages[i];
+                <path d="@s.Path" fill="@s.Color" opacity="0.85"
+                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")" />
+
+                <SvgText x="@F(Width / 2)" y="@F(s.LabelY)" text-anchor="middle"
+                      class="arcadia-chart__pie-label" style="fill: white; font-size: 12px;">@s.Name</SvgText>
+                <SvgText x="@F(Width / 2)" y="@F(s.LabelY + 16)" text-anchor="middle"
+                      style="fill: rgba(255,255,255,0.7); font-size: 11px;">@($"{s.Percent:F1}%")</SvgText>
+            }
+        </svg>
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Stage</th><th>Value</th><th>Percentage</th></tr></thead>
+            <tbody>
+                @foreach (var s in _stages)
+                {
+                    <tr><td>@s.Name</td><td>@s.Value</td><td>@($"{s.Percent:F1}%")</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
