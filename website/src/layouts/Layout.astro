@@ -120,13 +120,13 @@ const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
   </div>
 
   <!-- Nav -->
-  <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#080014]/80 border-b border-purple-500/10">
+  <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#080014]/80 border-b border-purple-500/10" style="pointer-events: auto;">
     <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
       <a href="/" class="text-xl font-bold">
         <span class="gradient-text">Arcadia</span>
         <span class="text-[var(--arc-text-muted)] font-normal ml-1">Controls</span>
       </a>
-      <div class="hidden md:flex items-center gap-8 text-sm text-[var(--arc-text-muted)]">
+      <div class="hidden md:flex items-center gap-8 text-sm text-[var(--arc-text-muted)]" style="pointer-events: auto;">
         <a href="#features" class="hover:text-white transition-colors">Features</a>
         <a href="#charts" class="hover:text-white transition-colors">Charts</a>
         <a href="#forms" class="hover:text-white transition-colors">Forms</a>

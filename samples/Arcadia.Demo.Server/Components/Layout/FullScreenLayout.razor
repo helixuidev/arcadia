@@ -1,0 +1,9 @@
+@inherits LayoutComponentBase
+
+<ThemeProvider Style="background: transparent; min-height: 100vh;">
+    <div style="position: fixed; top: 12px; right: 16px; z-index: 100;">
+        <ThemeToggle />
+    </div>
+    @Body
+    <HelixToastContainer Position="ToastPosition.TopRight" />
+</ThemeProvider>
