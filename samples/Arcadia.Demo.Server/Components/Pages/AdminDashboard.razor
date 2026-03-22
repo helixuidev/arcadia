@@ -1,0 +1,239 @@
+@page "/admin"
+@using Arcadia.Charts.Core
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Components.Dashboard
+@using Arcadia.Notifications
+@inject ToastService ToastService
+
+<PageTitle>SaaSMetrics — Admin Dashboard</PageTitle>
+
+<!-- Full-screen admin layout -->
+<div class="admin">
+    <!-- Sidebar -->
+    <aside class="admin__sidebar">
+        <div class="admin__logo">
+            <svg viewBox="0 0 24 24" class="admin__logo-icon" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 3v18h18M7 16l4-4 4 4 5-5"/>
+            </svg>
+            <span>SaaSMetrics</span>
+        </div>
+        <nav class="admin__nav">
+            <a class="admin__nav-item admin__nav-item--active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="admin__nav-icon"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a>
+            <a class="admin__nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="admin__nav-icon"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+                Customers
+            </a>
+            <a class="admin__nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="admin__nav-icon"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Invoices
+            </a>
+            <a class="admin__nav-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="admin__nav-icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                Settings
+            </a>
+        </nav>
+        <div class="admin__sidebar-footer">
+            <div class="admin__user">
+                <div class="admin__avatar">JD</div>
+                <div>
+                    <div class="admin__user-name">Jane Doe</div>
+                    <div class="admin__user-role">Admin</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin__main">
+        <!-- Header -->
+        <header class="admin__header">
+            <div>
+                <h1 class="admin__title">Dashboard</h1>
+                <p class="admin__subtitle">Welcome back, Jane. Here's what's happening today.</p>
+            </div>
+            <div class="admin__header-actions">
+                <select class="admin__period-select">
+                    <option>Last 30 days</option>
+                    <option>Last 7 days</option>
+                    <option>Last 90 days</option>
+                    <option>This year</option>
+                </select>
+                <button class="admin__export-btn" @onclick='() => ToastService.ShowSuccess("Report exported to CSV", "Export Complete")'>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="w-4 h-4"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export
+                </button>
+            </div>
+        </header>
+
+        <!-- KPI Row -->
+        <div class="admin__kpi-grid">
+            <HelixKpiCard Title="Monthly Revenue" Value="$142,580"
+                          Delta="+12.3%" DeltaType="DeltaType.Increase"
+                          Sparkline="@_revenueSparkline" Footer="vs last month" />
+            <HelixKpiCard Title="Active Subscriptions" Value="2,847"
+                          Delta="+8.1%" DeltaType="DeltaType.Increase"
+                          Sparkline="@_subsSparkline" SparklineColor="success" Footer="vs last month" />
+            <HelixKpiCard Title="Churn Rate" Value="2.4%"
+                          Delta="-0.3%" DeltaType="DeltaType.Decrease"
+                          Sparkline="@_churnSparkline" SparklineColor="danger" Footer="down is good" />
+            <HelixKpiCard Title="Avg. Deal Size" Value="$4,280"
+                          Delta="+$320" DeltaType="DeltaType.Increase"
+                          Sparkline="@_dealSparkline" Footer="vs last quarter" />
+        </div>
+
+        <!-- Charts row -->
+        <div class="admin__charts-grid">
+            <div class="admin__card admin__card--wide">
+                <div class="admin__card-header">
+                    <h2>Revenue Trend</h2>
+                    <div class="admin__card-tabs">
+                        <button class="admin__tab admin__tab--active">Monthly</button>
+                        <button class="admin__tab">Weekly</button>
+                    </div>
+                </div>
+                <HelixLineChart TItem="RevenuePoint" Data="@_revenueData"
+                                XField="@(d => (object)d.Month)"
+                                Series="@_revenueSeries"
+                                Height="280" Width="680"
+                                ShowPoints="true"
+                                AnimateOnLoad="true" />
+            </div>
+            <div class="admin__card">
+                <div class="admin__card-header">
+                    <h2>Revenue by Plan</h2>
+                </div>
+                <HelixPieChart TItem="PlanSlice" Data="@_planData"
+                               NameField="@(d => d.Name)"
+                               ValueField="@(d => d.Revenue)"
+                               InnerRadius="55"
+                               Height="280" Width="320"
+                               LabelFormat="Arcadia.Charts.Core.PieLabelFormat.NamePercent"
+                               AnimateOnLoad="true" />
+            </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="admin__bottom-grid">
+            <div class="admin__card">
+                <div class="admin__card-header">
+                    <h2>Top Customers</h2>
+                    <a class="admin__card-link">View all →</a>
+                </div>
+                <HelixBarList TItem="CustomerRecord" Data="@_topCustomers"
+                              NameField="@(d => d.Name)"
+                              ValueField="@(d => d.Mrr)"
+                              ValueFormat="$#,##0"
+                              Color="primary" />
+            </div>
+            <div class="admin__card">
+                <div class="admin__card-header">
+                    <h2>System Health</h2>
+                </div>
+                <div class="admin__health-grid">
+                    <HelixGaugeChart Value="73" Min="0" Max="100" Label="CPU" Width="140" Height="110"
+                                     Thresholds="@_healthThresholds" />
+                    <HelixGaugeChart Value="42" Min="0" Max="100" Label="Memory" Width="140" Height="110"
+                                     ValueFormatString="0'%'" />
+                    <HelixGaugeChart Value="91" Min="0" Max="100" Label="Disk" Width="140" Height="110"
+                                     Thresholds="@_healthThresholds" />
+                    <HelixGaugeChart Value="99.9" Min="0" Max="100" Label="Uptime" Width="140" Height="110"
+                                     ValueFormatString="0.0'%'" />
+                </div>
+            </div>
+            <div class="admin__card">
+                <div class="admin__card-header">
+                    <h2>Recent Activity</h2>
+                </div>
+                <div class="admin__activity">
+                    <div class="admin__activity-item">
+                        <div class="admin__activity-dot admin__activity-dot--green"></div>
+                        <div>
+                            <div class="admin__activity-text"><strong>Acme Corp</strong> upgraded to Enterprise</div>
+                            <div class="admin__activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="admin__activity-item">
+                        <div class="admin__activity-dot admin__activity-dot--blue"></div>
+                        <div>
+                            <div class="admin__activity-text"><strong>Jane Smith</strong> created a new project</div>
+                            <div class="admin__activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="admin__activity-item">
+                        <div class="admin__activity-dot admin__activity-dot--yellow"></div>
+                        <div>
+                            <div class="admin__activity-text"><strong>TechStart Inc</strong> payment failed — retry scheduled</div>
+                            <div class="admin__activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="admin__activity-item">
+                        <div class="admin__activity-dot admin__activity-dot--green"></div>
+                        <div>
+                            <div class="admin__activity-text"><strong>DataFlow LLC</strong> signed annual contract</div>
+                            <div class="admin__activity-time">3 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="admin__activity-item">
+                        <div class="admin__activity-dot admin__activity-dot--red"></div>
+                        <div>
+                            <div class="admin__activity-text"><strong>MiniApp</strong> cancelled subscription</div>
+                            <div class="admin__activity-time">5 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+@code {
+    record RevenuePoint(string Month, double Revenue, double Target, double LastYear);
+    record PlanSlice(string Name, double Revenue);
+    record CustomerRecord(string Name, double Mrr);
+
+    double[] _revenueSparkline = { 98, 105, 102, 118, 112, 128, 135, 131, 142, 138, 148, 142 };
+    double[] _subsSparkline = { 2100, 2200, 2280, 2350, 2420, 2500, 2580, 2650, 2720, 2780, 2820, 2847 };
+    double[] _churnSparkline = { 3.8, 3.5, 3.2, 3.0, 2.9, 2.8, 2.7, 2.6, 2.5, 2.5, 2.4, 2.4 };
+    double[] _dealSparkline = { 3200, 3400, 3500, 3600, 3800, 3900, 4000, 4050, 4100, 4200, 4250, 4280 };
+
+    List<GaugeThreshold> _healthThresholds = new()
+    {
+        new() { Value = 0, Color = "var(--arcadia-color-success)" },
+        new() { Value = 60, Color = "var(--arcadia-color-warning)" },
+        new() { Value = 85, Color = "var(--arcadia-color-danger)" },
+    };
+
+    List<RevenuePoint> _revenueData = new()
+    {
+        new("Jan", 98000, 95000, 82000), new("Feb", 105000, 98000, 88000),
+        new("Mar", 102000, 100000, 91000), new("Apr", 118000, 105000, 95000),
+        new("May", 112000, 108000, 99000), new("Jun", 128000, 112000, 105000),
+        new("Jul", 135000, 118000, 110000), new("Aug", 131000, 122000, 115000),
+        new("Sep", 142000, 128000, 118000), new("Oct", 138000, 132000, 122000),
+        new("Nov", 148000, 138000, 128000), new("Dec", 155000, 142000, 132000),
+    };
+
+    List<SeriesConfig<RevenuePoint>> _revenueSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true, AreaOpacity = 0.1 },
+        new() { Name = "Target", Field = d => d.Target, Color = "secondary", Dashed = true, StrokeWidth = 1.5 },
+        new() { Name = "Last Year", Field = d => d.LastYear, Color = "info", StrokeWidth = 1, Dashed = true },
+    };
+
+    List<PlanSlice> _planData = new()
+    {
+        new("Enterprise", 68500), new("Pro", 42800), new("Starter", 21280), new("Free Trial", 10000),
+    };
+
+    List<CustomerRecord> _topCustomers = new()
+    {
+        new("Acme Corporation", 12400),
+        new("TechFlow Industries", 8900),
+        new("DataPipe Systems", 7200),
+        new("CloudFirst Inc", 5800),
+        new("NexaPoint Labs", 4100),
+    };
+}
