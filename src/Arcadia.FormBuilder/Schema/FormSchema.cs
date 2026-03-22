@@ -48,23 +48,23 @@ public class FormSchema
     {
         get
         {
-            foreach (var field in Fields)
+            foreach (var f in Fields)
             {
-                yield return field;
-                if (field.Children is not null)
+                yield return f;
+                if (f.Children is not null)
                 {
-                    foreach (var child in field.Children)
+                    foreach (var child in f.Children)
                         yield return child;
                 }
             }
-            foreach (var section in Sections)
+            foreach (var s in Sections)
             {
-                foreach (var field in section.Fields)
+                foreach (var f in s.Fields)
                 {
-                    yield return field;
-                    if (field.Children is not null)
+                    yield return f;
+                    if (f.Children is not null)
                     {
-                        foreach (var child in field.Children)
+                        foreach (var child in f.Children)
                             yield return child;
                     }
                 }
