@@ -1,0 +1,25 @@
+@namespace Arcadia.Core.Accessibility
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<div @ref="_trapElement"
+     class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    @if (Active)
+    {
+        <span tabindex="0"
+              @onfocus="OnSentinelFocusAsync"
+              class="arcadia-focus-sentinel"
+              style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);"></span>
+    }
+
+    @ChildContent
+
+    @if (Active)
+    {
+        <span tabindex="0"
+              @onfocus="OnSentinelFocusAsync"
+              class="arcadia-focus-sentinel"
+              style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);"></span>
+    }
+</div>

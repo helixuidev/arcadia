@@ -1,0 +1,57 @@
+@namespace Arcadia.Charts.Components.Dashboard
+@inherits Arcadia.Core.Base.HelixComponentBase
+@typeparam T
+
+<div class="@CssClass" role="img" aria-label="@AriaLabel" @attributes="AdditionalAttributes">
+    <div class="arcadia-catbar__bar">
+        @if (Data is not null && NameField is not null && ValueField is not null && _total > 0)
+        {
+            @for (var i = 0; i < Data.Count; i++)
+            {
+                var item = Data[i];
+                var percent = ValueField(item) / _total * 100;
+                var color = _palette.GetColor(i);
+                <div class="arcadia-catbar__segment"
+                     style="width: @($"{percent:F1}")%; background: @color;"
+                     title="@($"{NameField!(item)}: {ValueField!(item):N0}")"></div>
+            }
+        }
+    </div>
+    @if (ShowLegend && Data is not null && NameField is not null && ValueField is not null)
+    {
+        <div class="arcadia-catbar__legend">
+            @for (var i = 0; i < Data.Count; i++)
+            {
+                var item = Data[i];
+                var color = _palette.GetColor(i);
+                <span class="arcadia-catbar__legend-item">
+                    <span class="arcadia-catbar__legend-swatch" style="background: @color;"></span>
+                    @NameField(item)
+                </span>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public IReadOnlyList<T>? Data { get; set; }
+    [Parameter] public Func<T, string>? NameField { get; set; }
+    [Parameter] public Func<T, double>? ValueField { get; set; }
+    [Parameter] public bool ShowLegend { get; set; } = true;
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public Arcadia.Charts.Core.ChartPalette? Palette { get; set; }
+
+    private Arcadia.Charts.Core.ChartPalette _palette = Arcadia.Charts.Core.ChartPalette.Default;
+    private double _total;
+
+    protected override void OnParametersSet()
+    {
+        _palette = Palette ?? Arcadia.Charts.Core.ChartPalette.Default;
+        if (Data is not null && ValueField is not null)
+            _total = Data.Sum(ValueField);
+    }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-catbar")
+        .AddClass(Class)
+        .Build();
+}

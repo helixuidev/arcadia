@@ -1,0 +1,51 @@
+@namespace Arcadia.FormBuilder.Components.Layout
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<div class="@CssClass" @attributes="AdditionalAttributes">
+    <div class="arcadia-form-tabs__nav" role="tablist">
+        @for (var i = 0; i < Tabs.Count; i++)
+        {
+            var tabIndex = i;
+            var tab = Tabs[i];
+            <button type="button"
+                    class="arcadia-form-tabs__tab @(tabIndex == ActiveTab ? "arcadia-form-tabs__tab--active" : "")"
+                    role="tab"
+                    aria-selected="@(tabIndex == ActiveTab ? "true" : "false")"
+                    aria-controls="@($"arcadia-tab-panel-{ElementId}-{tabIndex}")"
+                    @onclick="() => SetActiveTab(tabIndex)">
+                @tab.Title
+                @if (tab.ErrorCount > 0)
+                {
+                    <span class="arcadia-form-tabs__error-badge" aria-label="@($"{tab.ErrorCount} errors")">@tab.ErrorCount</span>
+                }
+            </button>
+        }
+    </div>
+
+    @for (var i = 0; i < Tabs.Count; i++)
+    {
+        var tabIndex = i;
+        <div id="@($"arcadia-tab-panel-{ElementId}-{tabIndex}")"
+             class="arcadia-form-tabs__panel"
+             role="tabpanel"
+             hidden="@(tabIndex != ActiveTab)">
+            @Tabs[tabIndex].Content
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public List<FormTab> Tabs { get; set; } = new();
+    [Parameter] public int ActiveTab { get; set; }
+    [Parameter] public EventCallback<int> ActiveTabChanged { get; set; }
+
+    private async Task SetActiveTab(int index)
+    {
+        ActiveTab = index;
+        await ActiveTabChanged.InvokeAsync(index);
+    }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-form-tabs")
+        .AddClass(Class)
+        .Build();
+}

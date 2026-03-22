@@ -1,0 +1,74 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<fieldset class="@ContainerClass" @attributes="AdditionalAttributes">
+    <legend class="arcadia-field__label">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </legend>
+
+    <div class="arcadia-field__daterange"
+         aria-describedby="@AriaDescribedBy">
+        <div class="arcadia-field__daterange-field">
+            <label class="arcadia-field__daterange-sublabel" for="@($"{ElementId}-start")">@StartLabel</label>
+            <input id="@($"{ElementId}-start")"
+                   type="date"
+                   class="arcadia-field__input"
+                   value="@StartFormatted"
+                   disabled="@EffectiveDisabled"
+                   aria-required="@(EffectiveRequired ? "true" : null)"
+                   aria-invalid="@(HasErrors ? "true" : null)"
+                   @onchange="HandleStartChange" />
+        </div>
+        <span class="arcadia-field__daterange-separator" aria-hidden="true">to</span>
+        <div class="arcadia-field__daterange-field">
+            <label class="arcadia-field__daterange-sublabel" for="@($"{ElementId}-end")">@EndLabel</label>
+            <input id="@($"{ElementId}-end")"
+                   type="date"
+                   class="arcadia-field__input"
+                   value="@EndFormatted"
+                   disabled="@EffectiveDisabled"
+                   aria-invalid="@(HasErrors ? "true" : null)"
+                   @onchange="HandleEndChange" />
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</fieldset>
+
+@code {
+    [Parameter] public DateTime? StartDate { get; set; }
+    [Parameter] public EventCallback<DateTime?> StartDateChanged { get; set; }
+    [Parameter] public DateTime? EndDate { get; set; }
+    [Parameter] public EventCallback<DateTime?> EndDateChanged { get; set; }
+    [Parameter] public string StartLabel { get; set; } = "Start";
+    [Parameter] public string EndLabel { get; set; } = "End";
+
+    private string? StartFormatted => StartDate?.ToString("yyyy-MM-dd");
+    private string? EndFormatted => EndDate?.ToString("yyyy-MM-dd");
+
+    private async Task HandleStartChange(ChangeEventArgs e)
+    {
+        StartDate = DateTime.TryParse(e.Value?.ToString(), out var d) ? d : null;
+        await StartDateChanged.InvokeAsync(StartDate);
+    }
+
+    private async Task HandleEndChange(ChangeEventArgs e)
+    {
+        EndDate = DateTime.TryParse(e.Value?.ToString(), out var d) ? d : null;
+        await EndDateChanged.InvokeAsync(EndDate);
+    }
+}

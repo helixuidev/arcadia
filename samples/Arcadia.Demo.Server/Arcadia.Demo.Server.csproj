@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Arcadia.Core\Arcadia.Core.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Theme\Arcadia.Theme.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Notifications\Arcadia.Notifications.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.FormBuilder\Arcadia.FormBuilder.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Charts\Arcadia.Charts.csproj" />
+  </ItemGroup>
+
+</Project>

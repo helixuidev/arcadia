@@ -1,0 +1,27 @@
+@namespace Arcadia.Charts.Components.Dashboard
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<span class="@CssClass" @attributes="AdditionalAttributes">
+    <span class="arcadia-delta__arrow" aria-hidden="true">@Arrow</span>
+    <span class="arcadia-delta__value">@Value</span>
+</span>
+
+@code {
+    /// <summary>The delta value text (e.g., "+12.3%", "-5.2%").</summary>
+    [Parameter] public string Value { get; set; } = string.Empty;
+
+    /// <summary>The delta direction.</summary>
+    [Parameter] public DeltaType Type { get; set; } = DeltaType.Neutral;
+
+    private string Arrow => Type switch
+    {
+        DeltaType.Increase => "↑",
+        DeltaType.Decrease => "↓",
+        _ => "→"
+    };
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-delta")
+        .AddClass($"arcadia-delta--{Type.ToString().ToLowerInvariant()}")
+        .AddClass(Class)
+        .Build();
+}

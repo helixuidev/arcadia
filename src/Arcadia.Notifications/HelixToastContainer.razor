@@ -1,0 +1,14 @@
+@namespace Arcadia.Notifications
+@inherits Arcadia.Core.Base.HelixComponentBase
+@implements IDisposable
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    @foreach (var toast in ToastService.Toasts)
+    {
+        <HelixToast Toast="toast" OnDismiss="() => Dismiss(toast.Id)" />
+    }
+</div>
+
+<LiveRegion Message="@_announcement" />

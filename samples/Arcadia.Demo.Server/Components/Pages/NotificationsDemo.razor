@@ -1,0 +1,55 @@
+@page "/notifications"
+@inject ToastService ToastService
+
+<PageTitle>HelixUI Demo — Notifications</PageTitle>
+
+<h1>Toast Notifications</h1>
+<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-lg);">
+    Click the buttons below to trigger different toast types.
+</p>
+
+<h2>Toast Levels</h2>
+<div style="display: flex; flex-wrap: wrap; gap: var(--arcadia-spacing-sm); margin-bottom: var(--arcadia-spacing-lg);">
+    <button class="arcadia-demo-btn arcadia-demo-btn--info" @onclick="ShowInfo">Info</button>
+    <button class="arcadia-demo-btn arcadia-demo-btn--success" @onclick="ShowSuccess">Success</button>
+    <button class="arcadia-demo-btn arcadia-demo-btn--warning" @onclick="ShowWarning">Warning</button>
+    <button class="arcadia-demo-btn arcadia-demo-btn--error" @onclick="ShowError">Error</button>
+</div>
+
+<h2>With Title</h2>
+<div style="display: flex; flex-wrap: wrap; gap: var(--arcadia-spacing-sm); margin-bottom: var(--arcadia-spacing-lg);">
+    <button class="arcadia-demo-btn" @onclick="ShowWithTitle">Show with Title</button>
+</div>
+
+<h2>Actions</h2>
+<div style="display: flex; flex-wrap: wrap; gap: var(--arcadia-spacing-sm); margin-bottom: var(--arcadia-spacing-lg);">
+    <button class="arcadia-demo-btn" @onclick="ShowMultiple">Show 3 at Once</button>
+    <button class="arcadia-demo-btn" @onclick="DismissAll">Dismiss All</button>
+</div>
+
+@code {
+    private void ShowInfo() =>
+        ToastService.ShowInfo("This is an informational message.");
+
+    private void ShowSuccess() =>
+        ToastService.ShowSuccess("Operation completed successfully.");
+
+    private void ShowWarning() =>
+        ToastService.ShowWarning("Please review before proceeding.");
+
+    private void ShowError() =>
+        ToastService.ShowError("Something went wrong. Please try again.");
+
+    private void ShowWithTitle() =>
+        ToastService.ShowSuccess("Your changes have been saved to the database.", "Saved!");
+
+    private void ShowMultiple()
+    {
+        ToastService.ShowInfo("Processing your request...");
+        ToastService.ShowSuccess("File uploaded successfully.");
+        ToastService.ShowWarning("Storage is almost full.");
+    }
+
+    private void DismissAll() =>
+        ToastService.DismissAll();
+}

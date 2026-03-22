@@ -1,0 +1,91 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="arcadia-field__label" id="@($"{ElementId}-label")">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </label>
+
+    <div class="arcadia-field__multiselect"
+         role="listbox"
+         aria-multiselectable="true"
+         aria-labelledby="@($"{ElementId}-label")"
+         aria-required="@(EffectiveRequired ? "true" : null)"
+         aria-invalid="@(HasErrors ? "true" : null)"
+         aria-describedby="@AriaDescribedBy">
+
+        @if (Values.Count > 0)
+        {
+            <div class="arcadia-field__multiselect-tags">
+                @foreach (var val in Values)
+                {
+                    var label = EffectiveOptions.FirstOrDefault(o => o.Value == val)?.Label ?? val;
+                    <span class="arcadia-field__multiselect-tag">
+                        @label
+                        @if (!EffectiveDisabled)
+                        {
+                            <button type="button" class="arcadia-field__multiselect-tag-remove"
+                                    aria-label="@($"Remove {label}")"
+                                    @onclick="() => RemoveValue(val)">×</button>
+                        }
+                    </span>
+                }
+            </div>
+        }
+
+        <select id="@ElementId"
+                class="arcadia-field__input arcadia-field__select"
+                disabled="@EffectiveDisabled"
+                @onchange="HandleAdd">
+            <option value="" selected>@(EffectivePlaceholder ?? "Select...")</option>
+            @foreach (var option in AvailableOptions)
+            {
+                <option value="@option.Value" disabled="@option.Disabled">@option.Label</option>
+            }
+        </select>
+    </div>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public List<string> Values { get; set; } = new();
+    [Parameter] public EventCallback<List<string>> ValuesChanged { get; set; }
+    [Parameter] public List<Arcadia.FormBuilder.Schema.FieldOption>? Options { get; set; }
+
+    private IReadOnlyList<Arcadia.FormBuilder.Schema.FieldOption> EffectiveOptions =>
+        Options ?? Schema?.Options ?? new List<Arcadia.FormBuilder.Schema.FieldOption>();
+
+    private IEnumerable<Arcadia.FormBuilder.Schema.FieldOption> AvailableOptions =>
+        EffectiveOptions.Where(o => !Values.Contains(o.Value));
+
+    private async Task HandleAdd(ChangeEventArgs e)
+    {
+        var val = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(val) && !Values.Contains(val))
+        {
+            Values.Add(val);
+            await ValuesChanged.InvokeAsync(Values);
+        }
+    }
+
+    private async Task RemoveValue(string val)
+    {
+        Values.Remove(val);
+        await ValuesChanged.InvokeAsync(Values);
+    }
+}

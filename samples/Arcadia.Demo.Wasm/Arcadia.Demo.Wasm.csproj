@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" VersionOverride="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" VersionOverride="9.0.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Arcadia.Core\Arcadia.Core.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Theme\Arcadia.Theme.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Notifications\Arcadia.Notifications.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.FormBuilder\Arcadia.FormBuilder.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,141 @@
+/* HelixUI Notifications — Toast Component Styles
+   Usage: <link href="_content/HelixUI.Notifications/css/arcadia-notifications.css" rel="stylesheet" /> */
+
+/* Toast Container — positions the toast stack on screen */
+.arcadia-toast-container {
+  position: fixed;
+  z-index: var(--arcadia-z-toast, 1500);
+  display: flex;
+  flex-direction: column;
+  gap: var(--arcadia-spacing-sm, 0.5rem);
+  pointer-events: none;
+  max-width: 420px;
+  width: 100%;
+  padding: var(--arcadia-spacing-md, 1rem);
+}
+
+.arcadia-toast-container--top-right    { top: 0; right: 0; }
+.arcadia-toast-container--top-left     { top: 0; left: 0; }
+.arcadia-toast-container--top-center   { top: 0; left: 50%; transform: translateX(-50%); }
+.arcadia-toast-container--bottom-right { bottom: 0; right: 0; flex-direction: column-reverse; }
+.arcadia-toast-container--bottom-left  { bottom: 0; left: 0; flex-direction: column-reverse; }
+.arcadia-toast-container--bottom-center { bottom: 0; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }
+
+/* Individual Toast */
+.arcadia-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--arcadia-spacing-sm, 0.5rem);
+  padding: var(--arcadia-spacing-sm, 0.5rem) var(--arcadia-spacing-md, 1rem);
+  border-radius: var(--arcadia-radius-lg, 0.5rem);
+  box-shadow: var(--arcadia-shadow-lg, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+  pointer-events: auto;
+  animation: arcadia-toast-enter 200ms var(--arcadia-ease-out, ease-out);
+  border: 1px solid;
+}
+
+/* Level variants */
+.arcadia-toast--info {
+  background: var(--arcadia-color-info-subtle, #f0f9ff);
+  border-color: var(--arcadia-color-info, #0284c7);
+  color: var(--arcadia-color-text, #0f172a);
+}
+
+.arcadia-toast--info .arcadia-toast__icon { color: var(--arcadia-color-info, #0284c7); }
+
+.arcadia-toast--success {
+  background: var(--arcadia-color-success-subtle, #f0fdf4);
+  border-color: var(--arcadia-color-success, #16a34a);
+  color: var(--arcadia-color-text, #0f172a);
+}
+
+.arcadia-toast--success .arcadia-toast__icon { color: var(--arcadia-color-success, #16a34a); }
+
+.arcadia-toast--warning {
+  background: var(--arcadia-color-warning-subtle, #fffbeb);
+  border-color: var(--arcadia-color-warning, #d97706);
+  color: var(--arcadia-color-text, #0f172a);
+}
+
+.arcadia-toast--warning .arcadia-toast__icon { color: var(--arcadia-color-warning, #d97706); }
+
+.arcadia-toast--error {
+  background: var(--arcadia-color-danger-subtle, #fef2f2);
+  border-color: var(--arcadia-color-danger, #dc2626);
+  color: var(--arcadia-color-text, #0f172a);
+}
+
+.arcadia-toast--error .arcadia-toast__icon { color: var(--arcadia-color-danger, #dc2626); }
+
+/* Icon */
+.arcadia-toast__icon {
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.arcadia-toast__svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Content */
+.arcadia-toast__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.arcadia-toast__title {
+  font-weight: var(--arcadia-font-semibold, 600);
+  font-size: var(--arcadia-text-sm, 0.875rem);
+  line-height: var(--arcadia-leading-tight, 1.25);
+  margin-bottom: 2px;
+}
+
+.arcadia-toast__message {
+  font-size: var(--arcadia-text-sm, 0.875rem);
+  line-height: var(--arcadia-leading-normal, 1.5);
+}
+
+/* Dismiss button */
+.arcadia-toast__dismiss {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--arcadia-radius-md, 0.375rem);
+  background: transparent;
+  color: var(--arcadia-color-text-muted, #64748b);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color var(--arcadia-duration-fast, 100ms) var(--arcadia-ease-default, ease);
+}
+
+.arcadia-toast__dismiss:hover {
+  background: rgb(0 0 0 / 0.1);
+}
+
+.arcadia-toast__dismiss:focus-visible {
+  outline: var(--arcadia-ring-width, 2px) solid var(--arcadia-ring-color, #2563eb);
+  outline-offset: var(--arcadia-ring-offset, 2px);
+}
+
+/* Entry animation */
+@keyframes arcadia-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcadia-toast {
+    animation: none;
+  }
+}

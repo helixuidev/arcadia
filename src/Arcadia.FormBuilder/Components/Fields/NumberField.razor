@@ -1,0 +1,55 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="arcadia-field__label" for="@ElementId">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </label>
+
+    <input id="@ElementId"
+           type="number"
+           class="arcadia-field__input"
+           value="@Value"
+           placeholder="@EffectivePlaceholder"
+           disabled="@EffectiveDisabled"
+           readonly="@ReadOnly"
+           required="@EffectiveRequired"
+           min="@Min"
+           max="@Max"
+           step="@Step"
+           aria-required="@(EffectiveRequired ? "true" : null)"
+           aria-invalid="@(HasErrors ? "true" : null)"
+           aria-describedby="@AriaDescribedBy"
+           @oninput="HandleInput"
+           @attributes="AdditionalAttributes" />
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public double? Value { get; set; }
+    [Parameter] public EventCallback<double?> ValueChanged { get; set; }
+    [Parameter] public double? Min { get; set; }
+    [Parameter] public double? Max { get; set; }
+    [Parameter] public string? Step { get; set; }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        Value = double.TryParse(e.Value?.ToString(), out var val) ? val : null;
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

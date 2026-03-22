@@ -1,0 +1,11 @@
+@namespace Arcadia.Core.Accessibility
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<div role="@(Assertive ? "alert" : "status")"
+     aria-live="@(Assertive ? "assertive" : "polite")"
+     aria-atomic="true"
+     class="@CssClass"
+     style="@VisuallyHiddenStyle"
+     @attributes="AdditionalAttributes">
+    @Message
+</div>

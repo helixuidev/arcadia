@@ -1,0 +1,53 @@
+@namespace Arcadia.Charts.Components.Dashboard
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<div class="@CssClass" @attributes="AdditionalAttributes">
+    <div class="arcadia-kpi__header">
+        <span class="arcadia-kpi__title">@Title</span>
+    </div>
+    <div class="arcadia-kpi__body">
+        <span class="arcadia-kpi__value">@Value</span>
+        @if (!string.IsNullOrEmpty(Delta))
+        {
+            <HelixDeltaIndicator Value="@Delta" Type="@DeltaType" />
+        }
+    </div>
+    @if (Sparkline is not null)
+    {
+        <div class="arcadia-kpi__sparkline">
+            <HelixSparkline Data="@Sparkline" Width="100" Height="28"
+                            Color="@SparklineColor" ShowArea="true" />
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(Footer))
+    {
+        <div class="arcadia-kpi__footer">@Footer</div>
+    }
+</div>
+
+@code {
+    /// <summary>KPI title (e.g., "Monthly Revenue").</summary>
+    [Parameter] public string Title { get; set; } = string.Empty;
+
+    /// <summary>KPI value (e.g., "$142,500").</summary>
+    [Parameter] public string Value { get; set; } = string.Empty;
+
+    /// <summary>Delta string (e.g., "+12.3%").</summary>
+    [Parameter] public string? Delta { get; set; }
+
+    /// <summary>Delta direction.</summary>
+    [Parameter] public DeltaType DeltaType { get; set; } = DeltaType.Neutral;
+
+    /// <summary>Optional sparkline data.</summary>
+    [Parameter] public IReadOnlyList<double>? Sparkline { get; set; }
+
+    /// <summary>Sparkline color.</summary>
+    [Parameter] public string SparklineColor { get; set; } = "primary";
+
+    /// <summary>Optional footer text (e.g., "vs last month").</summary>
+    [Parameter] public string? Footer { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-kpi")
+        .AddClass(Class)
+        .Build();
+}

@@ -1,0 +1,87 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 0 && XField is not null && YField is not null && ValueField is not null)
+{
+    <div class="arcadia-chart arcadia-heatmap" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Heatmap")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @* Heatmap cells *@
+            @foreach (var cell in _cells)
+            {
+                var localCell = cell;
+                <rect x="@F(localCell.X)" y="@F(localCell.Y)" width="@F(Math.Max(1, _cellWidth - 1))" height="@F(Math.Max(1, _cellHeight - 1))"
+                      fill="@localCell.Color"
+                      class="arcadia-heatmap__cell @(AnimateOnLoad ? "arcadia-animate-heatmap" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {localCell.Index * 15}ms;" : "")">
+                    <title>@localCell.XCategory, @localCell.YCategory: @localCell.DisplayValue</title>
+                </rect>
+
+                @if (ShowValues && _cellWidth > 25 && _cellHeight > 16)
+                {
+                    <SvgText x="@F(localCell.X + _cellWidth / 2)" y="@F(localCell.Y + _cellHeight / 2 + 4)"
+                          text-anchor="middle" class="arcadia-heatmap__cell-value">@localCell.DisplayValue</SvgText>
+                }
+            }
+
+            @* Y-axis labels (row labels) *@
+            @for (var i = 0; i < _yCategories.Count; i++)
+            {
+                var localI = i;
+                var label = _yCategories[localI];
+                <SvgText x="@F(_plotX - 6)" y="@F(_plotY + localI * _cellHeight + _cellHeight / 2 + 4)"
+                      text-anchor="end" class="arcadia-chart__tick-label">@label</SvgText>
+            }
+
+            @* X-axis labels (column labels) *@
+            @for (var i = 0; i < _xCategories.Count; i++)
+            {
+                var localI = i;
+                var label = _xCategories[localI];
+                <SvgText x="@F(_plotX + localI * _cellWidth + _cellWidth / 2)" y="@F(_plotY + _plotHeight + 16)"
+                      text-anchor="middle" class="arcadia-chart__tick-label">@label</SvgText>
+            }
+
+            @* Color scale legend *@
+            <defs>
+                <linearGradient id="arcadia-heatmap-gradient" x1="0" y1="1" x2="0" y2="0">
+                    <stop offset="0%" stop-color="@LowColor" />
+                    <stop offset="100%" stop-color="@HighColor" />
+                </linearGradient>
+            </defs>
+
+            @{
+                var legendX = _plotX + _plotWidth + 12;
+                var legendY = _plotY;
+                var legendHeight = _plotHeight;
+            }
+            <rect x="@F(legendX)" y="@F(legendY)" width="16" height="@F(legendHeight)"
+                  fill="url(#arcadia-heatmap-gradient)" rx="2" />
+            <SvgText x="@F(legendX + 22)" y="@F(legendY + 10)" class="arcadia-chart__tick-label">@GetScaleLabel(1)</SvgText>
+            <SvgText x="@F(legendX + 22)" y="@F(legendY + legendHeight)" class="arcadia-chart__tick-label">@GetScaleLabel(0)</SvgText>
+        </svg>
+
+        @* Hidden data table for screen readers *@
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead>
+                <tr>
+                    <th>Row</th><th>Column</th><th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cell in _cells)
+                {
+                    <tr><td>@cell.YCategory</td><td>@cell.XCategory</td><td>@cell.DisplayValue</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

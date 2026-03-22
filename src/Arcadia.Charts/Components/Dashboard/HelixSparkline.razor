@@ -1,0 +1,22 @@
+@namespace Arcadia.Charts.Components.Dashboard
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<svg class="@CssClass"
+     width="@Width" height="@Height"
+     viewBox="0 0 @Width @Height"
+     role="img"
+     aria-label="@AriaLabel"
+     @attributes="AdditionalAttributes">
+
+    @if (ShowArea && _pathData is not null)
+    {
+        <path d="@_areaPath" fill="@ResolvedColor" opacity="0.15" class="arcadia-animate-area" />
+    }
+
+    @if (_pathData is not null)
+    {
+        <path d="@_pathData" fill="none" stroke="@ResolvedColor"
+              stroke-width="@StrokeWidth" stroke-linecap="round" stroke-linejoin="round"
+              class="arcadia-animate-sparkline" />
+    }
+</svg>

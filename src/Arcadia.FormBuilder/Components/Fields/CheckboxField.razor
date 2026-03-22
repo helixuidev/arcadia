@@ -1,0 +1,47 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="arcadia-field__checkbox-label" for="@ElementId">
+        <input id="@ElementId"
+               type="checkbox"
+               class="arcadia-field__checkbox"
+               checked="@Value"
+               disabled="@EffectiveDisabled"
+               aria-required="@(EffectiveRequired ? "true" : null)"
+               aria-invalid="@(HasErrors ? "true" : null)"
+               aria-describedby="@AriaDescribedBy"
+               @onchange="HandleChange"
+               @attributes="AdditionalAttributes" />
+        <span class="arcadia-field__checkbox-text">
+            @EffectiveLabel
+            @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+        </span>
+    </label>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public bool Value { get; set; }
+    [Parameter] public EventCallback<bool> ValueChanged { get; set; }
+
+    private async Task HandleChange(ChangeEventArgs e)
+    {
+        Value = bool.TryParse(e.Value?.ToString(), out var val) && val;
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

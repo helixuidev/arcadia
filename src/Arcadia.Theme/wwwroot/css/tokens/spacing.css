@@ -1,0 +1,72 @@
+/* HelixUI Spacing Tokens
+   Based on a 4px base unit. Supports compact, default, and comfortable density. */
+
+:root {
+  /* Base scale */
+  --arcadia-spacing-0: 0;
+  --arcadia-spacing-0-5: 0.125rem; /* 2px */
+  --arcadia-spacing-1: 0.25rem;    /* 4px */
+  --arcadia-spacing-1-5: 0.375rem; /* 6px */
+  --arcadia-spacing-2: 0.5rem;     /* 8px */
+  --arcadia-spacing-3: 0.75rem;    /* 12px */
+  --arcadia-spacing-4: 1rem;       /* 16px */
+  --arcadia-spacing-5: 1.25rem;    /* 20px */
+  --arcadia-spacing-6: 1.5rem;     /* 24px */
+  --arcadia-spacing-8: 2rem;       /* 32px */
+  --arcadia-spacing-10: 2.5rem;    /* 40px */
+  --arcadia-spacing-12: 3rem;      /* 48px */
+  --arcadia-spacing-16: 4rem;      /* 64px */
+  --arcadia-spacing-20: 5rem;      /* 80px */
+  --arcadia-spacing-24: 6rem;      /* 96px */
+
+  /* Semantic spacing — remapped per density mode */
+  --arcadia-spacing-xs: var(--arcadia-spacing-1);   /* 4px */
+  --arcadia-spacing-sm: var(--arcadia-spacing-2);   /* 8px */
+  --arcadia-spacing-md: var(--arcadia-spacing-4);   /* 16px */
+  --arcadia-spacing-lg: var(--arcadia-spacing-6);   /* 24px */
+  --arcadia-spacing-xl: var(--arcadia-spacing-8);   /* 32px */
+
+  /* Component-specific */
+  --arcadia-spacing-input-x: var(--arcadia-spacing-3);
+  --arcadia-spacing-input-y: var(--arcadia-spacing-2);
+  --arcadia-spacing-button-x: var(--arcadia-spacing-4);
+  --arcadia-spacing-button-y: var(--arcadia-spacing-2);
+  --arcadia-spacing-card: var(--arcadia-spacing-4);
+  --arcadia-spacing-dialog: var(--arcadia-spacing-6);
+
+  /* Border radius */
+  --arcadia-radius-none: 0;
+  --arcadia-radius-sm: 0.25rem;    /* 4px */
+  --arcadia-radius-md: 0.375rem;   /* 6px */
+  --arcadia-radius-lg: 0.5rem;     /* 8px */
+  --arcadia-radius-xl: 0.75rem;    /* 12px */
+  --arcadia-radius-full: 9999px;
+}
+
+/* Compact density */
+[data-arcadia-density="compact"] {
+  --arcadia-spacing-xs: var(--arcadia-spacing-0-5);
+  --arcadia-spacing-sm: var(--arcadia-spacing-1);
+  --arcadia-spacing-md: var(--arcadia-spacing-2);
+  --arcadia-spacing-lg: var(--arcadia-spacing-4);
+  --arcadia-spacing-xl: var(--arcadia-spacing-6);
+  --arcadia-spacing-input-x: var(--arcadia-spacing-2);
+  --arcadia-spacing-input-y: var(--arcadia-spacing-1);
+  --arcadia-spacing-button-x: var(--arcadia-spacing-3);
+  --arcadia-spacing-button-y: var(--arcadia-spacing-1);
+  --arcadia-spacing-card: var(--arcadia-spacing-3);
+}
+
+/* Comfortable density */
+[data-arcadia-density="comfortable"] {
+  --arcadia-spacing-xs: var(--arcadia-spacing-2);
+  --arcadia-spacing-sm: var(--arcadia-spacing-3);
+  --arcadia-spacing-md: var(--arcadia-spacing-5);
+  --arcadia-spacing-lg: var(--arcadia-spacing-8);
+  --arcadia-spacing-xl: var(--arcadia-spacing-10);
+  --arcadia-spacing-input-x: var(--arcadia-spacing-4);
+  --arcadia-spacing-input-y: var(--arcadia-spacing-3);
+  --arcadia-spacing-button-x: var(--arcadia-spacing-5);
+  --arcadia-spacing-button-y: var(--arcadia-spacing-3);
+  --arcadia-spacing-card: var(--arcadia-spacing-6);
+}

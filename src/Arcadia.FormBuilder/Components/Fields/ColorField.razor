@@ -1,0 +1,61 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="arcadia-field__label" for="@ElementId">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </label>
+
+    <div class="arcadia-field__color-wrapper">
+        <input id="@ElementId"
+               type="color"
+               class="arcadia-field__color-input"
+               value="@(Value ?? "#000000")"
+               disabled="@EffectiveDisabled"
+               aria-required="@(EffectiveRequired ? "true" : null)"
+               aria-invalid="@(HasErrors ? "true" : null)"
+               aria-describedby="@AriaDescribedBy"
+               @oninput="HandleInput"
+               @attributes="AdditionalAttributes" />
+        <input type="text"
+               class="arcadia-field__input arcadia-field__color-text"
+               value="@Value"
+               placeholder="#000000"
+               disabled="@EffectiveDisabled"
+               aria-label="@($"{EffectiveLabel} hex value")"
+               @oninput="HandleTextInput" />
+    </div>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private async Task HandleTextInput(ChangeEventArgs e)
+    {
+        Value = e.Value?.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

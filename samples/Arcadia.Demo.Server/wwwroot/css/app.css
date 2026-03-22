@@ -1,0 +1,196 @@
+/* HelixUI Demo App Styles — layout and demo-specific styling only */
+
+.arcadia-app-layout {
+  min-height: 100vh;
+  display: grid;
+  grid-template-areas:
+    "header header"
+    "nav    main";
+  grid-template-columns: 220px 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+.arcadia-demo-header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  gap: var(--arcadia-spacing-md);
+  padding: var(--arcadia-spacing-sm) var(--arcadia-spacing-md);
+  border-bottom: 1px solid var(--arcadia-color-border);
+  background: var(--arcadia-color-surface-raised);
+}
+
+.arcadia-demo-header h1 {
+  font-size: var(--arcadia-text-lg);
+  font-weight: var(--arcadia-font-semibold);
+  margin: 0;
+}
+
+.arcadia-demo-nav {
+  grid-area: nav;
+  padding: var(--arcadia-spacing-md);
+  border-right: 1px solid var(--arcadia-color-border);
+  background: var(--arcadia-color-surface-sunken);
+}
+
+.arcadia-demo-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--arcadia-spacing-1);
+}
+
+.arcadia-demo-nav-link {
+  display: block;
+  padding: var(--arcadia-spacing-2) var(--arcadia-spacing-3);
+  border-radius: var(--arcadia-radius-md);
+  color: var(--arcadia-color-text);
+  text-decoration: none;
+  font-size: var(--arcadia-text-sm);
+  transition: background-color var(--arcadia-duration-fast) var(--arcadia-ease-default);
+}
+
+.arcadia-demo-nav-link:hover {
+  background: var(--arcadia-color-primary-subtle);
+}
+
+.arcadia-demo-main {
+  grid-area: main;
+  padding: var(--arcadia-spacing-lg);
+  overflow-y: auto;
+}
+
+.arcadia-demo-main h1 {
+  font-size: var(--arcadia-text-2xl);
+  font-weight: var(--arcadia-font-bold);
+  margin: 0 0 var(--arcadia-spacing-sm) 0;
+}
+
+.arcadia-demo-main h2 {
+  font-size: var(--arcadia-text-lg);
+  font-weight: var(--arcadia-font-semibold);
+  margin: var(--arcadia-spacing-lg) 0 var(--arcadia-spacing-sm) 0;
+}
+
+/* Theme toggle button */
+.arcadia-theme-toggle {
+  margin-left: auto;
+  padding: var(--arcadia-spacing-button-y) var(--arcadia-spacing-button-x);
+  border: 1px solid var(--arcadia-color-border);
+  border-radius: var(--arcadia-radius-md);
+  background: var(--arcadia-color-surface);
+  color: var(--arcadia-color-text);
+  font-size: var(--arcadia-text-sm);
+  cursor: pointer;
+  transition: background-color var(--arcadia-duration-fast) var(--arcadia-ease-default),
+              border-color var(--arcadia-duration-fast) var(--arcadia-ease-default);
+}
+
+.arcadia-theme-toggle:hover {
+  background: var(--arcadia-color-primary-subtle);
+  border-color: var(--arcadia-color-border-hover);
+}
+
+.arcadia-theme-toggle:focus-visible {
+  outline: var(--arcadia-ring-width) solid var(--arcadia-ring-color);
+  outline-offset: var(--arcadia-ring-offset);
+}
+
+/* Card grid */
+.arcadia-demo-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--arcadia-spacing-md);
+}
+
+.arcadia-demo-card {
+  padding: var(--arcadia-spacing-card);
+  border: 1px solid var(--arcadia-color-border);
+  border-radius: var(--arcadia-radius-lg);
+  background: var(--arcadia-color-surface-raised);
+  box-shadow: var(--arcadia-shadow-sm);
+}
+
+.arcadia-demo-card h2 {
+  font-size: var(--arcadia-text-base);
+  font-weight: var(--arcadia-font-semibold);
+  margin: 0 0 var(--arcadia-spacing-xs) 0;
+}
+
+.arcadia-demo-card p {
+  font-size: var(--arcadia-text-sm);
+  color: var(--arcadia-color-text-muted);
+  margin: 0 0 var(--arcadia-spacing-sm) 0;
+}
+
+.arcadia-demo-link {
+  font-size: var(--arcadia-text-sm);
+  color: var(--arcadia-color-primary);
+  text-decoration: none;
+}
+
+.arcadia-demo-link:hover {
+  text-decoration: underline;
+}
+
+/* Color swatches */
+.arcadia-demo-swatch-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--arcadia-spacing-sm);
+  margin-bottom: var(--arcadia-spacing-md);
+}
+
+.arcadia-demo-swatch {
+  padding: var(--arcadia-spacing-md);
+  border-radius: var(--arcadia-radius-md);
+  color: #ffffff;
+  font-size: var(--arcadia-text-sm);
+  font-weight: var(--arcadia-font-medium);
+  min-width: 100px;
+  text-align: center;
+}
+
+.arcadia-demo-surface {
+  padding: var(--arcadia-spacing-md);
+  border-radius: var(--arcadia-radius-md);
+  font-size: var(--arcadia-text-sm);
+  min-width: 120px;
+  text-align: center;
+}
+
+.arcadia-demo-elevation {
+  padding: var(--arcadia-spacing-md);
+  border-radius: var(--arcadia-radius-md);
+  background: var(--arcadia-color-surface-raised);
+  font-size: var(--arcadia-text-sm);
+  text-align: center;
+  min-width: 80px;
+}
+
+/* Demo buttons */
+.arcadia-demo-btn {
+  padding: var(--arcadia-spacing-button-y) var(--arcadia-spacing-button-x);
+  border: 1px solid var(--arcadia-color-border);
+  border-radius: var(--arcadia-radius-md);
+  background: var(--arcadia-color-surface);
+  color: var(--arcadia-color-text);
+  font-size: var(--arcadia-text-sm);
+  font-weight: var(--arcadia-font-medium);
+  cursor: pointer;
+  transition: background-color var(--arcadia-duration-fast) var(--arcadia-ease-default),
+              border-color var(--arcadia-duration-fast) var(--arcadia-ease-default);
+}
+
+.arcadia-demo-btn:hover { background: var(--arcadia-color-surface-sunken); border-color: var(--arcadia-color-border-hover); }
+.arcadia-demo-btn:focus-visible { outline: var(--arcadia-ring-width) solid var(--arcadia-ring-color); outline-offset: var(--arcadia-ring-offset); }
+.arcadia-demo-btn--info { background: var(--arcadia-color-info); color: var(--arcadia-color-on-info); border-color: var(--arcadia-color-info); }
+.arcadia-demo-btn--info:hover { background: var(--arcadia-color-info-hover); }
+.arcadia-demo-btn--success { background: var(--arcadia-color-success); color: var(--arcadia-color-on-success); border-color: var(--arcadia-color-success); }
+.arcadia-demo-btn--success:hover { background: var(--arcadia-color-success-hover); }
+.arcadia-demo-btn--warning { background: var(--arcadia-color-warning); color: var(--arcadia-color-on-warning); border-color: var(--arcadia-color-warning); }
+.arcadia-demo-btn--warning:hover { background: var(--arcadia-color-warning-hover); }
+.arcadia-demo-btn--error { background: var(--arcadia-color-danger); color: var(--arcadia-color-on-danger); border-color: var(--arcadia-color-danger); }
+.arcadia-demo-btn--error:hover { background: var(--arcadia-color-danger-hover); }

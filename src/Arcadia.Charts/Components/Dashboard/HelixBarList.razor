@@ -1,0 +1,62 @@
+@namespace Arcadia.Charts.Components.Dashboard
+@inherits Arcadia.Core.Base.HelixComponentBase
+@typeparam T
+
+<div class="@CssClass" @attributes="AdditionalAttributes">
+    @if (Data is not null && NameField is not null && ValueField is not null)
+    {
+        @foreach (var item in Data)
+        {
+            var name = NameField(item);
+            var value = ValueField(item);
+            var percent = _maxValue > 0 ? value / _maxValue * 100 : 0;
+
+            <div class="arcadia-barlist__item">
+                <div class="arcadia-barlist__bar-bg">
+                    <div class="arcadia-barlist__bar-fill" style="width: @($"{percent:F1}")%; background: @ResolvedColor;"></div>
+                </div>
+                <div class="arcadia-barlist__content">
+                    <span class="arcadia-barlist__name">@name</span>
+                    <span class="arcadia-barlist__value">@FormatValue(value)</span>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter] public IReadOnlyList<T>? Data { get; set; }
+    [Parameter] public Func<T, string>? NameField { get; set; }
+    [Parameter] public Func<T, double>? ValueField { get; set; }
+    [Parameter] public string? ValueFormat { get; set; }
+    [Parameter] public string Color { get; set; } = "primary";
+
+    private double _maxValue;
+
+    private string ResolvedColor => Color switch
+    {
+        "primary" => "var(--arcadia-color-primary)",
+        "success" => "var(--arcadia-color-success)",
+        "warning" => "var(--arcadia-color-warning)",
+        "danger" => "var(--arcadia-color-danger)",
+        "info" => "var(--arcadia-color-info)",
+        _ => Color
+    };
+
+    protected override void OnParametersSet()
+    {
+        if (Data is not null && ValueField is not null)
+            _maxValue = Data.Count > 0 ? Data.Max(ValueField) : 0;
+    }
+
+    private string FormatValue(double value)
+    {
+        if (!string.IsNullOrEmpty(ValueFormat))
+            return value.ToString(ValueFormat);
+        return value.ToString("N0");
+    }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-barlist")
+        .AddClass(Class)
+        .Build();
+}

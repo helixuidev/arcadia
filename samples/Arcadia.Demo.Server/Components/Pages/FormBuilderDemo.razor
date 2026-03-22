@@ -1,0 +1,217 @@
+@page "/forms"
+@inject ToastService ToastService
+
+<PageTitle>HelixUI Demo — FormBuilder</PageTitle>
+
+<h1>FormBuilder</h1>
+<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-lg);">
+    Dynamic schema-driven form with validation, conditional fields, and sections.
+</p>
+
+<h2>Schema-Driven Form</h2>
+<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-md); font-size: var(--arcadia-text-sm);">
+    This form is rendered entirely from a <code>FormSchema</code> object — no manual field markup.
+    Try selecting "Phone" as the contact method to see the conditional phone field appear.
+</p>
+
+<div style="max-width: 640px;">
+    <HelixFormBuilder Schema="@_contactSchema"
+                      State="@_contactState"
+                      OnValidSubmit="HandleValidSubmit"
+                      OnInvalidSubmit="HandleInvalidSubmit" />
+</div>
+
+@if (_submitted)
+{
+    <div style="margin-top: var(--arcadia-spacing-lg); padding: var(--arcadia-spacing-md); background: var(--arcadia-color-success-subtle); border: 1px solid var(--arcadia-color-success); border-radius: var(--arcadia-radius-md);">
+        <strong>Submitted Values:</strong>
+        <pre style="font-size: var(--arcadia-text-sm); margin-top: var(--arcadia-spacing-xs);">@_submittedJson</pre>
+    </div>
+}
+
+<hr style="margin: var(--arcadia-spacing-xl) 0; border-color: var(--arcadia-color-border);" />
+
+<h2>Individual Fields</h2>
+<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-md); font-size: var(--arcadia-text-sm);">
+    Each field component can also be used standalone with two-way binding.
+</p>
+
+<div style="max-width: 640px; display: flex; flex-direction: column; gap: var(--arcadia-spacing-md);">
+    <TextField Label="Text Field" Value="@_textValue" ValueChanged="v => _textValue = v" Placeholder="Type something..." HelperText="A basic single-line text input." />
+
+    <NumberField Label="Number Field" Value="@_numberValue" ValueChanged="v => _numberValue = v" Placeholder="Enter a number" Min="0" Max="100" HelperText="Range: 0–100" />
+
+    <TextAreaField Label="Text Area" Value="@_textAreaValue" ValueChanged="v => _textAreaValue = v" Placeholder="Write a longer message..." Rows="3" />
+
+    <SelectField Label="Select Field" Value="@_selectValue" ValueChanged="v => _selectValue = v" Placeholder="Choose one..." Options="@_selectOptions" />
+
+    <CheckboxField Label="I agree to the terms and conditions" Value="@_checkboxValue" ValueChanged="v => _checkboxValue = v" />
+
+    <SwitchField Label="Enable notifications" Value="@_switchValue" ValueChanged="v => _switchValue = v" HelperText="Toggle switch for boolean values." />
+
+    <DateField Label="Date Field" Value="@_dateValue" ValueChanged="v => _dateValue = v" HelperText="Pick a date." />
+
+    <RadioGroupField Label="Priority" Value="@_radioValue" ValueChanged="v => _radioValue = v" Options="@_radioOptions" />
+</div>
+
+<hr style="margin: var(--arcadia-spacing-xl) 0; border-color: var(--arcadia-color-border);" />
+
+<h2>Phase 2 Fields</h2>
+<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-md); font-size: var(--arcadia-text-sm);">
+    New field types that no other Blazor library offers.
+</p>
+
+<div style="max-width: 640px; display: flex; flex-direction: column; gap: var(--arcadia-spacing-md);">
+    <PasswordField Label="Password" Value="@_passwordValue" ValueChanged="v => _passwordValue = v" Placeholder="Enter a strong password" ShowStrength="true" HelperText="Must be at least 8 characters." />
+
+    <RatingField Label="Satisfaction Rating" Value="@_ratingValue" ValueChanged="v => _ratingValue = v" MaxRating="5" />
+
+    <SliderField Label="Volume" Value="@_sliderValue" ValueChanged="v => _sliderValue = v" Min="0" Max="100" Step="5" />
+
+    <ColorField Label="Brand Color" Value="@_colorValue" ValueChanged="v => _colorValue = v" HelperText="Pick your primary brand color." />
+
+    <TimeField Label="Meeting Time" Value="@_timeValue" ValueChanged="v => _timeValue = v" />
+
+    <DateRangeField Label="Project Duration" StartDate="@_startDate" StartDateChanged="v => _startDate = v" EndDate="@_endDate" EndDateChanged="v => _endDate = v" />
+
+    <MaskedField Label="Phone (Masked)" Value="@_maskedValue" ValueChanged="v => _maskedValue = v" Mask="(###) ###-####" HelperText="Input mask auto-formats as you type." />
+
+    <CheckboxGroupField Label="Skills" Values="@_checkboxGroupValues" ValuesChanged="v => _checkboxGroupValues = v" Options="@_skillOptions" />
+
+    <MultiSelectField Label="Tags" Values="@_multiSelectValues" ValuesChanged="v => _multiSelectValues = v" Options="@_tagOptions" Placeholder="Add tags..." HelperText="Select multiple items. Click × to remove." />
+</div>
+
+<hr style="margin: var(--arcadia-spacing-xl) 0; border-color: var(--arcadia-color-border);" />
+
+<h2>Wizard / Multi-Step Form</h2>
+<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-md); font-size: var(--arcadia-text-sm);">
+    First wizard form component in the Blazor ecosystem. Per-step navigation with progress bar.
+</p>
+
+<div style="max-width: 640px;">
+    <HelixWizard @bind-CurrentStep="_wizardStep" OnComplete="HandleWizardComplete">
+        <HelixWizardStep Title="Personal Info" Description="Tell us about yourself.">
+            <TextField Label="Full Name" Value="@_wizardName" ValueChanged="v => _wizardName = v" Required="true" Placeholder="Jane Doe" />
+            <div style="margin-top: var(--arcadia-spacing-sm);">
+                <TextField Label="Email" Value="@_wizardEmail" ValueChanged="v => _wizardEmail = v" Required="true" Placeholder="jane@example.com" />
+            </div>
+        </HelixWizardStep>
+        <HelixWizardStep Title="Preferences" Description="Customize your experience.">
+            <RatingField Label="How would you rate our product?" Value="@_wizardRating" ValueChanged="v => _wizardRating = v" />
+            <div style="margin-top: var(--arcadia-spacing-sm);">
+                <SliderField Label="Notification frequency" Value="@_wizardFreq" ValueChanged="v => _wizardFreq = v" Min="0" Max="10" />
+            </div>
+        </HelixWizardStep>
+        <HelixWizardStep Title="Review" Description="Confirm your choices.">
+            <div style="font-size: var(--arcadia-text-sm); display: flex; flex-direction: column; gap: var(--arcadia-spacing-xs);">
+                <div><strong>Name:</strong> @_wizardName</div>
+                <div><strong>Email:</strong> @_wizardEmail</div>
+                <div><strong>Rating:</strong> @_wizardRating / 5</div>
+                <div><strong>Frequency:</strong> @_wizardFreq</div>
+            </div>
+        </HelixWizardStep>
+    </HelixWizard>
+</div>
+
+@code {
+    private FormState _contactState = new();
+    private bool _submitted;
+    private string? _submittedJson;
+
+    // Standalone field values
+    private string? _textValue;
+    private double? _numberValue;
+    private string? _textAreaValue;
+    private string? _selectValue;
+    private bool _checkboxValue;
+    private bool _switchValue;
+    private DateTime? _dateValue;
+    private string? _radioValue;
+
+    // Phase 2 field values
+    private string? _passwordValue;
+    private int _ratingValue = 3;
+    private double _sliderValue = 50;
+    private string? _colorValue = "#2563eb";
+    private TimeSpan? _timeValue = new(9, 0, 0);
+    private DateTime? _startDate = new(2026, 1, 1);
+    private DateTime? _endDate = new(2026, 6, 30);
+    private string? _maskedValue;
+    private List<string> _checkboxGroupValues = new();
+    private List<string> _multiSelectValues = new();
+
+    // Wizard state
+    private int _wizardStep;
+    private string? _wizardName;
+    private string? _wizardEmail;
+    private int _wizardRating;
+    private double _wizardFreq = 5;
+
+    private List<FieldOption> _skillOptions = new()
+    {
+        new() { Label = "C#", Value = "csharp" },
+        new() { Label = "JavaScript", Value = "js" },
+        new() { Label = "SQL", Value = "sql" },
+        new() { Label = "Python", Value = "python" },
+    };
+
+    private List<FieldOption> _tagOptions = new()
+    {
+        new() { Label = "Frontend", Value = "frontend" },
+        new() { Label = "Backend", Value = "backend" },
+        new() { Label = "DevOps", Value = "devops" },
+        new() { Label = "Design", Value = "design" },
+        new() { Label = "QA", Value = "qa" },
+    };
+
+    private List<FieldOption> _selectOptions = new()
+    {
+        new() { Label = "Option A", Value = "a" },
+        new() { Label = "Option B", Value = "b" },
+        new() { Label = "Option C", Value = "c" },
+    };
+
+    private List<FieldOption> _radioOptions = new()
+    {
+        new() { Label = "Low", Value = "low" },
+        new() { Label = "Medium", Value = "medium" },
+        new() { Label = "High", Value = "high" },
+    };
+
+    private FormSchema _contactSchema = new()
+    {
+        Title = "Contact Form",
+        Description = "Fill out the form below and we'll get back to you within 24 hours.",
+        Columns = 1,
+        SubmitText = "Send Message",
+        CancelText = "Reset",
+        Fields = new()
+        {
+            new() { Name = "fullName", Type = FieldType.Text, Label = "Full Name", Required = true, Placeholder = "John Doe", Validation = new() { MinLength = 2, MaxLength = 100 } },
+            new() { Name = "email", Type = FieldType.Text, Label = "Email Address", Required = true, Placeholder = "john@example.com", Validation = new() { Pattern = "email" } },
+            new() { Name = "contactMethod", Type = FieldType.Select, Label = "Preferred Contact Method", Required = true, Placeholder = "Select one...", Options = new() { "Email", "Phone", "Mail" } },
+            new() { Name = "phone", Type = FieldType.Text, Label = "Phone Number", Placeholder = "+1 (555) 000-0000", Conditions = new() { new() { Field = "contactMethod", Operator = ConditionalOperator.Equals, Value = "Phone", Action = ConditionalAction.Show } } },
+            new() { Name = "subject", Type = FieldType.Select, Label = "Subject", Required = true, Placeholder = "What is this about?", Options = new() { "General Inquiry", "Technical Support", "Sales", "Partnership" } },
+            new() { Name = "message", Type = FieldType.TextArea, Label = "Message", Required = true, Placeholder = "Tell us how we can help...", Validation = new() { MinLength = 10, MaxLength = 2000 } },
+            new() { Name = "urgent", Type = FieldType.Switch, Label = "Mark as urgent" },
+            new() { Name = "terms", Type = FieldType.Checkbox, Label = "I agree to the terms and conditions", Required = true },
+        }
+    };
+
+    private void HandleValidSubmit(FormState state)
+    {
+        _submitted = true;
+        _submittedJson = string.Join("\n", state.Values.Select(kv => $"  {kv.Key}: {kv.Value}"));
+        ToastService.ShowSuccess("Form submitted successfully!", "Success");
+    }
+
+    private void HandleInvalidSubmit(FormState state)
+    {
+        ToastService.ShowError("Please fix the errors and try again.", "Validation Error");
+    }
+
+    private void HandleWizardComplete()
+    {
+        ToastService.ShowSuccess($"Wizard completed! Name: {_wizardName}, Rating: {_wizardRating}/5", "Wizard Done");
+    }
+}

@@ -1,0 +1,68 @@
+@namespace Arcadia.Charts.Components.Dashboard
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<div class="@CssClass" role="progressbar"
+     aria-valuenow="@Value" aria-valuemin="@Min" aria-valuemax="@Max"
+     aria-label="@(Label ?? $"{Percent:F0}%")"
+     @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <div class="arcadia-progress__header">
+            <span class="arcadia-progress__label">@Label</span>
+            @if (ShowValue)
+            {
+                <span class="arcadia-progress__value">@Value / @Max</span>
+            }
+        </div>
+    }
+    <div class="arcadia-progress__track arcadia-animate-progress">
+        <div class="arcadia-progress__fill" style="width: @($"{Percent:F0}")%; background: @FillColor;"></div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public double Value { get; set; }
+    [Parameter] public double Min { get; set; } = 0;
+    [Parameter] public double Max { get; set; } = 100;
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public bool ShowValue { get; set; } = true;
+    [Parameter] public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Thresholds for color changes. E.g., [(60, "warning"), (90, "danger")].
+    /// Values above the threshold use that color.
+    /// </summary>
+    [Parameter] public IReadOnlyList<(double Threshold, string Color)>? Thresholds { get; set; }
+
+    private double Percent => Max > Min ? Math.Clamp((Value - Min) / (Max - Min) * 100, 0, 100) : 0;
+
+    private string FillColor
+    {
+        get
+        {
+            if (Thresholds is not null)
+            {
+                foreach (var (threshold, color) in Thresholds.OrderByDescending(t => t.Threshold))
+                {
+                    if (Percent >= threshold)
+                        return ResolveColor(color);
+                }
+            }
+            return ResolveColor(Color);
+        }
+    }
+
+    private static string ResolveColor(string name) => name switch
+    {
+        "primary" => "var(--arcadia-color-primary)",
+        "success" => "var(--arcadia-color-success)",
+        "warning" => "var(--arcadia-color-warning)",
+        "danger" => "var(--arcadia-color-danger)",
+        "info" => "var(--arcadia-color-info)",
+        _ => name
+    };
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-progress")
+        .AddClass(Class)
+        .Build();
+}

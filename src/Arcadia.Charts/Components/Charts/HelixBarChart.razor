@@ -1,0 +1,92 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 0 && XField is not null && Series is not null)
+{
+    <div class="arcadia-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Bar chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @if (ShowGrid)
+            {
+                @foreach (var tick in _layout.YTicks)
+                {
+                    var y = _yScale!.Scale(tick.Value);
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="var(--arcadia-color-border, #e2e8f0)" stroke-width="1" stroke-dasharray="4,4" />
+                }
+            }
+
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="arcadia-chart__tick-label">@(YAxisFormatString is not null ? tick.Value.ToString(YAxisFormatString, FormatProvider) : tick.Label)</SvgText>
+            }
+
+            @* Bars *@
+            @foreach (var bar in _bars)
+            {
+                <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.Width)" height="@F(bar.Height)"
+                      rx="@(Rounded ? "3" : "0")" fill="@bar.Color"
+                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {bar.DataIndex * 80 + bar.SeriesIndex * 40}ms;" : "")" />
+
+                @if (ShowDataLabels && bar.Height > 14)
+                {
+                    <SvgText x="@F(bar.X + bar.Width / 2)" y="@F(bar.Y - 4)" text-anchor="middle"
+                          class="arcadia-chart__data-label">@FormatDataLabel(bar.Value)</SvgText>
+                }
+            }
+
+            @* X-axis labels *@
+            @if (_bandScale is not null)
+            {
+                @for (var di = 0; di < Data.Count; di++)
+                {
+                    var category = XField(Data[di])?.ToString() ?? "";
+                    var bandCenter = _bandScale.ScaleCenter(category);
+                    <SvgText x="@F(bandCenter)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                          text-anchor="middle" class="arcadia-chart__tick-label">@category</SvgText>
+                }
+            }
+
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" />
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
+                  x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" />
+        </svg>
+
+        @if (_layout.Legend.Visible && Series.Count > 1)
+        {
+            <div class="arcadia-chart__legend">
+                @for (var i = 0; i < Series.Count; i++)
+                {
+                    var color = ResolveColor(Series[i].Color, i);
+                    <span class="arcadia-chart__legend-item">
+                        <span class="arcadia-chart__legend-swatch" style="background: @color;"></span>
+                        @Series[i].Name
+                    </span>
+                }
+            </div>
+        }
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Category</th>@foreach (var s in Series) { <th>@s.Name</th> }</tr></thead>
+            <tbody>
+                @foreach (var item in Data)
+                {
+                    <tr><td>@XField(item)</td>@foreach (var s in Series) { <td>@s.Field(item)</td> }</tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

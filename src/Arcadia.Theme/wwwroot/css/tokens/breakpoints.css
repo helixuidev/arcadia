@@ -1,0 +1,21 @@
+/* HelixUI Breakpoint Tokens
+   Mobile-first responsive breakpoints.
+   Note: CSS custom properties can't be used in @media queries,
+   so these are documented here and mirrored in the Tailwind plugin. */
+
+/* Breakpoint values (reference only — used in Tailwind plugin and JS):
+   --arcadia-screen-sm:  640px
+   --arcadia-screen-md:  768px
+   --arcadia-screen-lg:  1024px
+   --arcadia-screen-xl:  1280px
+   --arcadia-screen-2xl: 1536px
+*/
+
+:root {
+  /* Container max-widths per breakpoint */
+  --arcadia-container-sm: 640px;
+  --arcadia-container-md: 768px;
+  --arcadia-container-lg: 1024px;
+  --arcadia-container-xl: 1280px;
+  --arcadia-container-2xl: 1536px;
+}

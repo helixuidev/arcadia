@@ -1,0 +1,13 @@
+@namespace Arcadia.Theme
+@inherits Arcadia.Core.Base.HelixComponentBase
+@implements IDisposable
+
+<div data-arcadia-theme="@ThemeService.CurrentTheme.Name"
+     data-arcadia-density="@Density"
+     class="@CssClass"
+     style="@ComputedStyle"
+     @attributes="AdditionalAttributes">
+    <CascadingValue Value="ThemeService" IsFixed="false">
+        @ChildContent
+    </CascadingValue>
+</div>

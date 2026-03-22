@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HelixUI Demo — Server</title>
+    <base href="/" />
+    <link href="_content/Arcadia.Theme/css/helix.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="_content/Arcadia.Notifications/css/arcadia-notifications.css" rel="stylesheet" />
+    <link href="_content/Arcadia.FormBuilder/css/arcadia-forms.css" rel="stylesheet" />
+    <link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" />
+    <HeadOutlet @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
+</head>
+<body>
+    <Routes @rendermode="Microsoft.AspNetCore.Components.Web.RenderMode.InteractiveServer" />
+    <script src="_framework/blazor.web.js"></script>
+</body>
+</html>

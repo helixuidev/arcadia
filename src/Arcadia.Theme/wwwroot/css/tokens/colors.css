@@ -1,0 +1,68 @@
+/* HelixUI Color Tokens
+   Semantic color tokens — never use raw hex in components.
+   All colors are defined as CSS custom properties for theme switching. */
+
+:root {
+  /* Primary */
+  --arcadia-color-primary: #2563eb;
+  --arcadia-color-primary-hover: #1d4ed8;
+  --arcadia-color-primary-active: #1e40af;
+  --arcadia-color-primary-subtle: #dbeafe;
+  --arcadia-color-on-primary: #ffffff;
+
+  /* Secondary */
+  --arcadia-color-secondary: #64748b;
+  --arcadia-color-secondary-hover: #475569;
+  --arcadia-color-secondary-active: #334155;
+  --arcadia-color-secondary-subtle: #f1f5f9;
+  --arcadia-color-on-secondary: #ffffff;
+
+  /* Surface */
+  --arcadia-color-surface: #ffffff;
+  --arcadia-color-surface-raised: #ffffff;
+  --arcadia-color-surface-overlay: #ffffff;
+  --arcadia-color-surface-sunken: #f8fafc;
+
+  /* Text */
+  --arcadia-color-text: #0f172a;
+  --arcadia-color-text-muted: #64748b;
+  --arcadia-color-text-inverse: #ffffff;
+  --arcadia-color-text-disabled: #94a3b8;
+
+  /* Border */
+  --arcadia-color-border: #e2e8f0;
+  --arcadia-color-border-hover: #cbd5e1;
+  --arcadia-color-border-focus: #2563eb;
+
+  /* Status — Danger */
+  --arcadia-color-danger: #dc2626;
+  --arcadia-color-danger-hover: #b91c1c;
+  --arcadia-color-danger-active: #991b1b;
+  --arcadia-color-danger-subtle: #fef2f2;
+  --arcadia-color-on-danger: #ffffff;
+
+  /* Status — Warning */
+  --arcadia-color-warning: #d97706;
+  --arcadia-color-warning-hover: #b45309;
+  --arcadia-color-warning-active: #92400e;
+  --arcadia-color-warning-subtle: #fffbeb;
+  --arcadia-color-on-warning: #ffffff;
+
+  /* Status — Success */
+  --arcadia-color-success: #16a34a;
+  --arcadia-color-success-hover: #15803d;
+  --arcadia-color-success-active: #166534;
+  --arcadia-color-success-subtle: #f0fdf4;
+  --arcadia-color-on-success: #ffffff;
+
+  /* Status — Info */
+  --arcadia-color-info: #0284c7;
+  --arcadia-color-info-hover: #0369a1;
+  --arcadia-color-info-active: #075985;
+  --arcadia-color-info-subtle: #f0f9ff;
+  --arcadia-color-on-info: #ffffff;
+
+  /* Focus */
+  --arcadia-color-focus-ring: #2563eb;
+  --arcadia-color-focus-ring-offset: #ffffff;
+}

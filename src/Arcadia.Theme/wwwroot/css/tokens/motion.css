@@ -1,0 +1,32 @@
+/* HelixUI Motion Tokens
+   Transitions and animations. Respects prefers-reduced-motion. */
+
+:root {
+  /* Durations */
+  --arcadia-duration-fast: 100ms;
+  --arcadia-duration-normal: 200ms;
+  --arcadia-duration-slow: 300ms;
+  --arcadia-duration-slower: 500ms;
+
+  /* Easing */
+  --arcadia-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --arcadia-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --arcadia-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --arcadia-ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Composed transitions */
+  --arcadia-transition-colors: color, background-color, border-color, text-decoration-color, fill, stroke;
+  --arcadia-transition-opacity: opacity;
+  --arcadia-transition-shadow: box-shadow;
+  --arcadia-transition-transform: transform;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --arcadia-duration-fast: 0ms;
+    --arcadia-duration-normal: 0ms;
+    --arcadia-duration-slow: 0ms;
+    --arcadia-duration-slower: 0ms;
+  }
+}

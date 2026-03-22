@@ -1,0 +1,45 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<div class="@ContainerClass">
+    <label class="arcadia-field__label" for="@ElementId">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </label>
+
+    <InputFile id="@ElementId"
+               class="arcadia-field__file"
+               disabled="@EffectiveDisabled"
+               accept="@Accept"
+               multiple="@Multiple"
+               OnChange="HandleFileChange"
+               aria-required="@(EffectiveRequired ? "true" : null)"
+               aria-invalid="@(HasErrors ? "true" : null)"
+               aria-describedby="@AriaDescribedBy"
+               @attributes="AdditionalAttributes" />
+
+    @if (SelectedFiles.Count > 0)
+    {
+        <div class="arcadia-field__file-list">
+            @foreach (var file in SelectedFiles)
+            {
+                <span class="arcadia-field__file-name">@file.Name (@FormatFileSize(file.Size))</span>
+            }
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</div>

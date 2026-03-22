@@ -1,0 +1,18 @@
+@namespace Arcadia.FormBuilder.Components.Layout
+@inherits Arcadia.Core.Base.HelixComponentBase
+
+<div class="@CssClass" role="separator" @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="arcadia-form-divider__label">@Label</span>
+    }
+</div>
+
+@code {
+    [Parameter] public string? Label { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-form-divider")
+        .AddClass("arcadia-form-divider--labeled", !string.IsNullOrEmpty(Label))
+        .AddClass(Class)
+        .Build();
+}

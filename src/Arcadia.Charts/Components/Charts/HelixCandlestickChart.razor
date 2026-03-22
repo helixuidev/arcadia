@@ -1,0 +1,118 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 0 && OpenField is not null && HighField is not null && LowField is not null && CloseField is not null)
+{
+    <div class="arcadia-chart" style="@Style" @attributes="AdditionalAttributes">
+        <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+             role="figure" aria-label="@(AriaLabel ?? Title ?? "Candlestick chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @if (ShowGrid)
+            {
+                @foreach (var tick in _layout.YTicks)
+                {
+                    var y = _yScale!.Scale(tick.Value);
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="var(--arcadia-color-border, #e2e8f0)" stroke-width="1" stroke-dasharray="4,4" />
+                }
+            }
+
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="arcadia-chart__tick-label">@FormatYTick(tick.Value)</SvgText>
+            }
+
+            @* X-axis labels *@
+            @foreach (var tick in _layout.XTicks)
+            {
+                <SvgText x="@F(tick.Position)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                      text-anchor="middle" class="arcadia-chart__tick-label">@tick.Label</SvgText>
+            }
+
+            @* Candlesticks *@
+            @for (var i = 0; i < _candles.Count; i++)
+            {
+                var c = _candles[i];
+                @* Wick (high-low line) *@
+                <line x1="@F(c.X)" y1="@F(c.HighY)" x2="@F(c.X)" y2="@F(c.LowY)"
+                      stroke="@c.Color" stroke-width="1.5"
+                      class="arcadia-candle__wick @(_animate ? "arcadia-animate-candle" : "")"
+                      style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")" />
+
+                @* Body (open-close rect) *@
+                <rect x="@F(c.X - c.HalfWidth)" y="@F(c.BodyTop)"
+                      width="@F(c.HalfWidth * 2)" height="@F(Math.Max(1, c.BodyHeight))"
+                      rx="1" fill="@c.Color" stroke="@c.Color" stroke-width="1"
+                      class="arcadia-candle__body @(_animate ? "arcadia-animate-candle" : "")"
+                      style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")" />
+            }
+
+            @* Overlay line series *@
+            @if (OverlaySeries is not null)
+            {
+                @for (var si = 0; si < OverlaySeries.Count; si++)
+                {
+                    var series = OverlaySeries[si];
+                    var color = ResolveColor(series.Color, si + 1);
+                    @if (_overlayPaths.ContainsKey(si))
+                    {
+                        <path d="@_overlayPaths[si]" fill="none" stroke="@color"
+                              stroke-width="@F(series.StrokeWidth)" stroke-linecap="round" stroke-linejoin="round"
+                              stroke-dasharray="@(series.Dashed ? "6,4" : "")"
+                              class="arcadia-chart__line @(_animate ? "arcadia-animate-line" : "")" />
+                    }
+                }
+            }
+
+            @* Axis lines *@
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" />
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
+                  x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="var(--arcadia-color-border, #cbd5e1)" stroke-width="1" />
+        </svg>
+
+        @if (_layout.Legend.Visible && OverlaySeries is { Count: > 0 })
+        {
+            <div class="arcadia-chart__legend">
+                <span class="arcadia-chart__legend-item">
+                    <span class="arcadia-chart__legend-swatch" style="background: @UpColor;"></span> Up
+                </span>
+                <span class="arcadia-chart__legend-item">
+                    <span class="arcadia-chart__legend-swatch" style="background: @DownColor;"></span> Down
+                </span>
+                @for (var i = 0; i < OverlaySeries.Count; i++)
+                {
+                    var s = OverlaySeries[i];
+                    var color = ResolveColor(s.Color, i + 1);
+                    <span class="arcadia-chart__legend-item">
+                        <span class="arcadia-chart__legend-swatch" style="background: @color;"></span> @s.Name
+                    </span>
+                }
+            </div>
+        }
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Date</th><th>Open</th><th>High</th><th>Low</th><th>Close</th></tr></thead>
+            <tbody>
+                @foreach (var item in Data)
+                {
+                    <tr>
+                        <td>@(LabelField is not null ? LabelField(item) : "")</td>
+                        <td>@OpenField(item)</td><td>@HighField(item)</td>
+                        <td>@LowField(item)</td><td>@CloseField(item)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

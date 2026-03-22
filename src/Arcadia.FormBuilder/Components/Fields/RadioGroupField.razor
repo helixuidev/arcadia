@@ -1,0 +1,61 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<fieldset class="@ContainerClass" @attributes="AdditionalAttributes">
+    <legend class="arcadia-field__label">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </legend>
+
+    <div class="arcadia-field__radio-group"
+         role="radiogroup"
+         aria-required="@(EffectiveRequired ? "true" : null)"
+         aria-invalid="@(HasErrors ? "true" : null)"
+         aria-describedby="@AriaDescribedBy">
+        @foreach (var option in EffectiveOptions)
+        {
+            var optionId = $"{ElementId}-{option.Value}";
+            <label class="arcadia-field__radio-label" for="@optionId">
+                <input id="@optionId"
+                       type="radio"
+                       class="arcadia-field__radio"
+                       name="@ElementId"
+                       value="@option.Value"
+                       checked="@(option.Value == Value)"
+                       disabled="@(EffectiveDisabled || option.Disabled)"
+                       @onchange="() => HandleChange(option.Value)" />
+                <span class="arcadia-field__radio-text">@option.Label</span>
+            </label>
+        }
+    </div>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</fieldset>
+
+@code {
+    [Parameter] public string? Value { get; set; }
+    [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+    [Parameter] public List<Schema.FieldOption>? Options { get; set; }
+
+    private IReadOnlyList<Schema.FieldOption> EffectiveOptions =>
+        Options ?? Schema?.Options ?? new List<Schema.FieldOption>();
+
+    private async Task HandleChange(string value)
+    {
+        Value = value;
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

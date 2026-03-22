@@ -1,0 +1,28 @@
+/* HelixUI Elevation Tokens
+   Box shadows and z-index scale for layered UI. */
+
+:root {
+  /* Box shadows */
+  --arcadia-shadow-none: none;
+  --arcadia-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --arcadia-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --arcadia-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --arcadia-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --arcadia-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --arcadia-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* Focus ring */
+  --arcadia-ring-width: 2px;
+  --arcadia-ring-offset: 2px;
+  --arcadia-ring-color: var(--arcadia-color-focus-ring);
+
+  /* Z-index scale */
+  --arcadia-z-base: 0;
+  --arcadia-z-dropdown: 1000;
+  --arcadia-z-sticky: 1100;
+  --arcadia-z-overlay: 1200;
+  --arcadia-z-modal: 1300;
+  --arcadia-z-popover: 1400;
+  --arcadia-z-toast: 1500;
+  --arcadia-z-tooltip: 1600;
+}

@@ -1,0 +1,274 @@
+/* HelixUI Charts — Dashboard Analytics Toolkit
+   Usage: <link href="_content/HelixUI.Charts/css/arcadia-charts.css" rel="stylesheet" /> */
+
+/* Loading state */
+.arcadia-chart--loading { position: relative; }
+.arcadia-chart--loading::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent 25%, var(--arcadia-color-surface-sunken, #f8fafc) 50%, transparent 75%);
+  background-size: 200% 100%; animation: arcadia-shimmer 1.5s infinite; border-radius: var(--arcadia-radius-md, 0.375rem);
+}
+@keyframes arcadia-shimmer { to { background-position: -200% 0; } }
+
+/* No data state */
+.arcadia-chart__no-data {
+  display: flex; align-items: center; justify-content: center;
+  height: 100%; min-height: 200px;
+  color: var(--arcadia-color-text-muted, #64748b); font-size: var(--arcadia-text-sm, 0.875rem);
+  border: 1px dashed var(--arcadia-color-border, #e2e8f0); border-radius: var(--arcadia-radius-md, 0.375rem);
+}
+
+/* Subtitle */
+.arcadia-chart__subtitle { font-size: var(--arcadia-text-sm, 0.875rem); fill: var(--arcadia-color-text-muted, #64748b); }
+
+/* Sparkline */
+.arcadia-sparkline { display: inline-block; vertical-align: middle; }
+
+/* KPI Card */
+.arcadia-kpi {
+  padding: var(--arcadia-spacing-md, 1rem);
+  border: 1px solid var(--arcadia-color-border, #e2e8f0);
+  border-radius: var(--arcadia-radius-lg, 0.5rem);
+  background: var(--arcadia-color-surface-raised, #fff);
+  display: flex; flex-direction: column; gap: var(--arcadia-spacing-xs, 0.25rem);
+}
+.arcadia-kpi__title { font-size: var(--arcadia-text-sm, 0.875rem); color: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-kpi__body { display: flex; align-items: baseline; gap: var(--arcadia-spacing-sm, 0.5rem); }
+.arcadia-kpi__value { font-size: var(--arcadia-text-2xl, 1.5rem); font-weight: var(--arcadia-font-bold, 700); color: var(--arcadia-color-text, #0f172a); }
+.arcadia-kpi__sparkline { margin-top: var(--arcadia-spacing-xs, 0.25rem); }
+.arcadia-kpi__footer { font-size: var(--arcadia-text-xs, 0.75rem); color: var(--arcadia-color-text-muted, #64748b); }
+
+/* Delta Indicator */
+.arcadia-delta { display: inline-flex; align-items: center; gap: 2px; font-size: var(--arcadia-text-sm, 0.875rem); font-weight: var(--arcadia-font-medium, 500); border-radius: var(--arcadia-radius-sm, 0.25rem); padding: 1px 6px; }
+.arcadia-delta--increase { color: var(--arcadia-color-success, #16a34a); background: var(--arcadia-color-success-subtle, #f0fdf4); }
+.arcadia-delta--decrease { color: var(--arcadia-color-danger, #dc2626); background: var(--arcadia-color-danger-subtle, #fef2f2); }
+.arcadia-delta--neutral { color: var(--arcadia-color-text-muted, #64748b); background: var(--arcadia-color-surface-sunken, #f8fafc); }
+.arcadia-delta__arrow { font-size: 0.75em; }
+
+/* Progress Bar */
+.arcadia-progress { display: flex; flex-direction: column; gap: var(--arcadia-spacing-1, 0.25rem); }
+.arcadia-progress__header { display: flex; justify-content: space-between; align-items: baseline; }
+.arcadia-progress__label { font-size: var(--arcadia-text-sm, 0.875rem); color: var(--arcadia-color-text, #0f172a); }
+.arcadia-progress__value { font-size: var(--arcadia-text-xs, 0.75rem); color: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-progress__track { height: 8px; background: var(--arcadia-color-border, #e2e8f0); border-radius: var(--arcadia-radius-full, 9999px); overflow: hidden; }
+.arcadia-progress__fill { height: 100%; border-radius: var(--arcadia-radius-full, 9999px); transition: width var(--arcadia-duration-normal, 200ms) var(--arcadia-ease-default, ease); }
+
+/* Bar List */
+.arcadia-barlist { display: flex; flex-direction: column; gap: var(--arcadia-spacing-sm, 0.5rem); }
+.arcadia-barlist__item { position: relative; }
+.arcadia-barlist__bar-bg { height: 28px; background: var(--arcadia-color-surface-sunken, #f8fafc); border-radius: var(--arcadia-radius-sm, 0.25rem); overflow: hidden; }
+.arcadia-barlist__bar-fill { height: 100%; border-radius: var(--arcadia-radius-sm, 0.25rem); opacity: 0.2; transition: width var(--arcadia-duration-normal, 200ms) var(--arcadia-ease-default, ease); }
+.arcadia-barlist__content { position: absolute; top: 0; left: 0; right: 0; height: 28px; display: flex; align-items: center; justify-content: space-between; padding: 0 var(--arcadia-spacing-sm, 0.5rem); }
+.arcadia-barlist__name { font-size: var(--arcadia-text-sm, 0.875rem); color: var(--arcadia-color-text, #0f172a); }
+.arcadia-barlist__value { font-size: var(--arcadia-text-sm, 0.875rem); color: var(--arcadia-color-text-muted, #64748b); font-weight: var(--arcadia-font-medium, 500); }
+
+/* Tracker (GitHub-style contribution grid) */
+.arcadia-tracker__grid { display: grid; gap: 3px; }
+.arcadia-tracker__cell { width: 100%; aspect-ratio: 1; border-radius: 2px; background: var(--arcadia-color-border, #e2e8f0); }
+.arcadia-tracker__cell--0 { background: var(--arcadia-color-surface-sunken, #f8fafc); }
+.arcadia-tracker__cell--1 { background: var(--arcadia-color-success, #16a34a); opacity: 0.25; }
+.arcadia-tracker__cell--2 { background: var(--arcadia-color-success, #16a34a); opacity: 0.5; }
+.arcadia-tracker__cell--3 { background: var(--arcadia-color-success, #16a34a); opacity: 0.75; }
+.arcadia-tracker__cell--4 { background: var(--arcadia-color-success, #16a34a); opacity: 1; }
+
+/* Category Bar */
+.arcadia-catbar { display: flex; flex-direction: column; gap: var(--arcadia-spacing-sm, 0.5rem); }
+.arcadia-catbar__bar { display: flex; height: 8px; border-radius: var(--arcadia-radius-full, 9999px); overflow: hidden; }
+.arcadia-catbar__segment { transition: width var(--arcadia-duration-normal, 200ms) var(--arcadia-ease-default, ease); }
+.arcadia-catbar__legend { display: flex; flex-wrap: wrap; gap: var(--arcadia-spacing-sm, 0.5rem); }
+.arcadia-catbar__legend-item { display: flex; align-items: center; gap: 4px; font-size: var(--arcadia-text-xs, 0.75rem); color: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-catbar__legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+/* Charts */
+.arcadia-chart { position: relative; }
+.arcadia-chart__svg { font-family: var(--arcadia-font-sans, system-ui); }
+.arcadia-chart__title { font-size: var(--arcadia-text-base, 1rem); font-weight: var(--arcadia-font-semibold, 600); fill: var(--arcadia-color-text, #0f172a); }
+.arcadia-chart__tick-label { font-size: 11px; fill: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-chart__line { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__line:hover { opacity: 0.8; }
+.arcadia-chart__bar { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__bar:hover { opacity: 0.8; filter: brightness(1.1); }
+.arcadia-chart__point { transition: r var(--arcadia-duration-fast, 100ms), opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__point:hover { r: 6; opacity: 1; }
+.arcadia-chart__pie-slice { transition: opacity var(--arcadia-duration-fast, 100ms); cursor: default; }
+.arcadia-chart__pie-slice:hover { opacity: 0.85; }
+.arcadia-chart__pie-label { font-size: 11px; fill: white; font-weight: var(--arcadia-font-semibold, 600); pointer-events: none; }
+
+/* Chart Legend */
+.arcadia-chart__legend { display: flex; flex-wrap: wrap; gap: var(--arcadia-spacing-sm, 0.5rem); padding: var(--arcadia-spacing-sm, 0.5rem) 0; justify-content: center; }
+.arcadia-chart__legend-item { display: flex; align-items: center; gap: 4px; font-size: var(--arcadia-text-xs, 0.75rem); color: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-chart__legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+/* Radar Chart */
+.arcadia-chart__radar-fill { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__radar-fill:hover { opacity: 0.4; }
+.arcadia-chart__radar-line { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__radar-line:hover { opacity: 0.9; }
+
+/* Gauge Chart */
+.arcadia-gauge__track { opacity: 1; }
+.arcadia-gauge__value { transition: stroke-dashoffset var(--arcadia-duration-normal, 200ms) var(--arcadia-ease-default, ease); }
+.arcadia-gauge__display-value { font-size: var(--arcadia-text-2xl, 1.5rem); font-weight: var(--arcadia-font-bold, 700); fill: var(--arcadia-color-text, #0f172a); }
+.arcadia-gauge__label { font-size: var(--arcadia-text-sm, 0.875rem); fill: var(--arcadia-color-text-muted, #64748b); }
+
+/* Heatmap */
+.arcadia-heatmap__cell { transition: opacity var(--arcadia-duration-fast, 100ms); cursor: default; }
+.arcadia-heatmap__cell:hover { opacity: 0.8; stroke: var(--arcadia-color-text, #0f172a); stroke-width: 1; }
+.arcadia-heatmap__cell-value { font-size: 10px; fill: var(--arcadia-color-text, #0f172a); pointer-events: none; }
+
+/* Trendline */
+.arcadia-chart__trendline { pointer-events: none; }
+
+/* Data Labels */
+.arcadia-chart__data-label { font-size: 10px; fill: var(--arcadia-color-text-muted, #64748b); pointer-events: none; }
+
+/* Candlestick Chart */
+.arcadia-candle__wick { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-candle__body { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-candle__body:hover { opacity: 0.8; filter: brightness(1.15); }
+
+/* ================================================================
+   ON-LOAD ANIMATIONS
+   Applied via .arcadia-animate-* classes when AnimateOnLoad=true.
+   Respects prefers-reduced-motion.
+   ================================================================ */
+
+/* Line draw animation — line draws itself left to right */
+.arcadia-animate-line {
+  stroke-dasharray: 5000;
+  stroke-dashoffset: 5000;
+  animation: arcadia-line-draw 1.2s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+@keyframes arcadia-line-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Area fade in after line draws */
+.arcadia-animate-area {
+  opacity: 0;
+  animation: arcadia-fade-in 0.6s var(--arcadia-ease-out, ease-out) 0.8s forwards;
+}
+
+/* Bar grow from baseline */
+.arcadia-animate-bar {
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: arcadia-bar-grow 0.5s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+@keyframes arcadia-bar-grow {
+  to { transform: scaleY(1); }
+}
+
+/* Pie slice sweep */
+.arcadia-animate-pie {
+  stroke-dasharray: 2000;
+  stroke-dashoffset: 2000;
+  animation: arcadia-pie-sweep 1s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+@keyframes arcadia-pie-sweep {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Scatter / point scale in */
+.arcadia-animate-point {
+  transform-origin: center;
+  transform: scale(0);
+  animation: arcadia-point-pop 0.3s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+@keyframes arcadia-point-pop {
+  to { transform: scale(1); }
+}
+
+/* Candlestick appear */
+.arcadia-animate-candle {
+  opacity: 0;
+  transform-origin: center;
+  animation: arcadia-candle-appear 0.3s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+@keyframes arcadia-candle-appear {
+  from { opacity: 0; transform: scaleY(0.3); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+/* Gauge fill animation */
+.arcadia-animate-gauge {
+  animation: arcadia-gauge-fill 1.2s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+/* Radar polygon draw */
+.arcadia-animate-radar {
+  stroke-dasharray: 3000;
+  stroke-dashoffset: 3000;
+  animation: arcadia-line-draw 1s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+/* Radar fill fade in */
+.arcadia-animate-radar-fill {
+  opacity: 0;
+  animation: arcadia-fade-in 0.5s var(--arcadia-ease-out, ease-out) 0.6s forwards;
+}
+
+/* Heatmap cell pop */
+.arcadia-animate-heatmap {
+  transform-origin: center;
+  transform: scale(0);
+  animation: arcadia-point-pop 0.2s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+/* Shared fade in */
+@keyframes arcadia-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* KPI value count up shimmer */
+.arcadia-animate-kpi {
+  animation: arcadia-fade-in 0.5s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+/* Sparkline draw */
+.arcadia-animate-sparkline {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: arcadia-line-draw 0.8s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+/* Progress bar fill */
+.arcadia-animate-progress .arcadia-progress__fill {
+  animation: arcadia-progress-fill 0.8s var(--arcadia-ease-out, ease-out) forwards;
+}
+
+@keyframes arcadia-progress-fill {
+  from { width: 0 !important; }
+}
+
+/* ================================================================
+   REDUCED MOTION — disable all animations
+   ================================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .arcadia-animate-line,
+  .arcadia-animate-area,
+  .arcadia-animate-bar,
+  .arcadia-animate-pie,
+  .arcadia-animate-point,
+  .arcadia-animate-candle,
+  .arcadia-animate-gauge,
+  .arcadia-animate-radar,
+  .arcadia-animate-radar-fill,
+  .arcadia-animate-heatmap,
+  .arcadia-animate-kpi,
+  .arcadia-animate-sparkline {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+/* Screen reader only — chart data tables */
+.arcadia-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }

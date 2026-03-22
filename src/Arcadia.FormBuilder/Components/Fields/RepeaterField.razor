@@ -1,0 +1,55 @@
+@namespace Arcadia.FormBuilder.Components.Fields
+@inherits FieldBase
+
+<fieldset class="@ContainerClass" @attributes="AdditionalAttributes">
+    <legend class="arcadia-field__label">
+        @EffectiveLabel
+        @if (EffectiveRequired) { <span class="arcadia-field__required" aria-hidden="true">*</span> }
+    </legend>
+
+    <div class="arcadia-repeater" aria-describedby="@AriaDescribedBy">
+        @for (var i = 0; i < Rows.Count; i++)
+        {
+            var rowIndex = i;
+            <div class="arcadia-repeater__row">
+                <div class="arcadia-repeater__row-fields">
+                    @if (RowTemplate is not null)
+                    {
+                        @RowTemplate(new RepeaterRowContext(rowIndex, Rows[rowIndex]))
+                    }
+                </div>
+                <div class="arcadia-repeater__row-actions">
+                    <button type="button"
+                            class="arcadia-repeater__remove"
+                            disabled="@(EffectiveDisabled || Rows.Count <= MinRows)"
+                            aria-label="@($"Remove row {rowIndex + 1}")"
+                            @onclick="() => RemoveRow(rowIndex)">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        }
+
+        <button type="button"
+                class="arcadia-repeater__add"
+                disabled="@(EffectiveDisabled || (MaxRows.HasValue && Rows.Count >= MaxRows.Value))"
+                @onclick="AddRow">
+            @AddText
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(EffectiveHelperText))
+    {
+        <div id="@HelperId" class="arcadia-field__helper">@EffectiveHelperText</div>
+    }
+
+    @if (HasErrors)
+    {
+        <div id="@ErrorId" class="arcadia-field__errors" role="alert">
+            @foreach (var error in Errors!)
+            {
+                <div class="arcadia-field__error">@error</div>
+            }
+        </div>
+    }
+</fieldset>

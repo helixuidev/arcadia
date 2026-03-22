@@ -1,0 +1,37 @@
+/* HelixUI Typography Tokens
+   System font stack with configurable override. Scale in rem. */
+
+:root {
+  /* Font families */
+  --arcadia-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --arcadia-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Font sizes */
+  --arcadia-text-xs: 0.75rem;      /* 12px */
+  --arcadia-text-sm: 0.875rem;     /* 14px */
+  --arcadia-text-base: 1rem;       /* 16px */
+  --arcadia-text-lg: 1.125rem;     /* 18px */
+  --arcadia-text-xl: 1.25rem;      /* 20px */
+  --arcadia-text-2xl: 1.5rem;      /* 24px */
+  --arcadia-text-3xl: 1.875rem;    /* 30px */
+  --arcadia-text-4xl: 2.25rem;     /* 36px */
+  --arcadia-text-5xl: 3rem;        /* 48px */
+  --arcadia-text-6xl: 3.75rem;     /* 60px */
+
+  /* Font weights */
+  --arcadia-font-light: 300;
+  --arcadia-font-regular: 400;
+  --arcadia-font-medium: 500;
+  --arcadia-font-semibold: 600;
+  --arcadia-font-bold: 700;
+
+  /* Line heights */
+  --arcadia-leading-tight: 1.25;
+  --arcadia-leading-normal: 1.5;
+  --arcadia-leading-relaxed: 1.75;
+
+  /* Letter spacing */
+  --arcadia-tracking-tight: -0.025em;
+  --arcadia-tracking-normal: 0;
+  --arcadia-tracking-wide: 0.025em;
+}
