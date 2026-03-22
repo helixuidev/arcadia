@@ -2,67 +2,188 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Arcadia Controls — Premium Blazor UI Components">
+<Layout title="Arcadia — Premium Blazor UI Components for .NET">
 
   <!-- HERO -->
-  <section class="pt-32 pb-20 px-6">
-    <div class="max-w-5xl mx-auto text-center">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 text-sm text-purple-300 mb-8">
-        <span class="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse"></span>
-        Now in public beta
+  <section class="pt-32 pb-24 px-6 overflow-hidden">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 text-sm text-purple-300 mb-8">
+          <span class="w-2 h-2 rounded-full bg-fuchsia-400 animate-pulse"></span>
+          Community Edition — Free & Open Source
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+          The dashboard toolkit<br/>
+          <span class="gradient-text">Blazor deserves</span>
+        </h1>
+
+        <p class="text-xl text-[var(--arc-text-muted)] max-w-2xl mx-auto mb-10 leading-relaxed">
+          Charts, KPI cards, forms, and notifications for .NET developers.
+          Native SVG rendering. Zero JavaScript. Ships in one <code class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-base">dotnet add package</code>.
+        </p>
+
+        <div class="flex flex-wrap items-center justify-center gap-4 mb-6">
+          <a href="/docs" class="btn-gradient text-lg !py-3.5 !px-8">
+            Get Started Free
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+          <a href="https://github.com/helixuidev/arcadia" class="btn-outline text-lg !py-3.5 !px-8">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            Star on GitHub
+          </a>
+        </div>
+        <div class="text-sm text-[var(--arc-text-muted)]">
+          <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300">dotnet add package Arcadia.Charts</code>
+        </div>
       </div>
 
-      <h1 class="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
-        Build stunning dashboards<br/>
-        <span class="gradient-text">in minutes, not months</span>
-      </h1>
+      <!-- HERO DASHBOARD MOCKUP -->
+      <div class="gradient-border max-w-5xl mx-auto">
+        <div class="bg-[#060012] rounded-2xl p-6 md:p-8">
+          <!-- Top KPI row -->
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="glass-card !rounded-xl p-4 !bg-[#0d0525]/80">
+              <div class="text-xs text-[var(--arc-text-muted)] mb-1">Revenue</div>
+              <div class="text-2xl font-bold">$142K</div>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-xs text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded">↑ 12.3%</span>
+              </div>
+              <svg viewBox="0 0 100 24" class="w-full h-5 mt-2"><path d="M0,20 L12,16 L25,18 L37,12 L50,14 L62,8 L75,10 L87,4 L100,6" fill="none" stroke="#8b5cf6" stroke-width="1.5"/></svg>
+            </div>
+            <div class="glass-card !rounded-xl p-4 !bg-[#0d0525]/80">
+              <div class="text-xs text-[var(--arc-text-muted)] mb-1">Users</div>
+              <div class="text-2xl font-bold">8,420</div>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-xs text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded">↓ 2.1%</span>
+              </div>
+              <svg viewBox="0 0 100 24" class="w-full h-5 mt-2"><path d="M0,6 L12,8 L25,7 L37,10 L50,12 L62,14 L75,13 L87,18 L100,16" fill="none" stroke="#ec4899" stroke-width="1.5"/></svg>
+            </div>
+            <div class="glass-card !rounded-xl p-4 !bg-[#0d0525]/80">
+              <div class="text-xs text-[var(--arc-text-muted)] mb-1">Conversion</div>
+              <div class="text-2xl font-bold">3.8%</div>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-xs text-green-400 bg-green-400/10 px-1.5 py-0.5 rounded">↑ 0.5%</span>
+              </div>
+              <svg viewBox="0 0 100 24" class="w-full h-5 mt-2"><path d="M0,22 L12,20 L25,18 L37,16 L50,14 L62,12 L75,10 L87,8 L100,4" fill="none" stroke="#16a34a" stroke-width="1.5"/></svg>
+            </div>
+            <div class="glass-card !rounded-xl p-4 !bg-[#0d0525]/80">
+              <div class="text-xs text-[var(--arc-text-muted)] mb-1">Latency</div>
+              <div class="text-2xl font-bold">42ms</div>
+              <div class="flex items-center gap-1 mt-1">
+                <span class="text-xs text-[var(--arc-text-muted)] bg-white/5 px-1.5 py-0.5 rounded">→ 0%</span>
+              </div>
+              <svg viewBox="0 0 100 24" class="w-full h-5 mt-2"><path d="M0,12 L12,13 L25,11 L37,12 L50,12 L62,11 L75,13 L87,12 L100,12" fill="none" stroke="#64748b" stroke-width="1.5"/></svg>
+            </div>
+          </div>
 
-      <p class="text-xl text-[var(--arc-text-muted)] max-w-2xl mx-auto mb-10 leading-relaxed">
-        Premium Blazor components for enterprise .NET developers. Charts, forms, notifications — 
-        beautifully crafted, fully accessible, and ready for production.
-      </p>
-
-      <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
-        <a href="#" class="btn-gradient text-lg !py-3.5 !px-8">
-          Get Started Free
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-        </a>
-        <a href="#features" class="btn-outline text-lg !py-3.5 !px-8">View Components</a>
-      </div>
-
-      <!-- Hero code preview -->
-      <div class="gradient-border max-w-3xl mx-auto">
-        <div class="code-block text-left text-sm">
-          <div class="text-[var(--arc-text-muted)] mb-3">// Drop in a KPI dashboard in 6 lines</div>
-          <div><span class="code-keyword">&lt;</span><span class="code-type">ArcadiaKpiCard</span></div>
-          <div class="ml-6"><span class="code-attr">Title</span>=<span class="code-string">"Monthly Revenue"</span></div>
-          <div class="ml-6"><span class="code-attr">Value</span>=<span class="code-string">"$142,500"</span></div>
-          <div class="ml-6"><span class="code-attr">Delta</span>=<span class="code-string">"+12.3%"</span></div>
-          <div class="ml-6"><span class="code-attr">DeltaType</span>=<span class="code-string">"Increase"</span></div>
-          <div class="ml-6"><span class="code-attr">Sparkline</span>=<span class="code-string">"@revenueData"</span> <span class="code-keyword">/&gt;</span></div>
+          <!-- Chart area -->
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="md:col-span-2 glass-card !rounded-xl p-5 !bg-[#0d0525]/80">
+              <div class="flex justify-between items-center mb-4">
+                <span class="text-sm font-semibold">Revenue vs Target</span>
+                <span class="text-xs text-[var(--arc-text-muted)]">Last 12 months</span>
+              </div>
+              <svg viewBox="0 0 500 160" class="w-full">
+                <defs>
+                  <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.25"/><stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/></linearGradient>
+                </defs>
+                <!-- Grid -->
+                <line x1="40" y1="20" x2="490" y2="20" stroke="#1e1545" stroke-width="0.5"/>
+                <line x1="40" y1="55" x2="490" y2="55" stroke="#1e1545" stroke-width="0.5"/>
+                <line x1="40" y1="90" x2="490" y2="90" stroke="#1e1545" stroke-width="0.5"/>
+                <line x1="40" y1="125" x2="490" y2="125" stroke="#1e1545" stroke-width="0.5"/>
+                <!-- Y labels -->
+                <text x="32" y="24" fill="#6b6490" font-size="8" text-anchor="end">$90K</text>
+                <text x="32" y="59" fill="#6b6490" font-size="8" text-anchor="end">$70K</text>
+                <text x="32" y="94" fill="#6b6490" font-size="8" text-anchor="end">$50K</text>
+                <text x="32" y="129" fill="#6b6490" font-size="8" text-anchor="end">$30K</text>
+                <!-- Area -->
+                <path d="M50,110 L87,100 L125,105 L162,80 L200,85 L237,65 L275,55 L312,60 L350,45 L387,35 L425,40 L462,25 L462,140 L50,140 Z" fill="url(#hg)"/>
+                <!-- Revenue line -->
+                <path d="M50,110 L87,100 L125,105 L162,80 L200,85 L237,65 L275,55 L312,60 L350,45 L387,35 L425,40 L462,25" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Target line -->
+                <path d="M50,105 L87,100 L125,95 L162,90 L200,85 L237,80 L275,75 L312,70 L350,65 L387,60 L425,55 L462,50" fill="none" stroke="#ec4899" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.6"/>
+                <!-- Dot -->
+                <circle cx="462" cy="25" r="4" fill="#8b5cf6"/><circle cx="462" cy="25" r="8" fill="#8b5cf6" opacity="0.2"/>
+                <!-- X labels -->
+                <text x="50" y="152" fill="#6b6490" font-size="7">Jan</text>
+                <text x="125" y="152" fill="#6b6490" font-size="7">Mar</text>
+                <text x="200" y="152" fill="#6b6490" font-size="7">May</text>
+                <text x="275" y="152" fill="#6b6490" font-size="7">Jul</text>
+                <text x="350" y="152" fill="#6b6490" font-size="7">Sep</text>
+                <text x="425" y="152" fill="#6b6490" font-size="7">Nov</text>
+              </svg>
+            </div>
+            <div class="glass-card !rounded-xl p-5 !bg-[#0d0525]/80">
+              <span class="text-sm font-semibold">Top Products</span>
+              <div class="mt-4 space-y-3">
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span>Enterprise Suite</span><span class="text-[var(--arc-text-muted)]">$48.5K</span></div>
+                  <div class="h-2 rounded-full bg-white/5"><div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500" style="width: 100%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span>Pro License</span><span class="text-[var(--arc-text-muted)]">$32K</span></div>
+                  <div class="h-2 rounded-full bg-white/5"><div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 opacity-75" style="width: 66%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span>Starter Plan</span><span class="text-[var(--arc-text-muted)]">$18.2K</span></div>
+                  <div class="h-2 rounded-full bg-white/5"><div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 opacity-50" style="width: 38%"></div></div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-xs mb-1"><span>Add-on Pack</span><span class="text-[var(--arc-text-muted)]">$12.8K</span></div>
+                  <div class="h-2 rounded-full bg-white/5"><div class="h-full rounded-full bg-gradient-to-r from-purple-500 to-fuchsia-500 opacity-40" style="width: 26%"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- STATS BAR -->
+  <!-- TRUSTED BY / STATS -->
   <section class="py-12 px-6 border-y border-purple-500/10">
     <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div><div class="text-3xl font-bold gradient-text">8</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Chart Types</div></div>
+      <div><div class="text-3xl font-bold gradient-text">21</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Form Fields</div></div>
+      <div><div class="text-3xl font-bold gradient-text">555+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Unit Tests</div></div>
+      <div><div class="text-3xl font-bold gradient-text">.NET 5–10</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Multi-target</div></div>
+    </div>
+  </section>
+
+  <!-- CODE EXAMPLE -->
+  <section class="py-24 px-6">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
       <div>
-        <div class="text-3xl font-bold gradient-text">8</div>
-        <div class="text-sm text-[var(--arc-text-muted)] mt-1">Chart Types</div>
+        <h2 class="text-3xl font-bold mb-4">Ship dashboards<br/><span class="gradient-text">in 6 lines of Razor</span></h2>
+        <p class="text-[var(--arc-text-muted)] text-lg leading-relaxed mb-6">
+          No JavaScript. No npm. No webpack. Just <code class="text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded text-sm">dotnet add package</code> and you're building.
+          Every component is strongly typed, fully accessible, and works across Server, WASM, and Auto render modes.
+        </p>
+        <ul class="space-y-3 text-[var(--arc-text-muted)]">
+          <li class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-xs text-purple-400">✓</span> Native SVG — zero JS for core rendering</li>
+          <li class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-xs text-purple-400">✓</span> WCAG 2.1 AA — hidden data tables, keyboard nav</li>
+          <li class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-xs text-purple-400">✓</span> Anti-collision engine — labels never overlap</li>
+          <li class="flex items-center gap-3"><span class="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center text-xs text-purple-400">✓</span> On-load animations — respects prefers-reduced-motion</li>
+        </ul>
       </div>
-      <div>
-        <div class="text-3xl font-bold gradient-text">21</div>
-        <div class="text-sm text-[var(--arc-text-muted)] mt-1">Form Fields</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold gradient-text">408</div>
-        <div class="text-sm text-[var(--arc-text-muted)] mt-1">Unit Tests</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold gradient-text">0</div>
-        <div class="text-sm text-[var(--arc-text-muted)] mt-1">JS Dependencies</div>
+      <div class="gradient-border">
+        <div class="code-block text-sm !p-6">
+          <div class="text-[#6b6490] mb-3">// A complete KPI card with sparkline</div>
+          <div><span style="color:#c084fc">&lt;</span><span style="color:#67e8f9">HelixKpiCard</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">Title</span>=<span style="color:#f472b6">"Monthly Revenue"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">Value</span>=<span style="color:#f472b6">"$142,500"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">Delta</span>=<span style="color:#f472b6">"+12.3%"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">DeltaType</span>=<span style="color:#f472b6">"Increase"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">Sparkline</span>=<span style="color:#f472b6">"@data"</span> <span style="color:#c084fc">/&gt;</span></div>
+          <div class="mt-4 text-[#6b6490]">// A multi-series line chart</div>
+          <div><span style="color:#c084fc">&lt;</span><span style="color:#67e8f9">HelixLineChart</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">Data</span>=<span style="color:#f472b6">"@sales"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">XField</span>=<span style="color:#f472b6">"@(d => d.Month)"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">Series</span>=<span style="color:#f472b6">"@series"</span></div>
+          <div class="ml-4"><span style="color:#a78bfa">ShowPoints</span>=<span style="color:#f472b6">"true"</span> <span style="color:#c084fc">/&gt;</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -71,118 +192,57 @@ import Layout from '../layouts/Layout.astro';
   <section id="features" class="py-24 px-6">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold mb-4">Everything you need to ship <span class="gradient-text">faster</span></h2>
-        <p class="text-[var(--arc-text-muted)] text-lg max-w-2xl mx-auto">Five packages, one design system. Each component is tree-shakeable, accessible, and works across all Blazor render modes.</p>
+        <h2 class="text-4xl font-bold mb-4">Everything you need to <span class="gradient-text">ship faster</span></h2>
+        <p class="text-[var(--arc-text-muted)] text-lg max-w-2xl mx-auto">Five packages, one design system. Tree-shakeable, accessible, and works across all Blazor render modes.</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
-        <!-- Charts -->
-        <div class="glass-card p-8 md:col-span-2 md:row-span-2">
+        <div class="glass-card p-8 md:col-span-2">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">C</div>
-            <h3 class="text-xl font-semibold">Charts & Dashboard Widgets</h3>
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 16l4-4 4 4 5-5"/></svg></div>
+            <h3 class="text-xl font-semibold">Charts & Dashboard</h3>
+            <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-6">8 chart types + 7 dashboard widgets. KPI cards, sparklines, gauges, bar lists — the Tremor-style toolkit nobody else in Blazor offers.</p>
-          
-          <!-- Mini chart demo -->
-          <div class="bg-[#060012] rounded-xl p-6 border border-purple-500/10">
-            <div class="grid grid-cols-3 gap-4 mb-6">
-              <div class="glass-card !rounded-lg p-3">
-                <div class="text-xs text-[var(--arc-text-muted)]">Revenue</div>
-                <div class="text-lg font-bold">$142K</div>
-                <div class="text-xs text-green-400">+12.3%</div>
-              </div>
-              <div class="glass-card !rounded-lg p-3">
-                <div class="text-xs text-[var(--arc-text-muted)]">Users</div>
-                <div class="text-lg font-bold">8,420</div>
-                <div class="text-xs text-red-400">-2.1%</div>
-              </div>
-              <div class="glass-card !rounded-lg p-3">
-                <div class="text-xs text-[var(--arc-text-muted)]">Conversion</div>
-                <div class="text-lg font-bold">3.8%</div>
-                <div class="text-xs text-green-400">+0.5%</div>
-              </div>
-            </div>
-            <!-- SVG mini line chart -->
-            <svg viewBox="0 0 400 100" class="w-full h-20">
-              <defs>
-                <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.3"/>
-                  <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path d="M0,80 L40,70 L80,75 L120,50 L160,55 L200,35 L240,40 L280,20 L320,25 L360,10 L400,15 L400,100 L0,100 Z" fill="url(#chartGrad)"/>
-              <path d="M0,80 L40,70 L80,75 L120,50 L160,55 L200,35 L240,40 L280,20 L320,25 L360,10 L400,15" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="400" cy="15" r="4" fill="#8b5cf6"/>
-              <circle cx="400" cy="15" r="8" fill="#8b5cf6" opacity="0.3"/>
-            </svg>
-          </div>
+          <p class="text-[var(--arc-text-muted)] mb-4">Line, Bar, Pie, Scatter charts + Sparkline widget. Native SVG, animated, accessible. <span class="text-purple-400">Pro adds Radar, Gauge, Heatmap, Candlestick + 6 dashboard widgets.</span></p>
+          <a href="/docs/charts" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
-        <!-- Form Builder -->
-        <div class="glass-card p-8" id="forms">
+        <div class="glass-card p-8">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center text-white font-bold">F</div>
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
             <h3 class="text-xl font-semibold">Form Builder</h3>
+            <span class="ml-auto text-xs bg-purple-500/10 text-purple-400 px-2 py-0.5 rounded-full">Pro</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">21 field types, schema-driven rendering, wizard forms, cross-field validation. Generate forms from C# classes or JSON.</p>
-          <div class="text-sm text-purple-300">TextField &middot; Select &middot; DateRange &middot; Rating &middot; Repeater &middot; +16 more</div>
+          <p class="text-[var(--arc-text-muted)] mb-4">21 field types. Schema-driven or model-driven. Wizard forms, cross-field validation, auto-save.</p>
+          <a href="/docs/forms" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
-        <!-- Notifications -->
         <div class="glass-card p-8">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-bold">N</div>
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0H9"/></svg></div>
             <h3 class="text-xl font-semibold">Notifications</h3>
+            <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">Toast notifications with auto-dismiss, stacking, and full ARIA accessibility. Drop in one component.</p>
-          <div class="text-sm text-purple-300">Info &middot; Success &middot; Warning &middot; Error</div>
+          <p class="text-[var(--arc-text-muted)] mb-4">Toast notifications with auto-dismiss, stacking, 4 severity levels, and full ARIA support.</p>
+          <a href="/docs/notifications" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
-        <!-- Theme -->
         <div class="glass-card p-8">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center text-white font-bold">T</div>
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg></div>
             <h3 class="text-xl font-semibold">Theme Engine</h3>
+            <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p class="text-[var(--arc-text-muted)]">Design tokens, light/dark themes, 3 density modes, Tailwind CSS integration. CSS custom properties all the way down.</p>
+          <p class="text-[var(--arc-text-muted)] mb-4">CSS custom property tokens. Light/dark themes. 3 density modes. Tailwind CSS 4.x plugin.</p>
+          <a href="/docs/theme" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
-        <!-- Core -->
         <div class="glass-card p-8">
           <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold">A</div>
-            <h3 class="text-xl font-semibold">Core & Accessibility</h3>
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+            <h3 class="text-xl font-semibold">Accessibility First</h3>
           </div>
-          <p class="text-[var(--arc-text-muted)]">WCAG 2.1 AA base classes, focus traps, live regions, keyboard navigation. Accessibility isn't an afterthought — it's the foundation.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- WHY ARCADIA -->
-  <section class="py-24 px-6">
-    <div class="max-w-5xl mx-auto">
-      <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold mb-4">Why <span class="gradient-text">Arcadia</span>?</h2>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="glass-card p-8">
-          <h3 class="text-lg font-semibold mb-3">Native Blazor SVG — Zero JS Tax</h3>
-          <p class="text-[var(--arc-text-muted)]">Charts render as pure SVG from C#. No JavaScript framework dependency. Works in Server, WASM, Auto, and static SSR. Every interop call eliminated is a round-trip saved in Blazor Server.</p>
-        </div>
-        <div class="glass-card p-8">
-          <h3 class="text-lg font-semibold mb-3">WCAG 2.1 AA Certified</h3>
-          <p class="text-[var(--arc-text-muted)]">Every chart includes a hidden data table for screen readers. Keyboard navigable. High contrast mode. Government and enterprise procurement-ready — pass accessibility audits your competitors can't.</p>
-        </div>
-        <div class="glass-card p-8">
-          <h3 class="text-lg font-semibold mb-3">Anti-Collision Layout Engine</h3>
-          <p class="text-[var(--arc-text-muted)]">Labels never overlap. Smart tick calculation, auto-rotation, responsive breakpoints — all resolved in a pure C# pass before rendering. Fuzz-tested with 1,000+ random configurations.</p>
-        </div>
-        <div class="glass-card p-8">
-          <h3 class="text-lg font-semibold mb-3">$299/year, Not $1,000+</h3>
-          <p class="text-[var(--arc-text-muted)]">Syncfusion, Telerik, DevExpress charge $1,000+ for suites you'll use 20% of. Arcadia gives you exactly what you need at a price that doesn't require VP approval.</p>
+          <p class="text-[var(--arc-text-muted)]">WCAG 2.1 AA. Focus traps, live regions, hidden data tables, keyboard navigation. Pass audits your competitors can't.</p>
         </div>
       </div>
     </div>
@@ -193,7 +253,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="max-w-5xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-4xl font-bold mb-4">Simple, honest <span class="gradient-text">pricing</span></h2>
-        <p class="text-[var(--arc-text-muted)] text-lg">No surprises. No per-project fees. One license per developer.</p>
+        <p class="text-[var(--arc-text-muted)] text-lg">No surprises. No per-project fees. Community edition is free forever.</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
@@ -201,33 +261,35 @@ import Layout from '../layouts/Layout.astro';
         <div class="glass-card p-8">
           <h3 class="text-lg font-semibold mb-2">Community</h3>
           <div class="text-4xl font-extrabold mb-1">Free</div>
-          <div class="text-sm text-[var(--arc-text-muted)] mb-6">Forever. No limits.</div>
+          <div class="text-sm text-[var(--arc-text-muted)] mb-6">Forever. MIT Licensed.</div>
           <ul class="space-y-3 text-sm text-[var(--arc-text-muted)] mb-8">
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Core + Theme packages</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Line, Bar, Pie, Scatter charts</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Sparkline widget</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Full source code (MIT)</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Community support</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Core + Theme engine</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 4 chart types (Line, Bar, Pie, Scatter)</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Sparkline widget</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Toast notifications</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Full source on GitHub</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Community support</li>
           </ul>
-          <a href="#" class="btn-outline w-full justify-center">Get Started</a>
+          <a href="https://github.com/helixuidev/arcadia" class="btn-outline w-full justify-center">Get Started</a>
         </div>
 
         <!-- Pro -->
-        <div class="gradient-border">
+        <div class="gradient-border !overflow-visible">
           <div class="glass-card p-8 !border-0 relative">
-            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</div>
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap z-10">MOST POPULAR</div>
             <h3 class="text-lg font-semibold mb-2">Pro</h3>
             <div class="text-4xl font-extrabold mb-1">$299</div>
             <div class="text-sm text-[var(--arc-text-muted)] mb-6">per developer / year</div>
             <ul class="space-y-3 text-sm text-[var(--arc-text-muted)] mb-8">
-              <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Everything in Community</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> All 8 chart types + animations</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> 7 dashboard widgets</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Trendlines, data labels, export</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Pan, zoom, live data</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Priority email support</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Community</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> All 8 chart types + animations</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 7 dashboard widgets (KPI, Gauge, etc.)</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Form Builder — 21 field types, wizard forms</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Trendlines, data labels, export</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> All future packages & updates</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Email support</li>
             </ul>
-            <a href="#" class="btn-gradient w-full justify-center">Start Free Trial</a>
+            <a href="#" class="btn-gradient w-full justify-center">Get Pro</a>
           </div>
         </div>
 
@@ -237,18 +299,18 @@ import Layout from '../layouts/Layout.astro';
           <div class="text-4xl font-extrabold mb-1">$799</div>
           <div class="text-sm text-[var(--arc-text-muted)] mb-6">per developer / year</div>
           <ul class="space-y-3 text-sm text-[var(--arc-text-muted)] mb-8">
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Everything in Pro</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Form Builder (21 fields)</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Notifications</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> All future packages</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> Dedicated support channel</li>
-            <li class="flex items-center gap-2"><span class="text-green-400">&#10003;</span> SLA guarantee</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Pro</li>
+            <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Custom feature requests</li>
+            <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Private roadmap access</li>
+            <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Priority bug fixes</li>
+            <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Early access to new packages</li>
+            <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Dedicated support channel</li>
           </ul>
-          <a href="#" class="btn-outline w-full justify-center">Contact Sales</a>
+          <a href="#" class="btn-outline w-full justify-center">Get Enterprise</a>
         </div>
       </div>
 
-      <p class="text-center text-sm text-[var(--arc-text-muted)] mt-8">All plans include .NET 5-9 support, all Blazor render modes, and no per-project fees.</p>
+      <p class="text-center text-sm text-[var(--arc-text-muted)] mt-8">All paid plans are per developer, billed annually. Includes 12 months of updates. Volume discounts available for teams of 5+.</p>
     </div>
   </section>
 
@@ -260,14 +322,14 @@ import Layout from '../layouts/Layout.astro';
           <h2 class="text-3xl font-bold mb-4">Ready to build something <span class="gradient-text">beautiful</span>?</h2>
           <p class="text-[var(--arc-text-muted)] mb-8 text-lg">Start with the free Community edition. Upgrade when you need the full toolkit.</p>
           <div class="flex flex-wrap items-center justify-center gap-4">
-            <a href="#" class="btn-gradient text-lg !py-3.5 !px-8">
-              Install Now
+            <a href="/docs" class="btn-gradient text-lg !py-3.5 !px-8">
+              Read the Docs
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </a>
-            <a href="#" class="btn-outline text-lg !py-3.5 !px-8">View on GitHub</a>
+            <a href="https://github.com/helixuidev/arcadia" class="btn-outline text-lg !py-3.5 !px-8">View on GitHub</a>
           </div>
           <div class="mt-6 text-sm text-[var(--arc-text-muted)]">
-            <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20">dotnet add package Arcadia.Charts</code>
+            <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300">dotnet add package Arcadia.Charts</code>
           </div>
         </div>
       </div>
@@ -275,4 +337,3 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
 </Layout>
-<!-- deployed -->
