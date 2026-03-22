@@ -1,160 +1,268 @@
 @page "/charts"
+@using Arcadia.Charts.Core
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Components.Dashboard
+@inject Arcadia.Notifications.ToastService ToastService
 
-<PageTitle>HelixUI Demo — Charts</PageTitle>
+<PageTitle>Arcadia — Chart Gallery</PageTitle>
 
-<h1>Charts & Dashboard Widgets</h1>
-<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-lg);">
-    Dashboard analytics toolkit — pre-composed widgets and SVG charts with zero JS dependencies.
-</p>
+<div class="gallery">
+    <div class="gallery__sidebar">
+        <h2 class="gallery__title">Chart Gallery</h2>
+        <p class="gallery__subtitle">Click a chart type to explore</p>
+        <nav class="gallery__nav">
+            <button class="gallery__nav-btn @(_tab == "dashboard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dashboard"'>Dashboard Widgets</button>
+            <button class="gallery__nav-btn @(_tab == "line" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "line"'>Line & Area</button>
+            <button class="gallery__nav-btn @(_tab == "bar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "bar"'>Bar Chart</button>
+            <button class="gallery__nav-btn @(_tab == "pie" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "pie"'>Pie & Donut</button>
+            <button class="gallery__nav-btn @(_tab == "scatter" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "scatter"'>Scatter</button>
+            <button class="gallery__nav-btn @(_tab == "candle" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "candle"'>Candlestick</button>
+            <button class="gallery__nav-btn @(_tab == "gauge" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "gauge"'>Gauges</button>
+            <button class="gallery__nav-btn @(_tab == "radar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "radar"'>Radar</button>
+            <button class="gallery__nav-btn @(_tab == "heatmap" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "heatmap"'>Heatmap</button>
+        </nav>
+        <div class="gallery__cta">
+            <a href="/admin" class="gallery__admin-link">View Admin Dashboard →</a>
+        </div>
+    </div>
 
-<h2>KPI Cards</h2>
-<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--arcadia-spacing-md); margin-bottom: var(--arcadia-spacing-xl);">
-    <HelixKpiCard Title="Monthly Revenue" Value="$142,500" Delta="+12.3%" DeltaType="DeltaType.Increase"
-                  Sparkline="@_revenueSparkline" Footer="vs last month" />
-    <HelixKpiCard Title="Active Users" Value="8,420" Delta="-2.1%" DeltaType="DeltaType.Decrease"
-                  Sparkline="@_usersSparkline" SparklineColor="danger" Footer="vs last week" />
-    <HelixKpiCard Title="Conversion Rate" Value="3.8%" Delta="+0.5%" DeltaType="DeltaType.Increase"
-                  Sparkline="@_conversionSparkline" SparklineColor="success" />
-    <HelixKpiCard Title="Avg Response Time" Value="142ms" Delta="→ 0%" DeltaType="DeltaType.Neutral"
-                  Footer="No change" />
+    <div class="gallery__content">
+        @if (_tab == "dashboard")
+        {
+            <div class="gallery__section">
+                <h1>Dashboard Widgets</h1>
+                <p>Pre-composed, drop-in widgets for KPI displays. No chart configuration needed.</p>
+
+                <div class="gallery__card">
+                    <h3>KPI Cards</h3>
+                    <div class="gallery__chart-area" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                        <HelixKpiCard Title="Revenue" Value="$142,500" Delta="+12.3%" DeltaType="DeltaType.Increase"
+                                      Sparkline="@_revenueSparkline" Footer="vs last month" />
+                        <HelixKpiCard Title="Users" Value="8,420" Delta="-2.1%" DeltaType="DeltaType.Decrease"
+                                      Sparkline="@_usersSparkline" SparklineColor="danger" Footer="vs last week" />
+                        <HelixKpiCard Title="Conversion" Value="3.8%" Delta="+0.5%" DeltaType="DeltaType.Increase"
+                                      Sparkline="@_conversionSparkline" SparklineColor="success" />
+                    </div>
+                </div>
+
+                <div class="gallery__card">
+                    <h3>Progress Bars</h3>
+                    <div class="gallery__chart-area" style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+                        <HelixProgressBar Value="73" Max="100" Label="Storage Used" Thresholds="@_storageThresholds" />
+                        <HelixProgressBar Value="45" Max="100" Label="CPU Usage" Color="info" />
+                        <HelixProgressBar Value="92" Max="100" Label="Memory" Thresholds="@_storageThresholds" />
+                    </div>
+                </div>
+
+                <div class="gallery__card">
+                    <h3>Inline Sparklines</h3>
+                    <p class="gallery__chart-desc">
+                        Revenue: <HelixSparkline Data="@_revenueSparkline" Color="primary" ShowArea="true" /> &nbsp;&nbsp;
+                        Users: <HelixSparkline Data="@_usersSparkline" Color="danger" /> &nbsp;&nbsp;
+                        Growth: <HelixSparkline Data="@_conversionSparkline" Color="success" ShowArea="true" />
+                    </p>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "line")
+        {
+            <div class="gallery__section">
+                <h1>Line & Area Chart</h1>
+                <p>Multi-series with area fill, trendlines, and data points. Click legend items to toggle series.</p>
+
+                <div class="gallery__card">
+                    <h3>Revenue vs Target — 12 Month Trend</h3>
+                    <div class="gallery__chart-area">
+                        <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
+                                        XField="@(d => (object)d.Month)"
+                                        Series="@_lineSeries"
+                                        Height="380" Width="800"
+                                        ShowPoints="true"
+                                        AnimateOnLoad="true"
+                                        Title="Monthly Revenue" />
+                    </div>
+                </div>
+
+                <div class="gallery__card">
+                    <h3>With Linear Regression Trendline</h3>
+                    <div class="gallery__chart-area">
+                        <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
+                                        XField="@(d => (object)d.Month)"
+                                        Series="@_trendSeries"
+                                        Height="380" Width="800"
+                                        ShowDataLabels="true"
+                                        Title="Revenue with Trend" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "bar")
+        {
+            <div class="gallery__section">
+                <h1>Bar Chart</h1>
+                <p>Grouped and stacked bars with rounded corners. Hover for tooltips, click legend to toggle.</p>
+
+                <div class="gallery__card">
+                    <h3>Quarterly Sales — Grouped</h3>
+                    <div class="gallery__chart-area">
+                        <HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales"
+                                       XField="@(d => (object)d.Quarter)"
+                                       Series="@_barSeries"
+                                       Height="380" Width="800"
+                                       Title="Quarterly Revenue by Region" />
+                    </div>
+                </div>
+
+                <div class="gallery__card">
+                    <h3>Same Data — Stacked</h3>
+                    <div class="gallery__chart-area">
+                        <HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales"
+                                       XField="@(d => (object)d.Quarter)"
+                                       Series="@_barSeries"
+                                       Height="380" Width="800"
+                                       Stacked="true"
+                                       Title="Quarterly Revenue — Stacked" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "pie")
+        {
+            <div class="gallery__section">
+                <h1>Pie & Donut Chart</h1>
+                <p>Configurable label formats, inner radius for donut mode, animated slices.</p>
+
+                <div class="gallery__card-row">
+                    <div class="gallery__card">
+                        <h3>Pie Chart</h3>
+                        <div class="gallery__chart-area">
+                            <HelixPieChart TItem="BudgetItem" Data="@_budget"
+                                           NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+                                           Height="350" Width="420" Title="Budget Allocation" />
+                        </div>
+                    </div>
+                    <div class="gallery__card">
+                        <h3>Donut Chart</h3>
+                        <div class="gallery__chart-area">
+                            <HelixPieChart TItem="BudgetItem" Data="@_budget"
+                                           NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+                                           Height="350" Width="420" InnerRadius="70" Title="Budget (Donut)" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "scatter")
+        {
+            <div class="gallery__section">
+                <h1>Scatter Chart</h1>
+                <p>Plot X/Y data with optional size mapping for bubble charts. Points animate in with stagger.</p>
+
+                <div class="gallery__card">
+                    <div class="gallery__chart-area">
+                        <HelixScatterChart TItem="DataXY" Data="@_scatterData"
+                                           XField="@(d => d.X)" YField="@(d => d.Y)"
+                                           Height="400" Width="800"
+                                           Title="Height vs Weight" Color="primary" PointSize="6" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "candle")
+        {
+            <div class="gallery__section">
+                <h1>Candlestick Chart</h1>
+                <p>Financial OHLC chart with moving average overlay. Green = up, red = down.</p>
+
+                <div class="gallery__card">
+                    <div class="gallery__chart-area">
+                        <HelixCandlestickChart TItem="StockCandle" Data="@_stockData"
+                                                LabelField="@(d => d.Date)"
+                                                OpenField="@(d => d.Open)" HighField="@(d => d.High)"
+                                                LowField="@(d => d.Low)" CloseField="@(d => d.Close)"
+                                                OverlaySeries="@_maSeries"
+                                                Title="ACME Corp — 30 Day Price"
+                                                Height="420" Width="800" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "gauge")
+        {
+            <div class="gallery__section">
+                <h1>Gauge Charts</h1>
+                <p>Radial gauges with color thresholds. Great for system health dashboards.</p>
+
+                <div class="gallery__card">
+                    <div class="gallery__chart-area" style="display: flex; gap: 32px; flex-wrap: wrap; justify-content: center;">
+                        <HelixGaugeChart Value="73" Min="0" Max="100" Label="CPU Usage" Width="200" Height="160" Thresholds="@_gaugeThresholds" />
+                        <HelixGaugeChart Value="42" Min="0" Max="100" Label="Memory" Width="200" Height="160" ValueFormatString="0'%'" />
+                        <HelixGaugeChart Value="91" Min="0" Max="100" Label="Disk" Width="200" Height="160" Thresholds="@_gaugeThresholds" />
+                        <HelixGaugeChart Value="99.9" Min="0" Max="100" Label="Uptime" Width="200" Height="160" ValueFormatString="0.0'%'" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "radar")
+        {
+            <div class="gallery__section">
+                <h1>Radar Chart</h1>
+                <p>Compare multi-dimensional data across categories. Fill and point display configurable.</p>
+
+                <div class="gallery__card">
+                    <div class="gallery__chart-area" style="display: flex; justify-content: center;">
+                        <HelixRadarChart TItem="SkillProfile" Data="@_skillData"
+                                         LabelField="@(d => d.Skill)"
+                                         Series="@_radarSeries" Title="Team Skills Comparison"
+                                         Height="420" Width="500" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "heatmap")
+        {
+            <div class="gallery__section">
+                <h1>Heatmap</h1>
+                <p>2D color grid for visualizing density and frequency data.</p>
+
+                <div class="gallery__card">
+                    <div class="gallery__chart-area">
+                        <HelixHeatmap TItem="HeatmapPoint" Data="@_heatmapData"
+                                      XField="@(d => d.Day)" YField="@(d => d.Hour)"
+                                      ValueField="@(d => d.Count)" Title="Commits by Day & Hour"
+                                      Height="340" Width="800" />
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
-
-<h2>Progress & Indicators</h2>
-<div style="max-width: 400px; display: flex; flex-direction: column; gap: var(--arcadia-spacing-md); margin-bottom: var(--arcadia-spacing-xl);">
-    <HelixProgressBar Value="73" Max="100" Label="Storage Used" Thresholds="@_storageThresholds" />
-    <HelixProgressBar Value="45" Max="100" Label="CPU Usage" Color="info" />
-    <HelixProgressBar Value="92" Max="100" Label="Memory" Thresholds="@_storageThresholds" />
-</div>
-
-<h2>Bar List</h2>
-<div style="max-width: 400px; margin-bottom: var(--arcadia-spacing-xl);">
-    <HelixBarList TItem="ProductSale" Data="@_topProducts" NameField="@(d => d.Name)" ValueField="@(d => d.Sales)" ValueFormat="$#,##0" Color="primary" />
-</div>
-
-<h2>Category Bar</h2>
-<div style="max-width: 500px; margin-bottom: var(--arcadia-spacing-xl);">
-    <HelixCategoryBar TItem="BudgetItem" Data="@_budget" NameField="@(d => d.Category)" ValueField="@(d => d.Amount)" />
-</div>
-
-<h2>Sparklines</h2>
-<div style="display: flex; gap: var(--arcadia-spacing-lg); align-items: center; margin-bottom: var(--arcadia-spacing-xl);">
-    <span>Revenue: <HelixSparkline Data="@_revenueSparkline" Color="primary" ShowArea="true" /></span>
-    <span>Users: <HelixSparkline Data="@_usersSparkline" Color="danger" /></span>
-    <span>Growth: <HelixSparkline Data="@_conversionSparkline" Color="success" ShowArea="true" /></span>
-</div>
-
-<hr style="margin: var(--arcadia-spacing-xl) 0; border-color: var(--arcadia-color-border);" />
-
-<h2>Line Chart</h2>
-<HelixLineChart TItem="MonthlySales" Data="@_monthlySales" XField="@(d => (object)d.Month)" Title="Revenue vs Target"
-                Series="@_lineSeries" ShowPoints="true" Height="320" Width="700" />
-
-<h2 style="margin-top: var(--arcadia-spacing-xl);">Bar Chart</h2>
-<HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales" XField="@(d => (object)d.Quarter)" Title="Quarterly Sales by Region"
-               Series="@_barSeries" Height="320" Width="700" />
-
-<h2 style="margin-top: var(--arcadia-spacing-xl);">Pie Chart</h2>
-<HelixPieChart TItem="BudgetItem" Data="@_budget" NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
-               Title="Budget Allocation" Height="350" Width="500" />
-
-<h2 style="margin-top: var(--arcadia-spacing-xl);">Donut Chart</h2>
-<HelixPieChart TItem="BudgetItem" Data="@_budget" NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
-               Title="Budget (Donut)" InnerRadius="70" Height="350" Width="500" />
-
-<h2 style="margin-top: var(--arcadia-spacing-xl);">Scatter Chart with Trendline</h2>
-<HelixScatterChart TItem="DataXY" Data="@_scatterData" XField="@(d => d.X)" YField="@(d => d.Y)"
-                   Title="Height vs Weight" Height="320" Width="700" Color="primary" />
-
-<hr style="margin: var(--arcadia-spacing-xl) 0; border-color: var(--arcadia-color-border);" />
-
-<h2>Phase 2 — Pro Charts</h2>
-<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-md);">
-    Radar, Gauge, and Heatmap — chart types no free Blazor library offers.
-</p>
-
-<h3>Stacked Bar Chart</h3>
-<HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales" XField="@(d => (object)d.Quarter)" Title="Quarterly Revenue — Stacked"
-               Series="@_barSeries" Height="320" Width="700" Stacked="true" />
-
-<h3 style="margin-top: var(--arcadia-spacing-xl);">Line Chart with Trendline + Data Labels</h3>
-<HelixLineChart TItem="MonthlySales" Data="@_monthlySales" XField="@(d => (object)d.Month)" Title="Revenue with Trend"
-                Series="@_trendSeries" ShowPoints="true" ShowDataLabels="true" DataLabelFormatString="C0"
-                Height="320" Width="700" />
-
-<h3 style="margin-top: var(--arcadia-spacing-xl);">Gauge Charts</h3>
-<div style="display: flex; gap: var(--arcadia-spacing-lg); flex-wrap: wrap; margin-bottom: var(--arcadia-spacing-xl);">
-    <HelixGaugeChart Value="73" Min="0" Max="100" Label="CPU Usage" Width="200" Height="160"
-                     Thresholds="@_gaugeThresholds" />
-    <HelixGaugeChart Value="42" Min="0" Max="100" Label="Memory" Width="200" Height="160"
-                     ValueFormatString="0'%'" />
-    <HelixGaugeChart Value="91" Min="0" Max="100" Label="Disk" Width="200" Height="160"
-                     Thresholds="@_gaugeThresholds" />
-</div>
-
-<h3>Radar Chart</h3>
-<HelixRadarChart TItem="SkillProfile" Data="@_skillData" LabelField="@(d => d.Skill)"
-                 Series="@_radarSeries" Title="Team Skills Comparison"
-                 Height="380" Width="500" />
-
-<h3 style="margin-top: var(--arcadia-spacing-xl);">Heatmap</h3>
-<HelixHeatmap TItem="HeatmapPoint" Data="@_heatmapData" XField="@(d => d.Day)" YField="@(d => d.Hour)"
-              ValueField="@(d => d.Count)" Title="Commits by Day & Hour"
-              Height="300" Width="700" ShowValues="false" />
-
-<hr style="margin: var(--arcadia-spacing-xl) 0; border-color: var(--arcadia-color-border);" />
-
-<h2>Candlestick Chart with Moving Average Overlay</h2>
-<p style="color: var(--arcadia-color-text-muted); margin-bottom: var(--arcadia-spacing-md);">
-    Financial OHLC candlestick chart with a 5-period moving average line overlay — mixed chart types in one view.
-</p>
-
-<HelixCandlestickChart TItem="StockCandle" Data="@_stockData"
-                        LabelField="@(d => d.Date)"
-                        OpenField="@(d => d.Open)" HighField="@(d => d.High)"
-                        LowField="@(d => d.Low)" CloseField="@(d => d.Close)"
-                        OverlaySeries="@_maSeries"
-                        Title="ACME Corp — 30 Day Price"
-                        YAxisFormatString="F2"
-                        Height="400" Width="700" />
 
 @code {
-    // Data models
+    string _tab = "dashboard";
+
     record MonthlySales(string Month, double Revenue, double Target);
     record QuarterlySales(string Quarter, double NorthAmerica, double Europe, double Asia);
-    record ProductSale(string Name, double Sales);
     record BudgetItem(string Category, double Amount);
     record DataXY(double X, double Y);
     record SkillProfile(string Skill, double TeamA, double TeamB);
     record HeatmapPoint(string Day, string Hour, double Count);
     record StockCandle(string Date, double Open, double High, double Low, double Close, double MA5);
 
-    // Sparkline data
     double[] _revenueSparkline = { 42, 48, 45, 52, 49, 55, 58, 62, 59, 65, 68, 72 };
     double[] _usersSparkline = { 85, 82, 88, 84, 80, 78, 82, 79, 76, 74, 78, 72 };
     double[] _conversionSparkline = { 2.1, 2.3, 2.5, 2.4, 2.8, 3.0, 2.9, 3.2, 3.4, 3.5, 3.6, 3.8 };
 
     IReadOnlyList<(double Threshold, string Color)> _storageThresholds = new[] { (60.0, "warning"), (90.0, "danger") };
 
-    // Dashboard data
-    List<ProductSale> _topProducts = new()
-    {
-        new("Enterprise Suite", 48500),
-        new("Pro License", 32000),
-        new("Starter Plan", 18200),
-        new("Add-on Pack", 12800),
-        new("Training", 5400),
-    };
-
-    List<BudgetItem> _budget = new()
-    {
-        new("Engineering", 450000),
-        new("Marketing", 180000),
-        new("Sales", 220000),
-        new("Operations", 120000),
-        new("HR", 80000),
-    };
-
-    // Chart data
     List<MonthlySales> _monthlySales = new()
     {
         new("Jan", 45000, 50000), new("Feb", 52000, 50000), new("Mar", 48000, 52000),
@@ -165,16 +273,20 @@
 
     List<SeriesConfig<MonthlySales>> _lineSeries = new()
     {
-        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true },
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true, AreaOpacity = 0.12 },
         new() { Name = "Target", Field = d => d.Target, Color = "secondary", Dashed = true },
+    };
+
+    List<SeriesConfig<MonthlySales>> _trendSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary",
+                Trendline = new() { Type = TrendlineType.Linear, Color = "var(--arcadia-color-danger)", Dashed = true } },
     };
 
     List<QuarterlySales> _quarterlySales = new()
     {
-        new("Q1", 145000, 98000, 72000),
-        new("Q2", 183000, 112000, 89000),
-        new("Q3", 215000, 134000, 105000),
-        new("Q4", 268000, 156000, 128000),
+        new("Q1", 145000, 98000, 72000), new("Q2", 183000, 112000, 89000),
+        new("Q3", 215000, 134000, 105000), new("Q4", 268000, 156000, 128000),
     };
 
     List<SeriesConfig<QuarterlySales>> _barSeries = new()
@@ -184,20 +296,18 @@
         new() { Name = "Asia", Field = d => d.Asia, Color = "warning" },
     };
 
+    List<BudgetItem> _budget = new()
+    {
+        new("Engineering", 450000), new("Marketing", 180000), new("Sales", 220000),
+        new("Operations", 120000), new("HR", 80000),
+    };
+
     List<DataXY> _scatterData = Enumerable.Range(0, 50).Select(i =>
     {
         var rng = new Random(i);
         return new DataXY(150 + rng.NextDouble() * 50, 50 + rng.NextDouble() * 60);
     }).ToList();
 
-    // Phase 2 data — Trendline series
-    List<SeriesConfig<MonthlySales>> _trendSeries = new()
-    {
-        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary",
-                Trendline = new() { Type = TrendlineType.Linear, Color = "var(--arcadia-color-danger)", Dashed = true } },
-    };
-
-    // Gauge thresholds
     List<GaugeThreshold> _gaugeThresholds = new()
     {
         new() { Value = 0, Color = "var(--arcadia-color-success)" },
@@ -205,15 +315,10 @@
         new() { Value = 85, Color = "var(--arcadia-color-danger)" },
     };
 
-    // Radar data
     List<SkillProfile> _skillData = new()
     {
-        new("C#", 90, 70),
-        new("JavaScript", 65, 85),
-        new("SQL", 80, 60),
-        new("DevOps", 50, 75),
-        new("Design", 40, 80),
-        new("Testing", 75, 65),
+        new("C#", 90, 70), new("JavaScript", 65, 85), new("SQL", 80, 60),
+        new("DevOps", 50, 75), new("Design", 40, 80), new("Testing", 75, 65),
     };
 
     List<SeriesConfig<SkillProfile>> _radarSeries = new()
@@ -222,10 +327,7 @@
         new() { Name = "Team B", Field = d => d.TeamB, Color = "success" },
     };
 
-    // Heatmap data
     List<HeatmapPoint> _heatmapData = new();
-
-    // Candlestick data
     List<StockCandle> _stockData = new();
     List<SeriesConfig<StockCandle>> _maSeries = new()
     {
@@ -234,44 +336,27 @@
 
     protected override void OnInitialized()
     {
-        // Heatmap
         var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
         var hours = new[] { "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm" };
         var rng = new Random(42);
         foreach (var day in days)
-        {
             foreach (var hour in hours)
-            {
-                var isWeekend = day is "Sat" or "Sun";
-                var baseCount = isWeekend ? 2 : 8;
-                _heatmapData.Add(new HeatmapPoint(day, hour, rng.Next(0, baseCount + 5)));
-            }
-        }
+                _heatmapData.Add(new HeatmapPoint(day, hour, rng.Next(0, (day is "Sat" or "Sun" ? 2 : 8) + 5)));
 
-        // Stock data — generate 30 days of realistic OHLC
         var stockRng = new Random(123);
         var price = 142.50;
         var closes = new List<double>();
         for (var i = 0; i < 30; i++)
         {
-            var change = (stockRng.NextDouble() - 0.48) * 4; // Slight upward bias
+            var change = (stockRng.NextDouble() - 0.48) * 4;
             var open = price;
             var close = price + change;
             var high = Math.Max(open, close) + stockRng.NextDouble() * 2;
             var low = Math.Min(open, close) - stockRng.NextDouble() * 2;
             closes.Add(close);
-
-            // Calculate 5-period moving average
-            var ma5 = double.NaN;
-            if (closes.Count >= 5)
-                ma5 = closes.Skip(closes.Count - 5).Take(5).Average();
-
-            _stockData.Add(new StockCandle(
-                new DateTime(2026, 2, 20).AddDays(i).ToString("MMM d"),
-                Math.Round(open, 2), Math.Round(high, 2),
-                Math.Round(low, 2), Math.Round(close, 2),
-                Math.Round(ma5, 2)));
-
+            var ma5 = closes.Count >= 5 ? closes.Skip(closes.Count - 5).Take(5).Average() : double.NaN;
+            _stockData.Add(new StockCandle(new DateTime(2026, 2, 20).AddDays(i).ToString("MMM d"),
+                Math.Round(open, 2), Math.Round(high, 2), Math.Round(low, 2), Math.Round(close, 2), Math.Round(ma5, 2)));
             price = close;
         }
     }

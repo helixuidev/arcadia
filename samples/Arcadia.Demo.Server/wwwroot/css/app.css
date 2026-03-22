@@ -328,3 +328,100 @@
 .admin__activity-text { font-size: 0.8rem; color: var(--arcadia-color-text); line-height: 1.4; }
 .admin__activity-text strong { font-weight: 600; }
 .admin__activity-time { font-size: 0.7rem; color: var(--arcadia-color-text-muted); margin-top: 2px; }
+
+/* ================================================================
+   CHART GALLERY — Sidebar + Content layout
+   ================================================================ */
+.gallery {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+  background: var(--arcadia-color-surface-sunken);
+}
+
+.gallery__sidebar {
+  background: var(--arcadia-color-surface);
+  border-right: 1px solid var(--arcadia-color-border);
+  padding: 24px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery__title {
+  font-size: 1.1rem; font-weight: 700; margin: 0 0 4px 0;
+  color: var(--arcadia-color-text);
+}
+.gallery__subtitle {
+  font-size: 0.75rem; color: var(--arcadia-color-text-muted);
+  margin: 0 0 20px 0;
+}
+
+.gallery__nav { display: flex; flex-direction: column; gap: 2px; }
+.gallery__nav-btn {
+  display: block; width: 100%; text-align: left;
+  padding: 8px 12px; border-radius: var(--arcadia-radius-md);
+  border: none; background: none; cursor: pointer;
+  font-size: 0.85rem; font-weight: 500; font-family: inherit;
+  color: var(--arcadia-color-text-muted);
+  transition: all 0.15s ease;
+}
+.gallery__nav-btn:hover {
+  background: var(--arcadia-color-surface-sunken);
+  color: var(--arcadia-color-text);
+}
+.gallery__nav-btn--active {
+  background: var(--arcadia-color-primary-subtle);
+  color: var(--arcadia-color-primary);
+  font-weight: 600;
+}
+
+.gallery__cta {
+  margin-top: auto; padding-top: 20px;
+  border-top: 1px solid var(--arcadia-color-border);
+}
+.gallery__admin-link {
+  display: block; text-align: center;
+  padding: 10px; border-radius: var(--arcadia-radius-md);
+  background: var(--arcadia-color-primary);
+  color: white; font-size: 0.8rem; font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+.gallery__admin-link:hover { filter: brightness(1.1); }
+
+.gallery__content {
+  padding: 32px 40px;
+  overflow-y: auto;
+  max-width: 900px;
+}
+
+.gallery__section h1 {
+  font-size: 1.6rem; font-weight: 700; margin: 0 0 8px 0;
+  color: var(--arcadia-color-text);
+}
+.gallery__section > p {
+  font-size: 0.9rem; color: var(--arcadia-color-text-muted);
+  margin: 0 0 28px 0; line-height: 1.6;
+}
+
+.gallery__card {
+  background: var(--arcadia-color-surface);
+  border: 1px solid var(--arcadia-color-border);
+  border-radius: var(--arcadia-radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.gallery__card h3 {
+  font-size: 0.95rem; font-weight: 600; margin: 0 0 16px 0;
+  color: var(--arcadia-color-text);
+}
+.gallery__card-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+}
+
+.gallery__chart-area { margin: 0; }
+.gallery__chart-desc { font-size: 0.9rem; color: var(--arcadia-color-text); line-height: 2; }
