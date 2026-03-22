@@ -1,0 +1,44 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const posts = [
+  {
+    title: 'The Best Blazor Chart Libraries in 2026 — A Honest Comparison',
+    description: 'We compared every Blazor charting option — Syncfusion, Telerik, DevExpress, MudBlazor, Radzen, and Arcadia. Here\'s what we found.',
+    date: '2026-03-22',
+    slug: 'best-blazor-chart-libraries-2026',
+    readTime: '12 min read',
+    tags: ['Blazor', 'Charts', 'Comparison'],
+  },
+];
+---
+
+<Layout title="Blog — Arcadia Controls" description="Technical articles, tutorials, and insights about Blazor UI development, charting, and dashboard design.">
+
+  <section class="pt-32 pb-24 px-6">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-4xl font-extrabold mb-4">Blog</h1>
+      <p class="text-[var(--arc-text-muted)] text-lg mb-12">Technical articles, tutorials, and insights about Blazor UI development.</p>
+
+      <div class="space-y-8">
+        {posts.map(post => (
+          <a href={`/blog/${post.slug}`} class="block glass-card p-8 group">
+            <div class="flex items-center gap-3 text-sm text-[var(--arc-text-muted)] mb-3">
+              <time>{new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</time>
+              <span>·</span>
+              <span>{post.readTime}</span>
+            </div>
+            <h2 class="text-2xl font-bold mb-2 group-hover:text-purple-300 transition-colors">{post.title}</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed">{post.description}</p>
+            <div class="flex gap-2 mt-3">
+              {post.tags.map(tag => (
+                <span class="text-xs bg-purple-500/10 text-purple-300 px-2 py-0.5 rounded-full">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+</Layout>

@@ -1,0 +1,148 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "The Best Blazor Chart Libraries in 2026 — An Honest Comparison"
+description: "We compared every Blazor charting option — Syncfusion, Telerik, DevExpress, MudBlazor, Radzen, and Arcadia. Rendering approach, chart types, pricing, accessibility, and developer experience."
+date: "2026-03-22"
+readTime: "12 min read"
+tags: ["Blazor", "Charts", "Comparison", ".NET"]
+---
+
+If you're building a dashboard in Blazor, you need charts. But which library should you pick? There are six serious options in 2026, and they're very different.
+
+We tested all of them. Here's what we found.
+
+## The Contenders
+
+| Library | Price | Chart Types | Rendering | JS Required? |
+|---|---|---|---|---|
+| **Syncfusion** | ~$995/yr | 55+ | SVG + Canvas | Minimal |
+| **Telerik** | ~$979/yr | ~15 | SVG (Kendo JS) | Heavy |
+| **DevExpress** | ~$1,078/yr | ~20 | SVG | JS interop |
+| **MudBlazor** | Free | ~8 | SVG native | None |
+| **Radzen** | Free | ~8 | SVG native | Minimal |
+| **Arcadia** | Free / $299 | 8 + widgets | SVG native | None* |
+
+*Arcadia uses minimal JS only for tooltips, resize, and pan/zoom — core rendering is pure C#.
+
+## Rendering: Native Blazor vs JavaScript Wrappers
+
+This is the most important architectural decision. There are two camps:
+
+**JavaScript wrappers** (Telerik, Syncfusion, DevExpress) — These render charts using a JavaScript library (Kendo, DevExtreme) and bridge to Blazor via JS interop. Pros: mature, feature-rich. Cons: every interop call is a network round-trip in Blazor Server, larger bundle size, doesn't work in static SSR.
+
+**Native Blazor SVG** (MudBlazor, Radzen, Arcadia) — These generate SVG markup directly in C#. Pros: zero JS overhead, works in static SSR, smaller bundles, better Blazor Server performance. Cons: building a charting engine from scratch is hard.
+
+> **Our take:** If you're running Blazor Server behind a corporate firewall (common in enterprise), native rendering is significantly faster. Every JS interop call in Blazor Server is a SignalR round-trip — that adds up fast with interactive charts.
+
+## Chart Type Coverage
+
+If you need 50+ chart types, Syncfusion wins. Nobody else comes close.
+
+But here's the thing: **most dashboards use 4-6 chart types.** Line, bar, pie, scatter cover 90% of use cases. The question is whether those 4 types are good, not whether you have 50 mediocre ones.
+
+| Feature | Syncfusion | Telerik | DevExpress | MudBlazor | Radzen | Arcadia |
+|---|---|---|---|---|---|---|
+| Line / Area | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Bar / Column | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Pie / Donut | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Scatter / Bubble | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Radar | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Gauge | ✅ | ❌ | ✅ | ❌ | ❌ | ✅ |
+| Heatmap | ✅ | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Candlestick | ✅ | ✅ | ✅ | ❌ | ❌ | ✅ |
+| Dashboard widgets | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
+
+The last row is interesting. **No other Blazor library ships pre-composed dashboard widgets** — KPI cards, sparklines, bar rankings, progress bars, gauges. These are the components that make a dashboard look like a product, not a science project.
+
+## Pricing: The Real Cost
+
+The commercial libraries cost $979-$1,078 per developer per year. That buys you their **entire UI suite** — 80+ components — even if you only need charts.
+
+| | Annual Cost (1 dev) | Annual Cost (5 devs) | What You Get |
+|---|---|---|---|
+| Syncfusion | $995 | $4,975 | Full suite (80+ components) |
+| Telerik | $979 | $4,895 | Full suite |
+| DevExpress | $1,078 | $5,390 | Full suite |
+| MudBlazor | $0 | $0 | Full suite (community) |
+| Radzen | $0 | $0 | Components only (Studio is paid) |
+| Arcadia | $0-$299 | $0-$1,495 | Charts + Forms + Notifications |
+
+Arcadia's model is different: the Community edition (4 chart types, theme, notifications) is free and open source. Pro ($299/dev/year) adds the full chart suite, dashboard widgets, and Form Builder. That's **70% cheaper** than Syncfusion for the components most teams actually use.
+
+> Syncfusion does offer a free Community License for companies under $1M revenue with 5 or fewer developers. But once you grow past that, you're at $995/dev. Arcadia stays at $299.
+
+## Accessibility
+
+This is where the field thins dramatically.
+
+| | WCAG Compliance | Keyboard Nav | Screen Reader | Hidden Data Table |
+|---|---|---|---|---|
+| Syncfusion | AA | ✅ | ✅ | ❌ |
+| Telerik | AA | ✅ | ✅ | ❌ |
+| DevExpress | Partial | Partial | Partial | ❌ |
+| MudBlazor | ❌ | ❌ | ❌ | ❌ |
+| Radzen | ❌ | ❌ | ❌ | ❌ |
+| Arcadia | AA | ✅ | ✅ | ✅ |
+
+The **hidden data table** is worth highlighting. When a screen reader encounters an SVG chart, it sees nothing useful. Arcadia renders an invisible HTML `<table>` alongside every chart with the actual data values. Screen reader users get structured data, not "image."
+
+If you're building for government or enterprise clients with accessibility requirements in procurement RFPs, this matters.
+
+## Developer Experience
+
+Here's what it feels like to add a chart in each library:
+
+**Arcadia** — strongly typed with lambda field selectors:
+```csharp
+<HelixLineChart TItem="Sale" Data="@data"
+                XField="@(d => (object)d.Month)"
+                Series="@series" Height="300" />
+```
+
+**MudBlazor** — simple but limited to `double[]`:
+```csharp
+<MudChart ChartType="ChartType.Line"
+          ChartSeries="@series"
+          XAxisLabels="@labels" />
+```
+
+**Syncfusion** — verbose with nested tags:
+```csharp
+<SfChart>
+  <ChartPrimaryXAxis ValueType="Syncfusion.Blazor.Charts.ValueType.Category" />
+  <ChartSeriesCollection>
+    <ChartSeries DataSource="@data" XName="Month" YName="Revenue"
+                 Type="ChartSeriesType.Line" />
+  </ChartSeriesCollection>
+</SfChart>
+```
+
+All three work. Arcadia and MudBlazor are the most concise. Syncfusion is the most configurable but also the most verbose.
+
+## Label Collision Handling
+
+A chart that looks good with 6 data points might look terrible with 30. Labels overlap, ticks pile up, legends overflow.
+
+| | Auto-rotation | Auto-reduction | Label hiding | Responsive tiers |
+|---|---|---|---|---|
+| Syncfusion | ✅ (7 modes) | ✅ | ✅ | ❌ |
+| Telerik | ✅ | ✅ | ❌ | ❌ |
+| Arcadia | ✅ (cascade) | ✅ | ✅ | ✅ (4 tiers) |
+| MudBlazor | ❌ | ❌ | ❌ | ❌ |
+| Radzen | ❌ | ❌ | ❌ | ❌ |
+
+Arcadia's layout engine runs a full collision detection pass before rendering: reduce ticks → rotate → abbreviate → skip → fallback to first/last only. It adapts structurally at 4 responsive breakpoints (wide/medium/narrow/compact), not just CSS scaling.
+
+## Our Recommendation
+
+**If money is no object** and you need 50+ chart types: **Syncfusion.** It's the most complete.
+
+**If you want free and simple:** **MudBlazor.** Great community, good enough for basic charts. But don't expect advanced features.
+
+**If you're building enterprise dashboards and want the best value:** We're biased, but we built [Arcadia](https://arcadiaui.com) specifically for this. Native Blazor rendering, dashboard-first widgets that nobody else offers, WCAG AA accessibility, and $299/year instead of $1,000+.
+
+The Community edition is [free on GitHub](https://github.com/helixuidev/arcadia). Try it and decide for yourself.
+
+---
+
+*Have questions? Reach us at [support@arcadiaui.com](mailto:support@arcadiaui.com?subject=[Arcadia Support]).*
