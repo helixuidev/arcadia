@@ -285,7 +285,7 @@
                 <div class="gallery__showcase-title">Crosshair + Annotations</div>
                 <div class="gallery__chart-container">
                     <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
-                                    XField="@(d => (object)d.Month)" Series="@_lineSeries"
+                                    XField="@(d => (object)d.Month)" Series="@_interactiveSeries"
                                     Height="380" Width="0" ShowPoints="true" ShowCrosshair="true"
                                     Annotations="@_annotations" AnimateOnLoad="true" />
                 </div>
@@ -669,6 +669,11 @@
     };
 
     // ── Interactive tab data ──
+    List<SeriesConfig<MonthlySales>> _interactiveSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "success", ShowArea = true, AreaOpacity = 0.15, CurveType = "smooth" },
+        new() { Name = "Target", Field = d => d.Target, Color = "warning", Dashed = true, StrokeWidth = 2, CurveType = "smooth" },
+    };
     List<ChartAnnotation> _annotations = new()
     {
         new() { DataIndex = 3, Label = "Launch", Color = "var(--arcadia-color-success)" },

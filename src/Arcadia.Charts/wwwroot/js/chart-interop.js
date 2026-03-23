@@ -94,14 +94,14 @@ export function unobserveResize(element) {
 // ── Export ────────────────────────────────────────────
 
 export function exportSvgAsString(containerEl) {
-  const svg = containerEl.querySelector('svg');
+  const svg = containerEl.querySelector('svg[data-chart]');
   if (!svg) return null;
   const serializer = new XMLSerializer();
   return serializer.serializeToString(svg);
 }
 
 export function exportAsPng(containerEl, filename, scale = 2) {
-  const svg = containerEl.querySelector('svg');
+  const svg = containerEl.querySelector('svg[data-chart]');
   if (!svg) return;
   
   const svgData = new XMLSerializer().serializeToString(svg);
@@ -138,7 +138,7 @@ export function exportAsPng(containerEl, filename, scale = 2) {
 }
 
 export function exportAsSvg(containerEl, filename) {
-  const svg = containerEl.querySelector('svg');
+  const svg = containerEl.querySelector('svg[data-chart]');
   if (!svg) return;
   
   const svgData = new XMLSerializer().serializeToString(svg);
@@ -155,7 +155,7 @@ export function exportAsSvg(containerEl, filename) {
 const panZoomState = new Map();
 
 export function enablePanZoom(containerEl, dotNetRef, options = {}) {
-  const svg = containerEl.querySelector('svg');
+  const svg = containerEl.querySelector('svg[data-chart]');
   if (!svg) return;
   
   const state = {

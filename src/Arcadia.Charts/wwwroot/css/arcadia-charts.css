@@ -84,12 +84,12 @@
 .arcadia-chart__svg { font-family: var(--arcadia-font-sans, system-ui); }
 .arcadia-chart__title { font-size: var(--arcadia-text-base, 1rem); font-weight: var(--arcadia-font-semibold, 600); fill: currentColor; }
 .arcadia-chart__tick-label { font-size: 11px; fill: currentColor; opacity: 0.7; }
-.arcadia-chart__line { transition: opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__line { transition: opacity var(--arcadia-duration-fast, 100ms), d 300ms ease-out; }
 .arcadia-chart__line:hover { opacity: 0.8; }
+.arcadia-chart__point { transition: cx 300ms ease-out, cy 300ms ease-out, r var(--arcadia-duration-fast, 100ms), opacity var(--arcadia-duration-fast, 100ms); }
+.arcadia-chart__point:hover { r: 6; opacity: 1; }
 .arcadia-chart__bar { transition: opacity var(--arcadia-duration-fast, 100ms); }
 .arcadia-chart__bar:hover { opacity: 0.8; filter: brightness(1.1); }
-.arcadia-chart__point { transition: r var(--arcadia-duration-fast, 100ms), opacity var(--arcadia-duration-fast, 100ms); }
-.arcadia-chart__point:hover { r: 6; opacity: 1; }
 .arcadia-chart__pie-slice { transition: opacity var(--arcadia-duration-fast, 100ms); cursor: default; }
 .arcadia-chart__pie-slice:hover { opacity: 0.85; }
 .arcadia-chart__pie-label { font-size: 11px; fill: white; font-weight: var(--arcadia-font-semibold, 600); pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
