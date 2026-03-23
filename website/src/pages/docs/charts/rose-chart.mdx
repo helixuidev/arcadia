@@ -1,0 +1,63 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Rose Chart
+description: Polar area chart with equal-angle sectors and value-proportional radii for cyclical data visualization.
+---
+
+# Rose Chart
+
+A polar area chart where each category gets an equal-angle sector with radius proportional to its value. Unlike a pie chart (which varies angle), the rose chart varies radius — making it ideal for cyclical data.
+
+## Basic Usage
+
+```razor
+<HelixRoseChart TItem="WindReading" Data="@data"
+                NameField="@(d => d.Direction)" ValueField="@(d => d.Speed)"
+                Height="400" Width="400" Title="Wind Speed by Direction" />
+
+@code {
+    record WindReading(string Direction, double Speed);
+
+    List<WindReading> data = new()
+    {
+        new("N", 12), new("NE", 8), new("E", 15), new("SE", 10),
+        new("S", 7), new("SW", 18), new("W", 14), new("NW", 9),
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `NameField` | `Func<T, string>` | required | Extracts the category name |
+| `ValueField` | `Func<T, double>` | required | Extracts the value (determines sector radius) |
+| `ShowLabels` | `bool` | true | Show category labels on sectors |
+| `Title` | `string?` | null | Chart title |
+| `Height` | `double` | 300 | Chart height in pixels |
+| `Width` | `double` | 600 | Chart width (0 = responsive) |
+| `AnimateOnLoad` | `bool` | true | Animate sectors on initial render |
+| `ShowLegend` | `bool` | true | Show legend with values |
+
+## How It Works
+
+- Each data item gets a sector of **equal angle** (360 / N degrees)
+- The **radius** of each sector is proportional to `value / maxValue`
+- Sectors start from the top (12 o'clock position) and go clockwise
+- Colors are assigned from the chart palette
+
+## Use Cases
+
+- **Wind roses** — speed and frequency by compass direction
+- **Time-of-day patterns** — activity levels by hour
+- **Seasonal data** — metrics by month or quarter
+- **Categorical comparisons** — when you want to emphasize magnitude differences more than a bar chart
+
+## Features
+
+- Hover tooltips with category name and value
+- Color-coded sectors from the chart palette
+- On-load animation (sectors pop in)
+- PNG/SVG export via toolbar (hover top-right)
+- Screen reader accessible data table
+- Legend with category names and values

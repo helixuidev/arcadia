@@ -1,0 +1,19 @@
+@page "/test/rose"
+@layout Arcadia.Demo.Server.Components.Layout.FullScreenLayout
+@using Arcadia.Charts.Components.Charts
+
+<div style="padding: 24px; background: transparent;">
+    <HelixRoseChart TItem="WindData" Data="@_data"
+                    NameField="@(d => d.Direction)" ValueField="@(d => d.Speed)"
+                    Height="400" Width="400" AnimateOnLoad="true"
+                    Title="Wind Speed by Direction" ShowLegend="true" />
+</div>
+
+@code {
+    record WindData(string Direction, double Speed);
+    List<WindData> _data = new()
+    {
+        new("N", 12), new("NE", 8), new("E", 15), new("SE", 10),
+        new("S", 7), new("SW", 18), new("W", 14), new("NW", 9),
+    };
+}

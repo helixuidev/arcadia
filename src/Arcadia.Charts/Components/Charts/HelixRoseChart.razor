@@ -1,0 +1,61 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 0 && NameField is not null && ValueField is not null)
+{
+    <div class="arcadia-chart" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
+        <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" />
+        <svg width="@EffectiveWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
+             role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Rose chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(EffectiveWidth / 2)" y="24" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @* Sectors *@
+            @for (var i = 0; i < _sectors.Count; i++)
+            {
+                var sector = _sectors[i];
+                <path d="@sector.Path" fill="@sector.Color" stroke="var(--arcadia-color-surface, #fff)" stroke-width="2"
+                      class="arcadia-chart__pie-slice @(AnimateOnLoad ? "arcadia-animate-point" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
+                      @onmouseover="@(e => ShowRoseTooltip(sector.Name, sector.Value, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction" />
+
+                @if (ShowLabels)
+                {
+                    <SvgText x="@F(sector.LabelX)" y="@F(sector.LabelY)" text-anchor="middle"
+                          class="arcadia-chart__pie-label">@sector.Name</SvgText>
+                }
+            }
+        </svg>
+        <CommunityWatermark />
+
+        @if (ShowLegend)
+        {
+            <div class="arcadia-chart__legend">
+                @for (var i = 0; i < _sectors.Count; i++)
+                {
+                    var sector = _sectors[i];
+                    <span class="arcadia-chart__legend-item">
+                        <span class="arcadia-chart__legend-swatch" style="background: @sector.Color;"></span>
+                        @sector.Name (@F(sector.Value))
+                    </span>
+                }
+            </div>
+        }
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Category</th><th>Value</th></tr></thead>
+            <tbody>
+                @foreach (var sector in _sectors)
+                {
+                    <tr><td>@sector.Name</td><td>@sector.Value</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -27,6 +27,7 @@
             <button class="gallery__nav-btn @(_tab == "gauge" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "gauge"'>Gauges</button>
             <button class="gallery__nav-btn @(_tab == "radar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "radar"'>Radar</button>
             <button class="gallery__nav-btn @(_tab == "heatmap" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "heatmap"'>Heatmap</button>
+            <button class="gallery__nav-btn @(_tab == "rose" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rose"'>Rose / Polar</button>
             <button class="gallery__nav-btn @(_tab == "interactive" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "interactive"'>Interactive</button>
             <button class="gallery__nav-btn @(_tab == "streaming" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "streaming"'>Streaming</button>
             <button class="gallery__nav-btn @(_tab == "advanced" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "advanced"'>Advanced</button>
@@ -268,6 +269,24 @@
                                   XField="@(d => d.Day)" YField="@(d => d.Hour)"
                                   ValueField="@(d => d.Count)"
                                   Height="320" Width="0" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "rose")
+        {
+            <div class="gallery__section-header">
+                <h1>Rose / Polar Area Chart</h1>
+                <p>Equal-angle sectors with radius proportional to value. Ideal for cyclical data like wind direction, time-of-day patterns, or seasonal comparisons.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Wind Speed by Direction</div>
+                <div class="gallery__chart-container" style="display: flex; justify-content: center;">
+                    <HelixRoseChart TItem="WindData" Data="@_windData"
+                                    NameField="@(d => d.Direction)" ValueField="@(d => d.Speed)"
+                                    Height="400" Width="400" AnimateOnLoad="true"
+                                    Title="Wind Speed by Direction" />
                 </div>
             </div>
         }
@@ -581,6 +600,7 @@
     record SkillProfile(string Skill, double TeamA, double TeamB);
     record HeatmapPoint(string Day, string Hour, double Count);
     record StockCandle(string Date, double Open, double High, double Low, double Close, double MA5);
+    record WindData(string Direction, double Speed);
     record NullablePoint(string Label, double Value);
     record StreamPoint(string Time, double Value);
 
@@ -665,6 +685,13 @@
     List<SeriesConfig<StockCandle>> _maSeries = new()
     {
         new() { Name = "MA(5)", Field = d => d.MA5, Color = "var(--arcadia-color-info)", StrokeWidth = 1.5 },
+    };
+
+    // ── Rose chart data ──
+    List<WindData> _windData = new()
+    {
+        new("N", 12), new("NE", 8), new("E", 15), new("SE", 10),
+        new("S", 7), new("SW", 18), new("W", 14), new("NW", 9),
     };
 
     // ── Interactive tab data ──
