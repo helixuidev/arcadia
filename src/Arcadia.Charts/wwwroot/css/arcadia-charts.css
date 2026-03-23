@@ -27,30 +27,31 @@
 /* KPI Card */
 .arcadia-kpi {
   padding: var(--arcadia-spacing-md, 1rem);
-  border: 1px solid var(--arcadia-color-border, #e2e8f0);
+  border: 1px solid currentColor; border-color: inherit; opacity: 1;
+  border: 1px solid rgba(128, 128, 128, 0.2);
   border-radius: var(--arcadia-radius-lg, 0.5rem);
-  background: var(--arcadia-color-surface-raised, #fff);
+  background: var(--arcadia-color-surface-raised, rgba(128, 128, 128, 0.08));
   display: flex; flex-direction: column; gap: var(--arcadia-spacing-xs, 0.25rem);
 }
-.arcadia-kpi__title { font-size: var(--arcadia-text-sm, 0.875rem); color: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-kpi__title { font-size: var(--arcadia-text-sm, 0.875rem); color: inherit; opacity: 0.6; }
 .arcadia-kpi__body { display: flex; align-items: baseline; gap: var(--arcadia-spacing-sm, 0.5rem); }
-.arcadia-kpi__value { font-size: var(--arcadia-text-2xl, 1.5rem); font-weight: var(--arcadia-font-bold, 700); color: var(--arcadia-color-text, #0f172a); }
+.arcadia-kpi__value { font-size: var(--arcadia-text-2xl, 1.5rem); font-weight: var(--arcadia-font-bold, 700); color: inherit; }
 .arcadia-kpi__sparkline { margin-top: var(--arcadia-spacing-xs, 0.25rem); }
-.arcadia-kpi__footer { font-size: var(--arcadia-text-xs, 0.75rem); color: var(--arcadia-color-text-muted, #64748b); }
+.arcadia-kpi__footer { font-size: var(--arcadia-text-xs, 0.75rem); color: inherit; opacity: 0.5; }
 
 /* Delta Indicator */
 .arcadia-delta { display: inline-flex; align-items: center; gap: 2px; font-size: var(--arcadia-text-sm, 0.875rem); font-weight: var(--arcadia-font-medium, 500); border-radius: var(--arcadia-radius-sm, 0.25rem); padding: 1px 6px; }
-.arcadia-delta--increase { color: var(--arcadia-color-success, #16a34a); background: var(--arcadia-color-success-subtle, #f0fdf4); }
-.arcadia-delta--decrease { color: var(--arcadia-color-danger, #dc2626); background: var(--arcadia-color-danger-subtle, #fef2f2); }
-.arcadia-delta--neutral { color: var(--arcadia-color-text-muted, #64748b); background: var(--arcadia-color-surface-sunken, #f8fafc); }
+.arcadia-delta--increase { color: var(--arcadia-color-success, #16a34a); background: rgba(22, 163, 74, 0.15); }
+.arcadia-delta--decrease { color: var(--arcadia-color-danger, #dc2626); background: rgba(220, 38, 38, 0.15); }
+.arcadia-delta--neutral { color: inherit; opacity: 0.6; background: rgba(128, 128, 128, 0.1); }
 .arcadia-delta__arrow { font-size: 0.75em; }
 
 /* Progress Bar */
 .arcadia-progress { display: flex; flex-direction: column; gap: var(--arcadia-spacing-1, 0.25rem); }
 .arcadia-progress__header { display: flex; justify-content: space-between; align-items: baseline; }
-.arcadia-progress__label { font-size: var(--arcadia-text-sm, 0.875rem); color: var(--arcadia-color-text, #0f172a); }
-.arcadia-progress__value { font-size: var(--arcadia-text-xs, 0.75rem); color: var(--arcadia-color-text-muted, #64748b); }
-.arcadia-progress__track { height: 8px; background: var(--arcadia-color-border, #e2e8f0); border-radius: var(--arcadia-radius-full, 9999px); overflow: hidden; }
+.arcadia-progress__label { font-size: var(--arcadia-text-sm, 0.875rem); color: inherit; }
+.arcadia-progress__value { font-size: var(--arcadia-text-xs, 0.75rem); color: inherit; opacity: 0.6; }
+.arcadia-progress__track { height: 8px; background: rgba(128, 128, 128, 0.2); border-radius: var(--arcadia-radius-full, 9999px); overflow: hidden; }
 .arcadia-progress__fill { height: 100%; border-radius: var(--arcadia-radius-full, 9999px); transition: width var(--arcadia-duration-normal, 200ms) var(--arcadia-ease-default, ease); }
 
 /* Bar List */

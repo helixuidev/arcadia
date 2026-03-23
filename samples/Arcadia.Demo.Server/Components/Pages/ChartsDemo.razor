@@ -618,8 +618,8 @@
     };
     List<SeriesConfig<MonthlySales>> _lineSeries = new()
     {
-        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true, AreaOpacity = 0.1, CurveType = "smooth" },
-        new() { Name = "Target", Field = d => d.Target, Color = "secondary", Dashed = true, StrokeWidth = 1.5, CurveType = "smooth" },
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "success", ShowArea = true, AreaOpacity = 0.12, CurveType = "smooth", StrokeWidth = 2.5 },
+        new() { Name = "Target", Field = d => d.Target, Color = "warning", Dashed = true, StrokeWidth = 2, CurveType = "smooth" },
     };
     List<SeriesConfig<MonthlySales>> _comboSeries = new()
     {
