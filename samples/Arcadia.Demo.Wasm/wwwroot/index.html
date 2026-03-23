@@ -3,14 +3,23 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HelixUI Demo — WASM</title>
-    <base href="/" />
+    <title>Arcadia Controls — Interactive Playground</title>
+    <base href="/playground/" />
     <link href="_content/Arcadia.Theme/css/helix.css" rel="stylesheet" />
+    <link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" />
+    <link href="_content/Arcadia.FormBuilder/css/arcadia-forms.css" rel="stylesheet" />
+    <link href="_content/Arcadia.Notifications/css/arcadia-notifications.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
-    <link href="_content/Arcadia.Notifications/css/helix-notifications.css" rel="stylesheet" />
 </head>
 <body>
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#090816;color:#8b87a8;font-family:system-ui;">
+            <div style="text-align:center;">
+                <div style="font-size:24px;margin-bottom:8px;">Loading Arcadia Controls...</div>
+                <div style="font-size:13px;opacity:0.6;">First load downloads the .NET runtime (~10MB). Subsequent visits are instant.</div>
+            </div>
+        </div>
+    </div>
     <script src="_framework/blazor.webassembly.js"></script>
 </body>
 </html>

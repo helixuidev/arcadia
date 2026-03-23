@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - 'website/**'
+      - 'samples/Arcadia.Demo.Wasm/**'
+      - 'src/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -22,18 +25,36 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Build Astro site
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Install dependencies
+      - name: Install website dependencies
         working-directory: website
         run: npm ci
 
-      - name: Build
+      - name: Build website
         working-directory: website
         run: npm run build
+
+      # Build Blazor WASM playground
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish WASM demo
+        run: dotnet publish samples/Arcadia.Demo.Wasm/Arcadia.Demo.Wasm.csproj -c Release -o /tmp/wasm-out --framework net9.0
+
+      # Combine: Astro site + WASM playground
+      - name: Copy WASM to playground directory
+        run: |
+          mkdir -p website/dist/playground
+          cp -r /tmp/wasm-out/wwwroot/* website/dist/playground/
+          # Add .nojekyll to prevent GitHub Pages from ignoring _framework
+          touch website/dist/.nojekyll
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

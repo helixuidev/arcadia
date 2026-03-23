@@ -1,0 +1,523 @@
+@page "/charts"
+@page "/"
+@using Arcadia.Charts.Core
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Components.Dashboard
+@using Arcadia.FormBuilder.Schema
+@using Arcadia.FormBuilder.Components
+@using Arcadia.FormBuilder.Components.Fields
+@using Arcadia.FormBuilder.Components.Layout
+@inject Arcadia.Notifications.ToastService ToastService
+
+<PageTitle>Arcadia Controls — Component Gallery</PageTitle>
+
+<div class="gallery">
+    <div class="gallery__sidebar">
+        <h2 class="gallery__title">Arcadia Controls</h2>
+        <p class="gallery__subtitle">Component Gallery</p>
+        <nav class="gallery__nav">
+            <div class="gallery__nav-group">Charts</div>
+            <button class="gallery__nav-btn @(_tab == "dashboard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dashboard"'>Dashboard Widgets</button>
+            <button class="gallery__nav-btn @(_tab == "line" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "line"'>Line & Area</button>
+            <button class="gallery__nav-btn @(_tab == "bar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "bar"'>Bar</button>
+            <button class="gallery__nav-btn @(_tab == "pie" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "pie"'>Pie & Donut</button>
+            <button class="gallery__nav-btn @(_tab == "scatter" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "scatter"'>Scatter</button>
+            <button class="gallery__nav-btn @(_tab == "candle" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "candle"'>Candlestick</button>
+            <button class="gallery__nav-btn @(_tab == "gauge" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "gauge"'>Gauges</button>
+            <button class="gallery__nav-btn @(_tab == "radar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "radar"'>Radar</button>
+            <button class="gallery__nav-btn @(_tab == "heatmap" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "heatmap"'>Heatmap</button>
+
+            <div class="gallery__nav-group">Forms</div>
+            <button class="gallery__nav-btn @(_tab == "fields" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "fields"'>Field Types</button>
+            <button class="gallery__nav-btn @(_tab == "schema" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "schema"'>Schema Form</button>
+            <button class="gallery__nav-btn @(_tab == "wizard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "wizard"'>Wizard</button>
+
+            <div class="gallery__nav-group">Other</div>
+            <button class="gallery__nav-btn @(_tab == "toasts" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "toasts"'>Notifications</button>
+        </nav>
+        <div class="gallery__cta">
+            <a href="https://arcadiaui.com" class="gallery__admin-link" target="_blank">arcadiaui.com →</a>
+        </div>
+    </div>
+
+    <div class="gallery__content">
+
+        @if (_tab == "dashboard")
+        {
+            <div class="gallery__section-header">
+                <h1>Dashboard Widgets</h1>
+                <p>Pre-composed widgets that look great out of the box. Drop them into any layout — no chart configuration needed.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">KPI Cards with Sparklines</div>
+                <div class="gallery__widget-grid">
+                    <HelixKpiCard Title="Monthly Revenue" Value="$142,580" Delta="+12.3%" DeltaType="DeltaType.Increase"
+                                  Sparkline="@_revenueSparkline" Footer="vs last month" />
+                    <HelixKpiCard Title="Active Users" Value="8,420" Delta="-2.1%" DeltaType="DeltaType.Decrease"
+                                  Sparkline="@_usersSparkline" SparklineColor="danger" Footer="vs last week" />
+                    <HelixKpiCard Title="Conversion Rate" Value="3.8%" Delta="+0.5%" DeltaType="DeltaType.Increase"
+                                  Sparkline="@_conversionSparkline" SparklineColor="success" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Progress Indicators</div>
+                <div class="gallery__progress-stack">
+                    <HelixProgressBar Value="73" Max="100" Label="Storage Used" Thresholds="@_thresholds" />
+                    <HelixProgressBar Value="45" Max="100" Label="CPU Usage" Color="info" />
+                    <HelixProgressBar Value="92" Max="100" Label="Memory" Thresholds="@_thresholds" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Inline Sparklines</div>
+                <div class="gallery__sparkline-row">
+                    <span>Revenue <HelixSparkline Data="@_revenueSparkline" Color="primary" ShowArea="true" /></span>
+                    <span>Users <HelixSparkline Data="@_usersSparkline" Color="danger" /></span>
+                    <span>Growth <HelixSparkline Data="@_conversionSparkline" Color="success" ShowArea="true" /></span>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "line")
+        {
+            <div class="gallery__section-header">
+                <h1>Line & Area Chart</h1>
+                <p>Multi-series with area fill, dashed lines, and trendline overlays. Lines draw themselves on load.</p>
+                <div class="gallery__hint">💡 Hover points for values · Click legend to toggle series</div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Revenue vs Target — 12 Months</div>
+                <div class="gallery__chart-container">
+                    <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
+                                    XField="@(d => (object)d.Month)" Series="@_lineSeries"
+                                    Height="380" Width="780" ShowPoints="true" AnimateOnLoad="true" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">With Trendline Overlay</div>
+                <div class="gallery__chart-container">
+                    <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
+                                    XField="@(d => (object)d.Month)" Series="@_trendSeries"
+                                    Height="380" Width="780" ShowDataLabels="true" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "bar")
+        {
+            <div class="gallery__section-header">
+                <h1>Bar Chart</h1>
+                <p>Grouped or stacked bars with rounded corners. Bars grow from baseline on load.</p>
+                <div class="gallery__hint">💡 Hover bars for tooltips · Click legend to toggle regions</div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Quarterly Revenue — Grouped by Region</div>
+                <div class="gallery__chart-container">
+                    <HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales"
+                                   XField="@(d => (object)d.Quarter)" Series="@_barSeries"
+                                   Height="380" Width="780" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Same Data — Stacked</div>
+                <div class="gallery__chart-container">
+                    <HelixBarChart TItem="QuarterlySales" Data="@_quarterlySales"
+                                   XField="@(d => (object)d.Quarter)" Series="@_barSeries"
+                                   Height="380" Width="780" Stacked="true" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "pie")
+        {
+            <div class="gallery__section-header">
+                <h1>Pie & Donut</h1>
+                <p>Animated slices with configurable labels. Set InnerRadius for donut mode.</p>
+            </div>
+
+            <div class="gallery__showcase-row">
+                <div class="gallery__showcase">
+                    <div class="gallery__showcase-title">Pie</div>
+                    <div class="gallery__chart-container">
+                        <HelixPieChart TItem="BudgetItem" Data="@_budget"
+                                       NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+                                       Height="340" Width="380" />
+                    </div>
+                </div>
+                <div class="gallery__showcase">
+                    <div class="gallery__showcase-title">Donut</div>
+                    <div class="gallery__chart-container">
+                        <HelixPieChart TItem="BudgetItem" Data="@_budget"
+                                       NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+                                       Height="340" Width="380" InnerRadius="70" />
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "scatter")
+        {
+            <div class="gallery__section-header">
+                <h1>Scatter Chart</h1>
+                <p>Plot X/Y data points with staggered pop-in animation. Add SizeField for bubble charts.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Height vs Weight Distribution</div>
+                <div class="gallery__chart-container">
+                    <HelixScatterChart TItem="DataXY" Data="@_scatterData"
+                                       XField="@(d => d.X)" YField="@(d => d.Y)"
+                                       Height="400" Width="780" Color="primary" PointSize="6" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "candle")
+        {
+            <div class="gallery__section-header">
+                <h1>Candlestick</h1>
+                <p>Financial OHLC chart with moving average overlay. Green candles = close above open.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">ACME Corp — 30 Day Price with MA(5)</div>
+                <div class="gallery__chart-container">
+                    <HelixCandlestickChart TItem="StockCandle" Data="@_stockData"
+                                            LabelField="@(d => d.Date)"
+                                            OpenField="@(d => d.Open)" HighField="@(d => d.High)"
+                                            LowField="@(d => d.Low)" CloseField="@(d => d.Close)"
+                                            OverlaySeries="@_maSeries"
+                                            Height="420" Width="780" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "gauge")
+        {
+            <div class="gallery__section-header">
+                <h1>Gauge Charts</h1>
+                <p>Radial gauges with color thresholds. Arc fills with smooth animation on load.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">System Health Monitors</div>
+                <div class="gallery__gauge-row">
+                    <HelixGaugeChart Value="73" Min="0" Max="100" Label="CPU" Width="180" Height="140" Thresholds="@_gaugeThresholds" />
+                    <HelixGaugeChart Value="42" Min="0" Max="100" Label="Memory" Width="180" Height="140" ValueFormatString="0'%'" />
+                    <HelixGaugeChart Value="91" Min="0" Max="100" Label="Disk" Width="180" Height="140" Thresholds="@_gaugeThresholds" />
+                    <HelixGaugeChart Value="99.9" Min="0" Max="100" Label="Uptime" Width="180" Height="140" ValueFormatString="0.0'%'" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "radar")
+        {
+            <div class="gallery__section-header">
+                <h1>Radar Chart</h1>
+                <p>Multi-dimensional comparison across categories. Polygons draw with line animation.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Team Skills — A vs B</div>
+                <div class="gallery__chart-container">
+                    <HelixRadarChart TItem="SkillProfile" Data="@_skillData"
+                                     LabelField="@(d => d.Skill)" Series="@_radarSeries"
+                                     Height="420" Width="460" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "heatmap")
+        {
+            <div class="gallery__section-header">
+                <h1>Heatmap</h1>
+                <p>2D color grid for visualizing density, frequency, or correlation data.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Commit Activity by Day & Hour</div>
+                <div class="gallery__chart-container">
+                    <HelixHeatmap TItem="HeatmapPoint" Data="@_heatmapData"
+                                  XField="@(d => d.Day)" YField="@(d => d.Hour)"
+                                  ValueField="@(d => d.Count)"
+                                  Height="320" Width="780" />
+                </div>
+            </div>
+        }
+
+        @* ─── FORMS ─── *@
+
+        @if (_tab == "fields")
+        {
+            <div class="gallery__section-header">
+                <h1>Field Types</h1>
+                <p>21 field types with labels, validation, helper text, and full accessibility. Each field is a standalone component with two-way binding.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Text Inputs</div>
+                <div style="display: flex; flex-direction: column; gap: 20px; max-width: 480px;">
+                    <TextField Label="Full Name" Value="@_textVal" ValueChanged="v => _textVal = v" Placeholder="Jane Doe" HelperText="Enter your legal name" Required="true" />
+                    <PasswordField Label="Password" Value="@_passVal" ValueChanged="v => _passVal = v" Placeholder="Enter password" ShowStrength="true" />
+                    <TextAreaField Label="Bio" Value="@_bioVal" ValueChanged="v => _bioVal = v" Placeholder="Tell us about yourself..." Rows="3" />
+                    <MaskedField Label="Phone" Value="@_maskedVal" ValueChanged="v => _maskedVal = v" Mask="(###) ###-####" HelperText="US format" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Selection & Choice</div>
+                <div style="display: flex; flex-direction: column; gap: 20px; max-width: 480px;">
+                    <SelectField Label="Country" Value="@_selectVal" ValueChanged="v => _selectVal = v" Placeholder="Choose one..." Options="@_countries" />
+                    <RadioGroupField Label="Priority" Value="@_radioVal" ValueChanged="v => _radioVal = v" Options="@_priorities" />
+                    <CheckboxField Label="I agree to the terms and conditions" Value="@_checkVal" ValueChanged="v => _checkVal = v" />
+                    <SwitchField Label="Enable dark mode" Value="@_switchVal" ValueChanged="v => _switchVal = v" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Date, Time & Numeric</div>
+                <div style="display: flex; flex-direction: column; gap: 20px; max-width: 480px;">
+                    <DateField Label="Start Date" Value="@_dateVal" ValueChanged="v => _dateVal = v" />
+                    <NumberField Label="Quantity" Value="@_numVal" ValueChanged="v => _numVal = v" Min="0" Max="100" />
+                    <SliderField Label="Volume" Value="@_sliderVal" ValueChanged="v => _sliderVal = v" Min="0" Max="100" Step="5" />
+                    <RatingField Label="Satisfaction" Value="@_ratingVal" ValueChanged="v => _ratingVal = v" MaxRating="5" />
+                    <ColorField Label="Brand Color" Value="@_colorVal" ValueChanged="v => _colorVal = v" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "schema")
+        {
+            <div class="gallery__section-header">
+                <h1>Schema-Driven Form</h1>
+                <p>Define a FormSchema object and the HelixFormBuilder renders it dynamically. Includes validation, conditional fields, and sections.</p>
+                <div class="gallery__hint">💡 Select "Phone" as contact method to see conditional field appear</div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Contact Form — Rendered from Schema</div>
+                <div style="max-width: 540px;">
+                    <HelixFormBuilder Schema="@_contactSchema" State="@_contactState"
+                                      OnValidSubmit="HandleFormSubmit" OnInvalidSubmit="HandleFormError" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "wizard")
+        {
+            <div class="gallery__section-header">
+                <h1>Wizard / Multi-Step</h1>
+                <p>Step-by-step form with progress bar. Navigate with Previous/Next. Review before submit.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Onboarding Wizard</div>
+                <div style="max-width: 560px;">
+                    <HelixWizard @bind-CurrentStep="_wizardStep" OnComplete="HandleWizardDone">
+                        <HelixWizardStep Title="Personal" Description="Tell us about yourself.">
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <TextField Label="Full Name" Value="@_wName" ValueChanged="v => _wName = v" Required="true" Placeholder="Jane Doe" />
+                                <TextField Label="Email" Value="@_wEmail" ValueChanged="v => _wEmail = v" Required="true" Placeholder="jane@example.com" />
+                            </div>
+                        </HelixWizardStep>
+                        <HelixWizardStep Title="Preferences" Description="Customize your experience.">
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <RatingField Label="How would you rate our product?" Value="@_wRating" ValueChanged="v => _wRating = v" />
+                                <SliderField Label="Email frequency" Value="@_wFreq" ValueChanged="v => _wFreq = v" Min="0" Max="10" />
+                            </div>
+                        </HelixWizardStep>
+                        <HelixWizardStep Title="Review" Description="Confirm and submit.">
+                            <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 6px;">
+                                <div><strong>Name:</strong> @_wName</div>
+                                <div><strong>Email:</strong> @_wEmail</div>
+                                <div><strong>Rating:</strong> @_wRating / 5</div>
+                                <div><strong>Frequency:</strong> @_wFreq</div>
+                            </div>
+                        </HelixWizardStep>
+                    </HelixWizard>
+                </div>
+            </div>
+        }
+
+        @* ─── NOTIFICATIONS ─── *@
+
+        @if (_tab == "toasts")
+        {
+            <div class="gallery__section-header">
+                <h1>Toast Notifications</h1>
+                <p>Fire-and-forget toasts with auto-dismiss, stacking, and severity levels.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Trigger Toasts</div>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <button class="gallery__toast-btn gallery__toast-btn--info" @onclick='() => ToastService.ShowInfo("This is an informational message.")'>Info</button>
+                    <button class="gallery__toast-btn gallery__toast-btn--success" @onclick='() => ToastService.ShowSuccess("Operation completed successfully.")'>Success</button>
+                    <button class="gallery__toast-btn gallery__toast-btn--warning" @onclick='() => ToastService.ShowWarning("Please review before proceeding.")'>Warning</button>
+                    <button class="gallery__toast-btn gallery__toast-btn--error" @onclick='() => ToastService.ShowError("Something went wrong.")'>Error</button>
+                    <button class="gallery__toast-btn" @onclick='() => ToastService.ShowSuccess("Your changes have been saved.", "Saved!")'>With Title</button>
+                    <button class="gallery__toast-btn" @onclick="ToastService.DismissAll">Dismiss All</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+    string _tab = "dashboard";
+
+    // Form field values
+    string? _textVal, _passVal, _bioVal, _maskedVal, _selectVal, _radioVal, _colorVal = "#8b5cf6";
+    bool _checkVal, _switchVal;
+    double? _numVal;
+    DateTime? _dateVal;
+    double _sliderVal = 50;
+    int _ratingVal = 3;
+
+    // Wizard state
+    int _wizardStep;
+    string? _wName, _wEmail;
+    int _wRating;
+    double _wFreq = 5;
+
+    // Schema form state
+    Arcadia.FormBuilder.FormState _contactState = new();
+
+    List<FieldOption> _countries = new() { new() { Label = "United States", Value = "US" }, new() { Label = "Canada", Value = "CA" }, new() { Label = "United Kingdom", Value = "UK" }, new() { Label = "Germany", Value = "DE" } };
+    List<FieldOption> _priorities = new() { new() { Label = "Low", Value = "low" }, new() { Label = "Medium", Value = "medium" }, new() { Label = "High", Value = "high" } };
+
+    FormSchema _contactSchema = new()
+    {
+        Title = "Contact Form",
+        Description = "Fill out the form and we'll get back to you.",
+        SubmitText = "Send Message",
+        CancelText = "Reset",
+        Fields = new()
+        {
+            new() { Name = "name", Type = FieldType.Text, Label = "Full Name", Required = true, Placeholder = "John Doe", Validation = new() { MinLength = 2 } },
+            new() { Name = "email", Type = FieldType.Text, Label = "Email", Required = true, Placeholder = "john@example.com", Validation = new() { Pattern = "email" } },
+            new() { Name = "method", Type = FieldType.Select, Label = "Contact Method", Required = true, Placeholder = "Select...", Options = new() { "Email", "Phone", "Mail" } },
+            new() { Name = "phone", Type = FieldType.Text, Label = "Phone", Placeholder = "+1 (555) 000-0000", Conditions = new() { new() { Field = "method", Operator = Arcadia.FormBuilder.Schema.ConditionalOperator.Equals, Value = "Phone", Action = Arcadia.FormBuilder.Schema.ConditionalAction.Show } } },
+            new() { Name = "message", Type = FieldType.TextArea, Label = "Message", Required = true, Placeholder = "How can we help?", Validation = new() { MinLength = 10 } },
+            new() { Name = "urgent", Type = FieldType.Switch, Label = "Mark as urgent" },
+            new() { Name = "terms", Type = FieldType.Checkbox, Label = "I agree to the terms", Required = true },
+        }
+    };
+
+    void HandleFormSubmit(Arcadia.FormBuilder.FormState state) => ToastService.ShowSuccess("Form submitted!", "Success");
+    void HandleFormError(Arcadia.FormBuilder.FormState state) => ToastService.ShowError("Please fix errors.", "Validation");
+    void HandleWizardDone() => ToastService.ShowSuccess($"Wizard complete! Name: {_wName}", "Done");
+
+    record MonthlySales(string Month, double Revenue, double Target);
+    record QuarterlySales(string Quarter, double NorthAmerica, double Europe, double Asia);
+    record BudgetItem(string Category, double Amount);
+    record DataXY(double X, double Y);
+    record SkillProfile(string Skill, double TeamA, double TeamB);
+    record HeatmapPoint(string Day, string Hour, double Count);
+    record StockCandle(string Date, double Open, double High, double Low, double Close, double MA5);
+
+    double[] _revenueSparkline = { 42, 48, 45, 52, 49, 55, 58, 62, 59, 65, 68, 72 };
+    double[] _usersSparkline = { 85, 82, 88, 84, 80, 78, 82, 79, 76, 74, 78, 72 };
+    double[] _conversionSparkline = { 2.1, 2.3, 2.5, 2.4, 2.8, 3.0, 2.9, 3.2, 3.4, 3.5, 3.6, 3.8 };
+    IReadOnlyList<(double Threshold, string Color)> _thresholds = new[] { (60.0, "warning"), (90.0, "danger") };
+
+    List<MonthlySales> _monthlySales = new()
+    {
+        new("Jan", 45000, 50000), new("Feb", 52000, 50000), new("Mar", 48000, 52000),
+        new("Apr", 61000, 55000), new("May", 55000, 55000), new("Jun", 67000, 58000),
+        new("Jul", 72000, 60000), new("Aug", 68000, 62000), new("Sep", 75000, 65000),
+        new("Oct", 82000, 68000), new("Nov", 79000, 70000), new("Dec", 88000, 72000),
+    };
+    List<SeriesConfig<MonthlySales>> _lineSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true, AreaOpacity = 0.1 },
+        new() { Name = "Target", Field = d => d.Target, Color = "secondary", Dashed = true, StrokeWidth = 1.5 },
+    };
+    List<SeriesConfig<MonthlySales>> _trendSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary",
+                Trendline = new() { Type = TrendlineType.Linear, Color = "var(--arcadia-color-danger)", Dashed = true } },
+    };
+
+    List<QuarterlySales> _quarterlySales = new()
+    {
+        new("Q1", 145000, 98000, 72000), new("Q2", 183000, 112000, 89000),
+        new("Q3", 215000, 134000, 105000), new("Q4", 268000, 156000, 128000),
+    };
+    List<SeriesConfig<QuarterlySales>> _barSeries = new()
+    {
+        new() { Name = "North America", Field = d => d.NorthAmerica, Color = "primary" },
+        new() { Name = "Europe", Field = d => d.Europe, Color = "success" },
+        new() { Name = "Asia", Field = d => d.Asia, Color = "warning" },
+    };
+
+    List<BudgetItem> _budget = new()
+    {
+        new("Engineering", 450000), new("Marketing", 180000), new("Sales", 220000),
+        new("Operations", 120000), new("HR", 80000),
+    };
+
+    List<DataXY> _scatterData = Enumerable.Range(0, 50).Select(i =>
+    {
+        var rng = new Random(i);
+        return new DataXY(150 + rng.NextDouble() * 50, 50 + rng.NextDouble() * 60);
+    }).ToList();
+
+    List<GaugeThreshold> _gaugeThresholds = new()
+    {
+        new() { Value = 0, Color = "var(--arcadia-color-success)" },
+        new() { Value = 60, Color = "var(--arcadia-color-warning)" },
+        new() { Value = 85, Color = "var(--arcadia-color-danger)" },
+    };
+
+    List<SkillProfile> _skillData = new()
+    {
+        new("C#", 90, 70), new("JavaScript", 65, 85), new("SQL", 80, 60),
+        new("DevOps", 50, 75), new("Design", 40, 80), new("Testing", 75, 65),
+    };
+    List<SeriesConfig<SkillProfile>> _radarSeries = new()
+    {
+        new() { Name = "Team A", Field = d => d.TeamA, Color = "primary" },
+        new() { Name = "Team B", Field = d => d.TeamB, Color = "success" },
+    };
+
+    List<HeatmapPoint> _heatmapData = new();
+    List<StockCandle> _stockData = new();
+    List<SeriesConfig<StockCandle>> _maSeries = new()
+    {
+        new() { Name = "MA(5)", Field = d => d.MA5, Color = "var(--arcadia-color-info)", StrokeWidth = 1.5 },
+    };
+
+    protected override void OnInitialized()
+    {
+        var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        var hours = new[] { "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm" };
+        var rng = new Random(42);
+        foreach (var day in days)
+            foreach (var hour in hours)
+                _heatmapData.Add(new HeatmapPoint(day, hour, rng.Next(0, (day is "Sat" or "Sun" ? 2 : 8) + 5)));
+
+        var stockRng = new Random(123);
+        var price = 142.50;
+        var closes = new List<double>();
+        for (var i = 0; i < 30; i++)
+        {
+            var change = (stockRng.NextDouble() - 0.48) * 4;
+            var open = price; var close = price + change;
+            var high = Math.Max(open, close) + stockRng.NextDouble() * 2;
+            var low = Math.Min(open, close) - stockRng.NextDouble() * 2;
+            closes.Add(close);
+            var ma5 = closes.Count >= 5 ? closes.Skip(closes.Count - 5).Take(5).Average() : double.NaN;
+            _stockData.Add(new StockCandle(new DateTime(2026, 2, 20).AddDays(i).ToString("MMM d"),
+                Math.Round(open, 2), Math.Round(high, 2), Math.Round(low, 2), Math.Round(close, 2), Math.Round(ma5, 2)));
+            price = close;
+        }
+    }
+}

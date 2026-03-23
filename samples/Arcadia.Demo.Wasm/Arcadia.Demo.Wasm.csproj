@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\src\Arcadia.Theme\Arcadia.Theme.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.Notifications\Arcadia.Notifications.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.FormBuilder\Arcadia.FormBuilder.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Charts\Arcadia.Charts.csproj" />
   </ItemGroup>
 
 </Project>

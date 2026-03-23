@@ -1,19 +1,6 @@
 @inherits LayoutComponentBase
 
-<ThemeProvider Class="arcadia-app-layout">
-    <header class="arcadia-demo-header">
-        <h1>HelixUI Demo</h1>
-        <span style="color: var(--arcadia-color-text-muted); font-size: var(--arcadia-text-sm);">WASM</span>
-        <ThemeToggle />
-    </header>
-
-    <nav class="arcadia-demo-nav">
-        <NavMenu />
-    </nav>
-
-    <main class="arcadia-demo-main">
-        @Body
-    </main>
-
+<ThemeProvider Style="background: transparent; min-height: 100vh;">
+    @Body
     <HelixToastContainer Position="ToastPosition.TopRight" />
 </ThemeProvider>
