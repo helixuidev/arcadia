@@ -48,7 +48,7 @@ jobs:
         run: dotnet build HelixUI.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test HelixUI.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test tests/Arcadia.Tests.Unit/Arcadia.Tests.Unit.csproj --configuration Release --no-build --verbosity normal
 
       - name: Pack all packages
         run: |
@@ -69,6 +69,7 @@ jobs:
         run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
       - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: ./nupkgs/*.nupkg
