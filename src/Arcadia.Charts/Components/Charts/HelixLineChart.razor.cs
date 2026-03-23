@@ -21,6 +21,9 @@ public partial class HelixLineChart<T> : ChartBase<T>
     /// <summary>How to handle null/missing data values (NaN in series Field).</summary>
     [Parameter] public NullHandling NullHandling { get; set; } = NullHandling.Gap;
 
+    /// <summary>When true, area fills stack on top of each other instead of starting from zero.</summary>
+    [Parameter] public bool Stacked { get; set; }
+
     private ChartLayoutResult _layout = new();
     private LinearScale? _yScale;
     private List<string> _xLabels = new();
@@ -28,6 +31,7 @@ public partial class HelixLineChart<T> : ChartBase<T>
     private Dictionary<int, string> _areaPaths = new();
     private Dictionary<int, string> _trendlinePaths = new();
     private Dictionary<int, List<DataPointInfo>> _dataPoints = new();
+    private Dictionary<int, Dictionary<int, double>> _stackBaselines = new();
 
     private string? CssClass => CssBuilder.Default("arcadia-chart__svg")
         .AddClass(Class)
@@ -42,8 +46,27 @@ public partial class HelixLineChart<T> : ChartBase<T>
         _xLabels = Data.Select(d => FormatLabel(XField(d))).ToList();
 
         // Calculate Y range across all series (filter out NaN for null handling)
-        var allYValues = Series.SelectMany(s => Data.Select(d => s.Field(d)))
-            .Where(v => !double.IsNaN(v)).ToList();
+        List<double> allYValues;
+        if (Stacked)
+        {
+            // For stacked, the Y range needs to account for cumulative sums
+            var cumulativeMax = new double[Data.Count];
+            foreach (var s in Series.Where(s => s.Visible))
+            {
+                for (var j = 0; j < Data.Count; j++)
+                {
+                    var v = s.Field(Data[j]);
+                    if (!double.IsNaN(v)) cumulativeMax[j] += v;
+                }
+            }
+            allYValues = cumulativeMax.Where(v => !double.IsNaN(v)).ToList();
+            allYValues.Add(0);
+        }
+        else
+        {
+            allYValues = Series.SelectMany(s => Data.Select(d => s.Field(d)))
+                .Where(v => !double.IsNaN(v)).ToList();
+        }
         if (allYValues.Count == 0) return;
         var yMin = YAxisMin ?? allYValues.Min();
         var yMax = YAxisMax ?? allYValues.Max();
@@ -73,6 +96,7 @@ public partial class HelixLineChart<T> : ChartBase<T>
         _areaPaths.Clear();
         _trendlinePaths.Clear();
         _dataPoints.Clear();
+        _stackBaselines.Clear();
 
         for (var si = 0; si < Series.Count; si++)
         {
@@ -107,7 +131,20 @@ public partial class HelixLineChart<T> : ChartBase<T>
                     continue; // Skip but don't break the segment
                 }
 
-                var y = _yScale.Scale(value);
+                // In stacked mode, add previous series values
+                var stackedValue = value;
+                if (Stacked && si > 0)
+                {
+                    for (var prevSi = 0; prevSi < si; prevSi++)
+                    {
+                        if (Series[prevSi].Visible)
+                        {
+                            var prevVal = Series[prevSi].Field(Data[i]);
+                            if (!double.IsNaN(prevVal)) stackedValue += prevVal;
+                        }
+                    }
+                }
+                var y = _yScale.Scale(Stacked ? stackedValue : value);
                 currentSegment.Add((x, y, i));
                 rawValues.Add(value);
                 seriesPoints.Add(new DataPointInfo { X = x, Y = y, Value = value, Index = i });
@@ -136,12 +173,41 @@ public partial class HelixLineChart<T> : ChartBase<T>
                     {
                         if (segment.Count < 2) continue;
                         var points = segment.Select(p => $"{F(p.X)},{F(p.Y)}").ToList();
-                        var baseY = _layout.PlotArea.Y + _layout.PlotArea.Height;
-                        var part = "M" + string.Join(" L", points);
-                        part += $" L{F(segment[^1].X)},{F(baseY)} L{F(segment[0].X)},{F(baseY)} Z";
-                        areaPathParts.Add(part);
+
+                        if (Stacked && si > 0 && _stackBaselines.ContainsKey(si - 1))
+                        {
+                            // Stack: bottom edge follows previous series
+                            var prevBaseline = _stackBaselines[si - 1];
+                            var bottomPoints = segment.Select(p => {
+                                var baseY = prevBaseline.ContainsKey(p.Index) ? prevBaseline[p.Index] : _layout.PlotArea.Y + _layout.PlotArea.Height;
+                                return $"{F(p.X)},{F(baseY)}";
+                            }).Reverse().ToList();
+                            var part = "M" + string.Join(" L", points) + " L" + string.Join(" L", bottomPoints) + " Z";
+                            areaPathParts.Add(part);
+                        }
+                        else
+                        {
+                            // Normal: bottom edge is the x-axis
+                            var baseY = _layout.PlotArea.Y + _layout.PlotArea.Height;
+                            var part = "M" + string.Join(" L", points);
+                            part += $" L{F(segment[^1].X)},{F(baseY)} L{F(segment[0].X)},{F(baseY)} Z";
+                            areaPathParts.Add(part);
+                        }
                     }
                     _areaPaths[si] = string.Join(" ", areaPathParts);
+                }
+
+                // Store baseline for stacking
+                if (Stacked)
+                {
+                    var baseline = new Dictionary<int, double>();
+                    foreach (var pt in seriesPoints)
+                    {
+                        var prevY = (si > 0 && _stackBaselines.ContainsKey(si - 1) && _stackBaselines[si - 1].ContainsKey(pt.Index))
+                            ? _stackBaselines[si - 1][pt.Index] : _layout.PlotArea.Y + _layout.PlotArea.Height;
+                        baseline[pt.Index] = pt.Y;
+                    }
+                    _stackBaselines[si] = baseline;
                 }
             }
 

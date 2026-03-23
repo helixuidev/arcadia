@@ -99,6 +99,15 @@
             </div>
 
             <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Stacked Area</div>
+                <div class="gallery__chart-container">
+                    <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
+                                    XField="@(d => (object)d.Month)" Series="@_stackedSeries"
+                                    Height="380" Width="0" Stacked="true" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
                 <div class="gallery__showcase-title">With Trendline Overlay</div>
                 <div class="gallery__chart-container">
                     <HelixLineChart TItem="MonthlySales" Data="@_monthlySales"
@@ -440,6 +449,12 @@
     {
         new() { Name = "Revenue", Field = d => d.Revenue, Color = "primary", ShowArea = true, AreaOpacity = 0.1 },
         new() { Name = "Target", Field = d => d.Target, Color = "secondary", Dashed = true, StrokeWidth = 1.5 },
+    };
+    List<SeriesConfig<MonthlySales>> _stackedSeries = new()
+    {
+        new() { Name = "Product A", Field = d => d.Revenue * 0.5, Color = "primary", ShowArea = true, AreaOpacity = 0.6 },
+        new() { Name = "Product B", Field = d => d.Revenue * 0.3, Color = "success", ShowArea = true, AreaOpacity = 0.6 },
+        new() { Name = "Product C", Field = d => d.Target * 0.2, Color = "warning", ShowArea = true, AreaOpacity = 0.6 },
     };
     List<SeriesConfig<MonthlySales>> _trendSeries = new()
     {
