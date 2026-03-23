@@ -1,7 +1,7 @@
 ---
 layout: ../../../layouts/DocsLayout.astro
 title: Charts Overview
-description: 8 chart types + 7 dashboard widgets for Blazor. Native SVG rendering, zero JS dependencies.
+description: 11 chart types + 7 dashboard widgets for Blazor. Native SVG rendering, zero JS dependencies.
 ---
 
 # Charts & Dashboard Widgets
@@ -9,7 +9,7 @@ description: 8 chart types + 7 dashboard widgets for Blazor. Native SVG renderin
 import LiveDemo from "../../../components/LiveDemo.astro";
 
 
-A dashboard analytics toolkit for Blazor — 8 chart types and 7 pre-composed dashboard widgets. Native SVG rendering with zero JavaScript dependencies.
+A dashboard analytics toolkit for Blazor — 11 chart types and 7 pre-composed dashboard widgets. Native SVG rendering with zero JavaScript dependencies.
 
 ## Chart Types
 
@@ -23,6 +23,9 @@ A dashboard analytics toolkit for Blazor — 8 chart types and 7 pre-composed da
 | Radar / Spider | `HelixRadarChart<T>` | Pro |
 | Gauge | `HelixGaugeChart` | Pro |
 | Heatmap | `HelixHeatmap<T>` | Pro |
+| Funnel | `HelixFunnelChart<T>` | Pro |
+| Treemap | `HelixTreemapChart<T>` | Pro |
+| Waterfall | `HelixWaterfallChart<T>` | Pro |
 
 ## Dashboard Widgets
 
@@ -59,9 +62,21 @@ All chart components inherit from `ChartBase<T>` and share these parameters:
 | `YAxisFormatString` | `string?` | null | Format (e.g., "C0", "P1") |
 | `ShowDataLabels` | `bool` | false | Value labels on data points |
 | `OnPointClick` | `EventCallback<T>` | — | Click event on data point |
+| `ShowCrosshair` | `bool` | false | Vertical crosshair on hover ([docs](/docs/charts/crosshair)) |
+| `Annotations` | `List<ChartAnnotation>?` | null | Data point markers ([docs](/docs/charts/annotations)) |
+| `EnableZoom` | `bool` | false | Mouse wheel zoom |
+| `EnablePan` | `bool` | false | Click-drag pan |
+| `ZoomMode` | `string` | "x" | Zoom direction: x, y, or xy |
 | `Loading` | `bool` | false | Show loading skeleton |
 | `AriaLabel` | `string?` | null | Screen reader label |
 | `FormatProvider` | `IFormatProvider?` | null | Culture for formatting |
+
+### Line Chart Only
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `SlidingWindow` | `int` | 0 | Max points for streaming ([docs](/docs/charts/streaming)) |
+| `NullHandling` | `NullHandling` | Gap | How to handle missing data: Gap, Connect, Zero |
 
 ## Series Configuration
 

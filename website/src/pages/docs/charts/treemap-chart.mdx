@@ -1,0 +1,48 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Treemap Chart
+description: Visualize hierarchical data as nested rectangles with the HelixTreemapChart component.
+---
+
+# Treemap Chart
+
+Displays hierarchical data as nested rectangles. Each rectangle's area is proportional to its value, using a squarified layout algorithm.
+
+## Basic Usage
+
+```razor
+<HelixTreemapChart TItem="DeptBudget" Data="@data"
+                   NameField="@(d => d.Dept)" ValueField="@(d => d.Budget)"
+                   Height="400" Width="600" Title="Department Allocation" />
+
+@code {
+    record DeptBudget(string Dept, double Budget);
+
+    List<DeptBudget> data = new()
+    {
+        new("Engineering", 450000), new("Marketing", 180000),
+        new("Sales", 220000), new("Operations", 120000),
+        new("HR", 80000), new("Design", 95000),
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `NameField` | `Func<T, string>` | required | Extracts the category name |
+| `ValueField` | `Func<T, double>` | required | Extracts the numeric value (determines area) |
+| `Title` | `string?` | null | Chart title |
+| `Height` | `double` | 300 | Chart height in pixels |
+| `Width` | `double` | 600 | Chart width (0 = responsive) |
+| `AnimateOnLoad` | `bool` | true | Animate cells on initial render |
+
+## Features
+
+- Squarified treemap algorithm for optimal aspect ratios
+- Color coding from the chart palette
+- Cell labels with name and formatted value
+- Hover tooltips
+- PNG/SVG export via toolbar
+- Screen reader accessible data table

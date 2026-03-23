@@ -1,0 +1,42 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Crosshair
+description: Add a vertical tracking crosshair to your line charts for precise data inspection.
+---
+
+# Crosshair
+
+A vertical line that follows the cursor across the chart, making it easy to read values at specific positions.
+
+## Usage
+
+```razor
+<HelixLineChart TItem="SalesRecord" Data="@data"
+                XField="@(d => (object)d.Month)" Series="@series"
+                ShowCrosshair="true"
+                Height="300" Width="600" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `ShowCrosshair` | `bool` | false | Enable the vertical crosshair line |
+
+## Behavior
+
+- The crosshair appears as a **dashed vertical line** when the cursor enters the chart area
+- It follows the mouse position horizontally within the plot area bounds
+- It disappears when the cursor leaves the chart
+- Works alongside hover tooltips on data points
+
+## Supported Charts
+
+- **HelixLineChart** — vertical crosshair tracking
+
+## Combining with Other Features
+
+The crosshair pairs well with:
+- **Annotations** — hover near annotated events to inspect surrounding data
+- **Streaming data** — track live values as they update
+- **Multi-series** — compare values across series at the same x position

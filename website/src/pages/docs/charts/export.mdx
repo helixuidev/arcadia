@@ -1,0 +1,58 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Export & Toolbar
+description: Export any Arcadia chart as PNG or SVG with the built-in toolbar.
+---
+
+# Export & Toolbar
+
+Every chart includes a built-in export toolbar that appears when you hover over the chart. It provides one-click PNG and SVG downloads.
+
+## How It Works
+
+Hover over any chart to reveal the toolbar in the top-right corner:
+
+- **PNG** — Rasterized image at 2x resolution for crisp display
+- **SVG** — Vector format, perfect for print or further editing
+
+No configuration needed — the toolbar is included automatically on all chart types.
+
+## Programmatic Export
+
+You can also trigger exports from code using a component reference:
+
+```razor
+<HelixLineChart @ref="chartRef" TItem="DataPoint" Data="@data"
+                XField="@(d => (object)d.Month)" Series="@series"
+                Height="300" Width="600" />
+
+<button @onclick="ExportChart">Download PNG</button>
+
+@code {
+    HelixLineChart<DataPoint>? chartRef;
+
+    async Task ExportChart()
+    {
+        if (chartRef is not null)
+            await chartRef.ExportPngAsync("my-chart.png");
+    }
+}
+```
+
+## Available Methods
+
+| Method | Description |
+|--------|-------------|
+| `ExportPngAsync(filename)` | Downloads the chart as a PNG image |
+| `ExportSvgFileAsync(filename)` | Downloads the chart as an SVG file |
+
+## Supported Charts
+
+The export toolbar is available on all chart types:
+Line, Bar, Pie, Scatter, Candlestick, Radar, Gauge, Heatmap, Funnel, Treemap, and Waterfall.
+
+## Notes
+
+- The PNG export uses a 2x scale factor for high-DPI displays
+- SVG exports preserve all vector paths for infinite scaling
+- Exports capture the current state of the chart (including toggled series)

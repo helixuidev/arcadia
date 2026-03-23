@@ -1,0 +1,56 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Annotations
+description: Mark key events and thresholds on your charts with annotation markers.
+---
+
+# Annotations
+
+Add visual markers to highlight specific data points — product launches, incidents, milestones, or thresholds.
+
+## Basic Usage
+
+```razor
+<HelixLineChart TItem="SalesRecord" Data="@data"
+                XField="@(d => (object)d.Month)" Series="@series"
+                Annotations="@annotations"
+                Height="300" Width="600" />
+
+@code {
+    List<ChartAnnotation> annotations = new()
+    {
+        new() { DataIndex = 3, Label = "Launch", Color = "var(--arcadia-color-success)" },
+        new() { DataIndex = 7, Label = "Outage", Color = "var(--arcadia-color-danger)" },
+        new() { DataIndex = 10, Label = "Campaign", Color = "var(--arcadia-color-info)" },
+    };
+}
+```
+
+## ChartAnnotation Properties
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `DataIndex` | `int` | 0 | X-axis data point index to annotate |
+| `Label` | `string` | `""` | Text label displayed above the chart |
+| `Color` | `string` | danger red | Color for the marker line and label |
+| `ShowLine` | `bool` | true | Whether to draw a vertical line at the data point |
+| `YValue` | `double?` | null | Optional Y-axis value for horizontal annotations |
+
+## Rendering
+
+Each annotation renders:
+1. A **vertical dashed line** from the top to bottom of the plot area (if `ShowLine` is true)
+2. A **text label** positioned above the plot area
+
+Annotations are rendered on top of all series, so they're always visible.
+
+## Supported Charts
+
+Annotations are currently supported on:
+- **HelixLineChart** — vertical markers at data indices
+
+## Tips
+
+- Use semantic colors (`success`, `danger`, `warning`, `info`) for consistency with your theme
+- Keep labels short (1-2 words) to avoid overlap
+- Combine with `ShowCrosshair` for interactive exploration around annotated points

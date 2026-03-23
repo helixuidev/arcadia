@@ -25,6 +25,19 @@ var thresholds = new List<GaugeThreshold>
 };
 ```
 
+## Full-Circle Mode
+
+Set `FullCircle="true"` for a complete 360-degree radial progress indicator — ideal for scores, ratings, and completion percentages:
+
+```razor
+<HelixGaugeChart Value="68" Min="0" Max="100" Label="Progress"
+                 Width="180" Height="180" FullCircle="true" />
+
+<HelixGaugeChart Value="3.8" Min="0" Max="5" Label="Rating"
+                 Width="180" Height="180" FullCircle="true"
+                 ValueFormatString="0.0" />
+```
+
 ## Parameters
 
 | Parameter | Type | Default | Description |

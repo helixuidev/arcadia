@@ -1,0 +1,53 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Waterfall Chart
+description: Show cumulative effect of sequential positive and negative values with the HelixWaterfallChart.
+---
+
+# Waterfall Chart
+
+Displays how an initial value is affected by a series of positive and negative changes. Bars float to show the running total.
+
+## Basic Usage
+
+```razor
+<HelixWaterfallChart TItem="WaterfallItem" Data="@data"
+                     CategoryField="@(d => d.Category)"
+                     ValueField="@(d => d.Amount)"
+                     Height="400" Width="600" Title="Revenue Waterfall" />
+
+@code {
+    record WaterfallItem(string Category, double Amount);
+
+    List<WaterfallItem> data = new()
+    {
+        new("Revenue", 500000),
+        new("COGS", -180000),
+        new("OpEx", -120000),
+        new("Marketing", -65000),
+        new("Tax", -40000),
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `CategoryField` | `Func<T, string>` | required | Extracts the category label |
+| `ValueField` | `Func<T, double>` | required | Extracts the value (positive = increase, negative = decrease) |
+| `PositiveColor` | `string` | success green | Color for positive bars |
+| `NegativeColor` | `string` | danger red | Color for negative bars |
+| `TotalColor` | `string` | primary blue | Color for total bars |
+| `Title` | `string?` | null | Chart title |
+| `Height` | `double` | 300 | Chart height in pixels |
+| `Width` | `double` | 600 | Chart width (0 = responsive) |
+| `AnimateOnLoad` | `bool` | true | Animate bars on initial render |
+
+## Features
+
+- Automatic color coding: green for increases, red for decreases
+- Connector lines between bars showing the running total
+- Hover tooltips with value and running total
+- Responsive layout with the standard layout engine
+- PNG/SVG export via toolbar

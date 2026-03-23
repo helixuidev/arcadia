@@ -1,0 +1,83 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Streaming & Live Data
+description: Update charts in real-time with the streaming API and sliding window.
+---
+
+# Streaming & Live Data
+
+The line chart supports real-time data updates with smooth slide animations. Push new data points without page reloads.
+
+## Sliding Window
+
+Set `SlidingWindow` to keep only the most recent N data points. Older points are automatically removed:
+
+```razor
+<HelixLineChart @ref="chart" TItem="SensorReading" Data="@readings"
+                XField="@(d => (object)d.Time)" Series="@series"
+                Height="300" Width="0" SlidingWindow="20"
+                ShowPoints="true" AnimateOnLoad="false" />
+
+@code {
+    HelixLineChart<SensorReading>? chart;
+    List<SensorReading> readings = new() { new("0s", 50), new("1s", 52) };
+    List<SeriesConfig<SensorReading>> series = new()
+    {
+        new() { Name = "Temperature", Field = d => d.Value, Color = "primary",
+                ShowArea = true, AreaOpacity = 0.15, CurveType = "smooth" }
+    };
+}
+```
+
+## Pushing Data
+
+Use `AppendAndSlide` to add a point and remove the oldest in one call. The chart animates a smooth slide-left transition:
+
+```csharp
+void AddReading()
+{
+    var point = new SensorReading($"{counter++}s", latestValue);
+    chart?.AppendAndSlide(point);
+}
+```
+
+## API Methods
+
+| Method | Description |
+|--------|-------------|
+| `AppendPoint(T item)` | Adds a data point to the end |
+| `RemoveFirst()` | Removes the oldest data point |
+| `AppendAndSlide(T item)` | Adds a point and removes the oldest if over `SlidingWindow` limit. Triggers slide animation. |
+
+## Auto-Streaming with Timer
+
+```csharp
+Timer? timer;
+
+void StartStream()
+{
+    timer = new Timer(_ =>
+    {
+        InvokeAsync(() => AddReading());
+    }, null, 0, 700); // Interval should be > 300ms (animation duration)
+}
+
+void StopStream()
+{
+    timer?.Dispose();
+    timer = null;
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `SlidingWindow` | `int` | 0 | Max points to keep (0 = unlimited) |
+
+## Tips
+
+- Set `AnimateOnLoad="false"` for streaming charts to avoid the initial draw animation
+- Use `CurveType = "smooth"` for visually appealing streaming lines
+- Set timer interval to at least 400ms for smooth animations (300ms animation + buffer)
+- Seed the data list with at least 2 points so the chart renders immediately

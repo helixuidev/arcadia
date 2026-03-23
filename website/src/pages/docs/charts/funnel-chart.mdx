@@ -1,0 +1,50 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Funnel Chart
+description: Visualize conversion funnels and multi-stage pipelines with the HelixFunnelChart component.
+---
+
+# Funnel Chart
+
+Renders a conversion funnel with progressively narrowing trapezoid stages. Each stage's width is proportional to its value.
+
+## Basic Usage
+
+```razor
+<HelixFunnelChart TItem="FunnelStage" Data="@data"
+                  NameField="@(d => d.Stage)" ValueField="@(d => d.Count)"
+                  Height="400" Width="500" Title="Conversion Funnel" />
+
+@code {
+    record FunnelStage(string Stage, double Count);
+
+    List<FunnelStage> data = new()
+    {
+        new("Visitors", 10000),
+        new("Signups", 4200),
+        new("Trials", 1800),
+        new("Paid", 720),
+        new("Enterprise", 180),
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `NameField` | `Func<T, string>` | required | Extracts the stage name from each item |
+| `ValueField` | `Func<T, double>` | required | Extracts the numeric value from each item |
+| `Title` | `string?` | null | Chart title |
+| `Height` | `double` | 300 | Chart height in pixels |
+| `Width` | `double` | 600 | Chart width (0 = responsive) |
+| `AnimateOnLoad` | `bool` | true | Animate stages on initial render |
+| `ShowLegend` | `bool` | true | Show legend below chart |
+
+## Features
+
+- Automatic width scaling relative to the maximum value
+- Hover tooltips with stage name and value
+- On-load animation (stages grow in sequence)
+- PNG/SVG export via toolbar (hover top-right)
+- Screen reader accessible data table
