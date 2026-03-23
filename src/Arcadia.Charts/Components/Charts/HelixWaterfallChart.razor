@@ -30,7 +30,9 @@
                 <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.W)" height="@F(bar.H)"
                       rx="2" fill="@bar.Color"
                       class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 60}ms;" : "")" />
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 60}ms;" : "")"
+                      @onmouseover="@(e => ShowTooltipForPoint(bar.Label, bar.Value, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction" />
 
                 @if (i > 0)
                 {

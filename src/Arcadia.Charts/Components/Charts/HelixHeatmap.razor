@@ -21,7 +21,9 @@
                 <rect x="@F(localCell.X)" y="@F(localCell.Y)" width="@F(Math.Max(1, _cellWidth - 1))" height="@F(Math.Max(1, _cellHeight - 1))"
                       fill="@localCell.Color"
                       class="arcadia-heatmap__cell @(AnimateOnLoad ? "arcadia-animate-heatmap" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {localCell.Index * 15}ms;" : "")">
+                      style="@(AnimateOnLoad ? $"animation-delay: {localCell.Index * 15}ms;" : "")"
+                      @onmouseover="@(e => ShowTooltipForPoint($"{localCell.XCategory}, {localCell.YCategory}", localCell.Value, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction">
                     <title>@localCell.XCategory, @localCell.YCategory: @localCell.DisplayValue</title>
                 </rect>
 

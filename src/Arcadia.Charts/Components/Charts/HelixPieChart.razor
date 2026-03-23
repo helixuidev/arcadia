@@ -20,7 +20,9 @@
                 var slice = _slices[i];
                 <path d="@slice.Path" fill="@slice.Color" stroke="var(--arcadia-color-surface, #fff)" stroke-width="2"
                       class="arcadia-chart__pie-slice @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")" />
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
+                      @onmouseover="@(e => ShowPieTooltip(slice.Name, slice.Value, slice.Percent, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction" />
 
                 @if (ShowLabels && slice.Percent >= MinLabelPercent && LabelFormat != PieLabelFormat.None)
                 {

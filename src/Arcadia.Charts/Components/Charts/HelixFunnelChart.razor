@@ -18,7 +18,9 @@
                 var s = _stages[i];
                 <path d="@s.Path" fill="@s.Color" opacity="0.85"
                       class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")" />
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
+                      @onmouseover="@(e => ShowTooltipForPoint(s.Name, s.Value, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction" />
 
                 <SvgText x="@F(Width / 2)" y="@F(s.LabelY)" text-anchor="middle"
                       class="arcadia-chart__pie-label" style="fill: white; font-size: 12px;">@s.Name</SvgText>

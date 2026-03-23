@@ -120,5 +120,14 @@ public partial class HelixScatterChart<T> : ChartBase<T>
         return value.ToString("G4");
     }
 
+
+    private async Task ShowScatterTooltip(double xVal, double yVal, double mouseX, double mouseY)
+    {
+        if (Interop is null) return;
+        var xFmt = XAxisFormatString is not null ? xVal.ToString(XAxisFormatString, FormatProvider) : xVal.ToString("G4");
+        var yFmt = YAxisFormatString is not null ? yVal.ToString(YAxisFormatString, FormatProvider) : yVal.ToString("G4");
+        var html = $"<div>X: {xFmt}</div><div>Y: {yFmt}</div>";
+        await Interop.ShowTooltipAsync(html, mouseX, mouseY);
+    }
     private static string F(double v) => v.ToString("F1");
 }

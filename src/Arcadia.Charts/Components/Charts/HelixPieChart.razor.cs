@@ -109,6 +109,14 @@ public partial class HelixPieChart<T> : ChartBase<T>
         };
     }
 
+
+    private async Task ShowPieTooltip(string name, double value, double percent, double x, double y)
+    {
+        if (Interop is null) return;
+        var formatted = ValueFormatString is not null ? value.ToString(ValueFormatString, FormatProvider) : value.ToString("N0");
+        var html = $"<div style='font-weight:600;margin-bottom:2px'>{name}</div><div>{formatted} ({percent:F1}%)</div>";
+        await Interop.ShowTooltipAsync(html, x, y);
+    }
     private static string BuildArcPath(double cx, double cy, double outerR, double innerR, double startAngle, double endAngle)
     {
         var largeArc = (endAngle - startAngle) > Math.PI ? 1 : 0;

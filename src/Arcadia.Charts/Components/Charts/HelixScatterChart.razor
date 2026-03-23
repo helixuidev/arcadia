@@ -7,7 +7,8 @@
     <div class="arcadia-chart" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
         <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
              role="figure" aria-label="@(AriaLabel ?? Title ?? "Scatter chart")"
-             class="@CssClass">
+             class="@CssClass"
+             @onmouseleave="HideTooltipAction">
 
             @if (!string.IsNullOrEmpty(Title))
             {
@@ -51,7 +52,9 @@
 
                 <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="0.7"
                         class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                        style="@(AnimateOnLoad ? $"animation-delay: {i * 20}ms;" : "")" />
+                        style="@(AnimateOnLoad ? $"animation-delay: {i * 20}ms;" : "")"
+                        @onmouseover="@(e => ShowScatterTooltip(XField(item), YField(item), e.ClientX, e.ClientY))"
+                        @onmouseout="HideTooltipAction" />
 
                 @if (ShowDataLabels)
                 {

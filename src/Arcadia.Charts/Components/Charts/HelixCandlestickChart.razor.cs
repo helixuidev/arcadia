@@ -128,6 +128,19 @@ public partial class HelixCandlestickChart<T> : ChartBase<T>
         return _layout.YTicks.FirstOrDefault(t => Math.Abs(t.Value - value) < double.Epsilon)?.Label ?? value.ToString("G4");
     }
 
+
+    private async Task ShowCandleTooltip(int index, double mouseX, double mouseY)
+    {
+        if (Interop is null || Data is null || index >= Data.Count) return;
+        var item = Data[index];
+        var label = LabelField?.Invoke(item) ?? "";
+        var o = OpenField!(item); var h = HighField!(item); var l = LowField!(item); var c = CloseField!(item);
+        var fmt = YAxisFormatString ?? "F2";
+        var html = $"<div style='font-weight:600;margin-bottom:4px'>{label}</div>" +
+                   $"<div>O: {o.ToString(fmt)} H: {h.ToString(fmt)}</div>" +
+                   $"<div>L: {l.ToString(fmt)} C: {c.ToString(fmt)}</div>";
+        await Interop.ShowTooltipAsync(html, mouseX, mouseY);
+    }
     private static string F(double v) => v.ToString("F1");
 
     private class CandleData

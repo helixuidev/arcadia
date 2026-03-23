@@ -151,8 +151,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.HelixComponentBase
     protected async Task ShowTooltipForPoint(string seriesName, double value, double mouseX, double mouseY)
     {
         if (Interop is null) return;
+        var formatted = FormatValue(value, YAxisFormatString ?? DataLabelFormatString);
         var html = $"<div style='font-weight:600;margin-bottom:2px'>{seriesName}</div>" +
-                   $"<div>{FormatValue(value, DataLabelFormatString)}</div>";
+                   $"<div>{formatted}</div>";
         await Interop.ShowTooltipAsync(html, mouseX, mouseY);
     }
 

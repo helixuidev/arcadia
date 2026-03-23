@@ -52,7 +52,9 @@
                       width="@F(c.HalfWidth * 2)" height="@F(Math.Max(1, c.BodyHeight))"
                       rx="1" fill="@c.Color" stroke="@c.Color" stroke-width="1"
                       class="arcadia-candle__body @(_animate ? "arcadia-animate-candle" : "")"
-                      style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")" />
+                      style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")"
+                      @onmouseover="@(e => ShowCandleTooltip(i, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction" />
             }
 
             @* Overlay line series *@

@@ -19,7 +19,9 @@
                 <rect x="@F(cell.X)" y="@F(cell.Y)" width="@F(cell.W)" height="@F(cell.H)"
                       rx="3" fill="@cell.Color" stroke="var(--arcadia-color-surface, #fff)" stroke-width="2"
                       class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-heatmap" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 50}ms;" : "")">
+                      style="@(AnimateOnLoad ? $"animation-delay: {i * 50}ms;" : "")"
+                      @onmouseover="@(e => ShowTooltipForPoint(cell.Name, double.Parse(cell.ValueDisplay, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture), e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction">
                     <title>@cell.Name: @cell.ValueDisplay</title>
                 </rect>
 
