@@ -177,13 +177,24 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.HelixComponentBase, IAsyn
 
     private double _measuredWidth;
 
+    private DotNetObjectReference<PanZoomCallbackHandler>? _panZoomRef;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (_disposed) return;
-        if (firstRender && IsResponsive && Interop is not null)
+        if (firstRender && Interop is not null)
         {
-            _resizeRef = DotNetObjectReference.Create(new ResizeCallbackHandler(this));
-            await Interop.ObserveResizeAsync(ContainerRef, _resizeRef);
+            if (IsResponsive)
+            {
+                _resizeRef = DotNetObjectReference.Create(new ResizeCallbackHandler(this));
+                await Interop.ObserveResizeAsync(ContainerRef, _resizeRef);
+            }
+
+            if (EnableZoom || EnablePan)
+            {
+                _panZoomRef = DotNetObjectReference.Create(new PanZoomCallbackHandler(this));
+                await Interop.EnablePanZoomAsync(ContainerRef, _panZoomRef, ZoomMode);
+            }
         }
     }
 
@@ -209,6 +220,44 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.HelixComponentBase, IAsyn
         public Task OnContainerResized(double width, double height)
         {
             _chart.OnResized(width, height);
+            return Task.CompletedTask;
+        }
+    }
+
+    /// <summary>Current zoom level (1.0 = 100%).</summary>
+    protected double ZoomLevel { get; private set; } = 1.0;
+
+    /// <summary>Current pan offset X in pixels.</summary>
+    protected double PanOffsetX { get; private set; }
+
+    /// <summary>Current pan offset Y in pixels.</summary>
+    protected double PanOffsetY { get; private set; }
+
+    /// <summary>SVG transform string for pan/zoom. Apply to a group wrapping chart content.</summary>
+    protected string PanZoomTransform =>
+        (EnableZoom || EnablePan) && (ZoomLevel != 1.0 || PanOffsetX != 0 || PanOffsetY != 0)
+            ? $"translate({PanOffsetX.ToString("F1")},{PanOffsetY.ToString("F1")}) scale({ZoomLevel.ToString("F3")})"
+            : "";
+
+    private class PanZoomCallbackHandler : IPanZoomHandler
+    {
+        private readonly ChartBase<T> _chart;
+        public PanZoomCallbackHandler(ChartBase<T> chart) => _chart = chart;
+
+        [Microsoft.JSInterop.JSInvokable]
+        public Task OnZoomChanged(double zoom, double centerX, double centerY)
+        {
+            _chart.ZoomLevel = zoom;
+            _chart.InvokeAsync(_chart.StateHasChanged);
+            return Task.CompletedTask;
+        }
+
+        [Microsoft.JSInterop.JSInvokable]
+        public Task OnPanChanged(double offsetX, double offsetY)
+        {
+            _chart.PanOffsetX = offsetX;
+            _chart.PanOffsetY = offsetY;
+            _chart.InvokeAsync(_chart.StateHasChanged);
             return Task.CompletedTask;
         }
     }
@@ -300,6 +349,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.HelixComponentBase, IAsyn
             await Interop.DisposeAsync();
 
         _resizeRef?.Dispose();
+        _panZoomRef?.Dispose();
 
         GC.SuppressFinalize(this);
     }

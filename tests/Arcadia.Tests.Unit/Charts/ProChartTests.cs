@@ -72,7 +72,7 @@ public class RadarChartTests : BunitContext
              .Add(c => c.Series, TestSeries)
              .Add(c => c.AriaLabel, "Player stats"));
 
-        cut.Find("svg").GetAttribute("aria-label").Should().Be("Player stats");
+        cut.Find("svg[data-chart]").GetAttribute("aria-label").Should().Be("Player stats");
     }
 
     [Fact]
@@ -234,7 +234,7 @@ public class GaugeChartTests : BunitContext
             p.Add(c => c.Value, 50)
              .Add(c => c.AriaLabel, "Server load"));
 
-        cut.Find("svg").GetAttribute("aria-label").Should().Be("Server load");
+        cut.Find("svg[data-chart]").GetAttribute("aria-label").Should().Be("Server load");
     }
 
     [Fact]

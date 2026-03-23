@@ -82,7 +82,7 @@ public class ChartInteropService : IAsyncDisposable
     // ── Pan/Zoom ─────────────────────────────────────
 
     /// <summary>Enables pan and zoom on a chart container.</summary>
-    public async ValueTask EnablePanZoomAsync(ElementReference container, DotNetObjectReference<IPanZoomHandler> dotNetRef, string mode = "x")
+    public async ValueTask EnablePanZoomAsync<THandler>(ElementReference container, DotNetObjectReference<THandler> dotNetRef, string mode = "x") where THandler : class
     {
         var module = await GetModuleAsync();
         await module.InvokeVoidAsync("enablePanZoom", container, dotNetRef, new { mode });
@@ -96,7 +96,7 @@ public class ChartInteropService : IAsyncDisposable
     }
 
     /// <summary>Resets zoom to default.</summary>
-    public async ValueTask ResetZoomAsync(ElementReference container, DotNetObjectReference<IPanZoomHandler> dotNetRef)
+    public async ValueTask ResetZoomAsync<THandler>(ElementReference container, DotNetObjectReference<THandler> dotNetRef) where THandler : class
     {
         var module = await GetModuleAsync();
         await module.InvokeVoidAsync("resetZoom", container, dotNetRef);
