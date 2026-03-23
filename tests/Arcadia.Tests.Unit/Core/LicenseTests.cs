@@ -109,4 +109,20 @@ public class LicenseTests : IDisposable
         ArcadiaLicense.SetKey("ARC-E5F6-G7H8-ICP5");
         ArcadiaLicense.GetTier().Should().Be(LicenseTier.Enterprise);
     }
+
+    [Fact]
+    public void GeneratedProKey_Validates()
+    {
+        ArcadiaLicense.SetKey("ARC-PWNX-BZTC-2LPX");
+        ArcadiaLicense.IsProLicensed.Should().BeTrue();
+        ArcadiaLicense.GetTier().Should().Be(LicenseTier.Pro);
+    }
+
+    [Fact]
+    public void GeneratedEnterpriseKey_Validates()
+    {
+        ArcadiaLicense.SetKey("ARC-EM7T-W97C-LG9R");
+        ArcadiaLicense.IsProLicensed.Should().BeTrue();
+        ArcadiaLicense.GetTier().Should().Be(LicenseTier.Enterprise);
+    }
 }
