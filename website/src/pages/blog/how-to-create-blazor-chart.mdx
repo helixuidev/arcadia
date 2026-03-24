@@ -1,0 +1,363 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "How to Create a Blazor Chart — Step-by-Step Tutorial (2026)"
+description: "Learn how to create charts in Blazor from scratch. This step-by-step tutorial covers SVG basics, chart libraries, and a complete walkthrough building line charts, bar charts, and interactive dashboards with Arcadia Controls."
+date: "2026-03-24"
+readTime: "12 min read"
+tags: ["Blazor", "Charts", "Tutorial", ".NET", "SVG", "Data Visualization"]
+---
+
+You want to add charts to your Blazor app. Maybe it is a dashboard for your SaaS product, an admin panel with analytics, or a reporting page for your enterprise app. But where do you start?
+
+This tutorial covers **everything** — from rendering a raw SVG bar chart in Blazor with zero dependencies, to building a fully interactive multi-series line chart with tooltips, crosshairs, and real-time data. By the end, you will know exactly how Blazor chart components work and how to ship them to production.
+
+## Option 1: Build a Chart from Scratch with SVG
+
+Before reaching for a library, it helps to understand how Blazor charts work under the hood. Every chart is ultimately SVG or Canvas. Here is a minimal bar chart in pure Blazor — no libraries, no JavaScript:
+
+```razor
+@page "/my-chart"
+
+<svg width="400" height="200" viewBox="0 0 400 200">
+    @foreach (var (label, value, index) in data.Select((d, i) => (d.Label, d.Value, i)))
+    {
+        var barHeight = value * 2;
+        var x = index * 80 + 20;
+        var y = 200 - barHeight;
+
+        <rect x="@x" y="@y" width="60" height="@barHeight"
+              fill="#8b5cf6" rx="4" />
+        <text x="@(x + 30)" y="195" text-anchor="middle"
+              fill="#9490b3" font-size="12">@label</text>
+    }
+</svg>
+
+@code {
+    private List<(string Label, double Value)> data = new()
+    {
+        ("Jan", 45), ("Feb", 72), ("Mar", 58), ("Apr", 88), ("May", 64)
+    };
+}
+```
+
+This renders five purple bars with labels. It works. But it has serious limitations:
+
+- **No tooltips** — users cannot hover to see exact values
+- **No responsiveness** — fixed width, no resize handling
+- **No accessibility** — screen readers cannot interpret the data
+- **No axes** — no gridlines, tick marks, or axis labels
+- **No animation** — data changes pop in without transitions
+- **No interactivity** — no click events, no selection, no zoom
+
+Building all of that from scratch is hundreds of hours of work. That is why chart libraries exist.
+
+## Option 2: Use a Blazor Chart Library
+
+A good chart library handles responsive layout, accessibility, tooltips, animations, axis formatting, and cross-browser rendering so you can focus on your data. Here is how the major Blazor chart libraries compare in 2026:
+
+| Feature | Arcadia Controls | MudBlazor | Radzen | ChartJs.Blazor |
+|---|---|---|---|---|
+| **Rendering** | Pure SVG (C#) | SVG (JS interop) | SVG (JS interop) | Canvas (JS) |
+| **JS required** | No | Yes | Yes | Yes (Chart.js) |
+| **Free chart types** | 4 | 6 | 8 | 8 |
+| **Paid chart types** | 12 total | N/A | 12+ | N/A |
+| **.NET 10** | Yes | Yes | Yes | No |
+| **Auto render mode** | Yes | Limited | Yes | No |
+| **Accessibility** | WCAG 2.1 AA | Partial | Partial | None |
+| **Dashboard widgets** | 7 | None | Some | None |
+| **Last updated** | March 2026 | March 2026 | February 2026 | 2023 |
+
+For this tutorial, we will use **Arcadia Controls** because it renders pure SVG from C# (no JavaScript to configure), supports every Blazor render mode, and has a free Community Edition.
+
+## Tutorial — Create a Line Chart with Arcadia Controls
+
+### Step 1: Create a new Blazor project
+
+If you already have a Blazor project, skip to Step 2. Otherwise:
+
+```bash
+dotnet new blazor -n ChartDemo --interactivity Auto
+cd ChartDemo
+```
+
+This creates a .NET 9+ Blazor project with Auto interactivity (server-side rendering with WebAssembly takeover).
+
+### Step 2: Install the Arcadia Charts package
+
+```bash
+dotnet add package Arcadia.Charts
+```
+
+The package targets .NET 5 through .NET 10, so it works regardless of your project's target framework.
+
+### Step 3: Add the stylesheet
+
+Open your `App.razor` (or `_Host.cshtml` for older Blazor Server projects) and add the CSS link in the `<head>`:
+
+```html
+<link rel="stylesheet" href="_content/Arcadia.Charts/arcadia-charts.css" />
+```
+
+### Step 4: Create a page with a basic line chart
+
+Create a new file `Components/Pages/Dashboard.razor`:
+
+```razor
+@page "/dashboard"
+@using Arcadia.Charts
+
+<h1>Sales Dashboard</h1>
+
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  XAxisTitle="Month"
+                  YAxisTitle="Revenue ($k)"
+                  ShowGrid="true">
+    <ChartSeries Name="Revenue"
+                 Data="@revenue"
+                 Color="#8b5cf6" />
+</ArcadiaLineChart>
+
+@code {
+    private double[] revenue = { 32.1, 41.5, 38.7, 52.3, 61.8, 58.2,
+                                  67.4, 72.1, 69.8, 78.5, 85.3, 91.7 };
+}
+```
+
+Navigate to `/dashboard` and you will see a line chart with monthly revenue data. The chart renders as SVG — inspect the DOM and you will see `<svg>`, `<path>`, `<circle>`, and `<text>` elements. No `<canvas>`, no JavaScript.
+
+### Step 5: Add multiple series
+
+Real dashboards compare data. Add a second series to show year-over-year comparison:
+
+```razor
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  XAxisTitle="Month"
+                  YAxisTitle="Revenue ($k)"
+                  ShowGrid="true"
+                  ShowLegend="true">
+    <ChartSeries Name="2025 Revenue"
+                 Data="@revenue2025"
+                 Color="#8b5cf6" />
+    <ChartSeries Name="2026 Revenue"
+                 Data="@revenue2026"
+                 Color="#ec4899" />
+</ArcadiaLineChart>
+
+@code {
+    private double[] revenue2025 = { 32.1, 41.5, 38.7, 52.3, 61.8, 58.2,
+                                      67.4, 72.1, 69.8, 78.5, 85.3, 91.7 };
+    private double[] revenue2026 = { 38.5, 49.2, 45.1, 59.7, 70.3, 65.8,
+                                      74.2, 81.5, 77.3, 0, 0, 0 };
+}
+```
+
+The `ShowLegend="true"` parameter adds a color-coded legend so users can distinguish the series.
+
+### Step 6: Add area fill and smooth curves
+
+Line charts become more readable with area fills for trend visualization:
+
+```razor
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  XAxisTitle="Month"
+                  YAxisTitle="Revenue ($k)"
+                  ShowGrid="true"
+                  ShowLegend="true"
+                  Smooth="true">
+    <ChartSeries Name="2025 Revenue"
+                 Data="@revenue2025"
+                 Color="#8b5cf6"
+                 ShowArea="true"
+                 AreaOpacity="0.15" />
+    <ChartSeries Name="2026 Revenue"
+                 Data="@revenue2026"
+                 Color="#ec4899"
+                 ShowArea="true"
+                 AreaOpacity="0.15" />
+</ArcadiaLineChart>
+```
+
+The `Smooth="true"` parameter uses Catmull-Rom spline interpolation to create smooth curves instead of straight line segments. `ShowArea="true"` with `AreaOpacity="0.15"` adds a translucent fill beneath each line.
+
+### Step 7: Add tooltips and crosshair
+
+For an interactive experience, enable tooltips and a crosshair that follows the cursor:
+
+```razor
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  XAxisTitle="Month"
+                  YAxisTitle="Revenue ($k)"
+                  ShowGrid="true"
+                  ShowLegend="true"
+                  Smooth="true"
+                  ShowTooltips="true"
+                  ShowCrosshair="true"
+                  TooltipFormat="$#,##0.0k">
+    <ChartSeries Name="2025 Revenue"
+                 Data="@revenue2025"
+                 Color="#8b5cf6"
+                 ShowArea="true"
+                 AreaOpacity="0.15" />
+    <ChartSeries Name="2026 Revenue"
+                 Data="@revenue2026"
+                 Color="#ec4899"
+                 ShowArea="true"
+                 AreaOpacity="0.15" />
+</ArcadiaLineChart>
+```
+
+The tooltip shows all series values at the hovered position. The crosshair draws vertical and horizontal reference lines. The `TooltipFormat` parameter controls number formatting inside the tooltip.
+
+## Adding Interactivity
+
+### Click events
+
+Respond to user clicks on data points:
+
+```razor
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  OnClick="HandleDataPointClick"
+                  ShowTooltips="true">
+    <ChartSeries Name="Revenue"
+                 Data="@revenue"
+                 Color="#8b5cf6" />
+</ArcadiaLineChart>
+
+<p>Selected: @selectedPoint</p>
+
+@code {
+    private double[] revenue = { 32.1, 41.5, 38.7, 52.3, 61.8, 58.2 };
+    private string selectedPoint = "Click a data point";
+
+    private void HandleDataPointClick(ChartClickEventArgs args)
+    {
+        selectedPoint = $"{args.SeriesName}: {args.Value:C1}k at index {args.Index}";
+    }
+}
+```
+
+### Annotations and reference lines
+
+Mark important thresholds or targets on your chart:
+
+```razor
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  ShowGrid="true"
+                  ShowTooltips="true">
+    <ChartSeries Name="Revenue"
+                 Data="@revenue"
+                 Color="#8b5cf6" />
+    <ChartAnnotation Type="AnnotationType.HorizontalLine"
+                     Value="70"
+                     Color="#f59e0b"
+                     Label="Target"
+                     StrokeDash="6,4" />
+</ArcadiaLineChart>
+```
+
+The annotation renders as a dashed horizontal line at the 70k mark with a "Target" label. This is useful for KPI tracking, SLA thresholds, and budget targets.
+
+### Dynamic data updates
+
+Charts automatically re-render when bound data changes, just like any Blazor component:
+
+```razor
+<ArcadiaLineChart Width="700"
+                  Height="400"
+                  ShowTooltips="true"
+                  Smooth="true">
+    <ChartSeries Name="Live Data"
+                 Data="@liveData"
+                 Color="#10b981" />
+</ArcadiaLineChart>
+
+<button @onclick="AddDataPoint" class="btn btn-primary">Add Point</button>
+
+@code {
+    private List<double> liveData = new() { 10, 25, 18, 32, 28 };
+
+    private void AddDataPoint()
+    {
+        var random = new Random();
+        liveData.Add(liveData.Last() + random.Next(-10, 15));
+        StateHasChanged();
+    }
+}
+```
+
+Each time you click the button, a new data point is added and the chart smoothly updates. Since Arcadia charts are part of the Blazor component tree, they participate in standard Blazor diffing — only the changed SVG elements are updated in the DOM.
+
+## Creating Other Chart Types
+
+The same patterns work across all Arcadia chart types. Here is a bar chart:
+
+```razor
+<ArcadiaBarChart Width="600"
+                 Height="350"
+                 ShowTooltips="true"
+                 ShowGrid="true"
+                 Orientation="Orientation.Vertical">
+    <ChartSeries Name="Q1"
+                 Data="@(new double[] { 85, 72, 91, 68, 77 })"
+                 Color="#8b5cf6" />
+    <ChartSeries Name="Q2"
+                 Data="@(new double[] { 92, 81, 88, 75, 83 })"
+                 Color="#ec4899" />
+</ArcadiaBarChart>
+```
+
+And a pie chart:
+
+```razor
+<ArcadiaPieChart Width="400"
+                 Height="400"
+                 ShowLabels="true"
+                 ShowTooltips="true">
+    <PieSlice Label="Desktop" Value="58.3" Color="#8b5cf6" />
+    <PieSlice Label="Mobile" Value="31.2" Color="#ec4899" />
+    <PieSlice Label="Tablet" Value="10.5" Color="#f59e0b" />
+</ArcadiaPieChart>
+```
+
+## Going Further
+
+This tutorial covered the fundamentals of creating Blazor charts. Here is where to go next:
+
+**More chart types:**
+- [Bar Chart docs](/docs/charts/bar-chart) — grouped, stacked, horizontal
+- [Pie Chart docs](/docs/charts/pie-chart) — slices, labels, custom colors
+- [Scatter Chart docs](/docs/charts/scatter-chart) — point clouds, bubble sizing
+- [All chart types overview](/docs/charts) — complete list with examples
+
+**Dashboard widgets:**
+- [KPI Card](/docs/dashboard-kit/kpi-card) — single-value metrics with trend arrows
+- [Gauge](/docs/dashboard-kit/gauge) — radial and linear gauges
+- [Sparkline](/docs/dashboard-kit/sparkline) — inline mini charts
+
+**Advanced features:**
+- [Streaming data](/docs/charts/streaming) — real-time charts with WebSocket feeds
+- [Theming](/docs/theme) — customize colors, fonts, and dark/light modes
+- [Export](/docs/charts/export) — save charts as PNG or SVG
+
+**Tools:**
+- [Chart Playground](/playground) — interactive builder to design charts visually
+- [MCP Server](/docs/mcp-server) — AI-assisted chart code generation
+- [NuGet Package](https://www.nuget.org/packages/Arcadia.Charts) — latest release
+
+## Get Started Now
+
+Install the free Community Edition and have your first chart rendering in under a minute:
+
+```bash
+dotnet add package Arcadia.Charts
+```
+
+The Community Edition includes Line, Bar, Pie, and Scatter charts — enough for most dashboards. When you need advanced visualizations like Treemaps, Heatmaps, or Candlestick charts, [Pro starts at $299/developer/year](/pricing).
+
+Every chart in this tutorial works in **Blazor Server, WebAssembly, and Auto render modes** without any code changes. No JavaScript configuration required.

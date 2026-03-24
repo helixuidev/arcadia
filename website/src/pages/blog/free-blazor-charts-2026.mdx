@@ -1,0 +1,199 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Free Blazor Charts — Build Data Visualizations Without Paying a Dime"
+description: "Stop paying $1000+/year for Blazor chart libraries. Arcadia Controls Community Edition gives you 4 chart types, 7 dashboard widgets, and an MIT license — completely free."
+date: "2026-03-24"
+readTime: "8 min read"
+tags: ["Blazor", "Charts", "Free", "Open Source", "NuGet", "Data Visualization"]
+---
+
+If you have ever priced out a Blazor chart library, you know the pain. Telerik starts at **$1,249/developer/year**. Syncfusion is **$995+**. For a team of five, you are looking at **$5,000 to $6,000 per year** just to render a bar chart.
+
+There is a better way. In this post, we will walk through every **free Blazor chart** option available in 2026 — and show you how to ship production-quality data visualizations without spending a dime.
+
+## What You Get for Free with Arcadia Controls Community Edition
+
+The **Arcadia Controls Community Edition** is a fully free, MIT-licensed Blazor chart library available on NuGet. No trial periods. No watermarks. No revenue caps. Here is what is included:
+
+**4 chart types:**
+- **Line Chart** — time series, trends, multi-series with area fill
+- **Bar Chart** — vertical, horizontal, grouped, and stacked
+- **Pie Chart** — standard pie with label positioning and custom colors
+- **Scatter Chart** — point clouds with size mapping and tooltips
+
+**7 dashboard widgets:**
+- KPI Card
+- Gauge (radial and linear)
+- Sparkline
+- Progress Ring
+- Stat Tile
+- Mini Chart
+- Notification Badge
+
+**Technical highlights:**
+- **Pure SVG rendering from C#** — zero JavaScript dependencies
+- **WCAG 2.1 AA accessible** — hidden data tables, keyboard navigation, ARIA labels
+- **Multi-target: .NET 5 through .NET 10** — works with every supported Blazor version
+- **All render modes** — Server, WebAssembly, Auto, and SSR
+- **MIT license** — use it in commercial projects, no attribution required on the UI
+
+The NuGet package name is `Arcadia.Charts`. Install it and start building.
+
+## Quick Start — Your First Free Blazor Chart in 60 Seconds
+
+### Step 1: Install the package
+
+```bash
+dotnet add package Arcadia.Charts
+```
+
+### Step 2: Add the CSS to your `App.razor` or `_Host.cshtml`
+
+```html
+<link rel="stylesheet" href="_content/Arcadia.Charts/arcadia-charts.css" />
+```
+
+### Step 3: Add a line chart to any page
+
+```razor
+@page "/dashboard"
+@using Arcadia.Charts
+
+<ArcadiaLineChart Width="600"
+                  Height="350"
+                  XAxisTitle="Month"
+                  YAxisTitle="Revenue ($k)">
+    <ChartSeries Name="2025"
+                 Data="@(new[] { 12.5, 18.3, 15.7, 22.1, 28.9, 31.4 })"
+                 Color="#8b5cf6" />
+    <ChartSeries Name="2026"
+                 Data="@(new[] { 15.1, 21.7, 19.3, 26.8, 33.2, 38.5 })"
+                 Color="#ec4899" />
+</ArcadiaLineChart>
+```
+
+That is it. No JavaScript imports. No canvas setup. No interop configuration. The chart renders as clean SVG directly from C# components. It works in Blazor Server, WebAssembly, and Auto mode without any changes.
+
+### Adding interactivity
+
+Want tooltips? Add one parameter:
+
+```razor
+<ArcadiaLineChart Width="600"
+                  Height="350"
+                  ShowTooltips="true"
+                  ShowCrosshair="true"
+                  XAxisTitle="Month"
+                  YAxisTitle="Revenue ($k)">
+    <ChartSeries Name="2025"
+                 Data="@(new[] { 12.5, 18.3, 15.7, 22.1, 28.9, 31.4 })"
+                 Color="#8b5cf6" />
+</ArcadiaLineChart>
+```
+
+Need click events? Use the standard Blazor callback pattern:
+
+```razor
+<ArcadiaBarChart OnClick="HandleBarClick" ... />
+
+@code {
+    private void HandleBarClick(ChartClickEventArgs args)
+    {
+        selectedCategory = args.Label;
+        selectedValue = args.Value;
+    }
+}
+```
+
+## What About Other Free Blazor Chart Options?
+
+Arcadia is not the only free option. Here is a honest comparison of every free Blazor chart library in 2026:
+
+### MudBlazor Charts
+
+**Price:** Free (MIT)
+
+MudBlazor includes 6 basic chart types as part of its component suite. The charts work but they are limited — no multi-series support on some chart types, no dashboard widgets, and no accessibility features like hidden data tables. The charts rely on JavaScript interop for rendering.
+
+**Best for:** Projects already using MudBlazor where you need a simple pie or bar chart and nothing more.
+
+### Radzen Charts
+
+**Price:** Freemium (free tier with limitations)
+
+Radzen offers charts in their free component library, but the free version has limitations on customization and the more advanced chart types require a paid license. Charts use JS interop under the hood.
+
+**Best for:** Teams already invested in the Radzen ecosystem.
+
+### ChartJs.Blazor
+
+**Price:** Free (MIT)
+
+This is a Blazor wrapper around Chart.js. It was popular in 2021-2022 but the repository has not seen meaningful updates since 2023. It still targets .NET 6 and does not support .NET 8+ render modes (Auto/SSR). Since it wraps Chart.js, you are pulling in a full JavaScript charting library.
+
+**Best for:** Legacy .NET 6 projects where you absolutely need Chart.js compatibility.
+
+### Why we built Arcadia differently
+
+Most "free Blazor charts" are wrappers around JavaScript chart engines. Data flows from C# to JS via interop, gets rendered in a canvas or JS-generated SVG, and events flow back through interop. This architecture adds latency, bundle size, and complexity.
+
+Arcadia Charts renders **pure SVG from C# Blazor components**. The chart elements are part of the Blazor component tree. They participate in normal Blazor diffing and lifecycle. There is no JavaScript runtime involved in rendering.
+
+| Feature | Arcadia (Free) | MudBlazor | Radzen (Free) | ChartJs.Blazor |
+|---|---|---|---|---|
+| **Chart types** | 4 | 6 | 8 | 8 |
+| **JS dependencies** | None | Required | Required | Required (Chart.js) |
+| **Dashboard widgets** | 7 | None | Limited | None |
+| **.NET 10 support** | Yes | Yes | Yes | No |
+| **Auto render mode** | Yes | Limited | Yes | No |
+| **WCAG 2.1 AA** | Yes | No | No | No |
+| **Actively maintained** | Yes | Yes | Yes | Stale |
+| **Bundle overhead** | 0 KB JS | ~60 KB | ~90 KB | ~180 KB |
+
+## When to Upgrade to Arcadia Pro
+
+The free Community Edition covers most dashboard use cases. But if you need advanced visualizations, the **Pro plan at $299/developer/year** unlocks:
+
+- **Area Chart** with gradient fills and stacking
+- **Donut Chart** with center labels
+- **Radar Chart** for multi-axis comparisons
+- **Treemap** for hierarchical data
+- **Heatmap** for density visualization
+- **Funnel Chart** for conversion pipelines
+- **Rose / Polar Area Chart** for directional data
+- **Candlestick Chart** for financial data
+
+Plus Pro features on all chart types:
+- Annotations and reference lines
+- Data zoom and pan
+- Export to PNG/SVG
+- Real-time streaming data support
+- Custom tooltip templates
+
+**How does $299 compare?**
+
+| Library | Price/dev/year | Free tier? |
+|---|---|---|
+| **Arcadia Pro** | $299 | Yes (Community) |
+| Telerik | $1,249 | No |
+| Syncfusion | $995 | Community (revenue cap) |
+| MudBlazor | Free | N/A (MIT) |
+
+You save **$700 to $950 per developer** compared to Telerik and Syncfusion — and you still get the zero-JS architecture, full accessibility, and .NET 5-10 support.
+
+## Get Started Today
+
+The Arcadia Controls Community Edition is free forever. No sign-up. No license keys for the free tier. Just install and build.
+
+```bash
+dotnet add package Arcadia.Charts
+```
+
+**Useful links:**
+- [Documentation](/docs) — full API reference and guides
+- [Chart Playground](/playground) — interactive chart builder
+- [GitHub](https://github.com/helixuidev/arcadia) — source code, issues, discussions
+- [NuGet](https://www.nuget.org/packages/Arcadia.Charts) — package page
+- [Chart Library Comparison](/blog/blazor-chart-library-comparison-2026) — detailed feature comparison
+
+Whether you are building an internal admin panel, a SaaS dashboard, or a customer-facing analytics page, free Blazor charts are production-ready in 2026. You do not need to pay $1,000+ per developer to render data visualizations in your Blazor app.
