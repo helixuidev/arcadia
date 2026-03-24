@@ -115,9 +115,10 @@
                     {
                         <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@color"
                                 class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                                style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                                style="@GetPointStyle(pt.Index)"
                                 @onmouseover="@(e => ShowTooltipForPoint(series.Name, pt.Value, e.ClientX, e.ClientY))"
-                                @onmouseout="HideTooltipAction" />
+                                @onmouseout="HideTooltipAction"
+                                @onclick="@(() => HandlePointClick(pt.Index))" />
                     }
                 }
 

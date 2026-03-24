@@ -1,0 +1,102 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (HasData && CategoryField is not null && MinField is not null && Q1Field is not null && MedianField is not null && Q3Field is not null && MaxField is not null)
+{
+    <div class="arcadia-chart" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
+        <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" />
+        <svg width="@EffectiveWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
+             role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Box plot")"
+             @onmouseleave="HideTooltipAction"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(EffectiveWidth / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                @if (ShowGrid)
+                {
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="@EffectiveGridColor" stroke-width="1" stroke-dasharray="@GridDash" />
+                }
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="arcadia-chart__tick-label">@(YAxisFormatString is not null ? tick.Value.ToString(YAxisFormatString, FormatProvider) : tick.Label)</SvgText>
+            }
+
+            @for (var i = 0; i < _boxes.Count; i++)
+            {
+                var idx = i;
+                var box = _boxes[i];
+
+                @* Whisker line: Min to Max *@
+                <line x1="@F(box.CenterX)" y1="@F(box.MaxY)" x2="@F(box.CenterX)" y2="@F(box.MinY)"
+                      stroke="currentColor" stroke-width="1.5" opacity="0.6" />
+
+                @* Cap at Max *@
+                <line x1="@F(box.CenterX - box.CapHalfWidth)" y1="@F(box.MaxY)"
+                      x2="@F(box.CenterX + box.CapHalfWidth)" y2="@F(box.MaxY)"
+                      stroke="currentColor" stroke-width="1.5" opacity="0.6" />
+
+                @* Cap at Min *@
+                <line x1="@F(box.CenterX - box.CapHalfWidth)" y1="@F(box.MinY)"
+                      x2="@F(box.CenterX + box.CapHalfWidth)" y2="@F(box.MinY)"
+                      stroke="currentColor" stroke-width="1.5" opacity="0.6" />
+
+                @* Box: Q1 to Q3 *@
+                <rect x="@F(box.BoxX)" y="@F(box.Q3Y)" width="@F(box.BoxWidth)" height="@F(Math.Max(1, box.Q1Y - box.Q3Y))"
+                      rx="2" fill="@BoxColor" fill-opacity="0.7" stroke="@BoxColor" stroke-width="1.5"
+                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {idx * 80}ms;" : "")"
+                      @onmouseover="@(e => ShowBoxTooltip(idx, e.ClientX, e.ClientY))"
+                      @onmouseout="HideTooltipAction" />
+
+                @* Median line *@
+                <line x1="@F(box.BoxX)" y1="@F(box.MedianY)"
+                      x2="@F(box.BoxX + box.BoxWidth)" y2="@F(box.MedianY)"
+                      stroke="white" stroke-width="2.5" />
+            }
+
+            @* X-axis labels *@
+            @if (_bandScale is not null)
+            {
+                @for (var di = 0; di < Data!.Count; di++)
+                {
+                    var category = CategoryField(Data[di]);
+                    var bandCenter = _bandScale.ScaleCenter(category);
+                    <SvgText x="@F(bandCenter)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                          text-anchor="middle" class="arcadia-chart__tick-label">@category</SvgText>
+                }
+            }
+
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
+                  x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+        </svg>
+
+        <CommunityWatermark />
+
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead><tr><th>Category</th><th>Min</th><th>Q1</th><th>Median</th><th>Q3</th><th>Max</th></tr></thead>
+            <tbody>
+                @foreach (var item in Data!)
+                {
+                    <tr>
+                        <td>@CategoryField(item)</td>
+                        <td>@MinField(item)</td>
+                        <td>@Q1Field(item)</td>
+                        <td>@MedianField(item)</td>
+                        <td>@Q3Field(item)</td>
+                        <td>@MaxField(item)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

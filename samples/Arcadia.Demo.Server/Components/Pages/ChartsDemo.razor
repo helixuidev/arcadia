@@ -352,6 +352,25 @@
                     </div>
                 </div>
             </div>
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Click Events — Click a bar to see the data</div>
+                <div style="font-size: 0.8rem; margin-bottom: 12px; opacity: 0.7;">
+                    @if (_clickedItem != null)
+                    {
+                        <span>Clicked: <strong>@_clickedItem</strong></span>
+                    }
+                    else
+                    {
+                        <span>Click any bar to see its data...</span>
+                    }
+                </div>
+                <div class="gallery__chart-container">
+                    <ArcadiaBarChart TItem="QuarterlySales" Data="@_quarterlySales"
+                                   XField="@(d => (object)d.Quarter)" Series="@_barSeries"
+                                   Height="300" Width="0"
+                                   OnPointClick="@(EventCallback.Factory.Create<QuarterlySales>(this, HandleBarClick))" />
+                </div>
+            </div>
         }
 
         @if (_tab == "streaming")
@@ -560,6 +579,12 @@
 
 @code {
     string _tab = "dashboard";
+    string? _clickedItem;
+
+    void HandleBarClick(QuarterlySales item)
+    {
+        _clickedItem = $"{item.Quarter}: NA=${item.NorthAmerica:N0}, EU=${item.Europe:N0}, Asia=${item.Asia:N0}";
+    }
 
     // Form field values
     string? _textVal, _passVal, _bioVal, _maskedVal, _selectVal, _radioVal, _colorVal = "#8b5cf6";

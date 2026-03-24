@@ -53,9 +53,10 @@
 
                 <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="0.7"
                         class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                        style="@(AnimateOnLoad ? $"animation-delay: {i * 20}ms;" : "")"
+                        style="@GetPointStyle(i)"
                         @onmouseover="@(e => ShowScatterTooltip(XField(item), YField(item), e.ClientX, e.ClientY))"
-                        @onmouseout="HideTooltipAction" />
+                        @onmouseout="HideTooltipAction"
+                        @onclick="@(() => HandlePointClick(item))" />
 
                 @if (ShowDataLabels)
                 {

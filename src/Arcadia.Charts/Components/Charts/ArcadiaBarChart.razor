@@ -38,9 +38,10 @@
                 <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.Width)" height="@F(bar.Height)"
                       rx="@(Rounded ? $"{CornerRadius}" : "0")" fill="@bar.Color"
                       class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {bar.DataIndex * 80 + bar.SeriesIndex * 40}ms;" : "")"
+                      style="@(AnimateOnLoad ? $"animation-delay: {bar.DataIndex * 80 + bar.SeriesIndex * 40}ms;" : "")cursor: @(OnPointClick.HasDelegate ? "pointer" : "default");"
                       @onmouseover="@(e => ShowTooltipForPoint(bar.SeriesName, bar.Value, e.ClientX, e.ClientY))"
-                      @onmouseout="HideTooltipAction" />
+                      @onmouseout="HideTooltipAction"
+                      @onclick="@(() => HandleBarClick(bar))" />
 
                 @if (ShowDataLabels && bar.Height > 14)
                 {

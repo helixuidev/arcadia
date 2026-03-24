@@ -351,6 +351,22 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
         }
     }
 
+    private string GetPointStyle(int index)
+    {
+        var style = "";
+        if (AnimateOnLoad)
+            style += $"animation-delay: {index * 40}ms;";
+        if (OnPointClick.HasDelegate)
+            style += "cursor:pointer;";
+        return style;
+    }
+
+    private async Task HandlePointClick(int index)
+    {
+        if (OnPointClick.HasDelegate && Data is not null && index >= 0 && index < Data.Count)
+            await OnPointClick.InvokeAsync(Data[index]);
+    }
+
     private static string F(double v) => v.ToString("F1");
 
     private class DataPointInfo

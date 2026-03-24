@@ -1,0 +1,159 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits Arcadia.Charts.Core.ChartBase<T>
+
+@if (Data is not null && Data.Count > 1 && XField is not null && UpperField is not null && LowerField is not null)
+{
+    <div class="arcadia-chart" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
+        <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" />
+        <svg width="@EffectiveWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
+             role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Range area chart")"
+             class="@CssClass">
+
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <SvgText x="@(EffectiveWidth / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
+            }
+            @if (!string.IsNullOrEmpty(Subtitle))
+            {
+                <SvgText x="@(EffectiveWidth / 2)" y="36" text-anchor="middle" class="arcadia-chart__subtitle">@Subtitle</SvgText>
+            }
+
+            @* Grid lines *@
+            @if (ShowGrid)
+            {
+                @foreach (var tick in _layout.YTicks)
+                {
+                    var y = _yScale!.Scale(tick.Value);
+                    <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
+                          stroke="currentColor" opacity="0.12" stroke-width="1" stroke-dasharray="4,4" />
+                }
+            }
+
+            @* Y-axis labels *@
+            @foreach (var tick in _layout.YTicks)
+            {
+                var y = _yScale!.Scale(tick.Value);
+                <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="arcadia-chart__tick-label">@(YAxisFormatString is not null ? tick.Value.ToString(YAxisFormatString, FormatProvider) : tick.Label)</SvgText>
+            }
+
+            @* X-axis labels *@
+            @foreach (var tick in _layout.XTicks)
+            {
+                <SvgText x="@F(tick.Position)" y="@F(_layout.PlotArea.Y + _layout.PlotArea.Height + 18)"
+                      text-anchor="middle"
+                      class="arcadia-chart__tick-label">@tick.Label</SvgText>
+            }
+
+            @* Range band fill *@
+            @if (!string.IsNullOrEmpty(_fillPath))
+            {
+                <path d="@_fillPath" fill="@FillColor" opacity="@F(FillOpacity)"
+                      class="@(AnimateOnLoad ? "arcadia-animate-area" : "")" />
+            }
+
+            @* Upper bound line *@
+            @if (!string.IsNullOrEmpty(_upperPath))
+            {
+                <path d="@_upperPath" fill="none" stroke="@StrokeColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      class="arcadia-chart__line @(AnimateOnLoad ? "arcadia-animate-line" : "")" />
+            }
+
+            @* Lower bound line *@
+            @if (!string.IsNullOrEmpty(_lowerPath))
+            {
+                <path d="@_lowerPath" fill="none" stroke="@StrokeColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      class="arcadia-chart__line @(AnimateOnLoad ? "arcadia-animate-line" : "")" />
+            }
+
+            @* Optional middle line *@
+            @if (MiddleField is not null && !string.IsNullOrEmpty(_middlePath))
+            {
+                <path d="@_middlePath" fill="none" stroke="@EffectiveMiddleColor" stroke-width="2"
+                      stroke-linecap="round" stroke-linejoin="round"
+                      stroke-dasharray="6,4"
+                      class="arcadia-chart__line @(AnimateOnLoad ? "arcadia-animate-line" : "")" />
+            }
+
+            @* Data points on upper line *@
+            @foreach (var pt in _upperPoints)
+            {
+                <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@StrokeColor"
+                        class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
+                        style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                        @onmouseover="@(e => ShowTooltipForPoint("Upper", pt.Value, e.ClientX, e.ClientY))"
+                        @onmouseout="HideTooltipAction" />
+            }
+
+            @* Data points on lower line *@
+            @foreach (var pt in _lowerPoints)
+            {
+                <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@StrokeColor"
+                        class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
+                        style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                        @onmouseover="@(e => ShowTooltipForPoint("Lower", pt.Value, e.ClientX, e.ClientY))"
+                        @onmouseout="HideTooltipAction" />
+            }
+
+            @* Data points on middle line *@
+            @if (MiddleField is not null)
+            {
+                @foreach (var pt in _middlePoints)
+                {
+                    <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@EffectiveMiddleColor"
+                            class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
+                            style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                            @onmouseover="@(e => ShowTooltipForPoint("Middle", pt.Value, e.ClientX, e.ClientY))"
+                            @onmouseout="HideTooltipAction" />
+                }
+            }
+
+            @* Data labels *@
+            @if (ShowDataLabels)
+            {
+                @foreach (var pt in _upperPoints)
+                {
+                    <SvgText x="@F(pt.X)" y="@F(pt.Y - 8)" text-anchor="middle" class="arcadia-chart__data-label">@FormatDataLabel(pt.Value)</SvgText>
+                }
+                @foreach (var pt in _lowerPoints)
+                {
+                    <SvgText x="@F(pt.X)" y="@F(pt.Y + 16)" text-anchor="middle" class="arcadia-chart__data-label">@FormatDataLabel(pt.Value)</SvgText>
+                }
+            }
+
+            @* Axis lines *@
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+            <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
+                  x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
+                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+        </svg>
+        <CommunityWatermark />
+
+        @* Hidden data table for screen readers *@
+        <table class="arcadia-sr-only" aria-label="Chart data">
+            <thead>
+                <tr>
+                    <th>@(XAxisTitle ?? "X")</th>
+                    <th>Upper</th>
+                    <th>Lower</th>
+                    @if (MiddleField is not null) { <th>Middle</th> }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Data)
+                {
+                    <tr>
+                        <td>@XField(item)</td>
+                        <td>@UpperField(item)</td>
+                        <td>@LowerField(item)</td>
+                        @if (MiddleField is not null) { <td>@MiddleField(item)</td> }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

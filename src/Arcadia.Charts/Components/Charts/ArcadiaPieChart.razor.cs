@@ -110,6 +110,15 @@ public partial class ArcadiaPieChart<T> : ChartBase<T>
     }
 
 
+    private async Task HandleSliceClick(int index)
+    {
+        if (Data is null || index < 0 || index >= Data.Count) return;
+        if (OnSliceClick.HasDelegate)
+            await OnSliceClick.InvokeAsync(Data[index]);
+        if (OnPointClick.HasDelegate)
+            await OnPointClick.InvokeAsync(Data[index]);
+    }
+
     private async Task ShowPieTooltip(string name, double value, double percent, double x, double y)
     {
         if (Interop is null) return;
@@ -138,6 +147,16 @@ public partial class ArcadiaPieChart<T> : ChartBase<T>
         }
 
         return $"M{F(cx)},{F(cy)} L{F(x1)},{F(y1)} A{F(outerR)},{F(outerR)} 0 {largeArc},1 {F(x2)},{F(y2)} Z";
+    }
+
+    private string GetSliceStyle(int index)
+    {
+        var style = "";
+        if (AnimateOnLoad)
+            style += "animation-delay: " + (index * 100) + "ms;";
+        if (OnPointClick.HasDelegate || OnSliceClick.HasDelegate)
+            style += "cursor:pointer;";
+        return style;
     }
 
     private static string F(double v) => v.ToString("F2");

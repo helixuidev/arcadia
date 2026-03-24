@@ -129,5 +129,21 @@ public partial class ArcadiaScatterChart<T> : ChartBase<T>
         var html = $"<div>X: {xFmt}</div><div>Y: {yFmt}</div>";
         await Interop.ShowTooltipAsync(html, mouseX, mouseY);
     }
+    private string GetPointStyle(int index)
+    {
+        var style = "";
+        if (AnimateOnLoad)
+            style += $"animation-delay: {index * 20}ms;";
+        if (OnPointClick.HasDelegate)
+            style += "cursor:pointer;";
+        return style;
+    }
+
+    private async Task HandlePointClick(T item)
+    {
+        if (OnPointClick.HasDelegate)
+            await OnPointClick.InvokeAsync(item);
+    }
+
     private static string F(double v) => v.ToString("F1");
 }
