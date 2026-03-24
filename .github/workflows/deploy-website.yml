@@ -55,15 +55,6 @@ jobs:
           cp -r /tmp/wasm-out/wwwroot/* website/dist/playground/
           # Add .nojekyll to prevent GitHub Pages from ignoring _framework
           touch website/dist/.nojekyll
-          # Cache headers — short cache for HTML, longer for assets
-          cat > website/dist/_headers << 'HEADERS'
-/*.html
-  Cache-Control: public, max-age=0, must-revalidate
-/playground/*
-  Cache-Control: public, max-age=0, must-revalidate
-/_astro/*
-  Cache-Control: public, max-age=31536000, immutable
-HEADERS
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
