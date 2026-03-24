@@ -1,28 +1,82 @@
 # Arcadia Controls
 
-> Premium Blazor UI components for enterprise .NET developers. Charts, forms, dashboards, and notifications — native SVG rendering with zero JavaScript dependencies.
+> Arcadia Controls is a commercial Blazor component library for .NET. It provides charts, dashboard widgets, a form builder, toast notifications, and a theme engine — all rendered with pure SVG and zero JavaScript dependencies for core rendering.
 
-## Overview
+Website: https://arcadiaui.com
+Documentation: https://arcadiaui.com/docs
+Playground: https://arcadiaui.com/playground
+GitHub (Community): https://github.com/helixuidev/arcadia
 
-Arcadia Controls is a commercial Blazor component library that provides:
-- 8 chart types (Line, Bar, Pie, Scatter, Radar, Gauge, Heatmap, Candlestick)
-- 7 dashboard widgets (KPI Card, Sparkline, Delta Indicator, Progress Bar, Bar List, Tracker, Category Bar)
-- 21-field Form Builder with schema-driven and model-driven rendering
-- Toast notification system
-- Theme engine with design tokens, light/dark modes, and Tailwind CSS plugin
+## What Is Arcadia Controls?
 
-## Technical Details
+Arcadia Controls is a premium UI component library for Microsoft Blazor (.NET). It targets enterprise developers who need data visualization, dashboards, forms, and notifications. Unlike competitors that rely on JavaScript chart engines wrapped in Blazor, Arcadia renders charts as native SVG directly from C# — resulting in smaller bundles, better server-side rendering, and no JS interop overhead for chart rendering.
 
-- Rendering: Native Blazor SVG — zero JavaScript for core chart rendering
-- Frameworks: .NET 5, 6, 7, 8, 9, 10
-- Render Modes: Blazor Server, WebAssembly, Auto, Static SSR
-- Accessibility: WCAG 2.1 AA compliant with hidden data tables for screen readers
-- Testing: 555+ unit tests
-- License: Community Edition is MIT (free), Pro and Enterprise are commercial
+Key differentiators:
+- Pure SVG rendering with zero JavaScript dependencies for core chart rendering
+- Multi-targets .NET 5 through .NET 10
+- Supports all Blazor render modes: Server, WebAssembly, Auto (net8+), and Static SSR
+- WCAG 2.1 AA accessible — hidden data tables, keyboard navigation, ARIA labels
+- MCP (Model Context Protocol) server for AI-assisted chart code generation — the first Blazor library with built-in AI tooling
+- Tree-shakeable: each feature is a separate NuGet package
 
-## Installation
+## Chart Types (12 total)
+
+| Chart Type | Component Name | Description |
+|---|---|---|
+| Line Chart | ArcadiaLineChart | Multi-series line and area charts with trendlines, streaming data, and null handling |
+| Bar Chart | ArcadiaBarChart | Vertical/horizontal bars with grouped and stacked modes, rounded corners |
+| Pie & Donut | ArcadiaPieChart | Configurable inner radius for donut mode, label formatting, slice animations |
+| Scatter Chart | ArcadiaScatterChart | Scatter and bubble charts with optional trendlines and size-mapped points |
+| Candlestick | ArcadiaCandlestickChart | Financial OHLC chart with overlay line series for indicators |
+| Radar Chart | ArcadiaRadarChart | Spider chart for multi-dimensional data comparison |
+| Gauge Chart | ArcadiaGaugeChart | Radial gauge for KPI dashboards with color thresholds |
+| Heatmap | ArcadiaHeatmap | 2D color grid for density, frequency, or intensity data |
+| Funnel Chart | ArcadiaFunnelChart | Conversion funnel with progressively narrowing trapezoid stages |
+| Treemap Chart | ArcadiaTreemapChart | Hierarchical data as nested rectangles with squarified layout |
+| Waterfall Chart | ArcadiaWaterfallChart | Cumulative effect of sequential positive and negative values |
+| Rose Chart | ArcadiaRoseChart | Polar area chart with equal-angle sectors and value-proportional radii |
+
+## Dashboard Widgets (7 total)
+
+| Widget | Component Name | Description |
+|---|---|---|
+| KPI Card | ArcadiaKpiCard | Display key metrics with title, value, delta indicator, and sparkline |
+| Sparkline | ArcadiaSparkline | Inline mini line chart for trend visualization |
+| Delta Indicator | ArcadiaDeltaIndicator | Shows change direction and magnitude with color coding |
+| Progress Bar | ArcadiaProgressBar | Horizontal progress indicator with label and percentage |
+| Bar List | ArcadiaBarList | Ranked horizontal bar list for comparisons |
+| Tracker | ArcadiaTracker | Status tracker with segmented indicators |
+| Category Bar | ArcadiaCategoryBar | Segmented bar for category breakdowns |
+
+## Form Builder
+
+- Component: ArcadiaFormBuilder
+- 21 field types: text, number, email, password, textarea, select, multi-select, checkbox, radio, switch, date, time, datetime, color, slider, file upload, rich text, autocomplete, rating, tags, hidden
+- Schema-driven or model-driven rendering
+- Wizard (multi-step) forms with progress indicator
+- Cross-field validation with FluentValidation support
+- Auto-save and dirty tracking
+
+## Notifications
+
+- Component: ArcadiaToastProvider / ArcadiaToast
+- 4 severity levels: success, warning, error, info
+- Auto-dismiss with configurable duration
+- Toast stacking with position control
+- Full ARIA support for screen readers
+
+## Theme Engine
+
+- Package: Arcadia.Theme
+- CSS custom property design tokens
+- Light and dark mode with system preference detection
+- 3 density modes: compact, comfortable, spacious
+- Tailwind CSS 4.x plugin for seamless integration
+
+## NuGet Packages
 
 ```
+dotnet add package Arcadia.Core
 dotnet add package Arcadia.Charts
 dotnet add package Arcadia.FormBuilder
 dotnet add package Arcadia.Theme
@@ -31,18 +85,42 @@ dotnet add package Arcadia.Notifications
 
 ## Pricing
 
-- Community: Free forever (MIT). Core, Theme, 4 chart types, Sparkline, Notifications.
-- Pro: $299/developer/year. All 8 chart types, 7 dashboard widgets, Form Builder, animations, email support.
-- Enterprise: $799/developer/year. Everything in Pro plus custom feature requests, private roadmap access, priority bug fixes, early access, dedicated support.
+| Tier | Price | Includes |
+|---|---|---|
+| Community | Free forever (MIT) | Core, Theme, 4 chart types (Line, Bar, Pie, Scatter), Sparkline, Notifications |
+| Pro | $299/developer/year | All 12 chart types, 7 dashboard widgets, Form Builder, animations, trendlines, export, email support |
+| Enterprise | $799/developer/year | Everything in Pro + custom feature requests, private roadmap, priority bug fixes, early access, dedicated support |
 
-## Links
+## AI Integration (MCP Server)
 
-- Documentation: https://arcadiaui.com/docs
-- Demo: https://arcadiaui.com/demo
-- GitHub (Community): https://github.com/helixuidev/arcadia
-- Pricing: https://arcadiaui.com/#pricing
+Arcadia Controls includes an MCP (Model Context Protocol) server that allows AI assistants like Claude, ChatGPT, and Copilot to generate Arcadia chart code from natural language descriptions. Developers can describe a visualization in plain English and get working Blazor code. This is the first Blazor component library with built-in AI tooling.
+
+## Competitor Comparison
+
+| Feature | Arcadia Controls | Telerik UI for Blazor | Syncfusion Blazor | MudBlazor | Radzen |
+|---|---|---|---|---|---|
+| Chart rendering | Pure SVG (C#) | Canvas (JS) | Canvas (JS) | SVG (JS interop) | SVG (JS interop) |
+| JS dependencies (charts) | None | Required | Required | Required | Required |
+| Chart types | 12 | 30+ | 35+ | 6 | 15+ |
+| Dashboard widgets | 7 | Various | Various | None | None |
+| Form builder | Yes (21 fields) | Yes | Yes | Basic | Yes |
+| .NET versions | 5–10 | 6–9 | 6–9 | 6–9 | 6–9 |
+| Render modes | Server, WASM, Auto, SSR | Server, WASM, Auto | Server, WASM, Auto | Server, WASM | Server, WASM |
+| WCAG 2.1 AA | Yes (all charts) | Partial | Partial | Partial | No |
+| AI integration (MCP) | Yes | No | No | No | No |
+| Pricing (per dev/year) | $299 (Pro) | $1,249+ | $995+ | Free (MIT) | $249+ |
+| Open source | Community Edition (MIT) | No | No | Yes (MIT) | No |
+
+## Technical Stack
+
+- Language: C# 13+ with nullable reference types
+- Rendering: Native Blazor SVG components — no JavaScript for chart rendering
+- Accessibility: WCAG 2.1 AA — hidden data tables for screen readers, keyboard navigation, focus management
+- Testing: 563+ unit tests (bUnit)
+- Bundle: Tree-shakeable — each package is independent, Core is the only shared dependency
 
 ## Contact
 
 - Sales: sales@arcadiaui.com
 - Support: support@arcadiaui.com
+- GitHub: https://github.com/helixuidev/arcadia

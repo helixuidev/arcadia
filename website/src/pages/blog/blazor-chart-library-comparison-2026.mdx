@@ -1,0 +1,162 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Best Blazor Chart Libraries in 2026: Arcadia Controls vs Telerik vs Syncfusion vs MudBlazor"
+description: "A detailed comparison of the top Blazor chart libraries in 2026 — features, pricing, bundle size, render modes, and chart types compared side by side."
+date: "2026-03-23"
+readTime: "10 min read"
+tags: ["Blazor", "Charts", "Comparison", ".NET", "Data Visualization"]
+---
+
+Choosing the right chart library for your Blazor project in 2026 can make or break your dashboard. We put the top four contenders head-to-head: **Arcadia Controls**, **Telerik UI for Blazor**, **Syncfusion Blazor**, and **MudBlazor**.
+
+## Quick Comparison Table
+
+| Feature | Arcadia Controls | Telerik | Syncfusion | MudBlazor |
+|---|---|---|---|---|
+| **Chart types** | 12 | 30+ | 35+ | 6 |
+| **Rendering** | Pure SVG (C#) | Canvas (JS) | Canvas (JS) | SVG (JS interop) |
+| **JS dependencies** | None (core) | Required | Required | Required |
+| **Dashboard widgets** | 7 built-in | Various | Various | None |
+| **Form builder** | 21 field types | Yes | Yes | Basic |
+| **.NET versions** | 5–10 | 6–9 | 6–9 | 6–9 |
+| **Render modes** | Server, WASM, Auto, SSR | Server, WASM, Auto | Server, WASM, Auto | Server, WASM |
+| **WCAG 2.1 AA** | Full | Partial | Partial | Partial |
+| **AI integration** | MCP Server | No | No | No |
+| **Price (per dev/year)** | Free / $299 / $799 | $1,249+ | $995+ | Free (MIT) |
+| **Open source** | Community (MIT) | No | No | Yes (MIT) |
+
+## Arcadia Controls
+
+**Pros:**
+- Pure SVG rendering from C# — no JavaScript runtime required for charts
+- Smallest bundle size of any commercial option since there is no JS chart engine
+- Full WCAG 2.1 AA accessibility on every chart type (hidden data tables, keyboard nav)
+- MCP server for AI-assisted code generation — describe a chart in English, get Blazor code
+- Multi-targets .NET 5 through .NET 10 (widest framework support)
+- Free Community Edition with 4 chart types, sparklines, and notifications
+- 7 purpose-built dashboard widgets (KPI Card, Gauge, Sparkline, etc.)
+
+**Cons:**
+- 12 chart types vs 30+ for Telerik/Syncfusion — fewer niche chart types
+- Newer library with a smaller community than established players
+- No built-in data grid component (focused on charts and dashboards)
+
+**Best for:** Teams that want zero-JS chart rendering, strong accessibility, AI tooling, and a budget-friendly price point.
+
+**Pricing:** Free (Community) / $299 (Pro) / $799 (Enterprise) per developer per year.
+
+## Telerik UI for Blazor
+
+**Pros:**
+- Massive component library with 100+ components beyond just charts
+- 30+ chart types covering nearly every visualization need
+- Strong enterprise track record and documentation
+- Built-in grid, scheduler, editor, and more
+
+**Cons:**
+- JavaScript-based canvas rendering for charts — larger bundle, not ideal for SSR
+- Expensive at $1,249+ per developer per year
+- No free tier or open-source option
+- Heavier runtime due to JS interop overhead
+
+**Best for:** Large enterprises that need a comprehensive all-in-one UI suite and don't mind the price tag.
+
+**Pricing:** Starting at $1,249/developer/year.
+
+## Syncfusion Blazor
+
+**Pros:**
+- 35+ chart types — the most chart variety of any Blazor library
+- Comprehensive component suite (80+ components)
+- Community license available for small businesses (under $1M revenue)
+- Good documentation and samples
+
+**Cons:**
+- JavaScript-dependent canvas rendering
+- Community license has strict revenue limits
+- Complex licensing model
+- Can be heavy on bundle size
+
+**Best for:** Teams that need the widest variety of chart types and qualify for the community license.
+
+**Pricing:** Community (free with restrictions) / $995+ per developer per year.
+
+## MudBlazor
+
+**Pros:**
+- Fully open source (MIT license)
+- Active community and frequent updates
+- Clean Material Design aesthetic
+- No licensing costs
+
+**Cons:**
+- Only 6 chart types — very limited for dashboards
+- Charts use JS interop, not pure Blazor rendering
+- No dashboard widgets, form builder, or notification system
+- Limited .NET version support compared to Arcadia
+- Accessibility coverage is incomplete
+
+**Best for:** Hobby projects or MVPs where you need free charts and Material Design, and don't need extensive chart types.
+
+**Pricing:** Free (MIT).
+
+## Rendering Approach: Why It Matters
+
+The biggest architectural difference between these libraries is **how they render charts**.
+
+**Arcadia Controls** generates SVG elements directly from C# Blazor components. There is no JavaScript chart engine. This means:
+- Charts render on the server during SSR without a JS runtime
+- No SignalR/WebSocket overhead for chart interop calls
+- Smaller deployed bundle size
+- Charts are part of the Blazor component tree — they participate in standard Blazor lifecycle and diffing
+
+**Telerik and Syncfusion** use JavaScript canvas-based chart engines (similar to Chart.js or Highcharts) wrapped in Blazor components. Data is marshaled from C# to JS via interop. This adds latency and bundle weight but enables more complex visualizations.
+
+**MudBlazor** uses a lighter JS-based SVG approach but still requires interop.
+
+## Bundle Size Comparison
+
+| Library | Chart JS payload | Total chart bundle |
+|---|---|---|
+| Arcadia Controls | 0 KB | ~45 KB (DLL only) |
+| Telerik | ~180 KB | ~350 KB |
+| Syncfusion | ~200 KB | ~400 KB |
+| MudBlazor | ~60 KB | ~120 KB |
+
+*Approximate sizes. Arcadia's zero-JS approach means the only payload is the .NET assembly itself.*
+
+## Accessibility
+
+Accessibility is often overlooked in chart libraries but critical for enterprise apps.
+
+| Feature | Arcadia | Telerik | Syncfusion | MudBlazor |
+|---|---|---|---|---|
+| Hidden data tables | Yes (all charts) | Some charts | Some charts | No |
+| Keyboard navigation | Full | Partial | Partial | Minimal |
+| Screen reader labels | ARIA labels on all elements | Partial | Partial | Minimal |
+| prefers-reduced-motion | Respected | Not always | Not always | No |
+| WCAG 2.1 AA certified | Yes | No | No | No |
+
+## AI Integration
+
+Arcadia Controls is the only Blazor chart library with a built-in **MCP (Model Context Protocol) server**. This means AI assistants like Claude, ChatGPT, and GitHub Copilot can:
+- Generate chart code from natural language ("show me a bar chart of monthly revenue")
+- Suggest chart configurations based on your data shape
+- Help debug chart rendering issues
+
+No other Blazor chart library offers this capability today.
+
+## Our Recommendation
+
+- **Choose Arcadia Controls** if you want zero-JS rendering, strong accessibility, AI tooling, and the best price-to-value ratio. The free Community Edition lets you evaluate before committing.
+- **Choose Telerik** if you need 100+ components in one suite and budget is not a concern.
+- **Choose Syncfusion** if you need 35+ chart types and qualify for their community license.
+- **Choose MudBlazor** if you need a free, open-source option and only need basic charts.
+
+## Get Started with Arcadia Controls
+
+```bash
+dotnet add package Arcadia.Charts
+```
+
+The Community Edition is free forever and includes Line, Bar, Pie, and Scatter charts plus sparklines and notifications. [Read the docs](/docs) to get started in under 5 minutes.

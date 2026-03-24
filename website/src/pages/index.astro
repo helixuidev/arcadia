@@ -336,4 +336,52 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
+  <!-- FAQ Schema for SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is Arcadia Controls?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Arcadia Controls is a commercial Blazor component library with 12 chart types, dashboard widgets, a form builder, and toast notifications. It uses native SVG rendering with zero JavaScript dependencies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is Arcadia Controls free?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Arcadia Controls offers a free Community Edition with 4 chart types (Line, Bar, Pie, Scatter). Pro ($299/dev/year) and Enterprise ($799/dev/year) tiers include all 12 chart types plus priority support."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What Blazor render modes does Arcadia Controls support?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Arcadia Controls supports all Blazor render modes: Server, WebAssembly, and Auto (net8+). It multi-targets .NET 5 through .NET 10."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does Arcadia Controls compare to Telerik and Syncfusion?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Arcadia Controls uses pure SVG rendering with no JavaScript dependencies for chart rendering, resulting in smaller bundle sizes and better server-side rendering. At $299/dev/year it's also significantly cheaper than Telerik ($1,249+) or Syncfusion ($995+)."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does Arcadia Controls have an AI integration?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Arcadia Controls includes an MCP (Model Context Protocol) server that lets AI assistants like Claude generate chart code from natural language descriptions. It's the first Blazor component library with built-in AI tooling."
+        }
+      }
+    ]
+  })} />
+
 </Layout>
