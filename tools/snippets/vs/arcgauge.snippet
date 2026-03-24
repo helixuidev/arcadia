@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Arcadia Gauge Chart</Title>
+      <Shortcut>arcgauge</Shortcut>
+      <Description>Scaffolds an ArcadiaGaugeChart with value, range, and thresholds</Description>
+      <Author>Arcadia Controls</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>GaugeValue</ID>
+          <Default>75</Default>
+        </Literal>
+        <Literal>
+          <ID>MinValue</ID>
+          <Default>0</Default>
+        </Literal>
+        <Literal>
+          <ID>MaxValue</ID>
+          <Default>100</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="html">
+        <![CDATA[<ArcadiaGaugeChart Value="$GaugeValue$" Min="$MinValue$" Max="$MaxValue$"
+                Height="200" Width="300"
+                Thresholds="@(new List<GaugeThreshold>
+                {
+                    new() { Value = 0, Color = "danger" },
+                    new() { Value = 50, Color = "warning" },
+                    new() { Value = 75, Color = "success" }
+                })"
+                AnimateOnLoad="true" Title="$end$" />]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

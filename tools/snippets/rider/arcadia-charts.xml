@@ -1,0 +1,120 @@
+<templateSet group="Arcadia Controls">
+  <template name="arcline" value="&lt;ArcadiaLineChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                XField=&quot;@(d =&gt; (object)d.Label)&quot; Series=&quot;@_series&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot; ShowPoints=&quot;true&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Line Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcbar" value="&lt;ArcadiaBarChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                XField=&quot;@(d =&gt; (object)d.Label)&quot; Series=&quot;@_series&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot; Rounded=&quot;true&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Bar Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcpie" value="&lt;ArcadiaPieChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                NameField=&quot;@(d =&gt; d.Name)&quot; ValueField=&quot;@(d =&gt; d.Value)&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot; ShowLabels=&quot;true&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Pie Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcdonut" value="&lt;ArcadiaPieChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                NameField=&quot;@(d =&gt; d.Name)&quot; ValueField=&quot;@(d =&gt; d.Value)&quot;&#10;                InnerRadius=&quot;$InnerRadius$&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot; ShowLabels=&quot;true&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Donut Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="InnerRadius" expression="" defaultValue="&quot;60&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcscatter" value="&lt;ArcadiaScatterChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                XField=&quot;@(d =&gt; d.X)&quot; YField=&quot;@(d =&gt; d.Y)&quot;&#10;                PointSize=&quot;5&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Scatter Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcbubble" value="&lt;ArcadiaScatterChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                XField=&quot;@(d =&gt; d.X)&quot; YField=&quot;@(d =&gt; d.Y)&quot;&#10;                SizeField=&quot;@(d =&gt; d.Size)&quot; PointSize=&quot;5&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Bubble Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arccandle" value="&lt;ArcadiaCandlestickChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                LabelField=&quot;@(d =&gt; d.Date)&quot;&#10;                OpenField=&quot;@(d =&gt; d.Open)&quot; HighField=&quot;@(d =&gt; d.High)&quot;&#10;                LowField=&quot;@(d =&gt; d.Low)&quot; CloseField=&quot;@(d =&gt; d.Close)&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Candlestick Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;OhlcRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcradar" value="&lt;ArcadiaRadarChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                LabelField=&quot;@(d =&gt; d.Label)&quot; Series=&quot;@_series&quot;&#10;                ShowFill=&quot;true&quot; ShowPoints=&quot;true&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Radar Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcgauge" value="&lt;ArcadiaGaugeChart Value=&quot;$GaugeValue$&quot; Min=&quot;$Min$&quot; Max=&quot;$Max$&quot;&#10;                Height=&quot;200&quot; Width=&quot;300&quot;&#10;                Thresholds=&quot;@(new List&lt;GaugeThreshold&gt;&#10;                {&#10;                    new() { Value = 0, Color = &amp;quot;danger&amp;quot; },&#10;                    new() { Value = 50, Color = &amp;quot;warning&amp;quot; },&#10;                    new() { Value = 75, Color = &amp;quot;success&amp;quot; }&#10;                })&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Gauge Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="GaugeValue" expression="" defaultValue="&quot;75&quot;" alwaysStopAt="true" />
+    <variable name="Min" expression="" defaultValue="&quot;0&quot;" alwaysStopAt="true" />
+    <variable name="Max" expression="" defaultValue="&quot;100&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="archeat" value="&lt;ArcadiaHeatmap TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                XField=&quot;@(d =&gt; d.Column)&quot; YField=&quot;@(d =&gt; d.Row)&quot;&#10;                ValueField=&quot;@(d =&gt; d.Value)&quot;&#10;                LowColor=&quot;#f1f5f9&quot; HighColor=&quot;#2563eb&quot;&#10;                ShowValues=&quot;true&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Heatmap" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;HeatmapRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcfunnel" value="&lt;ArcadiaFunnelChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                NameField=&quot;@(d =&gt; d.Stage)&quot; ValueField=&quot;@(d =&gt; d.Count)&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Funnel Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;FunnelRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arctree" value="&lt;ArcadiaTreemapChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                NameField=&quot;@(d =&gt; d.Name)&quot; ValueField=&quot;@(d =&gt; d.Value)&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Treemap Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;TreemapRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcwater" value="&lt;ArcadiaWaterfallChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                CategoryField=&quot;@(d =&gt; d.Category)&quot; ValueField=&quot;@(d =&gt; d.Value)&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Waterfall Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;WaterfallRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcrose" value="&lt;ArcadiaRoseChart TItem=&quot;$DataType$&quot; Data=&quot;@_data&quot;&#10;                NameField=&quot;@(d =&gt; d.Name)&quot; ValueField=&quot;@(d =&gt; d.Value)&quot;&#10;                ShowLabels=&quot;true&quot;&#10;                Height=&quot;350&quot; Width=&quot;0&quot;&#10;                AnimateOnLoad=&quot;true&quot; Title=&quot;$Title$&quot; /&gt;" description="Arcadia Rose Chart" toReformat="false" toShortenFQNames="true">
+    <variable name="DataType" expression="" defaultValue="&quot;DataRecord&quot;" alwaysStopAt="true" />
+    <variable name="Title" expression="" defaultValue="&quot;Chart Title&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arckpi" value="&lt;ArcadiaKpiCard Title=&quot;$KpiTitle$&quot; Value=&quot;$KpiValue$&quot;&#10;                Delta=&quot;$KpiDelta$&quot; DeltaType=&quot;DeltaType.Positive&quot;&#10;                Sparkline=&quot;@_sparklineData&quot; SparklineColor=&quot;primary&quot;&#10;                Footer=&quot;$Footer$&quot; /&gt;" description="Arcadia KPI Card" toReformat="false" toShortenFQNames="true">
+    <variable name="KpiTitle" expression="" defaultValue="&quot;Monthly Revenue&quot;" alwaysStopAt="true" />
+    <variable name="KpiValue" expression="" defaultValue="&quot;$142,500&quot;" alwaysStopAt="true" />
+    <variable name="KpiDelta" expression="" defaultValue="&quot;+12.3%&quot;" alwaysStopAt="true" />
+    <variable name="Footer" expression="" defaultValue="&quot;vs last month&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+  <template name="arcspark" value="&lt;ArcadiaSparkline Data=&quot;@_sparklineData&quot;&#10;                Width=&quot;$Width$&quot; Height=&quot;$Height$&quot;&#10;                Color=&quot;$Color$&quot; ShowArea=&quot;true&quot; /&gt;" description="Arcadia Sparkline" toReformat="false" toShortenFQNames="true">
+    <variable name="Width" expression="" defaultValue="&quot;120&quot;" alwaysStopAt="true" />
+    <variable name="Height" expression="" defaultValue="&quot;32&quot;" alwaysStopAt="true" />
+    <variable name="Color" expression="" defaultValue="&quot;primary&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="RAZOR" value="true" />
+    </context>
+  </template>
+</templateSet>

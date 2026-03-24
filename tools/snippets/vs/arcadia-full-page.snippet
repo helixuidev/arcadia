@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Arcadia Full Dashboard Page</Title>
+      <Shortcut>arcpage</Shortcut>
+      <Description>Scaffolds a complete Blazor page with KPI cards, line chart, bar chart, and sample data</Description>
+      <Author>Arcadia Controls</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>PageRoute</ID>
+          <Default>/dashboard</Default>
+        </Literal>
+        <Literal>
+          <ID>PageTitle</ID>
+          <Default>Dashboard</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="html">
+        <![CDATA[@page "$PageRoute$"
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Components.Dashboard
+@using Arcadia.Charts.Core
+
+<PageTitle>$PageTitle$</PageTitle>
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+    <ArcadiaKpiCard Title="Total Revenue" Value="@("$142,500")"
+                    Delta="+12.3%" DeltaType="DeltaType.Positive"
+                    Sparkline="@_sparkline" SparklineColor="primary"
+                    Footer="vs last month" />
+
+    <ArcadiaKpiCard Title="Active Users" Value="3,842"
+                    Delta="+5.7%" DeltaType="DeltaType.Positive"
+                    Sparkline="@_sparkline" SparklineColor="success"
+                    Footer="vs last month" />
+
+    <ArcadiaKpiCard Title="Error Rate" Value="0.42%"
+                    Delta="-0.12%" DeltaType="DeltaType.Negative"
+                    Sparkline="@_sparkline" SparklineColor="danger"
+                    Footer="vs last month" />
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    <ArcadiaLineChart TItem="SampleData" Data="@_data"
+                      XField="@(d => (object)d.Month)" Series="@_lineSeries"
+                      Height="350" Width="0" ShowPoints="true"
+                      AnimateOnLoad="true" Title="Monthly Trend" />
+
+    <ArcadiaBarChart TItem="SampleData" Data="@_data"
+                     XField="@(d => (object)d.Month)" Series="@_barSeries"
+                     Height="350" Width="0" Rounded="true"
+                     AnimateOnLoad="true" Title="Monthly Comparison" />
+</div>
+
+$end$
+
+@code {
+    private List<SampleData> _data = new()
+    {
+        new("Jan", 120, 80),
+        new("Feb", 150, 95),
+        new("Mar", 170, 110),
+        new("Apr", 140, 100),
+        new("May", 190, 130),
+        new("Jun", 210, 150)
+    };
+
+    private List<double> _sparkline = new() { 30, 45, 35, 50, 40, 60, 55, 70 };
+
+    private List<SeriesConfig<SampleData>> _lineSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Value1, Color = "primary", ShowArea = true },
+        new() { Name = "Costs", Field = d => d.Value2, Color = "secondary" }
+    };
+
+    private List<SeriesConfig<SampleData>> _barSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Value1, Color = "primary" },
+        new() { Name = "Costs", Field = d => d.Value2, Color = "secondary" }
+    };
+
+    private record SampleData(string Month, double Value1, double Value2);
+}]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

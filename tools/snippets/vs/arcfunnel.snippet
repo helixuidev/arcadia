@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Arcadia Funnel Chart</Title>
+      <Shortcut>arcfunnel</Shortcut>
+      <Description>Scaffolds an ArcadiaFunnelChart with name and value fields</Description>
+      <Author>Arcadia Controls</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>DataType</ID>
+          <Default>FunnelRecord</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="html">
+        <![CDATA[<ArcadiaFunnelChart TItem="$DataType$" Data="@_data"
+                NameField="@(d => d.Stage)" ValueField="@(d => d.Count)"
+                Height="350" Width="0"
+                AnimateOnLoad="true" Title="$end$" />]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

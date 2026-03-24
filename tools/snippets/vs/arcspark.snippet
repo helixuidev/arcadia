@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Arcadia Sparkline</Title>
+      <Shortcut>arcspark</Shortcut>
+      <Description>Scaffolds an ArcadiaSparkline inline mini chart</Description>
+      <Author>Arcadia Controls</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>SparkWidth</ID>
+          <Default>120</Default>
+        </Literal>
+        <Literal>
+          <ID>SparkHeight</ID>
+          <Default>32</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="html">
+        <![CDATA[<ArcadiaSparkline Data="@_sparklineData"
+                Width="$SparkWidth$" Height="$SparkHeight$"
+                Color="primary" ShowArea="true"$end$ />]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

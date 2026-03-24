@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Arcadia Bar Chart</Title>
+      <Shortcut>arcbar</Shortcut>
+      <Description>Scaffolds an ArcadiaBarChart with data model and series config</Description>
+      <Author>Arcadia Controls</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>DataType</ID>
+          <Default>DataRecord</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="html">
+        <![CDATA[<ArcadiaBarChart TItem="$DataType$" Data="@_data"
+                XField="@(d => (object)d.Label)" Series="@_series"
+                Height="350" Width="0" Rounded="true"
+                AnimateOnLoad="true" Title="$end$" />]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
