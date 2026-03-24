@@ -1,8 +1,16 @@
 # Arcadia.FormBuilder
 
-Dynamic form builder for Blazor — 21 field types, schema-driven rendering, wizard forms, and validation.
+Dynamic form generation for Blazor — 21 field types, schema-driven and model-driven modes, multi-step wizards.
+
+## Install
+
+```bash
+dotnet add package Arcadia.FormBuilder
+```
 
 ## Quick Start
+
+Generate a form from a JSON schema:
 
 ```csharp
 var schema = new FormSchema
@@ -15,28 +23,24 @@ var schema = new FormSchema
                 Validation = new() { Pattern = "email" } },
     }
 };
+```
 
+```razor
 <HelixFormBuilder Schema="@schema" OnValidSubmit="HandleSubmit" />
 ```
 
+Or generate directly from a C# model with DataAnnotations:
+
+```razor
+<HelixFormBuilder TModel="ContactForm" Model="@contact" OnValidSubmit="HandleSubmit" />
+```
+
+## Field Types
+
+Text · Number · Email · Select · MultiSelect · Checkbox · Radio · Toggle · Date · DateTime · Time · File Upload · TextArea · Autocomplete · Switch · Slider · Rating · Color Picker · Rich Text · Repeater · Hidden
+
 ## Key Features
 
-- 21 field types (text, number, select, date, rating, repeater, and more)
-- Schema-driven, model-driven, or component-based forms
-- Wizard/multi-step with per-step validation
-- Conditional field visibility
-- Cross-field validation (password confirm, date ranges)
-- Auto-generate from C# classes with DataAnnotations
-- Auto-save with undo/redo
-- Full accessibility (aria-required, aria-invalid, aria-describedby)
+Schema-driven & model-driven · Multi-step wizard with per-step validation · Conditional field visibility · Async validation · Auto-save with undo/redo · WCAG 2.1 AA accessible · All Blazor render modes · .NET 5–10
 
-## Installation
-
-```
-dotnet add package Arcadia.FormBuilder
-```
-
-## Links
-
-- [Documentation](https://arcadiaui.com/docs/forms)
-- [GitHub](https://github.com/helixuidev/helixui)
+**[Docs](https://arcadiaui.com/docs/form-builder)** · **[Demo](https://arcadiaui.com/playground/)** · **[GitHub](https://github.com/ArcadiaUIDev/arcadia)**

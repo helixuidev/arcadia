@@ -116,8 +116,8 @@
                         <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@color"
                                 class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                                 style="@GetPointStyle(pt.Index)"
-                                @onmouseover="@(e => ShowTooltipForPoint(series.Name, pt.Value, e.ClientX, e.ClientY))"
-                                @onmouseout="HideTooltipAction"
+                                @onmouseover="@(e => HandlePointHover(series.Name, pt, e))"
+                                @onmouseout="HideTooltipOrTemplate"
                                 @onclick="@(() => HandlePointClick(pt.Index))" />
                     }
                 }
@@ -213,6 +213,7 @@
                 }
             </tbody>
         </table>
+        @if (RenderTooltipTemplate is not null) { @RenderTooltipTemplate }
     </div>
 }
 else

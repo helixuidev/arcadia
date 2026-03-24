@@ -335,6 +335,61 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
         return EffectivePalette.GetColor(seriesIndex);
     }
 
+    // ── Custom tooltip state ────────────────────────────
+    private T? _hoveredItem;
+    private double _tooltipX;
+    private double _tooltipY;
+    private bool _tooltipVisible;
+
+    /// <summary>Shows the custom tooltip template for a data item, or falls back to JS tooltip.</summary>
+    protected async Task ShowTooltipOrTemplate(T item, string fallbackHtml, double mouseX, double mouseY)
+    {
+        if (_disposed) return;
+        if (TooltipTemplate is not null)
+        {
+            _hoveredItem = item;
+            _tooltipX = mouseX;
+            _tooltipY = mouseY;
+            _tooltipVisible = true;
+            await InvokeAsync(StateHasChanged);
+        }
+        else if (Interop is not null)
+        {
+            try { await Interop.ShowTooltipAsync(fallbackHtml, mouseX, mouseY); }
+#if NET6_0_OR_GREATER
+            catch (JSDisconnectedException) { }
+#endif
+            catch (ObjectDisposedException) { }
+        }
+    }
+
+    /// <summary>Hides the custom tooltip or JS tooltip.</summary>
+    protected async Task HideTooltipOrTemplate()
+    {
+        if (_disposed) return;
+        if (TooltipTemplate is not null)
+        {
+            _tooltipVisible = false;
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            await HideTooltipAction();
+        }
+    }
+
+    /// <summary>Renders the custom tooltip portal div if TooltipTemplate is set and an item is hovered.</summary>
+    protected RenderFragment? RenderTooltipTemplate => _tooltipVisible && _hoveredItem is not null && TooltipTemplate is not null
+        ? builder =>
+        {
+            builder.OpenElement(0, "div");
+            builder.AddAttribute(1, "class", "arcadia-tooltip arcadia-tooltip--custom");
+            builder.AddAttribute(2, "style", $"position:fixed;left:{_tooltipX + 12}px;top:{_tooltipY - 8}px;z-index:9999;pointer-events:none;");
+            builder.AddContent(3, TooltipTemplate(_hoveredItem));
+            builder.CloseElement();
+        }
+        : null;
+
     /// <summary>Formats a value for screen reader tables, replacing NaN with "—".</summary>
     protected static string FormatSrValue(double value) =>
         double.IsNaN(value) || double.IsInfinity(value) ? "—" : value.ToString("G4");

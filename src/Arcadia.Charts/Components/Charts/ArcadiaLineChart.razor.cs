@@ -361,6 +361,16 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
         return style;
     }
 
+    private async Task HandlePointHover(string seriesName, DataPointInfo pt, Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+    {
+        if (Data is not null && pt.Index >= 0 && pt.Index < Data.Count)
+        {
+            var item = Data[pt.Index];
+            var fallbackHtml = $"<div style='font-weight:600;margin-bottom:2px'>{seriesName}</div><div>{FormatValue(pt.Value, YAxisFormatString ?? DataLabelFormatString)}</div>";
+            await ShowTooltipOrTemplate(item, fallbackHtml, e.ClientX, e.ClientY);
+        }
+    }
+
     private async Task HandlePointClick(int index)
     {
         if (OnPointClick.HasDelegate && Data is not null && index >= 0 && index < Data.Count)
