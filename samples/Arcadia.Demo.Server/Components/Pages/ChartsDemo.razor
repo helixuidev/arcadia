@@ -280,13 +280,24 @@
                 <p>Equal-angle sectors with radius proportional to value. Ideal for cyclical data like wind direction, time-of-day patterns, or seasonal comparisons.</p>
             </div>
 
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Wind Speed by Direction</div>
-                <div class="gallery__chart-container" style="display: flex; justify-content: center;">
-                    <HelixRoseChart TItem="WindData" Data="@_windData"
-                                    NameField="@(d => d.Direction)" ValueField="@(d => d.Speed)"
-                                    Height="400" Width="400" AnimateOnLoad="true"
-                                    Title="Wind Speed by Direction" />
+            <div class="gallery__showcase-row">
+                <div class="gallery__showcase">
+                    <div class="gallery__showcase-title">Wind Speed by Direction</div>
+                    <div class="gallery__chart-container">
+                        <HelixRoseChart TItem="WindData" Data="@_windData"
+                                        NameField="@(d => d.Direction)" ValueField="@(d => d.Speed)"
+                                        Height="380" Width="380" AnimateOnLoad="true"
+                                        Title="Wind Speed" />
+                    </div>
+                </div>
+                <div class="gallery__showcase">
+                    <div class="gallery__showcase-title">Monthly Activity</div>
+                    <div class="gallery__chart-container">
+                        <HelixRoseChart TItem="MonthActivity" Data="@_monthActivity"
+                                        NameField="@(d => d.Month)" ValueField="@(d => d.Hours)"
+                                        Height="380" Width="380" AnimateOnLoad="true"
+                                        Title="Activity by Month" />
+                    </div>
                 </div>
             </div>
         }
@@ -601,6 +612,7 @@
     record HeatmapPoint(string Day, string Hour, double Count);
     record StockCandle(string Date, double Open, double High, double Low, double Close, double MA5);
     record WindData(string Direction, double Speed);
+    record MonthActivity(string Month, double Hours);
     record NullablePoint(string Label, double Value);
     record StreamPoint(string Time, double Value);
 
@@ -618,8 +630,8 @@
     };
     List<SeriesConfig<MonthlySales>> _lineSeries = new()
     {
-        new() { Name = "Revenue", Field = d => d.Revenue, Color = "success", ShowArea = true, AreaOpacity = 0.12, CurveType = "smooth", StrokeWidth = 2.5 },
-        new() { Name = "Target", Field = d => d.Target, Color = "warning", Dashed = true, StrokeWidth = 2, CurveType = "smooth" },
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "#22c55e", ShowArea = true, AreaOpacity = 0.08, CurveType = "smooth", StrokeWidth = 2.5 },
+        new() { Name = "Target", Field = d => d.Target, Color = "#f59e0b", Dashed = true, StrokeWidth = 2.5, CurveType = "smooth" },
     };
     List<SeriesConfig<MonthlySales>> _comboSeries = new()
     {
@@ -676,8 +688,8 @@
     };
     List<SeriesConfig<SkillProfile>> _radarSeries = new()
     {
-        new() { Name = "Team A", Field = d => d.TeamA, Color = "primary" },
-        new() { Name = "Team B", Field = d => d.TeamB, Color = "success" },
+        new() { Name = "Team A", Field = d => d.TeamA, Color = "primary", AreaOpacity = 0.2 },
+        new() { Name = "Team B", Field = d => d.TeamB, Color = "success", AreaOpacity = 0.15 },
     };
 
     List<HeatmapPoint> _heatmapData = new();
@@ -692,6 +704,13 @@
     {
         new("N", 12), new("NE", 8), new("E", 15), new("SE", 10),
         new("S", 7), new("SW", 18), new("W", 14), new("NW", 9),
+    };
+
+    List<MonthActivity> _monthActivity = new()
+    {
+        new("Jan", 120), new("Feb", 95), new("Mar", 140), new("Apr", 160),
+        new("May", 185), new("Jun", 210), new("Jul", 195), new("Aug", 170),
+        new("Sep", 155), new("Oct", 130), new("Nov", 100), new("Dec", 85),
     };
 
     // ── Interactive tab data ──

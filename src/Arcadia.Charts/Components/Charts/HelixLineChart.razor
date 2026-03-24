@@ -153,8 +153,8 @@
                             <line x1="@F(ax)" y1="@F(_layout.PlotArea.Y)" x2="@F(ax)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
                                   stroke="@ann.Color" stroke-width="1" stroke-dasharray="4,3" opacity="0.7" />
                         }
-                        <SvgText x="@F(ax)" y="@F(_layout.PlotArea.Y - 6)" text-anchor="middle"
-                              style="@($"font-size:10px; fill:{ann.Color}; font-weight:600;")">@ann.Label</SvgText>
+                        <SvgText x="@F(ax)" y="@F(_layout.PlotArea.Y + 14)" text-anchor="middle"
+                              style="@($"font-size:10px; fill:{ann.Color}; font-weight:600; background: var(--g-card, rgba(0,0,0,0.5));")">@ann.Label</SvgText>
                     }
                 }
             }

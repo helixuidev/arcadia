@@ -81,7 +81,8 @@
 .arcadia-catbar__legend-swatch { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 
 /* Charts */
-.arcadia-chart { position: relative; overflow: hidden; }
+.arcadia-chart { position: relative; overflow: hidden; color: inherit; }
+.arcadia-gauge { width: fit-content; }
 .arcadia-chart__svg { font-family: var(--arcadia-font-sans, system-ui); overflow: visible; }
 .arcadia-chart__title { font-size: var(--arcadia-text-base, 1rem); font-weight: var(--arcadia-font-semibold, 600); fill: currentColor; }
 .arcadia-chart__tick-label { font-size: 11px; fill: currentColor; opacity: 0.7; }
@@ -302,23 +303,10 @@
 .arcadia-treemap__cell { transition: opacity 0.15s ease; }
 .arcadia-treemap__cell:hover { opacity: 0.85; filter: brightness(1.1); }
 
-/* Responsive chart container */
-.arcadia-chart { position: relative; width: 100%; }
-.arcadia-chart svg { max-width: 100%; height: auto; }
-
 /* Gauge sweep animation */
 @keyframes arcadia-gauge-sweep {
   to { stroke-dashoffset: 0; }
 }
-
-
-/* Dark mode chart overrides — inherits from parent color */
-.arcadia-chart { color: var(--arcadia-color-text, inherit); }
-
-/* Gallery dark override */
-.gallery .arcadia-chart { color: #c4c0dc; }
-.gallery .arcadia-chart__legend-btn { color: #8b87a8; }
-.gallery .arcadia-chart__legend-btn--hidden { color: #5b577a; }
 
 /* Chart Toolbar */
 .arcadia-chart-toolbar {
