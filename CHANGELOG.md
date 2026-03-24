@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.0.0-beta.4.1 (2026-03-24) — Post-review fixes
+
+### Bug Fixes
+- Fix `Loading` property — now applies `arcadia-chart--loading` shimmer CSS class
+- Fix `YValue` annotations — draws horizontal reference lines at Y position (was always vertical)
+- Fix pan/zoom listener leak — `mousemove`/`mouseup` handlers properly removed in `disablePanZoom()`
+- Fix NaN in screen reader tables — shows "—" instead of "NaN"
+- Add `ShowToolbar` parameter (default `true`) to opt out of export toolbar
+- Add `NoDataState` component — all 14 charts show "No data available" when empty
+- All CSS variable references now have hardcoded fallbacks (pie, rose, funnel, treemap, etc.)
+- Fix stale HelixUI path references in all CSS file comments
+
+### Known API Inconsistencies (will be addressed in 1.0.0)
+- `ArcadiaGaugeChart.Thresholds` uses `List<GaugeThreshold>` while `ArcadiaProgressBar.Thresholds` uses `IReadOnlyList<(double, string)>` — will be unified
+- `OnPointClick` returns `EventCallback<T>` (item) while `OnSeriesClick` returns `EventCallback<int>` (index) — will add a unified `PointClickEventArgs`
+- `TooltipTemplate` parameter exists but is not documented — it requires JS interop and only works in interactive render modes
+
 ## 1.0.0-beta.4 (2026-03-24)
 
 ### Breaking Changes
