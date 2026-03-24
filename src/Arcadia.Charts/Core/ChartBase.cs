@@ -178,8 +178,16 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <summary>The actual rendered width used for layout calculations.</summary>
     protected double EffectiveWidth => _measuredWidth > 0 ? _measuredWidth : (Width > 0 ? Width : 600);
 
-    /// <summary>The SVG width attribute — "100%" in responsive mode, pixel value otherwise.</summary>
+    /// <summary>The SVG width attribute — "100%" when responsive and unmeasured, pixel value otherwise.</summary>
     protected string SvgWidth => IsResponsive && _measuredWidth <= 0 ? "100%" : EffectiveWidth.ToString("F0");
+
+    /// <summary>Always false — skeleton approach removed in favor of width="100%" scaling.
+    /// Kept for API compatibility with chart razor files.</summary>
+    protected bool AwaitingMeasurement => false;
+
+    /// <summary>Gets the container div style — adds width:100% and min-height when awaiting measurement.</summary>
+    protected string GetContainerStyle() =>
+        AwaitingMeasurement ? $"width:100%;min-height:{Height.ToString("F0")}px;{Style}" : Style ?? "";
 
     private double _measuredWidth;
 

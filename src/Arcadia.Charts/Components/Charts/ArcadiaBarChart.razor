@@ -2,9 +2,10 @@
 @typeparam T
 @inherits Arcadia.Charts.Core.ChartBase<T>
 
-@if (Data is not null && Data.Count > 0 && XField is not null && Series is not null)
-{
-    <div class="arcadia-chart @(Loading ? "arcadia-chart--loading" : "")" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
+<div class="arcadia-chart @(AwaitingMeasurement || Loading ? "arcadia-chart--loading" : "")" @ref="ContainerRef" style="@GetContainerStyle()" @attributes="AdditionalAttributes">
+@if (AwaitingMeasurement) {
+}
+else if (Data is not null && Data.Count > 0 && XField is not null && Series is not null) {
         @if (ShowToolbar) { <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" /> }
         <svg width="@SvgWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
              role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Bar chart")"
@@ -100,9 +101,9 @@
             </tbody>
         </table>
         @if (RenderTooltipTemplate is not null) { @RenderTooltipTemplate }
-    </div>
 }
 else
 {
     <NoDataState Message="@(NoDataMessage ?? "No data available")" Height="@Height" />
 }
+</div>
