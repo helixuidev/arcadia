@@ -1,0 +1,61 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Box Plot
+description: Blazor box and whisker chart component showing statistical distribution with minimum, Q1, median, Q3, and maximum values per category.
+---
+
+# Box Plot
+
+Displays statistical distribution for each data category using a box and whisker diagram. The box spans from Q1 (25th percentile) to Q3 (75th percentile), with a line at the median. Whiskers extend to the minimum and maximum values.
+
+## Basic Usage
+
+```razor
+<ArcadiaBoxPlot TItem="DeptSalary" Data="@data"
+                CategoryField="@(d => d.Department)"
+                MinField="@(d => d.Min)"
+                Q1Field="@(d => d.Q1)"
+                MedianField="@(d => d.Median)"
+                Q3Field="@(d => d.Q3)"
+                MaxField="@(d => d.Max)"
+                Height="400" Width="600" Title="Salary Distribution" />
+
+@code {
+    record DeptSalary(string Department, double Min, double Q1, double Median, double Q3, double Max);
+
+    List<DeptSalary> data = new()
+    {
+        new("Engineering", 75000, 95000, 120000, 145000, 190000),
+        new("Marketing",   55000, 68000,  82000,  98000, 130000),
+        new("Sales",       45000, 62000,  78000, 105000, 160000),
+        new("HR",          50000, 60000,  72000,  85000, 110000),
+        new("Design",      60000, 75000,  90000, 110000, 140000),
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `CategoryField` | `Func<T, string>` | required | Extracts the category label |
+| `MinField` | `Func<T, double>` | required | Extracts the minimum value |
+| `Q1Field` | `Func<T, double>` | required | Extracts the first quartile (25th percentile) |
+| `MedianField` | `Func<T, double>` | required | Extracts the median (50th percentile) |
+| `Q3Field` | `Func<T, double>` | required | Extracts the third quartile (75th percentile) |
+| `MaxField` | `Func<T, double>` | required | Extracts the maximum value |
+| `BoxColor` | `string` | primary | Fill color for the box |
+| `BoxWidth` | `double` | 0.6 | Box width as fraction of available space (0-1) |
+| `Title` | `string?` | null | Chart title |
+| `Height` | `double` | 300 | Chart height in pixels |
+| `Width` | `double` | 600 | Chart width (0 = responsive) |
+| `AnimateOnLoad` | `bool` | true | Animate boxes on initial render |
+
+## Features
+
+- Box spans Q1 to Q3 with a prominent median line
+- Whiskers extend from minimum to maximum with end caps
+- Hover tooltips showing all five statistical values
+- Responsive layout with the standard layout engine
+- PNG/SVG export via toolbar
+- Screen reader accessible data table

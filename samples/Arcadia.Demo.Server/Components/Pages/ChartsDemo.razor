@@ -28,6 +28,8 @@
             <button class="gallery__nav-btn @(_tab == "radar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "radar"'>Radar</button>
             <button class="gallery__nav-btn @(_tab == "heatmap" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "heatmap"'>Heatmap</button>
             <button class="gallery__nav-btn @(_tab == "rose" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rose"'>Rose / Polar</button>
+            <button class="gallery__nav-btn @(_tab == "boxplot" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "boxplot"'>Box Plot</button>
+            <button class="gallery__nav-btn @(_tab == "rangearea" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rangearea"'>Range Area</button>
             <button class="gallery__nav-btn @(_tab == "interactive" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "interactive"'>Interactive</button>
             <button class="gallery__nav-btn @(_tab == "streaming" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "streaming"'>Streaming</button>
             <button class="gallery__nav-btn @(_tab == "advanced" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "advanced"'>Advanced</button>
@@ -298,6 +300,46 @@
                                         Height="380" Width="380" AnimateOnLoad="true"
                                         Title="Activity by Month" />
                     </div>
+                </div>
+            </div>
+        }
+
+        @if (_tab == "boxplot")
+        {
+            <div class="gallery__section-header">
+                <h1>Box Plot</h1>
+                <p>Statistical distribution chart showing min, Q1, median, Q3, and max for each category.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Salary Distribution by Department</div>
+                <div class="gallery__chart-container">
+                    <ArcadiaBoxPlot TItem="BoxData" Data="@_boxData"
+                                   CategoryField="@(d => d.Dept)"
+                                   MinField="@(d => d.Min)" Q1Field="@(d => d.Q1)"
+                                   MedianField="@(d => d.Median)" Q3Field="@(d => d.Q3)"
+                                   MaxField="@(d => d.Max)"
+                                   Height="380" Width="0" Title="Salary Distribution ($K)" />
+                </div>
+            </div>
+        }
+
+        @if (_tab == "rangearea")
+        {
+            <div class="gallery__section-header">
+                <h1>Range Area Chart</h1>
+                <p>Shows a filled band between upper and lower values — ideal for confidence intervals, temperature ranges, and min/max bands.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Temperature Range — Daily High/Low/Avg</div>
+                <div class="gallery__chart-container">
+                    <ArcadiaRangeAreaChart TItem="TempRange" Data="@_tempData"
+                                          XField="@(d => (object)d.Month)"
+                                          UpperField="@(d => d.High)" LowerField="@(d => d.Low)"
+                                          MiddleField="@(d => d.Avg)"
+                                          CurveType="smooth"
+                                          Height="380" Width="0" Title="Monthly Temperature Range" />
                 </div>
             </div>
         }
@@ -637,6 +679,8 @@
     record HeatmapPoint(string Day, string Hour, double Count);
     record StockCandle(string Date, double Open, double High, double Low, double Close, double MA5);
     record WindData(string Direction, double Speed);
+    record BoxData(string Dept, double Min, double Q1, double Median, double Q3, double Max);
+    record TempRange(string Month, double High, double Low, double Avg);
     record MonthActivity(string Month, double Hours);
     record NullablePoint(string Label, double Value);
     record StreamPoint(string Time, double Value);
@@ -736,6 +780,25 @@
         new("Jan", 120), new("Feb", 95), new("Mar", 140), new("Apr", 160),
         new("May", 185), new("Jun", 210), new("Jul", 195), new("Aug", 170),
         new("Sep", 155), new("Oct", 130), new("Nov", 100), new("Dec", 85),
+    };
+
+    // ── Box Plot data ──
+    List<BoxData> _boxData = new()
+    {
+        new("Engineering", 75, 95, 120, 145, 180),
+        new("Marketing", 55, 70, 85, 100, 130),
+        new("Sales", 40, 65, 90, 120, 160),
+        new("HR", 50, 62, 75, 88, 105),
+        new("Design", 60, 80, 100, 125, 155),
+    };
+
+    // ── Range Area data ──
+    List<TempRange> _tempData = new()
+    {
+        new("Jan", 8, -2, 3), new("Feb", 10, -1, 4), new("Mar", 15, 3, 9),
+        new("Apr", 20, 7, 13), new("May", 25, 12, 18), new("Jun", 30, 17, 23),
+        new("Jul", 33, 20, 26), new("Aug", 32, 19, 25), new("Sep", 27, 15, 21),
+        new("Oct", 20, 9, 14), new("Nov", 14, 4, 9), new("Dec", 9, 0, 4),
     };
 
     // ── Interactive tab data ──

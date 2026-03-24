@@ -44,10 +44,21 @@ A commercial Blazor component library for enterprise .NET developers. Pure SVG c
 
 ## Quick Start
 
+**1. Install packages:**
+
 ```bash
 dotnet add package Arcadia.Charts
 dotnet add package Arcadia.Theme
 ```
+
+**2. Add stylesheets** to your `App.razor` (or `_Host.cshtml` / `index.html`):
+
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" />
+```
+
+**3. Use a chart:**
 
 ```razor
 @using Arcadia.Charts.Core

@@ -1,0 +1,82 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Range Area Chart
+description: Blazor range area chart component for visualizing data bands between upper and lower bounds — confidence intervals, min/max ranges, and temperature bands.
+---
+
+# Range Area Chart
+
+A range area chart displays a filled band between upper and lower bound values for each data point. It is ideal for visualizing confidence intervals, min/max ranges, temperature bands, and forecast uncertainty in Blazor applications.
+
+## Basic Usage
+
+```razor
+<ArcadiaRangeAreaChart TItem="MonthlyTemperature" Data="@data"
+                     XField="@(d => (object)d.Month)"
+                     UpperField="@(d => d.High)"
+                     LowerField="@(d => d.Low)"
+                     MiddleField="@(d => d.Average)"
+                     Height="400" Width="700"
+                     Title="Monthly Temperature Range"
+                     CurveType="smooth" />
+
+@code {
+    record MonthlyTemperature(string Month, double High, double Low, double Average);
+
+    List<MonthlyTemperature> data = new()
+    {
+        new("Jan", 42, 28, 35), new("Feb", 45, 30, 37),
+        new("Mar", 55, 38, 46), new("Apr", 65, 45, 55),
+        new("May", 75, 55, 65), new("Jun", 85, 65, 75),
+        new("Jul", 90, 70, 80), new("Aug", 88, 68, 78),
+        new("Sep", 80, 60, 70), new("Oct", 68, 48, 58),
+        new("Nov", 55, 38, 46), new("Dec", 44, 30, 37),
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `XField` | `Func<T, object>` | required | Extracts the X-axis label from each data item |
+| `UpperField` | `Func<T, double>` | required | Extracts the upper bound value |
+| `LowerField` | `Func<T, double>` | required | Extracts the lower bound value |
+| `MiddleField` | `Func<T, double>?` | null | Optional middle line value (e.g., average) |
+| `FillColor` | `string` | `var(--arcadia-color-primary)` | Fill color for the range band |
+| `FillOpacity` | `double` | 0.2 | Opacity of the range band fill |
+| `StrokeColor` | `string` | `var(--arcadia-color-primary)` | Stroke color for upper/lower lines |
+| `MiddleColor` | `string?` | null | Stroke color for the middle line (defaults to StrokeColor) |
+| `CurveType` | `string` | `"linear"` | Curve interpolation: `"linear"` or `"smooth"` |
+| `Title` | `string?` | null | Chart title |
+| `Height` | `double` | 300 | Chart height in pixels |
+| `Width` | `double` | 600 | Chart width (0 = responsive) |
+| `AnimateOnLoad` | `bool` | true | Animate on initial render |
+| `ShowDataLabels` | `bool` | false | Show value labels on data points |
+| `ShowGrid` | `bool` | true | Show grid lines |
+
+## How It Works
+
+- Two paths are rendered for the **upper** and **lower** bounds
+- A filled area path connects the upper line forward and lower line reversed to create the band
+- An optional **middle line** (dashed) renders on top for averages or medians
+- Set `CurveType="smooth"` for Catmull-Rom spline interpolation
+
+## Use Cases
+
+- **Temperature bands** -- daily high/low with average
+- **Confidence intervals** -- statistical upper/lower bounds around a forecast
+- **Stock price ranges** -- daily trading range (high/low)
+- **Sensor tolerance bands** -- acceptable range with actual reading
+- **Weather forecasts** -- predicted temperature range over time
+
+## Features
+
+- Filled band between upper and lower bounds with configurable opacity
+- Optional middle line for averages or medians
+- Smooth curve interpolation via Catmull-Rom splines
+- Hover tooltips on data points (upper, lower, middle)
+- On-load animation for fill and stroke
+- PNG/SVG export via toolbar (hover top-right)
+- Screen reader accessible data table
+- Theme-aware colors via CSS custom properties

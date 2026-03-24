@@ -1,0 +1,52 @@
+@page "/test/rangearea"
+@layout Arcadia.Demo.Server.Components.Layout.FullScreenLayout
+@using Arcadia.Charts.Components.Charts
+
+<div style="padding: 24px; background: transparent;">
+    <ArcadiaRangeAreaChart TItem="MonthlyTemperature" Data="@_data"
+                         XField="@(d => (object)d.Month)"
+                         UpperField="@(d => d.High)"
+                         LowerField="@(d => d.Low)"
+                         MiddleField="@(d => d.Average)"
+                         Height="400" Width="700" AnimateOnLoad="true"
+                         Title="Monthly Temperature Range"
+                         YAxisTitle="Temperature (°F)"
+                         XAxisTitle="Month"
+                         FillColor="var(--arcadia-color-primary)"
+                         FillOpacity="0.2"
+                         StrokeColor="var(--arcadia-color-primary)"
+                         MiddleColor="var(--arcadia-color-warning)"
+                         CurveType="smooth" />
+</div>
+
+<div style="padding: 24px; background: transparent;">
+    <ArcadiaRangeAreaChart TItem="MonthlyTemperature" Data="@_data"
+                         XField="@(d => (object)d.Month)"
+                         UpperField="@(d => d.High)"
+                         LowerField="@(d => d.Low)"
+                         Height="400" Width="700" AnimateOnLoad="true"
+                         Title="Temperature Band (Linear, No Middle Line)"
+                         YAxisTitle="Temperature (°F)"
+                         CurveType="linear"
+                         ShowDataLabels="true" />
+</div>
+
+@code {
+    record MonthlyTemperature(string Month, double High, double Low, double Average);
+
+    List<MonthlyTemperature> _data = new()
+    {
+        new("Jan", 42, 28, 35),
+        new("Feb", 45, 30, 37),
+        new("Mar", 55, 38, 46),
+        new("Apr", 65, 45, 55),
+        new("May", 75, 55, 65),
+        new("Jun", 85, 65, 75),
+        new("Jul", 90, 70, 80),
+        new("Aug", 88, 68, 78),
+        new("Sep", 80, 60, 70),
+        new("Oct", 68, 48, 58),
+        new("Nov", 55, 38, 46),
+        new("Dec", 44, 30, 37),
+    };
+}

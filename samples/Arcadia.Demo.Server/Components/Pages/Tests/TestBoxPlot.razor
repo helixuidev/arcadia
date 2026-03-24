@@ -1,0 +1,29 @@
+@page "/test/boxplot"
+@layout Arcadia.Demo.Server.Components.Layout.FullScreenLayout
+@using Arcadia.Charts.Components.Charts
+
+<div style="padding: 24px; background: transparent;">
+    <ArcadiaBoxPlot TItem="DeptSalary" Data="@_data"
+                    CategoryField="@(d => d.Department)"
+                    MinField="@(d => d.Min)"
+                    Q1Field="@(d => d.Q1)"
+                    MedianField="@(d => d.Median)"
+                    Q3Field="@(d => d.Q3)"
+                    MaxField="@(d => d.Max)"
+                    Height="420" Width="700" AnimateOnLoad="true"
+                    Title="Salary Distribution by Department"
+                    YAxisFormatString="C0" />
+</div>
+
+@code {
+    record DeptSalary(string Department, double Min, double Q1, double Median, double Q3, double Max);
+
+    List<DeptSalary> _data = new()
+    {
+        new("Engineering", 75000, 95000, 120000, 145000, 190000),
+        new("Marketing",   55000, 68000,  82000,  98000, 130000),
+        new("Sales",       45000, 62000,  78000, 105000, 160000),
+        new("HR",          50000, 60000,  72000,  85000, 110000),
+        new("Design",      60000, 75000,  90000, 110000, 140000),
+    };
+}

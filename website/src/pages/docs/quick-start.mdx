@@ -11,6 +11,17 @@ import LiveDemo from "../../components/LiveDemo.astro";
 
 Build a revenue dashboard with KPI cards, charts, and rankings in under 50 lines.
 
+## Prerequisites
+
+Make sure you've [installed the packages](/docs) and added the stylesheets to your `App.razor`:
+
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" />
+```
+
+## The Dashboard
+
 ```razor
 @page "/dashboard"
 @using Arcadia.Charts.Core
