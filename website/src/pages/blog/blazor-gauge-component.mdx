@@ -1,0 +1,199 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Blazor Gauge Component — Build KPI Dashboards with Radial Gauges"
+description: "Add radial gauge components to your Blazor app for KPI dashboards. Semi-circle and full-circle gauges with color thresholds, animations, and zero JavaScript dependencies."
+date: "2026-03-24"
+readTime: "7 min read"
+tags: ["Blazor", "Gauge", "Dashboard", "KPI", "Components", "Data Visualization"]
+---
+
+Gauges are the most effective way to show a single metric against a target. CPU usage. Customer satisfaction score. Monthly quota progress. A radial gauge communicates status instantly — green means good, red means act now.
+
+Building a gauge from scratch in Blazor means calculating SVG arc paths, handling animations, managing color transitions, and making it accessible. That is a solid week of work for a polished result. Or you can install **Arcadia Controls** and have production-ready gauges in under a minute.
+
+## Semi-Circle Gauge — The Classic KPI Indicator
+
+The semi-circle gauge is the most common style for dashboards. It shows a value from 0 to a maximum, with an arc that fills proportionally:
+
+```razor
+@using Arcadia.Charts
+
+<ArcadiaGauge Value="73"
+              Min="0"
+              Max="100"
+              GaugeType="GaugeType.SemiCircle"
+              FormatString="{0}%"
+              Title="CPU Usage"
+              Width="250"
+              Height="160" />
+```
+
+That renders a clean semi-circle gauge with the value centered below the arc. No JavaScript. No canvas. Pure SVG rendered from C# Blazor components.
+
+## Full-Circle Gauge — For Compact Layouts
+
+When vertical space is limited or you want a speedometer-style look, use the full-circle variant:
+
+```razor
+<ArcadiaGauge Value="4.2"
+              Min="0"
+              Max="5.0"
+              GaugeType="GaugeType.FullCircle"
+              FormatString="{0:F1}"
+              Title="Customer Rating"
+              Width="200"
+              Height="200" />
+```
+
+Both gauge types are responsive — set `Width="0"` to make them fill their container.
+
+## Color Thresholds — Make Status Obvious
+
+The real power of gauges is color thresholds. Define ranges and the gauge arc changes color automatically based on the current value:
+
+```razor
+<ArcadiaGauge Value="87"
+              Min="0"
+              Max="100"
+              GaugeType="GaugeType.SemiCircle"
+              FormatString="{0}%"
+              Title="Server Load">
+    <Thresholds>
+        <GaugeThreshold UpTo="60" Color="#10b981" />   @* Green — healthy *@
+        <GaugeThreshold UpTo="80" Color="#f59e0b" />   @* Amber — warning *@
+        <GaugeThreshold UpTo="100" Color="#ef4444" />  @* Red — critical *@
+    </Thresholds>
+</ArcadiaGauge>
+```
+
+With this configuration:
+- **0 to 60:** The arc renders green
+- **61 to 80:** The arc turns amber
+- **81 to 100:** The arc turns red
+
+The value of 87 would render a red arc, immediately signaling a problem. No conditional logic in your code — the gauge handles it.
+
+## Multiple Gauges in a Grid — KPI Dashboard Layout
+
+Most dashboards need several gauges side by side. Here is a realistic KPI row:
+
+```razor
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    <ArcadiaGauge Value="73" Min="0" Max="100"
+                  GaugeType="GaugeType.SemiCircle"
+                  FormatString="{0}%" Title="CPU Usage"
+                  Width="0">
+        <Thresholds>
+            <GaugeThreshold UpTo="60" Color="#10b981" />
+            <GaugeThreshold UpTo="80" Color="#f59e0b" />
+            <GaugeThreshold UpTo="100" Color="#ef4444" />
+        </Thresholds>
+    </ArcadiaGauge>
+
+    <ArcadiaGauge Value="62" Min="0" Max="100"
+                  GaugeType="GaugeType.SemiCircle"
+                  FormatString="{0}%" Title="Memory"
+                  Width="0">
+        <Thresholds>
+            <GaugeThreshold UpTo="70" Color="#10b981" />
+            <GaugeThreshold UpTo="90" Color="#f59e0b" />
+            <GaugeThreshold UpTo="100" Color="#ef4444" />
+        </Thresholds>
+    </ArcadiaGauge>
+
+    <ArcadiaGauge Value="2.1" Min="0" Max="10"
+                  GaugeType="GaugeType.SemiCircle"
+                  FormatString="{0:F1} GB/s" Title="Network I/O"
+                  Width="0">
+        <Thresholds>
+            <GaugeThreshold UpTo="5" Color="#10b981" />
+            <GaugeThreshold UpTo="8" Color="#f59e0b" />
+            <GaugeThreshold UpTo="10" Color="#ef4444" />
+        </Thresholds>
+    </ArcadiaGauge>
+
+    <ArcadiaGauge Value="41" Min="0" Max="100"
+                  GaugeType="GaugeType.SemiCircle"
+                  FormatString="{0}%" Title="Disk Usage"
+                  Width="0">
+        <Thresholds>
+            <GaugeThreshold UpTo="70" Color="#10b981" />
+            <GaugeThreshold UpTo="90" Color="#f59e0b" />
+            <GaugeThreshold UpTo="100" Color="#ef4444" />
+        </Thresholds>
+    </ArcadiaGauge>
+</div>
+```
+
+That gives you a server monitoring dashboard with four gauges in a responsive grid. On mobile, it stacks to two columns. Every gauge independently updates its color based on the threshold rules.
+
+## Binding to Live Data
+
+Gauges work with standard Blazor data binding. Update the `Value` parameter and the gauge re-renders with a smooth animation:
+
+```razor
+<ArcadiaGauge Value="@cpuUsage"
+              Min="0" Max="100"
+              GaugeType="GaugeType.SemiCircle"
+              FormatString="{0}%"
+              Title="CPU Usage"
+              AnimationDuration="300" />
+
+@code {
+    private double cpuUsage = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(2));
+        while (await timer.WaitForNextTickAsync())
+        {
+            cpuUsage = await MetricsService.GetCpuUsageAsync();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+}
+```
+
+The `AnimationDuration` parameter controls how smoothly the arc transitions between values. Set it to `0` for instant updates.
+
+## Building Gauges from Scratch — Why You Should Not
+
+Here is what a DIY Blazor gauge requires:
+
+1. **SVG arc path calculation** — convert a percentage to `d` attribute arc commands with correct start/end angles and large-arc flags
+2. **Responsive sizing** — viewBox math, aspect ratio preservation
+3. **Color interpolation** — threshold logic, gradient transitions
+4. **Animation** — CSS transitions on SVG paths or Blazor animation timers
+5. **Text positioning** — centering the value label, handling different font sizes
+6. **Accessibility** — ARIA roles, screen reader labels, hidden data for assistive technology
+7. **Dark mode** — colors that work on both light and dark backgrounds
+8. **Testing** — verify rendering across all Blazor render modes
+
+That is easily 500+ lines of code per gauge type, plus ongoing maintenance. The Arcadia Gauge component handles all of this in a single tag with declarative parameters.
+
+## Accessibility Built In
+
+Every Arcadia Gauge renders with proper ARIA attributes:
+- `role="meter"` with `aria-valuenow`, `aria-valuemin`, `aria-valuemax`
+- A hidden text description for screen readers
+- Sufficient color contrast for threshold colors
+- Keyboard-focusable for navigation
+
+This is WCAG 2.1 AA compliance out of the box — something most chart libraries skip entirely.
+
+## Get Started
+
+The Gauge component is included in the **Arcadia.Charts** package. The Community Edition is free with an MIT license.
+
+```bash
+dotnet add package Arcadia.Charts
+dotnet add package Arcadia.Theme
+```
+
+Add the CSS references and start using `<ArcadiaGauge>` on any page. It works in Blazor Server, WebAssembly, and Auto render mode.
+
+**Useful links:**
+- [Gauge Documentation](/docs/charts/gauge) — full parameter reference
+- [Dashboard Tutorial](/blog/blazor-dashboard-tutorial) — build a complete dashboard
+- [Chart Playground](/playground) — try gauges interactively
+- [GitHub](https://github.com/ArcadiaUIDev/arcadia) — source code and issues
