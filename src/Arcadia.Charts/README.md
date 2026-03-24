@@ -1,45 +1,31 @@
 # Arcadia.Charts
 
-Dashboard analytics toolkit for Blazor — 8 chart types + 7 dashboard widgets. Native SVG rendering with zero JavaScript dependencies.
+12 Blazor chart types + 7 dashboard widgets. Pure SVG rendering, zero JavaScript dependencies.
 
 ## Charts
 
-Line, Bar, Pie/Donut, Scatter, Candlestick, Radar, Gauge, Heatmap
-
-## Dashboard Widgets
-
-KPI Card, Sparkline, Delta Indicator, Progress Bar, Bar List, Tracker, Category Bar
+| Community (Free) | Pro ($299/dev/year) |
+|-----------------|---------------------|
+| Line / Area | Candlestick (OHLC) |
+| Bar / Column | Radar / Spider |
+| Pie / Donut | Gauge |
+| Scatter / Bubble | Heatmap, Funnel, Treemap, Waterfall, Rose |
 
 ## Quick Start
 
-```csharp
-<HelixKpiCard Title="Revenue" Value="$142,500"
-              Delta="+12.3%" DeltaType="DeltaType.Increase"
-              Sparkline="@(new double[] { 42, 48, 45, 52, 55, 58, 62 })" />
+```bash
+dotnet add package Arcadia.Charts
+dotnet add package Arcadia.Theme
+```
 
-<HelixLineChart TItem="SalesRecord" Data="@data"
-                XField="@(d => (object)d.Month)"
-                Series="@series" Height="300" />
+```razor
+<ArcadiaLineChart TItem="DataRecord" Data="@data"
+                  XField="@(d => (object)d.Label)" Series="@series"
+                  Height="350" Width="0" ShowPoints="true" />
 ```
 
 ## Key Features
 
-- Native Blazor SVG rendering — zero JS for core charts
-- Anti-collision layout engine — labels never overlap
-- LTTB downsampling — handles 100K+ data points
-- On-load animations — lines draw, bars grow, points pop
-- WCAG 2.1 AA — hidden data table for screen readers
-- 7 color palettes including color-blind safe (Okabe-Ito)
-- Works in Server, WASM, Auto, and static SSR
+Pure SVG rendering · Responsive (`Width="0"`) · Dark/Light themes · Export PNG/SVG · Streaming data · Crosshair & annotations · Smooth curves · Anti-collision labels · WCAG 2.1 AA accessible
 
-## Installation
-
-```
-dotnet add package Arcadia.Charts
-```
-
-## Links
-
-- [Documentation](https://arcadiaui.com/docs/charts)
-- [Live Demo](https://arcadiaui.com/demo)
-- [GitHub](https://github.com/helixuidev/helixui)
+**[Docs](https://arcadiaui.com/docs/charts)** · **[Demo](https://arcadiaui.com/playground/)** · **[GitHub](https://github.com/ArcadiaUIDev/arcadia)**

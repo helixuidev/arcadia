@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.Theme</PackageId>
-    <Description>Design tokens, theming engine, and Tailwind CSS integration for HelixUI components.</Description>
+    <Description>Design tokens, dark/light themes, and Tailwind CSS integration for Arcadia Controls Blazor components. CSS custom properties for colors, spacing, typography.</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -40,4 +40,7 @@
     <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.Charts</PackageId>
-    <Description>Dashboard analytics toolkit for Blazor — charts, sparklines, KPI cards, and data visualization widgets.</Description>
+    <Description>12 Blazor chart types (Line, Bar, Pie, Scatter, Candlestick, Radar, Gauge, Heatmap, Funnel, Treemap, Waterfall, Rose) + 7 dashboard widgets. Pure SVG rendering, zero JS dependencies. arcadiaui.com</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -43,4 +43,7 @@
     <InternalsVisibleTo Include="Arcadia.Tests.Unit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>

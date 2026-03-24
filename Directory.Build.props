@@ -16,10 +16,12 @@
     <Copyright>Copyright © 2026 Arcadia Controls. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://arcadiaui.com</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/helixuidev/helixui</RepositoryUrl>
+    <RepositoryUrl>https://github.com/ArcadiaUIDev/arcadia</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>blazor;components;ui;charts;forms;dashboard;dotnet;aspnetcore</PackageTags>
-    <Version>1.0.0-beta.1</Version>
+    <PackageTags>blazor;components;ui;charts;forms;dashboard;dotnet;aspnetcore;data-visualization;svg;line-chart;bar-chart;pie-chart</PackageTags>
+    <PackageIcon>icon.png</PackageIcon>
+    <Version>1.0.0-beta.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

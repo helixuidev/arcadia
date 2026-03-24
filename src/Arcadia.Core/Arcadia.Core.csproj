@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.Core</PackageId>
-    <Description>Core foundation for HelixUI — base classes, utilities, theming abstractions, and accessibility helpers.</Description>
+    <Description>Core foundation for Arcadia Controls — base classes, theming engine, accessibility utilities, and CSS custom property system for Blazor. Supports .NET 5–10, Server/WASM/Auto.</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -40,4 +40,7 @@
     <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>

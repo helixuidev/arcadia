@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.FormBuilder</PackageId>
-    <Description>Dynamic form builder with schema-driven rendering, validation, and accessible field components for Arcadia.</Description>
+    <Description>Blazor form builder with 21 field types, schema-driven and model-driven rendering, validation, wizard mode, and full accessibility. Part of Arcadia Controls.</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -40,4 +40,7 @@
     <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>

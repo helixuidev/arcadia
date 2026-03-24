@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.Notifications</PackageId>
-    <Description>Toast notifications and notification center for Arcadia.</Description>
+    <Description>Blazor toast notification system with auto-dismiss, stacking, severity levels, and positioning. Part of Arcadia Controls.</Description>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -40,4 +40,7 @@
     <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/" />
+  </ItemGroup>
 </Project>
