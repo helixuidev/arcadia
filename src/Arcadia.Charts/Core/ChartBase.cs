@@ -80,6 +80,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <summary>Color palette for series.</summary>
     [Parameter] public ChartPalette? Palette { get; set; }
 
+    /// <summary>Whether to show the export toolbar (PNG/SVG) on hover. Default true.</summary>
+    [Parameter] public bool ShowToolbar { get; set; } = true;
+
     /// <summary>Whether to animate on load.</summary>
     [Parameter] public bool AnimateOnLoad { get; set; } = true;
 
@@ -324,6 +327,10 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
         }
         return EffectivePalette.GetColor(seriesIndex);
     }
+
+    /// <summary>Formats a value for screen reader tables, replacing NaN with "—".</summary>
+    protected static string FormatSrValue(double value) =>
+        double.IsNaN(value) || double.IsInfinity(value) ? "—" : value.ToString("G4");
 
     protected string FormatValue(double value, string? formatString)
     {

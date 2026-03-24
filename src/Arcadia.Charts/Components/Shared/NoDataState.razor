@@ -1,0 +1,10 @@
+@namespace Arcadia.Charts.Components.Shared
+
+<div class="arcadia-chart__no-data" style="min-height: @(Height)px; display: flex; align-items: center; justify-content: center;">
+    <span>@Message</span>
+</div>
+
+@code {
+    [Parameter] public string Message { get; set; } = "No data available";
+    [Parameter] public double Height { get; set; } = 200;
+}

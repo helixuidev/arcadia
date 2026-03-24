@@ -5,7 +5,7 @@
 @if (Data is not null && Data.Count > 0 && NameField is not null && ValueField is not null)
 {
     <div class="arcadia-chart" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
-        <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" />
+        @if (ShowToolbar) { <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" /> }
         <svg width="@EffectiveWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
              role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Rose chart")"
              class="@CssClass">
@@ -58,4 +58,8 @@
             </tbody>
         </table>
     </div>
+}
+else
+{
+    <NoDataState Message="@(NoDataMessage ?? "No data available")" Height="@Height" />
 }

@@ -1,5 +1,5 @@
 /* Arcadia Controls FormBuilder Styles
-   Usage: <link href="_content/HelixUI.FormBuilder/css/arcadia-forms.css" rel="stylesheet" /> */
+   Usage: <link href="_content/Arcadia.FormBuilder/css/arcadia-forms.css" rel="stylesheet" /> */
 
 /* Form */
 .arcadia-form { display: flex; flex-direction: column; gap: var(--arcadia-spacing-md, 1rem); }

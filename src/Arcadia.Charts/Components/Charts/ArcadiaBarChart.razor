@@ -5,7 +5,7 @@
 @if (Data is not null && Data.Count > 0 && XField is not null && Series is not null)
 {
     <div class="arcadia-chart" @ref="ContainerRef" style="@Style" @attributes="AdditionalAttributes">
-        <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" />
+        @if (ShowToolbar) { <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" /> }
         <svg width="@EffectiveWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
              role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Bar chart")"
              @onmouseleave="HideTooltipAction"
@@ -95,9 +95,13 @@
             <tbody>
                 @foreach (var item in Data)
                 {
-                    <tr><td>@XField(item)</td>@foreach (var s in Series) { <td>@s.Field(item)</td> }</tr>
+                    <tr><td>@XField(item)</td>@foreach (var s in Series) { <td>@FormatSrValue(s.Field(item))</td> }</tr>
                 }
             </tbody>
         </table>
     </div>
+}
+else
+{
+    <NoDataState Message="@(NoDataMessage ?? "No data available")" Height="@Height" />
 }
