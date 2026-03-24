@@ -22,6 +22,8 @@ A realistic admin dashboard with:
 
 The final result works in Blazor Server, WebAssembly, and Auto render mode without any changes.
 
+![Complete dashboard with KPI cards, charts, and widgets](/blog/dashboard-hero.png)
+
 ## Step 1: Create the Project
 
 Start with a standard Blazor Web App (.NET 8 or later):
@@ -88,6 +90,8 @@ Create a new page at `Components/Pages/Dashboard.razor`. Start with a row of KPI
 
 Each card renders as an accessible, themed component. The `Change` value shows a green or red badge automatically based on the `ChangeDirection`.
 
+![KPI cards with sparklines showing revenue, users, orders, and conversion](/blog/dashboard-kpi-cards.png)
+
 ## Step 5: Add a Line Chart for Revenue Trends
 
 Below the KPI row, add a revenue trend chart:
@@ -111,6 +115,8 @@ Below the KPI row, add a revenue trend chart:
 
 The `Width="0"` parameter makes the chart responsive — it fills the available container width automatically.
 
+![Line chart showing revenue and cost trends over 12 months](/blog/dashboard-line-chart.png)
+
 ## Step 6: Add a Bar Chart for Category Sales
 
 Continue the two-column grid with a bar chart:
@@ -129,6 +135,8 @@ Continue the two-column grid with a bar chart:
     </div>
 </div>
 ```
+
+![Bar chart showing sales by category with grouped multi-series bars](/blog/dashboard-bar-chart.png)
 
 ## Step 7: Add Progress Bars for Goal Tracking
 
@@ -160,6 +168,8 @@ Add a section with progress bars to show team goals:
 ```
 
 Progress bars support custom format strings so you can show percentages, fractions, or any label you need.
+
+![Progress bars with color thresholds tracking quarterly goals](/blog/dashboard-progress-bars.png)
 
 ## Step 8: Add Sparklines for Inline Trends
 

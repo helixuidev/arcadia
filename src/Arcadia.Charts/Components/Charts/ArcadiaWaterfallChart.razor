@@ -21,7 +21,7 @@ else if (HasData && CategoryField is not null && ValueField is not null) {
                 @if (ShowGrid)
                 {
                     <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
-                          stroke="@EffectiveGridColor" stroke-width="1" stroke-dasharray="@GridDash" />
+                          stroke="@EffectiveGridColor" opacity="@GridOpacity.ToString("F2")" stroke-width="1" stroke-dasharray="@GridDash" />
                 }
                 <SvgText x="@F(_layout.PlotArea.X - 8)" y="@F(y + 4)" text-anchor="end" class="arcadia-chart__tick-label">@tick.Label</SvgText>
             }
@@ -40,7 +40,7 @@ else if (HasData && CategoryField is not null && ValueField is not null) {
                 {
                     <line x1="@F(_bars[i-1].X + _bars[i-1].W)" y1="@F(_bars[i-1].ConnectY)"
                           x2="@F(bar.X)" y2="@F(_bars[i-1].ConnectY)"
-                          stroke="currentColor" opacity="0.2" stroke-width="1" stroke-dasharray="3,3" />
+                          stroke="currentColor" opacity="@ConnectorOpacity.ToString("F2")" stroke-width="1" stroke-dasharray="@ConnectorDashPattern" />
                 }
             }
 
@@ -52,7 +52,7 @@ else if (HasData && CategoryField is not null && ValueField is not null) {
 
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
                   x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
         </svg>
 
         <table class="arcadia-sr-only" aria-label="Chart data">

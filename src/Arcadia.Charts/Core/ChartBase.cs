@@ -63,6 +63,12 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <summary>Grid line dash pattern (e.g., "4,4"). Empty = solid.</summary>
     [Parameter] public string GridDash { get; set; } = "4,4";
 
+    /// <summary>Grid line opacity. Default 0.12.</summary>
+    [Parameter] public double GridOpacity { get; set; } = 0.12;
+
+    /// <summary>Axis line opacity. Default 0.2.</summary>
+    [Parameter] public double AxisLineOpacity { get; set; } = 0.2;
+
     /// <summary>Show horizontal grid lines.</summary>
     [Parameter] public bool ShowHorizontalGrid { get; set; } = true;
 
@@ -101,6 +107,10 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
 
     /// <summary>Manual left margin override. Null = auto.</summary>
     [Parameter] public double? MarginLeft { get; set; }
+
+    // ── Points ─────────────────────────────────────────
+    /// <summary>Radius of data point circles in pixels.</summary>
+    [Parameter] public double PointRadius { get; set; } = 3;
 
     // ── Data labels ──────────────────────────────────────
     /// <summary>Whether to show value labels on data points/bars.</summary>

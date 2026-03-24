@@ -14,7 +14,7 @@
         @* Background track — thinner than value arc so it hides cleanly behind it *@
         <path d="@_trackPath" fill="none" stroke="@TrackColor"
               stroke-width="@F(StrokeWidth - 2)" stroke-linecap="round"
-              opacity="0.3" class="arcadia-gauge__track" />
+              opacity="@F(TrackOpacity)" class="arcadia-gauge__track" />
 
         @* Value arc *@
         @if (!string.IsNullOrEmpty(_valuePath))

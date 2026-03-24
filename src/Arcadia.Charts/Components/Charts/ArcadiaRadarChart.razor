@@ -9,7 +9,8 @@ else if (Data is not null && Data.Count > 0 && LabelField is not null && Series 
         @if (ShowToolbar) { <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" /> }
         <svg width="@SvgWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
              role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Radar chart")"
-             class="@CssClass">
+             class="@CssClass"
+             style="@($"--radar-dim-opacity:{HoverDimOpacity.ToString("F2")};--radar-hover-fill:{HoverFillOpacity.ToString("F2")}")">
 
             @if (!string.IsNullOrEmpty(Title))
             {
@@ -27,7 +28,7 @@ else if (Data is not null && Data.Count > 0 && LabelField is not null && Series 
                     ringPoints.Add($"{F(p.X)},{F(p.Y)}");
                 }
                 <polygon points="@string.Join(" ", ringPoints)"
-                         fill="none" stroke="currentColor" stroke-width="1" opacity="0.15" />
+                         fill="none" stroke="currentColor" stroke-width="1" opacity="@F(GridRingOpacity)" />
             }
 
             @* Axis lines *@
@@ -36,7 +37,7 @@ else if (Data is not null && Data.Count > 0 && LabelField is not null && Series 
                 var localI = i;
                 var end = GetAxisEndpoint(localI);
                 <line x1="@F(_cx)" y1="@F(_cy)" x2="@F(end.X)" y2="@F(end.Y)"
-                      stroke="currentColor" opacity="0.12" stroke-width="1" />
+                      stroke="currentColor" opacity="@F(AxisLineOpacity)" stroke-width="1" />
             }
 
             @* Series polygons *@
@@ -58,7 +59,7 @@ else if (Data is not null && Data.Count > 0 && LabelField is not null && Series 
                 {
                     @foreach (var pt in localPoly.Points)
                     {
-                        <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@localPoly.Color"
+                        <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@F(PointRadius)" fill="@localPoly.Color"
                                 class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")" />
                     }
                 }

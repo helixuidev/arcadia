@@ -23,7 +23,7 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
                 {
                     var y = _yScale!.Scale(tick.Value);
                     <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
-                          stroke="currentColor" opacity="0.12" stroke-width="1" stroke-dasharray="4,4" />
+                          stroke="currentColor" opacity="@GridOpacity.ToString("F2")" stroke-width="1" stroke-dasharray="4,4" />
                 }
             }
 
@@ -40,7 +40,7 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
                 <path d="@_trendlinePath" fill="none" stroke="@trendColor"
                       stroke-width="@F(Trendline.StrokeWidth)"
                       stroke-dasharray="@(Trendline.Dashed ? "8,4" : "")"
-                      opacity="0.6" class="arcadia-chart__trendline" />
+                      opacity="@TrendlineOpacity.ToString("F2")" class="arcadia-chart__trendline" />
             }
 
             @* Points *@
@@ -49,10 +49,10 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
                 var item = Data[i];
                 var px = _xScale!.Scale(XField(item));
                 var py = _yScale!.Scale(YField(item));
-                var size = SizeField is not null ? Math.Max(3, Math.Sqrt(SizeField(item)) * 2) : PointSize;
+                var size = SizeField is not null ? Math.Max(PointRadius, Math.Sqrt(SizeField(item)) * 2) : PointSize;
                 var color = ResolveColor(Color, 0);
 
-                <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="0.7"
+                <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="@PointOpacity.ToString("F2")"
                         class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                         style="@GetPointStyle(i)"
                         @onmouseover="@(e => ShowScatterTooltip(XField(item), YField(item), e.ClientX, e.ClientY))"
@@ -68,10 +68,10 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
 
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
                   x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
                   x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
         </svg>
 
         <table class="arcadia-sr-only" aria-label="Chart data">

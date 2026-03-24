@@ -32,6 +32,9 @@ public partial class ArcadiaHeatmap<T> : ChartBase<T>
     /// <summary>Format string for cell values.</summary>
     [Parameter] public string? ValueFormatString { get; set; }
 
+    /// <summary>Gap in pixels between adjacent heatmap cells. Set to 0 for no gap.</summary>
+    [Parameter] public double CellGap { get; set; } = 1;
+
     /// <summary>Custom tooltip template for cells.</summary>
 
     private List<string> _xCategories = new();

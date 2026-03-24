@@ -7,7 +7,8 @@
 else if (HasData) {
     @if (ShowToolbar) { <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" /> }
     <svg width="@SvgWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
-         role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Sankey diagram")">
+         role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Sankey diagram")"
+         style="@($"--sankey-link-opacity:{F(LinkOpacity)};--sankey-link-hover-opacity:{F(LinkHoverOpacity)}")">
 
         @if (!string.IsNullOrEmpty(Title))
         {
@@ -23,7 +24,7 @@ else if (HasData) {
         {
             var link = _layoutLinks[i];
             var idx = i;
-            <path d="@link.Path" fill="@link.Color" opacity="0.3"
+            <path d="@link.Path" fill="@link.Color" opacity="@F(LinkOpacity)"
                   class="arcadia-chart__sankey-link @(AnimateOnLoad ? "arcadia-animate-sankey" : "")"
                   style="@(AnimateOnLoad ? $"animation-delay: {idx * 60}ms;" : "")"
                   @onmouseover="@(e => ShowSankeyTooltip(link, e.ClientX, e.ClientY))"

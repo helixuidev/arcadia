@@ -19,6 +19,12 @@ public partial class ArcadiaRoseChart<T> : ChartBase<T>
     /// <summary>Whether to show category labels on each sector.</summary>
     [Parameter] public bool ShowLabels { get; set; } = true;
 
+    /// <summary>Stroke width for each rose slice border. Default is 2.</summary>
+    [Parameter] public double SliceStrokeWidth { get; set; } = 2;
+
+    /// <summary>Stroke color for each rose slice border. Default is "var(--arcadia-color-surface, #fff)".</summary>
+    [Parameter] public string SliceStrokeColor { get; set; } = "var(--arcadia-color-surface, #fff)";
+
     private List<SectorData> _sectors = new();
 
     private string? CssClass => CssBuilder.Default("arcadia-chart__svg")

@@ -20,7 +20,7 @@ else if (Data is not null && Data.Count > 0 && NameField is not null && ValueFie
             @for (var i = 0; i < _slices.Count; i++)
             {
                 var slice = _slices[i];
-                <path d="@slice.Path" fill="@slice.Color" stroke="var(--arcadia-color-surface, #fff)" stroke-width="2"
+                <path d="@slice.Path" fill="@slice.Color" stroke="@SliceStrokeColor" stroke-width="@F(SliceStrokeWidth)"
                       class="arcadia-chart__pie-slice @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                       style="@GetSliceStyle(i)"
                       @onmouseover="@(e => ShowPieTooltip(slice.Name, slice.Value, slice.Percent, e.ClientX, e.ClientY))"

@@ -27,6 +27,12 @@ public partial class ArcadiaCandlestickChart<T> : ChartBase<T>
     /// <summary>Optional overlay line series (e.g., moving average, Bollinger bands).</summary>
     [Parameter] public List<SeriesConfig<T>>? OverlaySeries { get; set; }
 
+    /// <summary>Stroke width of the wick (high-low) line on each candlestick.</summary>
+    [Parameter] public double WickWidth { get; set; } = 1.5;
+
+    /// <summary>Candle body width as a fraction of the available band space (0-1). Controls how wide each candlestick body is relative to its slot.</summary>
+    [Parameter] public double CandleWidthRatio { get; set; } = 0.35;
+
     /// <summary>Format string for Y-axis labels.</summary>
 
     private ChartLayoutResult _layout = new();
@@ -70,7 +76,7 @@ public partial class ArcadiaCandlestickChart<T> : ChartBase<T>
         // Build candles
         _candles.Clear();
         var candleWidth = _layout.PlotArea.Width / Data.Count;
-        var halfWidth = Math.Max(2, candleWidth * 0.35);
+        var halfWidth = Math.Max(2, candleWidth * CandleWidthRatio);
 
         for (var i = 0; i < Data.Count; i++)
         {

@@ -25,6 +25,15 @@ public partial class ArcadiaRadarChart<T> : ChartBase<T>
     /// <summary>Whether to show data points on the polygon vertices.</summary>
     [Parameter] public bool ShowPoints { get; set; } = true;
 
+    /// <summary>Opacity of non-hovered series when any series is hovered. 0 = fully hidden, 1 = no dimming.</summary>
+    [Parameter] public double HoverDimOpacity { get; set; } = 0.05;
+
+    /// <summary>Fill opacity of the hovered series polygon.</summary>
+    [Parameter] public double HoverFillOpacity { get; set; } = 0.35;
+
+    /// <summary>Opacity of the concentric grid rings (0.0 fully transparent, 1.0 fully opaque).</summary>
+    [Parameter] public double GridRingOpacity { get; set; } = 0.15;
+
     /// <summary>Whether to show the legend.</summary>
 
     /// <summary>Custom tooltip template for data points.</summary>

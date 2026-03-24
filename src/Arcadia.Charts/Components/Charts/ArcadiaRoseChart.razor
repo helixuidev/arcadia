@@ -20,7 +20,7 @@ else if (Data is not null && Data.Count > 0 && NameField is not null && ValueFie
             @for (var i = 0; i < _sectors.Count; i++)
             {
                 var sector = _sectors[i];
-                <path d="@sector.Path" fill="@sector.Color" stroke="var(--arcadia-color-surface, #fff)" stroke-width="2"
+                <path d="@sector.Path" fill="@sector.Color" stroke="@SliceStrokeColor" stroke-width="@F(SliceStrokeWidth)"
                       class="arcadia-chart__pie-slice @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                       style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
                       @onmouseover="@(e => ShowRoseTooltip(sector.Name, sector.Value, e.ClientX, e.ClientY))"

@@ -22,7 +22,7 @@ else if (Data is not null && Data.Count > 0 && OpenField is not null && HighFiel
                 {
                     var y = _yScale!.Scale(tick.Value);
                     <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
-                          stroke="currentColor" opacity="0.12" stroke-width="1" stroke-dasharray="4,4" />
+                          stroke="currentColor" opacity="@GridOpacity.ToString("F2")" stroke-width="1" stroke-dasharray="4,4" />
                 }
             }
 
@@ -45,7 +45,7 @@ else if (Data is not null && Data.Count > 0 && OpenField is not null && HighFiel
                 var c = _candles[i];
                 @* Wick (high-low line) *@
                 <line x1="@F(c.X)" y1="@F(c.HighY)" x2="@F(c.X)" y2="@F(c.LowY)"
-                      stroke="@c.Color" stroke-width="1.5"
+                      stroke="@c.Color" stroke-width="@F(WickWidth)"
                       class="arcadia-candle__wick @(_animate ? "arcadia-animate-candle" : "")"
                       style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")" />
 
@@ -79,10 +79,10 @@ else if (Data is not null && Data.Count > 0 && OpenField is not null && HighFiel
             @* Axis lines *@
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
                   x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
                   x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
         </svg>
 
         @if (_layout.Legend.Visible && OverlaySeries is { Count: > 0 })

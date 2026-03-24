@@ -36,6 +36,18 @@ public partial class ArcadiaBoxPlot<T> : ChartBase<T>
     /// <summary>Box width as a fraction of available band space (0-1).</summary>
     [Parameter] public double BoxWidth { get; set; } = 0.6;
 
+    /// <summary>Fill opacity of the box rectangle (0.0 to 1.0).</summary>
+    [Parameter] public double BoxFillOpacity { get; set; } = 0.7;
+
+    /// <summary>Opacity of the whisker and cap lines (0.0 to 1.0).</summary>
+    [Parameter] public double WhiskerOpacity { get; set; } = 0.6;
+
+    /// <summary>Color of the median line drawn across each box.</summary>
+    [Parameter] public string MedianLineColor { get; set; } = "white";
+
+    /// <summary>Stroke width of the median line drawn across each box.</summary>
+    [Parameter] public double MedianLineWidth { get; set; } = 2.5;
+
     private ChartLayoutResult _layout = new();
     private LinearScale? _yScale;
     private BandScale? _bandScale;

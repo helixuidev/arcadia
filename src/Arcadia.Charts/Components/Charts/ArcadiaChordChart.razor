@@ -7,7 +7,8 @@
 else if (HasData) {
     @if (ShowToolbar) { <ChartToolbar OnExportPng="@(() => ExportPngAsync())" OnExportSvg="@(() => ExportSvgFileAsync())" /> }
     <svg width="@SvgWidth" height="@Height" viewBox="0 0 @EffectiveWidth @Height"
-         role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Chord diagram")">
+         role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? "Chord diagram")"
+         style="@($"--chord-opacity:{F(ChordOpacity)};--chord-hover-opacity:{F(ChordHoverOpacity)}")">
 
         @if (!string.IsNullOrEmpty(Title))
         {

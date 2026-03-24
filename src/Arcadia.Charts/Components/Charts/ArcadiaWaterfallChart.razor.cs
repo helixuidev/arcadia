@@ -14,6 +14,12 @@ public partial class ArcadiaWaterfallChart<T> : ChartBase<T>
     [Parameter] public string NegativeColor { get; set; } = "var(--arcadia-color-danger, #dc2626)";
     [Parameter] public string TotalColor { get; set; } = "var(--arcadia-color-primary, #2563eb)";
 
+    /// <summary>Opacity of the connector lines between waterfall bars (0.0 to 1.0).</summary>
+    [Parameter] public double ConnectorOpacity { get; set; } = 0.2;
+
+    /// <summary>SVG stroke-dasharray pattern for connector lines between bars (e.g., "3,3").</summary>
+    [Parameter] public string ConnectorDashPattern { get; set; } = "3,3";
+
     private ChartLayoutResult _layout = new();
     private LinearScale? _yScale;
     private List<WaterfallBar> _bars = new();

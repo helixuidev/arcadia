@@ -27,6 +27,12 @@ public partial class ArcadiaPieChart<T> : ChartBase<T>
     /// <summary>Minimum percentage for a slice to show its label. Smaller slices are label-free.</summary>
     [Parameter] public double MinLabelPercent { get; set; } = 5;
 
+    /// <summary>Stroke width for each pie slice border. Default is 2.</summary>
+    [Parameter] public double SliceStrokeWidth { get; set; } = 2;
+
+    /// <summary>Stroke color for each pie slice border. Default is "var(--arcadia-color-surface, #fff)".</summary>
+    [Parameter] public string SliceStrokeColor { get; set; } = "var(--arcadia-color-surface, #fff)";
+
     /// <summary>Fired when a pie slice is clicked.</summary>
     [Parameter] public EventCallback<T> OnSliceClick { get; set; }
 

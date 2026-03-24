@@ -35,6 +35,12 @@ public partial class ArcadiaScatterChart<T> : ChartBase<T>
     /// <summary>Trendline configuration for the scatter data.</summary>
     [Parameter] public TrendlineConfig? Trendline { get; set; }
 
+    /// <summary>Opacity of data points (0.0 to 1.0). Default is 0.7.</summary>
+    [Parameter] public double PointOpacity { get; set; } = 0.7;
+
+    /// <summary>Opacity of the trendline (0.0 to 1.0). Default is 0.6.</summary>
+    [Parameter] public double TrendlineOpacity { get; set; } = 0.6;
+
     /// <summary>Whether to show data labels on points.</summary>
 
     /// <summary>Format string for data labels.</summary>

@@ -28,6 +28,9 @@ public partial class ArcadiaChordChart : ChartBase<ChordNode>
     /// <summary>Default fill opacity for chord ribbons.</summary>
     [Parameter] public double ChordOpacity { get; set; } = 0.75;
 
+    /// <summary>Fill opacity for chord ribbons on hover.</summary>
+    [Parameter] public double ChordHoverOpacity { get; set; } = 1.0;
+
     /// <summary>Minimum arc angle in degrees for a label to be shown. Arcs smaller than this are label-free.</summary>
     [Parameter] public double MinLabelAngle { get; set; } = 8;
 

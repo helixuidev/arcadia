@@ -33,7 +33,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && Series is n
                 {
                     var y = _yScale!.Scale(tick.Value);
                     <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
-                          stroke="currentColor" opacity="0.12" stroke-width="1" stroke-dasharray="4,4" />
+                          stroke="currentColor" opacity="@GridOpacity.ToString("F2")" stroke-width="1" stroke-dasharray="4,4" />
                 }
             }
 
@@ -118,7 +118,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && Series is n
                 {
                     @foreach (var pt in _dataPoints[si])
                     {
-                        <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@color"
+                        <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@color"
                                 class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                                 style="@GetPointStyle(pt.Index)"
                                 @onmouseover="@(e => HandlePointHover(series.Name, pt, e))"
@@ -178,10 +178,10 @@ else if (Data is not null && Data.Count > 1 && XField is not null && Series is n
             @* Axis lines *@
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
                   x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
                   x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
         </svg>
 
         @* Legend (clickable to toggle series) *@

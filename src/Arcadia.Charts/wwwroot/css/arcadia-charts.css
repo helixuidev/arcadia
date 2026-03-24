@@ -111,10 +111,10 @@
   pointer-events: stroke;
 }
 /* When any radar fill is hovered, dim all fills and lines */
-svg:has(.arcadia-chart__radar-fill:hover) .arcadia-chart__radar-fill { opacity: 0.05 !important; }
-svg:has(.arcadia-chart__radar-fill:hover) .arcadia-chart__radar-line { opacity: 0.15 !important; }
+svg:has(.arcadia-chart__radar-fill:hover) .arcadia-chart__radar-fill { opacity: var(--radar-dim-opacity, 0.05) !important; }
+svg:has(.arcadia-chart__radar-fill:hover) .arcadia-chart__radar-line { opacity: var(--radar-dim-opacity, 0.15) !important; }
 /* Un-dim the hovered fill and its adjacent line (next sibling) */
-svg .arcadia-chart__radar-fill:hover { opacity: 0.35 !important; }
+svg .arcadia-chart__radar-fill:hover { opacity: var(--radar-hover-fill, 0.35) !important; }
 svg .arcadia-chart__radar-fill:hover + .arcadia-chart__radar-line { opacity: 1 !important; }
 
 /* Gauge Chart */
@@ -266,8 +266,7 @@ svg .arcadia-chart__radar-fill:hover + .arcadia-chart__radar-line { opacity: 1 !
   transition: opacity var(--arcadia-transition-fast, 0.15s) ease;
 }
 .arcadia-chart__sankey-link:hover {
-  opacity: 0.55 !important;
-  filter: brightness(var(--arcadia-chart-hover-brightness, 1.05));
+  opacity: var(--sankey-link-hover-opacity, 0.55) !important;
 }
 .arcadia-chart__sankey-node {
   transition: opacity var(--arcadia-transition-fast, 0.15s) ease;
@@ -279,9 +278,9 @@ svg .arcadia-chart__radar-fill:hover + .arcadia-chart__radar-line { opacity: 1 !
   transition: opacity var(--arcadia-transition-fast, 0.15s) ease,
               filter var(--arcadia-transition-fast, 0.15s) ease;
 }
-/* When a ribbon is hovered, bring it to full opacity */
+/* When a ribbon is hovered, bring it to configured hover opacity */
 .arcadia-chart__chord-ribbon:hover {
-  opacity: 1 !important;
+  opacity: var(--chord-hover-opacity, 1) !important;
 }
 .arcadia-chart__chord-arc {
   transition: opacity var(--arcadia-transition-fast, 0.15s) ease;

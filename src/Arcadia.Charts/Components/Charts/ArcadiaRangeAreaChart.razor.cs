@@ -36,6 +36,9 @@ public partial class ArcadiaRangeAreaChart<T> : ChartBase<T>
     /// <summary>Optional stroke color for the middle line. Defaults to StrokeColor if null.</summary>
     [Parameter] public string? MiddleColor { get; set; }
 
+    /// <summary>Stroke width for the upper, lower, and middle boundary lines.</summary>
+    [Parameter] public double LineStrokeWidth { get; set; } = 2;
+
     /// <summary>Curve interpolation type: "linear" or "smooth".</summary>
     [Parameter] public string CurveType { get; set; } = "linear";
 

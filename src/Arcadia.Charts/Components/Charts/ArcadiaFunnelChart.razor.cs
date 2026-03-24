@@ -8,6 +8,12 @@ public partial class ArcadiaFunnelChart<T> : ChartBase<T>
     [Parameter] public Func<T, string>? NameField { get; set; }
     [Parameter] public Func<T, double>? ValueField { get; set; }
 
+    /// <summary>Opacity for each funnel stage shape. Default is 0.85.</summary>
+    [Parameter] public double StageOpacity { get; set; } = 0.85;
+
+    /// <summary>Fill color for the stage name label text. Default is "white".</summary>
+    [Parameter] public string StageLabelColor { get; set; } = "white";
+
     private List<FunnelStage> _stages = new();
 
     protected override void OnParametersSet()

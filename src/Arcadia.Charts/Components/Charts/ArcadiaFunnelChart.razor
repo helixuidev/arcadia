@@ -18,14 +18,14 @@ else if (HasData && NameField is not null && ValueField is not null) {
             @for (var i = 0; i < _stages.Count; i++)
             {
                 var s = _stages[i];
-                <path d="@s.Path" fill="@s.Color" opacity="0.85"
+                <path d="@s.Path" fill="@s.Color" opacity="@F(StageOpacity)"
                       class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
                       style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
                       @onmouseover="@(e => ShowTooltipForPoint(s.Name, s.Value, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction" />
 
                 <SvgText x="@F(Width / 2)" y="@F(s.LabelY)" text-anchor="middle"
-                      class="arcadia-chart__pie-label" style="fill: white; font-size: 12px;">@s.Name</SvgText>
+                      class="arcadia-chart__pie-label" style="@($"fill: {StageLabelColor}; font-size: 12px;")">@s.Name</SvgText>
                 <SvgText x="@F(Width / 2)" y="@F(s.LabelY + 16)" text-anchor="middle"
                       style="fill: rgba(255,255,255,0.7); font-size: 11px;">@($"{s.Percent:F1}%")</SvgText>
             }

@@ -26,6 +26,12 @@ public partial class ArcadiaSankeyChart : ChartBase<SankeyNode>
     /// <summary>Whether to show value labels on links.</summary>
     [Parameter] public bool ShowValues { get; set; } = true;
 
+    /// <summary>Default fill opacity for link paths.</summary>
+    [Parameter] public double LinkOpacity { get; set; } = 0.3;
+
+    /// <summary>Fill opacity for link paths on hover.</summary>
+    [Parameter] public double LinkHoverOpacity { get; set; } = 0.55;
+
     /// <summary>Fired when a link is clicked.</summary>
     [Parameter] public EventCallback<SankeyLinkClickEventArgs> OnLinkClick { get; set; }
 

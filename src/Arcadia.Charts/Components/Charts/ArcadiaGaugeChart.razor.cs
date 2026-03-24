@@ -52,6 +52,9 @@ public partial class ArcadiaGaugeChart : Arcadia.Core.Base.ArcadiaComponentBase
     /// <summary>Accessible description for screen readers.</summary>
     [Parameter] public string? AriaLabel { get; set; }
 
+    /// <summary>Opacity of the background track arc (0.0 fully transparent, 1.0 fully opaque).</summary>
+    [Parameter] public double TrackOpacity { get; set; } = 0.3;
+
     /// <summary>Whether to animate on load.</summary>
     [Parameter] public bool AnimateOnLoad { get; set; } = true;
 

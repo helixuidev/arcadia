@@ -8,6 +8,15 @@ public partial class ArcadiaTreemapChart<T> : ChartBase<T>
     [Parameter] public Func<T, string>? NameField { get; set; }
     [Parameter] public Func<T, double>? ValueField { get; set; }
 
+    /// <summary>Stroke width for each treemap cell border. Default is 2.</summary>
+    [Parameter] public double CellStrokeWidth { get; set; } = 2;
+
+    /// <summary>Stroke color for each treemap cell border. Default is "var(--arcadia-color-surface, #fff)".</summary>
+    [Parameter] public string CellStrokeColor { get; set; } = "var(--arcadia-color-surface, #fff)";
+
+    /// <summary>Fill color for the cell name label text. Default is "white".</summary>
+    [Parameter] public string CellLabelColor { get; set; } = "white";
+
     private List<TreemapCell> _cells = new();
 
     protected override void OnParametersSet()

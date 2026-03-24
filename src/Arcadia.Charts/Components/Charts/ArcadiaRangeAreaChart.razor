@@ -27,7 +27,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
                 {
                     var y = _yScale!.Scale(tick.Value);
                     <line x1="@F(_layout.PlotArea.X)" y1="@F(y)" x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(y)"
-                          stroke="currentColor" opacity="0.12" stroke-width="1" stroke-dasharray="4,4" />
+                          stroke="currentColor" opacity="@GridOpacity.ToString("F2")" stroke-width="1" stroke-dasharray="4,4" />
                 }
             }
 
@@ -56,7 +56,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @* Upper bound line *@
             @if (!string.IsNullOrEmpty(_upperPath))
             {
-                <path d="@_upperPath" fill="none" stroke="@StrokeColor" stroke-width="2"
+                <path d="@_upperPath" fill="none" stroke="@StrokeColor" stroke-width="@F(LineStrokeWidth)"
                       stroke-linecap="round" stroke-linejoin="round"
                       class="arcadia-chart__line @(AnimateOnLoad ? "arcadia-animate-line" : "")" />
             }
@@ -64,7 +64,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @* Lower bound line *@
             @if (!string.IsNullOrEmpty(_lowerPath))
             {
-                <path d="@_lowerPath" fill="none" stroke="@StrokeColor" stroke-width="2"
+                <path d="@_lowerPath" fill="none" stroke="@StrokeColor" stroke-width="@F(LineStrokeWidth)"
                       stroke-linecap="round" stroke-linejoin="round"
                       class="arcadia-chart__line @(AnimateOnLoad ? "arcadia-animate-line" : "")" />
             }
@@ -72,7 +72,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @* Optional middle line *@
             @if (MiddleField is not null && !string.IsNullOrEmpty(_middlePath))
             {
-                <path d="@_middlePath" fill="none" stroke="@EffectiveMiddleColor" stroke-width="2"
+                <path d="@_middlePath" fill="none" stroke="@EffectiveMiddleColor" stroke-width="@F(LineStrokeWidth)"
                       stroke-linecap="round" stroke-linejoin="round"
                       stroke-dasharray="6,4"
                       class="arcadia-chart__line @(AnimateOnLoad ? "arcadia-animate-line" : "")" />
@@ -81,7 +81,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @* Data points on upper line *@
             @foreach (var pt in _upperPoints)
             {
-                <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@StrokeColor"
+                <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@StrokeColor"
                         class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                         style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
                         @onmouseover="@(e => ShowTooltipForPoint("Upper", pt.Value, e.ClientX, e.ClientY))"
@@ -91,7 +91,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @* Data points on lower line *@
             @foreach (var pt in _lowerPoints)
             {
-                <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@StrokeColor"
+                <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@StrokeColor"
                         class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                         style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
                         @onmouseover="@(e => ShowTooltipForPoint("Lower", pt.Value, e.ClientX, e.ClientY))"
@@ -103,7 +103,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             {
                 @foreach (var pt in _middlePoints)
                 {
-                    <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="3" fill="@EffectiveMiddleColor"
+                    <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@EffectiveMiddleColor"
                             class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
                             style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
                             @onmouseover="@(e => ShowTooltipForPoint("Middle", pt.Value, e.ClientX, e.ClientY))"
@@ -127,10 +127,10 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @* Axis lines *@
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
                   x2="@F(_layout.PlotArea.X + _layout.PlotArea.Width)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
             <line x1="@F(_layout.PlotArea.X)" y1="@F(_layout.PlotArea.Y)"
                   x2="@F(_layout.PlotArea.X)" y2="@F(_layout.PlotArea.Y + _layout.PlotArea.Height)"
-                  stroke="currentColor" opacity="0.2" stroke-width="1" />
+                  stroke="currentColor" opacity="@AxisLineOpacity.ToString("F2")" stroke-width="1" />
         </svg>
         <CommunityWatermark />
 
