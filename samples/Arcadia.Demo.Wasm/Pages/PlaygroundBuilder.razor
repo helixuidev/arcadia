@@ -1,0 +1,364 @@
+@page "/playground-builder"
+
+@using Arcadia.Charts.Core
+@using Arcadia.Charts.Components.Charts
+
+<PageTitle>Arcadia Controls — Chart Playground</PageTitle>
+
+<div class="gallery" style="grid-template-columns: 320px 1fr;">
+    @* ── LEFT: Parameter Panel ── *@
+    <div class="gallery__sidebar" style="width: 320px; padding: 20px 16px; gap: 0;">
+        <h2 class="gallery__title">Chart Playground</h2>
+        <p class="gallery__subtitle">Tweak parameters live</p>
+
+        <div style="display: flex; flex-direction: column; gap: 14px; overflow-y: auto; flex: 1; padding-right: 4px;">
+
+            @* Chart Type *@
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="font-size: 0.7rem; font-weight: 600; color: var(--g-text-faint); text-transform: uppercase; letter-spacing: 0.05em;">Chart Type</label>
+                <select @bind="_chartType" style="@_selectStyle">
+                    <option value="Line">Line</option>
+                    <option value="Bar">Bar</option>
+                    <option value="Pie">Pie</option>
+                    <option value="Scatter">Scatter</option>
+                </select>
+            </div>
+
+            @* Title *@
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="@_labelStyle">Title</label>
+                <input type="text" @bind="_title" @bind:event="oninput" style="@_inputStyle" placeholder="Chart title..." />
+            </div>
+
+            @* Height *@
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="@_labelStyle">Height: @_height px</label>
+                <input type="range" min="200" max="600" step="10" @bind="_height" @bind:event="oninput"
+                       style="width: 100%; accent-color: #8b5cf6;" />
+            </div>
+
+            @* Width *@
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="@_labelStyle">Width: @(_width == 0 ? "Responsive" : $"{_width} px")</label>
+                <input type="range" min="0" max="800" step="10" @bind="_width" @bind:event="oninput"
+                       style="width: 100%; accent-color: #8b5cf6;" />
+            </div>
+
+            @* Palette *@
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <label style="@_labelStyle">Palette</label>
+                <select @bind="_paletteName" style="@_selectStyle">
+                    <option value="Default">Default</option>
+                    <option value="Cool">Cool</option>
+                    <option value="Warm">Warm</option>
+                    <option value="Pastel">Pastel</option>
+                    <option value="Vibrant">Vibrant</option>
+                    <option value="Accessible">Accessible</option>
+                </select>
+            </div>
+
+            @* AnimateOnLoad *@
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8rem; color: var(--g-text);">
+                <input type="checkbox" @bind="_animateOnLoad" style="accent-color: #8b5cf6; width: 16px; height: 16px;" />
+                Animate On Load
+            </label>
+
+            @* ShowGrid *@
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8rem; color: var(--g-text);">
+                <input type="checkbox" @bind="_showGrid" style="accent-color: #8b5cf6; width: 16px; height: 16px;" />
+                Show Grid
+            </label>
+
+            @* ShowLegend *@
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8rem; color: var(--g-text);">
+                <input type="checkbox" @bind="_showLegend" style="accent-color: #8b5cf6; width: 16px; height: 16px;" />
+                Show Legend
+            </label>
+
+            @* ShowPoints (Line only) *@
+            @if (_chartType == "Line")
+            {
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8rem; color: var(--g-text);">
+                    <input type="checkbox" @bind="_showPoints" style="accent-color: #8b5cf6; width: 16px; height: 16px;" />
+                    Show Points
+                </label>
+            }
+
+            @* ShowDataLabels *@
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.8rem; color: var(--g-text);">
+                <input type="checkbox" @bind="_showDataLabels" style="accent-color: #8b5cf6; width: 16px; height: 16px;" />
+                Show Data Labels
+            </label>
+
+            @* GridOpacity *@
+            @if (_showGrid)
+            {
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                    <label style="@_labelStyle">Grid Opacity: @_gridOpacity.ToString("F2")</label>
+                    <input type="range" min="0" max="0.5" step="0.01" @bind="_gridOpacity" @bind:event="oninput"
+                           style="width: 100%; accent-color: #8b5cf6;" />
+                </div>
+            }
+
+            @* Back to Gallery *@
+            <div style="margin-top: auto; padding-top: 16px;">
+                <a href="/" style="display: block; text-align: center; padding: 10px; border-radius: 8px; background: linear-gradient(135deg, #8b5cf6, #d946ef); color: white; font-size: 0.75rem; font-weight: 600; text-decoration: none; transition: all 0.2s ease;">
+                    ← Back to Gallery
+                </a>
+            </div>
+        </div>
+    </div>
+
+    @* ── RIGHT: Preview + Code ── *@
+    <div class="gallery__content" style="padding: 32px 48px 64px;">
+
+        <div class="gallery__section-header">
+            <h1>Chart Playground</h1>
+            <p>Tweak parameters on the left and see the chart update in real time. Copy the generated code below into your own app.</p>
+        </div>
+
+        @* Live Chart Preview *@
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Live Preview — @_chartType Chart</div>
+            <div class="gallery__chart-container">
+                @if (_chartType == "Line")
+                {
+                    <ArcadiaLineChart TItem="MonthlySales" Data="@_monthlySales"
+                                      XField="@(d => (object)d.Month)" Series="@_lineSeries"
+                                      Height="@_height" Width="@_width"
+                                      Title="@_title"
+                                      AnimateOnLoad="@_animateOnLoad"
+                                      ShowGrid="@_showGrid"
+                                      ShowLegend="@_showLegend"
+                                      ShowPoints="@_showPoints"
+                                      ShowDataLabels="@_showDataLabels"
+                                      Palette="@SelectedPalette"
+                                      GridOpacity="@_gridOpacity" />
+                }
+                else if (_chartType == "Bar")
+                {
+                    <ArcadiaBarChart TItem="QuarterlySales" Data="@_quarterlySales"
+                                     XField="@(d => (object)d.Quarter)" Series="@_barSeries"
+                                     Height="@_height" Width="@_width"
+                                     Title="@_title"
+                                     AnimateOnLoad="@_animateOnLoad"
+                                     ShowGrid="@_showGrid"
+                                     ShowLegend="@_showLegend"
+                                     ShowDataLabels="@_showDataLabels"
+                                     Palette="@SelectedPalette"
+                                     GridOpacity="@_gridOpacity" />
+                }
+                else if (_chartType == "Pie")
+                {
+                    <ArcadiaPieChart TItem="BudgetItem" Data="@_budget"
+                                     NameField="@(d => d.Category)" ValueField="@(d => d.Amount)"
+                                     Height="@_height" Width="@(_width == 0 ? 480 : _width)"
+                                     Title="@_title"
+                                     AnimateOnLoad="@_animateOnLoad"
+                                     ShowLegend="@_showLegend"
+                                     ShowLabels="@_showDataLabels"
+                                     Palette="@SelectedPalette" />
+                }
+                else if (_chartType == "Scatter")
+                {
+                    <ArcadiaScatterChart TItem="DataXY" Data="@_scatterData"
+                                         XField="@(d => d.X)" YField="@(d => d.Y)"
+                                         Height="@_height" Width="@_width"
+                                         Title="@_title"
+                                         AnimateOnLoad="@_animateOnLoad"
+                                         ShowGrid="@_showGrid"
+                                         ShowLegend="@_showLegend"
+                                         ShowDataLabels="@_showDataLabels"
+                                         Palette="@SelectedPalette"
+                                         GridOpacity="@_gridOpacity"
+                                         Color="primary" PointSize="6" />
+                }
+            </div>
+        </div>
+
+        @* Generated Code Output *@
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Generated Razor Code</div>
+            <pre style="background: #0a0920; border: 1px solid var(--g-border); border-radius: 10px; padding: 20px; margin: 0; overflow-x: auto; font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', monospace; font-size: 0.78rem; line-height: 1.7; color: #c4b5fd; tab-size: 4;">@GeneratedCode</pre>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    // ── Parameter state ──
+    string _chartType = "Line";
+    string _title = "";
+    double _height = 380;
+    double _width = 0;
+    bool _animateOnLoad = true;
+    bool _showGrid = true;
+    bool _showLegend = true;
+    bool _showPoints = true;
+    bool _showDataLabels = false;
+    string _paletteName = "Default";
+    double _gridOpacity = 0.12;
+
+    // ── Styles ──
+    const string _labelStyle = "font-size: 0.7rem; font-weight: 600; color: var(--g-text-faint); text-transform: uppercase; letter-spacing: 0.05em;";
+    const string _inputStyle = "background: var(--g-input-bg); border: 1px solid var(--g-accent-border); border-radius: 8px; padding: 8px 12px; color: var(--g-text); font-size: 0.8rem; font-family: inherit; outline: none; width: 100%; box-sizing: border-box;";
+    const string _selectStyle = "background: var(--g-input-bg); border: 1px solid var(--g-accent-border); border-radius: 8px; padding: 8px 12px; color: var(--g-text); font-size: 0.8rem; font-family: inherit; outline: none; width: 100%; box-sizing: border-box; cursor: pointer;";
+
+    // ── Palette mapping ──
+    ChartPalette SelectedPalette => _paletteName switch
+    {
+        "Cool" => ChartPalette.Cool,
+        "Warm" => ChartPalette.Warm,
+        "Pastel" => ChartPalette.Pastel,
+        "Vibrant" => ChartPalette.Vibrant,
+        "Accessible" => ChartPalette.Accessible,
+        _ => ChartPalette.Default,
+    };
+
+    // ── Sample data ──
+    record MonthlySales(string Month, double Revenue, double Target);
+    record QuarterlySales(string Quarter, double NorthAmerica, double Europe, double Asia);
+    record BudgetItem(string Category, double Amount);
+    record DataXY(double X, double Y);
+
+    List<MonthlySales> _monthlySales = new()
+    {
+        new("Jan", 45000, 50000), new("Feb", 52000, 50000), new("Mar", 48000, 52000),
+        new("Apr", 61000, 55000), new("May", 55000, 55000), new("Jun", 67000, 58000),
+        new("Jul", 72000, 60000), new("Aug", 68000, 62000), new("Sep", 75000, 65000),
+        new("Oct", 82000, 68000), new("Nov", 79000, 70000), new("Dec", 88000, 72000),
+    };
+
+    List<SeriesConfig<MonthlySales>> _lineSeries = new()
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue, Color = "#22c55e", ShowArea = true, AreaOpacity = 0.08, CurveType = "smooth", StrokeWidth = 2.5 },
+        new() { Name = "Target", Field = d => d.Target, Color = "#f59e0b", Dashed = true, StrokeWidth = 2.5, CurveType = "smooth" },
+    };
+
+    List<QuarterlySales> _quarterlySales = new()
+    {
+        new("Q1", 145000, 98000, 72000), new("Q2", 183000, 112000, 89000),
+        new("Q3", 215000, 134000, 105000), new("Q4", 268000, 156000, 128000),
+    };
+
+    List<SeriesConfig<QuarterlySales>> _barSeries = new()
+    {
+        new() { Name = "North America", Field = d => d.NorthAmerica, Color = "primary" },
+        new() { Name = "Europe", Field = d => d.Europe, Color = "success" },
+        new() { Name = "Asia", Field = d => d.Asia, Color = "warning" },
+    };
+
+    List<BudgetItem> _budget = new()
+    {
+        new("Engineering", 450000), new("Marketing", 180000), new("Sales", 220000),
+        new("Operations", 120000), new("HR", 80000),
+    };
+
+    List<DataXY> _scatterData = Enumerable.Range(0, 50).Select(i =>
+    {
+        var rng = new Random(i);
+        return new DataXY(150 + rng.NextDouble() * 50, 50 + rng.NextDouble() * 60);
+    }).ToList();
+
+    // ── Code generation ──
+    string GeneratedCode => _chartType switch
+    {
+        "Line" => GenerateLineCode(),
+        "Bar" => GenerateBarCode(),
+        "Pie" => GeneratePieCode(),
+        "Scatter" => GenerateScatterCode(),
+        _ => ""
+    };
+
+    string GenerateLineCode()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("<ArcadiaLineChart TItem=\"MonthlySales\"");
+        sb.AppendLine("    Data=\"@monthlySales\"");
+        sb.AppendLine("    XField=\"@(d => (object)d.Month)\"");
+        sb.AppendLine("    Series=\"@lineSeries\"");
+        sb.AppendLine($"    Height=\"{_height}\"");
+        sb.AppendLine($"    Width=\"{_width}\"");
+        if (!string.IsNullOrWhiteSpace(_title))
+            sb.AppendLine($"    Title=\"{_title}\"");
+        sb.AppendLine($"    AnimateOnLoad=\"{_animateOnLoad.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowGrid=\"{_showGrid.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowLegend=\"{_showLegend.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowPoints=\"{_showPoints.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowDataLabels=\"{_showDataLabels.ToString().ToLower()}\"");
+        if (_paletteName != "Default")
+            sb.AppendLine($"    Palette=\"ChartPalette.{_paletteName}\"");
+        if (Math.Abs(_gridOpacity - 0.12) > 0.001)
+            sb.AppendLine($"    GridOpacity=\"{_gridOpacity:F2}\"");
+        sb.Append("    />");
+        return sb.ToString();
+    }
+
+    string GenerateBarCode()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("<ArcadiaBarChart TItem=\"QuarterlySales\"");
+        sb.AppendLine("    Data=\"@quarterlySales\"");
+        sb.AppendLine("    XField=\"@(d => (object)d.Quarter)\"");
+        sb.AppendLine("    Series=\"@barSeries\"");
+        sb.AppendLine($"    Height=\"{_height}\"");
+        sb.AppendLine($"    Width=\"{_width}\"");
+        if (!string.IsNullOrWhiteSpace(_title))
+            sb.AppendLine($"    Title=\"{_title}\"");
+        sb.AppendLine($"    AnimateOnLoad=\"{_animateOnLoad.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowGrid=\"{_showGrid.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowLegend=\"{_showLegend.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowDataLabels=\"{_showDataLabels.ToString().ToLower()}\"");
+        if (_paletteName != "Default")
+            sb.AppendLine($"    Palette=\"ChartPalette.{_paletteName}\"");
+        if (Math.Abs(_gridOpacity - 0.12) > 0.001)
+            sb.AppendLine($"    GridOpacity=\"{_gridOpacity:F2}\"");
+        sb.Append("    />");
+        return sb.ToString();
+    }
+
+    string GeneratePieCode()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("<ArcadiaPieChart TItem=\"BudgetItem\"");
+        sb.AppendLine("    Data=\"@budget\"");
+        sb.AppendLine("    NameField=\"@(d => d.Category)\"");
+        sb.AppendLine("    ValueField=\"@(d => d.Amount)\"");
+        sb.AppendLine($"    Height=\"{_height}\"");
+        sb.AppendLine($"    Width=\"{(_width == 0 ? 480 : _width)}\"");
+        if (!string.IsNullOrWhiteSpace(_title))
+            sb.AppendLine($"    Title=\"{_title}\"");
+        sb.AppendLine($"    AnimateOnLoad=\"{_animateOnLoad.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowLegend=\"{_showLegend.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowLabels=\"{_showDataLabels.ToString().ToLower()}\"");
+        if (_paletteName != "Default")
+            sb.AppendLine($"    Palette=\"ChartPalette.{_paletteName}\"");
+        sb.Append("    />");
+        return sb.ToString();
+    }
+
+    string GenerateScatterCode()
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.AppendLine("<ArcadiaScatterChart TItem=\"DataXY\"");
+        sb.AppendLine("    Data=\"@scatterData\"");
+        sb.AppendLine("    XField=\"@(d => d.X)\"");
+        sb.AppendLine("    YField=\"@(d => d.Y)\"");
+        sb.AppendLine($"    Height=\"{_height}\"");
+        sb.AppendLine($"    Width=\"{_width}\"");
+        if (!string.IsNullOrWhiteSpace(_title))
+            sb.AppendLine($"    Title=\"{_title}\"");
+        sb.AppendLine($"    AnimateOnLoad=\"{_animateOnLoad.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowGrid=\"{_showGrid.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowLegend=\"{_showLegend.ToString().ToLower()}\"");
+        sb.AppendLine($"    ShowDataLabels=\"{_showDataLabels.ToString().ToLower()}\"");
+        if (_paletteName != "Default")
+            sb.AppendLine($"    Palette=\"ChartPalette.{_paletteName}\"");
+        if (Math.Abs(_gridOpacity - 0.12) > 0.001)
+            sb.AppendLine($"    GridOpacity=\"{_gridOpacity:F2}\"");
+        sb.AppendLine("    Color=\"primary\"");
+        sb.AppendLine("    PointSize=\"6\"");
+        sb.Append("    />");
+        return sb.ToString();
+    }
+}
