@@ -12,10 +12,19 @@ namespace Arcadia.Charts.Components.Charts;
 /// </summary>
 public partial class ArcadiaCandlestickChart<T> : ChartBase<T>
 {
+    /// <summary>Accessor that extracts the X-axis label (e.g., date or time period) from each data item. When null, labels are omitted from the category axis.</summary>
     [Parameter] public Func<T, string>? LabelField { get; set; }
+
+    /// <summary>Accessor that extracts the opening price from each data item. Required for rendering candlestick bodies.</summary>
     [Parameter] public Func<T, double>? OpenField { get; set; }
+
+    /// <summary>Accessor that extracts the highest price from each data item. Determines the top of the wick line.</summary>
     [Parameter] public Func<T, double>? HighField { get; set; }
+
+    /// <summary>Accessor that extracts the lowest price from each data item. Determines the bottom of the wick line.</summary>
     [Parameter] public Func<T, double>? LowField { get; set; }
+
+    /// <summary>Accessor that extracts the closing price from each data item. Together with OpenField, determines candle body direction and color.</summary>
     [Parameter] public Func<T, double>? CloseField { get; set; }
 
     /// <summary>Color for up (close > open) candles.</summary>

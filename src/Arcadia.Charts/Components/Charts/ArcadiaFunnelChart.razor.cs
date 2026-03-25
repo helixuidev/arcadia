@@ -3,9 +3,16 @@ using Arcadia.Charts.Core;
 
 namespace Arcadia.Charts.Components.Charts;
 
+/// <summary>
+/// Funnel chart that visualizes progressive narrowing across sequential stages,
+/// such as sales pipelines or conversion funnels.
+/// </summary>
 public partial class ArcadiaFunnelChart<T> : ChartBase<T>
 {
+    /// <summary>Accessor that extracts the display name for each funnel stage from a data item. Rendered as the centered label inside the stage shape.</summary>
     [Parameter] public Func<T, string>? NameField { get; set; }
+
+    /// <summary>Accessor that extracts the numeric value for each funnel stage. Values determine the relative width of each stage; the largest value produces the widest section.</summary>
     [Parameter] public Func<T, double>? ValueField { get; set; }
 
     /// <summary>Opacity for each funnel stage shape. Default is 0.85.</summary>

@@ -6,12 +6,25 @@ using Arcadia.Charts.Core.Scales;
 
 namespace Arcadia.Charts.Components.Charts;
 
+/// <summary>
+/// Waterfall chart that visualizes cumulative effect of sequential positive and negative
+/// values. Each bar floats from the running total, making it easy to see incremental changes.
+/// </summary>
 public partial class ArcadiaWaterfallChart<T> : ChartBase<T>
 {
+    /// <summary>Accessor that extracts the category label for each bar from a data item. Displayed along the X-axis below each waterfall segment.</summary>
     [Parameter] public Func<T, string>? CategoryField { get; set; }
+
+    /// <summary>Accessor that extracts the incremental value (positive or negative) for each waterfall segment. Positive values stack upward; negative values stack downward from the running total.</summary>
     [Parameter] public Func<T, double>? ValueField { get; set; }
+
+    /// <summary>Fill color for bars representing positive increments. Accepts CSS color values or design-token variables. Default is the success semantic color.</summary>
     [Parameter] public string PositiveColor { get; set; } = "var(--arcadia-color-success, #16a34a)";
+
+    /// <summary>Fill color for bars representing negative decrements. Accepts CSS color values or design-token variables. Default is the danger semantic color.</summary>
     [Parameter] public string NegativeColor { get; set; } = "var(--arcadia-color-danger, #dc2626)";
+
+    /// <summary>Fill color for the final summary/total bar. Accepts CSS color values or design-token variables. Default is the primary semantic color.</summary>
     [Parameter] public string TotalColor { get; set; } = "var(--arcadia-color-primary, #2563eb)";
 
     /// <summary>Opacity of the connector lines between waterfall bars (0.0 to 1.0).</summary>

@@ -3,9 +3,16 @@ using Arcadia.Charts.Core;
 
 namespace Arcadia.Charts.Components.Charts;
 
+/// <summary>
+/// Treemap chart that displays hierarchical data as nested rectangles, where each
+/// cell's area is proportional to its value. Uses a squarified layout algorithm.
+/// </summary>
 public partial class ArcadiaTreemapChart<T> : ChartBase<T>
 {
+    /// <summary>Accessor that extracts the display name for each treemap cell from a data item. Rendered as the label inside the cell when the cell is large enough.</summary>
     [Parameter] public Func<T, string>? NameField { get; set; }
+
+    /// <summary>Accessor that extracts the numeric value that determines each cell's area. Larger values produce proportionally larger rectangles in the squarified layout.</summary>
     [Parameter] public Func<T, double>? ValueField { get; set; }
 
     /// <summary>Stroke width for each treemap cell border. Default is 2.</summary>
