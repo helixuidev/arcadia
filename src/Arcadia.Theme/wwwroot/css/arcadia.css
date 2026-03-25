@@ -13,6 +13,12 @@
 @import "tokens/breakpoints.css";
 @import "themes/light.css";
 @import "themes/dark.css";
+@import "themes/obsidian.css";
+@import "themes/vapor.css";
+@import "themes/carbon.css";
+@import "themes/aurora.css";
+@import "themes/slate.css";
+@import "themes/midnight.css";
 
 /* Base reset for Arcadia Controls components */
 *,

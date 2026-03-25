@@ -1,0 +1,30 @@
+/* Arcadia Carbon Theme — Stripe Enterprise
+   Apply: data-arcadia-theme="carbon" */
+
+[data-arcadia-theme="carbon"] {
+  --arcadia-color-primary: #635BFF;
+  --arcadia-color-primary-hover: #7A73FF;
+  --arcadia-color-primary-active: #4B44E0;
+  --arcadia-color-primary-subtle: rgba(99,91,255,0.12);
+  --arcadia-color-on-primary: #FFFFFF;
+
+  --arcadia-color-surface: #111118;
+  --arcadia-color-surface-raised: #19192A;
+  --arcadia-color-surface-overlay: #22223A;
+  --arcadia-color-surface-sunken: #0A0A0F;
+
+  --arcadia-color-text: #F0F0F5;
+  --arcadia-color-text-muted: #8888A0;
+  --arcadia-color-text-inverse: #111118;
+
+  --arcadia-color-border: #25253A;
+  --arcadia-color-border-hover: #33334D;
+  --arcadia-color-border-focus: #635BFF;
+
+  --arcadia-color-success: #3ECF8E;
+  --arcadia-color-danger: #E25C5C;
+  --arcadia-color-warning: #F5A623;
+  --arcadia-color-info: #5DADEC;
+
+  color-scheme: dark;
+}

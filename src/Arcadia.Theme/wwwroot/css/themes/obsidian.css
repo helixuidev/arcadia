@@ -1,0 +1,33 @@
+/* Arcadia Obsidian Theme — Ultra-minimal (Linear/shadcn inspired)
+   Apply: <ThemeProvider Class="arcadia-theme-obsidian"> or data-arcadia-theme="obsidian" */
+
+[data-arcadia-theme="obsidian"] {
+  --arcadia-color-primary: #6366F1;
+  --arcadia-color-primary-hover: #818CF8;
+  --arcadia-color-primary-active: #4F46E5;
+  --arcadia-color-primary-subtle: #1E1B4B;
+  --arcadia-color-on-primary: #FAFAFA;
+
+  --arcadia-color-surface: #09090B;
+  --arcadia-color-surface-raised: #0F0F12;
+  --arcadia-color-surface-overlay: #18181B;
+  --arcadia-color-surface-sunken: #050506;
+
+  --arcadia-color-text: #FAFAFA;
+  --arcadia-color-text-muted: #71717A;
+  --arcadia-color-text-inverse: #09090B;
+
+  --arcadia-color-border: #1F1F23;
+  --arcadia-color-border-hover: #27272A;
+  --arcadia-color-border-focus: #6366F1;
+
+  --arcadia-color-success: #22C55E;
+  --arcadia-color-danger: #EF4444;
+  --arcadia-color-warning: #F59E0B;
+  --arcadia-color-info: #3B82F6;
+
+  --arcadia-color-focus-ring: #6366F1;
+  --arcadia-color-focus-ring-offset: #09090B;
+
+  color-scheme: dark;
+}

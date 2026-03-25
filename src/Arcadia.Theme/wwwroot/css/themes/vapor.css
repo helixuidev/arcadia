@@ -1,0 +1,30 @@
+/* Arcadia Vapor Theme — Frosted Glass (Apple/Vercel inspired)
+   Apply: data-arcadia-theme="vapor" */
+
+[data-arcadia-theme="vapor"] {
+  --arcadia-color-primary: #818CF8;
+  --arcadia-color-primary-hover: #A5B4FC;
+  --arcadia-color-primary-active: #6366F1;
+  --arcadia-color-primary-subtle: rgba(129,140,248,0.12);
+  --arcadia-color-on-primary: #0F0F12;
+
+  --arcadia-color-surface: rgba(255,255,255,0.02);
+  --arcadia-color-surface-raised: rgba(255,255,255,0.05);
+  --arcadia-color-surface-overlay: rgba(255,255,255,0.08);
+  --arcadia-color-surface-sunken: rgba(0,0,0,0.2);
+
+  --arcadia-color-text: #E4E4E7;
+  --arcadia-color-text-muted: #6B6B76;
+  --arcadia-color-text-inverse: #050507;
+
+  --arcadia-color-border: rgba(255,255,255,0.06);
+  --arcadia-color-border-hover: rgba(255,255,255,0.1);
+  --arcadia-color-border-focus: #818CF8;
+
+  --arcadia-color-success: #34D399;
+  --arcadia-color-danger: #F87171;
+  --arcadia-color-warning: #FBBF24;
+  --arcadia-color-info: #5DADEC;
+
+  color-scheme: dark;
+}

@@ -1,0 +1,30 @@
+/* Arcadia Slate Theme — Notion Warm Neutrals
+   Apply: data-arcadia-theme="slate" */
+
+[data-arcadia-theme="slate"] {
+  --arcadia-color-primary: #2EAADC;
+  --arcadia-color-primary-hover: #4BC4F0;
+  --arcadia-color-primary-active: #1A90C0;
+  --arcadia-color-primary-subtle: rgba(46,170,220,0.12);
+  --arcadia-color-on-primary: #191919;
+
+  --arcadia-color-surface: #191919;
+  --arcadia-color-surface-raised: #202020;
+  --arcadia-color-surface-overlay: #2C2C2C;
+  --arcadia-color-surface-sunken: #111111;
+
+  --arcadia-color-text: #E8E5E0;
+  --arcadia-color-text-muted: #9B9A97;
+  --arcadia-color-text-inverse: #37352F;
+
+  --arcadia-color-border: #2E2E2E;
+  --arcadia-color-border-hover: #3E3E3E;
+  --arcadia-color-border-focus: #2EAADC;
+
+  --arcadia-color-success: #4DAB9A;
+  --arcadia-color-danger: #FF7369;
+  --arcadia-color-warning: #FFA344;
+  --arcadia-color-info: #529CCA;
+
+  color-scheme: dark;
+}

@@ -1,0 +1,30 @@
+/* Arcadia Aurora Theme — Gradient Accent (Raycast/Arc inspired)
+   Apply: data-arcadia-theme="aurora" */
+
+[data-arcadia-theme="aurora"] {
+  --arcadia-color-primary: #8B5CF6;
+  --arcadia-color-primary-hover: #A78BFA;
+  --arcadia-color-primary-active: #7C3AED;
+  --arcadia-color-primary-subtle: rgba(139,92,246,0.12);
+  --arcadia-color-on-primary: #FFFFFF;
+
+  --arcadia-color-surface: #0C0C0E;
+  --arcadia-color-surface-raised: #141416;
+  --arcadia-color-surface-overlay: #1C1C20;
+  --arcadia-color-surface-sunken: #060607;
+
+  --arcadia-color-text: #F5F5F7;
+  --arcadia-color-text-muted: #6E6E78;
+  --arcadia-color-text-inverse: #0C0C0E;
+
+  --arcadia-color-border: #232326;
+  --arcadia-color-border-hover: #2E2E32;
+  --arcadia-color-border-focus: #8B5CF6;
+
+  --arcadia-color-success: #10B981;
+  --arcadia-color-danger: #EF4444;
+  --arcadia-color-warning: #F59E0B;
+  --arcadia-color-info: #3B82F6;
+
+  color-scheme: dark;
+}

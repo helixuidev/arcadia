@@ -1,0 +1,30 @@
+/* Arcadia Midnight Theme — Vercel High-Contrast
+   Apply: data-arcadia-theme="midnight" */
+
+[data-arcadia-theme="midnight"] {
+  --arcadia-color-primary: #0070F3;
+  --arcadia-color-primary-hover: #3291FF;
+  --arcadia-color-primary-active: #0060D0;
+  --arcadia-color-primary-subtle: rgba(0,112,243,0.12);
+  --arcadia-color-on-primary: #FFFFFF;
+
+  --arcadia-color-surface: #000000;
+  --arcadia-color-surface-raised: #0A0A0A;
+  --arcadia-color-surface-overlay: #111111;
+  --arcadia-color-surface-sunken: #000000;
+
+  --arcadia-color-text: #EDEDED;
+  --arcadia-color-text-muted: #888888;
+  --arcadia-color-text-inverse: #000000;
+
+  --arcadia-color-border: #1A1A1A;
+  --arcadia-color-border-hover: #333333;
+  --arcadia-color-border-focus: #0070F3;
+
+  --arcadia-color-success: #0070F3;
+  --arcadia-color-danger: #EE0000;
+  --arcadia-color-warning: #F5A623;
+  --arcadia-color-info: #0070F3;
+
+  color-scheme: dark;
+}
