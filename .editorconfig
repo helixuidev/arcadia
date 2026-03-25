@@ -1,0 +1,85 @@
+# Arcadia Controls — EditorConfig
+# https://editorconfig.org
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{cs,razor}]
+# Formatting
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+csharp_space_after_cast = false
+csharp_space_after_keywords_in_control_flow_statements = true
+
+# Naming
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_style.camel_case.capitalization = camel_case
+dotnet_naming_style.underscore_prefix.capitalization = camel_case
+dotnet_naming_style.underscore_prefix.required_prefix = _
+
+# Private fields: _camelCase
+dotnet_naming_rule.private_fields.symbols = private_fields
+dotnet_naming_rule.private_fields.style = underscore_prefix
+dotnet_naming_rule.private_fields.severity = suggestion
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+# Public members: PascalCase
+dotnet_naming_rule.public_members.symbols = public_members
+dotnet_naming_rule.public_members.style = pascal_case
+dotnet_naming_rule.public_members.severity = warning
+dotnet_naming_symbols.public_members.applicable_kinds = property, method, event
+dotnet_naming_symbols.public_members.applicable_accessibilities = public
+
+# Analyzers — Severity overrides
+# Unused private members
+dotnet_diagnostic.IDE0051.severity = warning
+dotnet_diagnostic.IDE0052.severity = warning
+
+# Unnecessary using directives
+dotnet_diagnostic.IDE0005.severity = warning
+
+# Use pattern matching
+dotnet_diagnostic.IDE0019.severity = suggestion
+dotnet_diagnostic.IDE0020.severity = suggestion
+
+# Prefer 'is null' over '== null'
+dotnet_diagnostic.IDE0041.severity = suggestion
+
+# Async methods should have Async suffix — disabled (Blazor lifecycle doesn't follow this)
+dotnet_diagnostic.VSTHRD200.severity = none
+
+# CA1062 — validate args of public methods — disabled for Blazor components (parameters set by framework)
+dotnet_diagnostic.CA1062.severity = none
+
+# CA1822 — mark members as static — suggestion only (many internal methods need instance access in Blazor)
+dotnet_diagnostic.CA1822.severity = suggestion
+
+# CA2007 — ConfigureAwait — disabled (Blazor requires sync context)
+dotnet_diagnostic.CA2007.severity = none
+
+# CA1031 — don't catch general exceptions — warning (we want specific catch blocks)
+dotnet_diagnostic.CA1031.severity = warning
+
+# CA1848 — use LoggerMessage — disabled (no ILogger in components)
+dotnet_diagnostic.CA1848.severity = none
+
+[*.css]
+indent_size = 2
+
+[*.{js,json}]
+indent_size = 2
+
+[*.{md,mdx}]
+trim_trailing_whitespace = false
