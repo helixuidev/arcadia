@@ -6,9 +6,10 @@ using Arcadia.DataGrid.Core;
 namespace Arcadia.DataGrid.Components;
 
 /// <summary>
-/// A data grid component with sorting, paging, and column templates.
+/// A data grid component with sorting, paging, filtering, selection, grouping,
+/// inline editing, master-detail, and CSV export.
 /// </summary>
-public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
+public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDisposable
 {
     /// <summary>Client-side data source.</summary>
     [Parameter] public IReadOnlyList<TItem>? Data { get; set; }
@@ -43,10 +44,10 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Message shown when data is empty.</summary>
     [Parameter] public string EmptyMessage { get; set; } = "No data available";
 
-    /// <summary>Show row selector column with row numbers and state indicators (current arrow, edit pencil).</summary>
+    /// <summary>Show row selector column with row numbers and state indicators.</summary>
     [Parameter] public bool ShowRowSelector { get; set; }
 
-    /// <summary>Show row numbers in the row selector. When false, only state glyphs are shown.</summary>
+    /// <summary>Show row numbers in the row selector.</summary>
     [Parameter] public bool ShowRowNumbers { get; set; } = true;
 
     /// <summary>Enable column filtering (filter row below header).</summary>
@@ -55,7 +56,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Enable row selection.</summary>
     [Parameter] public bool Selectable { get; set; }
 
-    /// <summary>Allow multi-row selection (checkbox column). Requires Selectable=true.</summary>
+    /// <summary>Allow multi-row selection (checkbox column).</summary>
     [Parameter] public bool MultiSelect { get; set; }
 
     /// <summary>Currently selected items. Two-way bindable.</summary>
@@ -64,10 +65,10 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Fired when selection changes.</summary>
     [Parameter] public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
 
-    /// <summary>Server-side data loading callback. When set, grid delegates sort/filter/page to the server.</summary>
+    /// <summary>Server-side data loading callback.</summary>
     [Parameter] public EventCallback<DataGridLoadArgs> LoadData { get; set; }
 
-    /// <summary>Total row count for server-side paging. Required when using LoadData.</summary>
+    /// <summary>Total row count for server-side paging.</summary>
     [Parameter] public int? ServerTotalCount { get; set; }
 
     /// <summary>Detail row template. When set, rows become expandable.</summary>
@@ -79,7 +80,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Fired when sort changes.</summary>
     [Parameter] public EventCallback<SortDescriptor?> SortChanged { get; set; }
 
-    /// <summary>Fired when a row is edited (inline edit commits).</summary>
+    /// <summary>Fired when a row edit is committed.</summary>
     [Parameter] public EventCallback<TItem> OnRowEdit { get; set; }
 
     /// <summary>Column key to group rows by. Null = no grouping.</summary>
@@ -87,6 +88,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
 
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     private IJSObjectReference? _jsModule;
+    private bool _disposed;
 
     // ── Internal state ──
     internal ArcadiaDataGridColumnCollector<TItem> Collector { get; } = new();
@@ -100,28 +102,42 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     private HashSet<TItem> _expandedRows = new();
     private TItem? _editingRow;
     private string? _editingColumn;
+    private bool _editCommitting; // guard against double-commit
     private TItem? _currentRow;
     private Dictionary<object, bool> _groupExpanded = new();
     private bool _isServerMode => LoadData.HasDelegate;
 
-    private IReadOnlyList<ArcadiaColumn<TItem>> Columns => Collector.Columns;
-    private bool HasData => _isServerMode || (Data is not null && Data.Count > 0);
-    private int FilteredCount => _isServerMode ? (ServerTotalCount ?? 0) : GetFilteredData().Count();
-    private int TotalCount => _isServerMode ? (ServerTotalCount ?? 0) : (Filterable && _filters.Values.Any(f => !string.IsNullOrEmpty(f.Value)) ? GetFilteredData().Count() : (Data?.Count ?? 0));
-    private int PageCount => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 1;
+    // ── Cached filtered data to avoid multiple LINQ enumerations ──
+    private List<TItem>? _filteredDataCache;
+    private int _lastDataHash;
+    private int _lastFilterHash;
 
     internal ElementReference TableRef;
     private bool _resizeInitialized;
 
+    private IReadOnlyList<ArcadiaColumn<TItem>> Columns => Collector.Columns;
+    private bool HasData => _isServerMode || (Data is not null && Data.Count > 0);
+
+    private int TotalCount
+    {
+        get
+        {
+            if (_isServerMode) return ServerTotalCount ?? 0;
+            return GetCachedFilteredData().Count;
+        }
+    }
+
+    private int PageCount => PageSize > 0 ? Math.Max(1, (int)Math.Ceiling((double)TotalCount / PageSize)) : 1;
+
     protected override async void OnAfterRender(bool firstRender)
     {
+        if (_disposed) return;
         if (firstRender && !_columnsCollected && Columns.Count > 0)
         {
             _columnsCollected = true;
             StateHasChanged();
         }
 
-        // Init column resize handles after columns render
         if (_columnsCollected && !_resizeInitialized)
         {
             _resizeInitialized = true;
@@ -135,13 +151,31 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         }
     }
 
-    /// <summary>Get filtered data (before paging).</summary>
-    internal IEnumerable<TItem> GetFilteredData()
+    // ── Filtered data cache ──
+
+    private List<TItem> GetCachedFilteredData()
+    {
+        var dataHash = Data?.Count ?? 0;
+        var filterHash = _filters.Values.Sum(f => f.Value?.GetHashCode() ?? 0);
+        if (_filteredDataCache is null || dataHash != _lastDataHash || filterHash != _lastFilterHash)
+        {
+            _filteredDataCache = GetFilteredDataInternal().ToList();
+            _lastDataHash = dataHash;
+            _lastFilterHash = filterHash;
+        }
+        return _filteredDataCache;
+    }
+
+    private void InvalidateCache() { _filteredDataCache = null; }
+
+    /// <summary>Get filtered data (before paging). Uses cache.</summary>
+    internal IEnumerable<TItem> GetFilteredData() => GetCachedFilteredData();
+
+    private IEnumerable<TItem> GetFilteredDataInternal()
     {
         if (Data is null) return Enumerable.Empty<TItem>();
         IEnumerable<TItem> result = Data;
 
-        // Apply filters
         foreach (var filter in _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)))
         {
             var col = Columns.FirstOrDefault(c => c.Key == filter.Property);
@@ -171,9 +205,10 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Get the current page of data, filtered and sorted.</summary>
     internal IEnumerable<TItem> GetPagedData()
     {
-        var result = GetFilteredData();
+        if (_isServerMode) return Data ?? Enumerable.Empty<TItem>();
 
-        // Apply sort
+        IEnumerable<TItem> result = GetCachedFilteredData();
+
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
             var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
@@ -185,7 +220,6 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
             }
         }
 
-        // Apply paging
         if (PageSize > 0)
         {
             result = result.Skip(_pageIndex * PageSize).Take(PageSize);
@@ -202,6 +236,8 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
             _filters[columnKey] = new FilterDescriptor { Property = columnKey };
         _filters[columnKey].Value = value;
         _pageIndex = 0;
+        InvalidateCache();
+        if (_isServerMode) _ = InvokeLoadData();
     }
 
     internal string GetFilterValue(string columnKey)
@@ -212,7 +248,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     internal void ToggleFilters()
     {
         _showFilters = !_showFilters;
-        if (!_showFilters) _filters.Clear();
+        // Don't clear filters on toggle — preserve filter state when hidden
     }
 
     // ── Selection methods ──
@@ -277,7 +313,6 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         var key = column.Key;
         if (_currentSort?.Property == key)
         {
-            // Cycle: Ascending → Descending → None
             _currentSort.Direction = _currentSort.Direction switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
@@ -292,9 +327,11 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
             _currentSort = new SortDescriptor { Property = key, Direction = SortDirection.Ascending };
         }
 
-        _pageIndex = 0; // Reset to first page on sort change
+        _pageIndex = 0;
+        CancelEdit(); // Clear edit state on sort change
         if (SortChanged.HasDelegate)
             await SortChanged.InvokeAsync(_currentSort);
+        if (_isServerMode) await InvokeLoadData();
     }
 
     internal void GoToPage(int page)
@@ -302,12 +339,16 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         if (page < 0) page = 0;
         if (page >= PageCount) page = PageCount - 1;
         _pageIndex = page;
+        CancelEdit(); // Clear edit state on page change
+        if (_isServerMode) _ = InvokeLoadData();
     }
 
     internal void SetPageSize(int size)
     {
         PageSize = size;
         _pageIndex = 0;
+        CancelEdit();
+        if (_isServerMode) _ = InvokeLoadData();
     }
 
     internal void HandlePageSizeChange(ChangeEventArgs e)
@@ -343,18 +384,6 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         await LoadData.InvokeAsync(args);
     }
 
-    internal async Task GoToPageAsync(int page)
-    {
-        GoToPage(page);
-        if (_isServerMode) await InvokeLoadData();
-    }
-
-    internal async Task SetPageSizeAsync(int size)
-    {
-        SetPageSize(size);
-        if (_isServerMode) await InvokeLoadData();
-    }
-
     // ── Current row (focus) ──
 
     internal bool IsCurrent(TItem item) => _currentRow is not null && EqualityComparer<TItem>.Default.Equals(_currentRow, item);
@@ -379,7 +408,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
             _expandedRows.Add(item);
     }
 
-    // ── Inline editing ──
+    // ── Inline editing (with double-commit guard) ──
 
     internal bool IsEditing(TItem item) => _editingRow is not null && EqualityComparer<TItem>.Default.Equals(_editingRow, item);
     internal bool IsEditingCell(TItem item, string colKey) => IsEditing(item) && _editingColumn == colKey;
@@ -392,10 +421,19 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
 
     internal async Task CommitEdit()
     {
-        if (_editingRow is not null && OnRowEdit.HasDelegate)
-            await OnRowEdit.InvokeAsync(_editingRow);
-        _editingRow = default;
-        _editingColumn = null;
+        if (_editCommitting) return; // guard against double-commit from blur + Enter
+        _editCommitting = true;
+        try
+        {
+            if (_editingRow is not null && OnRowEdit.HasDelegate)
+                await OnRowEdit.InvokeAsync(_editingRow);
+        }
+        finally
+        {
+            _editingRow = default;
+            _editingColumn = null;
+            _editCommitting = false;
+        }
     }
 
     internal void CancelEdit()
@@ -412,7 +450,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         var col = Columns.FirstOrDefault(c => c.Key == GroupBy);
         if (col?.Field is null) return new();
 
-        var sorted = GetFilteredData();
+        IEnumerable<TItem> sorted = GetCachedFilteredData();
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
             var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
@@ -440,7 +478,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         if (_groupExpanded.ContainsKey(key))
             _groupExpanded[key] = !_groupExpanded[key];
         else
-            _groupExpanded[key] = false; // was expanded (default), now collapsed
+            _groupExpanded[key] = false;
     }
 
     // ── CSV Export ──
@@ -450,11 +488,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         var sb = new System.Text.StringBuilder();
         var visibleCols = Columns.Where(c => c.IsVisible && c.Field is not null).ToList();
 
-        // Header
         sb.AppendLine(string.Join(",", visibleCols.Select(c => CsvQuote(c.Title))));
 
-        // Data (all filtered+sorted, not just current page)
-        var allData = GetFilteredData();
+        IEnumerable<TItem> allData = GetCachedFilteredData();
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
             var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
@@ -506,14 +542,18 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     internal void ToggleColumnVisibility(ArcadiaColumn<TItem> col)
     {
         col.ToggleVisible();
+        StateHasChanged(); // FIX: was missing — column picker didn't update UI
     }
 
-    // ── Aggregate computation ──
+    // ── Aggregate computation (uses filtered data, not raw Data) ──
 
     internal double ComputeAggregate(ArcadiaColumn<TItem> col, AggregateType type)
     {
-        if (col.Field is null || Data is null) return 0;
-        var values = Data.Select(item =>
+        if (col.Field is null) return 0;
+        var source = GetCachedFilteredData(); // FIX: was using Data, now uses filtered
+        if (source.Count == 0) return 0;
+
+        var values = source.Select(item =>
         {
             var raw = col.Field(item);
             return raw switch
@@ -537,5 +577,22 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
             AggregateType.Max => values.Max(),
             _ => 0
         };
+    }
+
+    // ── Disposal ──
+
+    public async ValueTask DisposeAsync()
+    {
+        _disposed = true;
+        try
+        {
+            if (_jsModule is not null)
+                await _jsModule.DisposeAsync();
+        }
+#if NET6_0_OR_GREATER
+        catch (JSDisconnectedException) { }
+#endif
+        catch (ObjectDisposedException) { }
+        GC.SuppressFinalize(this);
     }
 }
