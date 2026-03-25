@@ -76,6 +76,17 @@
     <div style="margin-top: 4px; color: #9490b3; font-size: 0.75rem;">
         Double-click the Salary column to edit inline. Click Export CSV in toolbar. Click arrow to expand detail rows.
     </div>
+
+    <h3 style="color: white; margin-top: 32px; margin-bottom: 12px;">Virtual Scroll — 10,000 Rows</h3>
+    <ArcadiaDataGrid TItem="Employee" Data="@_bigData" VirtualizeRows="true" Height="400px"
+                      Class="arcadia-grid--midnight">
+        <ChildContent>
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Id)" Title="ID" Width="80px" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Name)" Title="Name" Width="1fr" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Department)" Title="Department" Width="1fr" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Salary)" Title="Salary" Format="C0" Width="120px" />
+        </ChildContent>
+    </ArcadiaDataGrid>
 </div>
 
 @code {
@@ -106,6 +117,7 @@
     record Employee(int Id, string Name, string Department, string Title, double Salary, DateTime StartDate);
 
     List<Employee> _employees = new();
+    List<Employee> _bigData = new();
 
     protected override void OnInitialized()
     {
@@ -124,6 +136,16 @@
             var salary = 55000 + rng.Next(120000);
             var start = new DateTime(2018, 1, 1).AddDays(rng.Next(2500));
             _employees.Add(new Employee(i, $"{first} {last}", dept, $"{title} {dept}", salary, start));
+        }
+
+        // Generate 10K rows for virtual scroll demo
+        for (var i = 1; i <= 10000; i++)
+        {
+            var dept = departments[rng.Next(departments.Length)];
+            var first = firstNames[rng.Next(firstNames.Length)];
+            var last = lastNames[rng.Next(lastNames.Length)];
+            var salary = 45000 + rng.Next(150000);
+            _bigData.Add(new Employee(i, $"{first} {last}", dept, "", salary, DateTime.MinValue));
         }
     }
 }

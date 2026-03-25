@@ -5,6 +5,8 @@ namespace Arcadia.Tests.E2E.DataGrid;
 [TestFixture]
 public class DataGridTests : ChartTestBase
 {
+    private ILocator _mainGrid = null!;
+
     private async Task NavigateToGrid()
     {
         await Page.GotoAsync($"{TestConstants.BaseUrl}/test/datagrid",
@@ -13,6 +15,8 @@ public class DataGridTests : ChartTestBase
         await Page.WaitForSelectorAsync(".arcadia-grid__table",
             new() { State = WaitForSelectorState.Visible, Timeout = 10000 });
         await Page.WaitForTimeoutAsync(1000);
+        // Scope all queries to the first grid (the one with a table, not the virtual one)
+        _mainGrid = Page.Locator(".arcadia-grid:has(.arcadia-grid__table)").First;
     }
 
     [Test]
@@ -53,12 +57,12 @@ public class DataGridTests : ChartTestBase
     public async Task Grid_PaginationWorks()
     {
         await NavigateToGrid();
-        var pageInfo = Page.Locator(".arcadia-grid__page-info");
+        var pageInfo = _mainGrid.Locator(".arcadia-grid__page-info");
         var text = await pageInfo.InnerTextAsync();
         Assert.That(text, Does.Contain("of 75"), "Should show total count");
 
         // Click next page
-        var nextBtn = Page.Locator(".arcadia-grid__page-btn[aria-label='Next page']");
+        var nextBtn = _mainGrid.Locator(".arcadia-grid__page-btn[aria-label='Next page']");
         await nextBtn.ClickAsync();
         await Page.WaitForTimeoutAsync(300);
         var newText = await pageInfo.InnerTextAsync();
@@ -147,7 +151,7 @@ public class DataGridTests : ChartTestBase
     public async Task Grid_ExportCsvButton_Exists()
     {
         await NavigateToGrid();
-        var exportBtn = Page.Locator("button:has-text('Export CSV')");
+        var exportBtn = _mainGrid.Locator("button:has-text('Export CSV')");
         await Expect(exportBtn).ToBeVisibleAsync();
     }
 

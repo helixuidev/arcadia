@@ -750,6 +750,81 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   pointer-events: none;
 }
 
+/* ── Virtual Scroll ── */
+.arcadia-grid__scroll-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.arcadia-grid__virtual-header {
+  display: grid;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--_header);
+  border-bottom: 1px solid var(--_border);
+}
+
+.arcadia-grid__virtual-hcell {
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--_muted);
+  cursor: pointer;
+  user-select: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.arcadia-grid__virtual-hcell:hover { color: var(--_text); }
+.arcadia-grid__virtual-hcell--sorted { color: var(--_accent); }
+
+.arcadia-grid__virtual-row {
+  display: grid;
+  border-bottom: 1px solid var(--_border);
+  background: var(--_row-bg);
+  transition: background 0.1s;
+}
+.arcadia-grid__virtual-row:nth-child(even) {
+  background: var(--_row-alt);
+}
+.arcadia-grid__virtual-row:hover {
+  background: var(--_row-hover);
+}
+
+.arcadia-grid__virtual-cell {
+  padding: 11px 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Smooth Scrollbar ── */
+.arcadia-grid::-webkit-scrollbar,
+.arcadia-grid__scroll-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.arcadia-grid::-webkit-scrollbar-track,
+.arcadia-grid__scroll-container::-webkit-scrollbar-track {
+  background: var(--_bg);
+}
+.arcadia-grid::-webkit-scrollbar-thumb,
+.arcadia-grid__scroll-container::-webkit-scrollbar-thumb {
+  background: var(--_border);
+  border-radius: 4px;
+}
+.arcadia-grid::-webkit-scrollbar-thumb:hover,
+.arcadia-grid__scroll-container::-webkit-scrollbar-thumb:hover {
+  background: var(--_muted);
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .arcadia-grid__skeleton-row,

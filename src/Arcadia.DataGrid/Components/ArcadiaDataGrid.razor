@@ -31,6 +31,61 @@
             }
         </div>
     }
+    else if (VirtualizeRows && _columnsCollected && Columns.Count > 0)
+    {
+        @* ── Virtual scroll mode: CSS Grid layout ── *@
+        <div class="arcadia-grid__toolbar">
+            @if (Filterable)
+            {
+                <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
+                        @onclick="ToggleFilters">Filter</button>
+            }
+            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">Export CSV</button>
+            <span class="arcadia-grid__page-info" style="margin-left:auto;">@TotalCount rows</span>
+        </div>
+        <div class="arcadia-grid__scroll-container" style="height: @(Height ?? "400px");">
+            @* Sticky header *@
+            <div class="arcadia-grid__virtual-header" style="@GetGridTemplateColumns()">
+                @foreach (var col in Columns.Where(c => c.IsVisible))
+                {
+                    var vCol = col;
+                    var sortDir = GetSortDirection(vCol.Key);
+                    <div class="arcadia-grid__virtual-hcell @(sortDir != SortDirection.None ? "arcadia-grid__virtual-hcell--sorted" : "")"
+                         @onclick="@(() => HandleHeaderClick(vCol))">
+                        @vCol.Title
+                        @if (sortDir == SortDirection.Ascending) { <span class="arcadia-grid__sort-icon" style="opacity:1;color:var(--_accent);">&#9650;</span> }
+                        else if (sortDir == SortDirection.Descending) { <span class="arcadia-grid__sort-icon" style="opacity:1;color:var(--_accent);">&#9660;</span> }
+                    </div>
+                }
+            </div>
+            @* Virtualized rows *@
+            @{ var vData = GetAllSortedDataList(); }
+            @if (vData.Count == 0)
+            {
+                <div class="arcadia-grid__empty" style="padding: 48px 16px;">@EmptyMessage</div>
+            }
+            else
+            {
+                <Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize
+                    TItem="TItem"
+                    Items="@vData"
+                    ItemSize="@ItemSize"
+                    OverscanCount="@OverscanCount"
+                    Context="vItem">
+                    <div class="arcadia-grid__virtual-row" style="@GetGridTemplateColumns()">
+                        @foreach (var col in Columns.Where(c => c.IsVisible))
+                        {
+                            <div class="arcadia-grid__virtual-cell">
+                                @if (col.Template is not null) { @col.Template(vItem) }
+                                else if (col.Field is not null) { @col.FormatValue(col.Field(vItem)) }
+                            </div>
+                        }
+                    </div>
+                </Microsoft.AspNetCore.Components.Web.Virtualization.Virtualize>
+            }
+        </div>
+        <CommunityWatermark />
+    }
     else if (_columnsCollected && Columns.Count > 0)
     {
         <div class="arcadia-grid__toolbar">

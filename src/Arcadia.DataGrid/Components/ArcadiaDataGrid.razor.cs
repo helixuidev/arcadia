@@ -622,6 +622,46 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         };
     }
 
+    // ── Virtual scroll helpers ──
+
+    /// <summary>Generate CSS grid-template-columns from visible column widths.</summary>
+    internal string GetGridTemplateColumns()
+    {
+        var cols = Columns.Where(c => c.IsVisible).ToList();
+        var template = string.Join(" ", cols.Select(c => c.Width ?? "1fr"));
+        return $"grid-template-columns: {template};";
+    }
+
+    /// <summary>Get all sorted data as a list for Virtualize Items binding.</summary>
+    internal IList<TItem> GetAllSortedDataList() => GetAllSortedData();
+
+#if NET6_0_OR_GREATER
+    /// <summary>ItemsProvider for server-side virtual scrolling.</summary>
+    internal async ValueTask<Microsoft.AspNetCore.Components.Web.Virtualization.ItemsProviderResult<TItem>> ProvideItems(
+        Microsoft.AspNetCore.Components.Web.Virtualization.ItemsProviderRequest request)
+    {
+        if (!_isServerMode)
+        {
+            var allData = GetAllSortedDataList();
+            var page = allData.Skip(request.StartIndex).Take(request.Count).ToList();
+            return new Microsoft.AspNetCore.Components.Web.Virtualization.ItemsProviderResult<TItem>(page, allData.Count);
+        }
+
+        var args = new DataGridLoadArgs
+        {
+            Skip = request.StartIndex,
+            Take = request.Count,
+            SortProperty = _currentSort?.Property,
+            SortDirection = _currentSort?.Direction ?? SortDirection.None,
+            Filters = _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)).ToList()
+        };
+        await LoadData.InvokeAsync(args);
+        return new Microsoft.AspNetCore.Components.Web.Virtualization.ItemsProviderResult<TItem>(
+            Data?.ToList() ?? new List<TItem>(),
+            ServerTotalCount ?? 0);
+    }
+#endif
+
     // ── Keyboard Navigation (WAI-ARIA Grid Pattern) ──
 
     internal void HandleGridKeyDown(KeyboardEventArgs e)
