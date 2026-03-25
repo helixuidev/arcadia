@@ -78,9 +78,11 @@
                             <input type="checkbox" checked="@IsAllSelected()" @onclick="ToggleSelectAll" />
                         </th>
                     }
+                    @{ var headerColIdx = 0; }
                     @foreach (var col in Columns.Where(c => c.IsVisible))
                     {
                         var localCol = col;
+                        var localHeaderIdx = headerColIdx++;
                         var sortDir = GetSortDirection(localCol.Key);
                         var isSortable = localCol.Sortable ?? Sortable;
                         var ariaSort = sortDir switch
@@ -92,8 +94,14 @@
                         <th role="columnheader"
                             aria-sort="@ariaSort"
                             aria-label="@GetSortAriaLabel(localCol)"
-                            style="@(localCol.Width is not null ? $"width:{localCol.Width};" : "") text-align:@localCol.Align;"
-                            class="arcadia-grid__th @(isSortable ? "arcadia-grid__th--sortable" : "")"
+                            style="@(localCol.Width is not null ? $"width:{localCol.Width};" : "") text-align:@localCol.Align; @(localCol.Frozen ? $"position:sticky;left:0;z-index:3;background:var(--_header);" : "")"
+                            class="arcadia-grid__th @(isSortable ? "arcadia-grid__th--sortable" : "") @(localHeaderIdx == _dragSourceCol ? "arcadia-grid__th--dragging" : "") @(localHeaderIdx == _dropTargetCol ? "arcadia-grid__th--drop-target" : "")"
+                            draggable="true"
+                            @ondragstart="@(() => StartColumnDrag(localHeaderIdx))"
+                            @ondragover="@(() => SetDropTarget(localHeaderIdx))"
+                            @ondragover:preventDefault
+                            @ondrop="@(() => DropColumn(localHeaderIdx))"
+                            @ondragend="EndColumnDrag"
                             @onclick="@(() => HandleHeaderClick(localCol))">
                             @if (localCol.HeaderTemplate is not null)
                             {
