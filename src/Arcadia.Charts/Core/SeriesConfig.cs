@@ -8,31 +8,31 @@ public class SeriesConfig<T>
     /// <summary>Series display name (used in legend and tooltips).</summary>
     public string Name { get; set; } = string.Empty;
 
-    /// <summary>Function to extract the Y value from a data item.</summary>
+    /// <summary>Lambda that extracts the numeric Y value from each data item (e.g., d => d.Revenue). Every series must have this set to render data.</summary>
     public Func<T, double> Field { get; set; } = _ => 0;
 
     /// <summary>Color override. If null, uses palette.</summary>
     public string? Color { get; set; }
 
-    /// <summary>Stroke width for lines.</summary>
+    /// <summary>Width of the line stroke in pixels for line and area series. Default is 2.</summary>
     public double StrokeWidth { get; set; } = 2;
 
-    /// <summary>Whether to show as dashed line.</summary>
+    /// <summary>Renders the line with a dash pattern to visually distinguish it (e.g., projections vs actuals). Overridden by DashPattern if set.</summary>
     public bool Dashed { get; set; }
 
     /// <summary>Custom dash pattern (e.g., "8,4", "2,2"). Overrides Dashed.</summary>
     public string? DashPattern { get; set; }
 
-    /// <summary>Whether to show area fill below line.</summary>
+    /// <summary>Fills the region between the line and the X-axis with a semi-transparent color. Opacity controlled by AreaOpacity.</summary>
     public bool ShowArea { get; set; }
 
-    /// <summary>Area fill opacity (0-1).</summary>
+    /// <summary>Opacity of the area fill beneath the line (0 = invisible, 1 = opaque). Only applies when ShowArea is true. Default is 0.15.</summary>
     public double AreaOpacity { get; set; } = 0.15;
 
-    /// <summary>Whether to show data points on the line.</summary>
+    /// <summary>Renders circular markers at each data point. Disable for cleaner visuals on dense time-series. Default is true.</summary>
     public bool ShowPoints { get; set; } = true;
 
-    /// <summary>Point radius in pixels.</summary>
+    /// <summary>Radius of data point markers in pixels. Overrides the chart-level PointRadius for this series. Default is 3.</summary>
     public double PointRadius { get; set; } = 3;
 
     /// <summary>Point shape: "circle", "square", "diamond", "triangle".</summary>

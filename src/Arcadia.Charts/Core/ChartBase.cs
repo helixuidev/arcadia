@@ -12,34 +12,34 @@ namespace Arcadia.Charts.Core;
 public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAsyncDisposable
 {
     // ── Data ──────────────────────────────────────────────
-    /// <summary>The data to visualize.</summary>
+    /// <summary>Collection of data items to plot. Each item maps to one or more chart points via SeriesConfig field accessors. When null or empty, the chart renders the NoDataMessage placeholder.</summary>
     [Parameter] public IReadOnlyList<T>? Data { get; set; }
 
     // ── Dimensions ───────────────────────────────────────
-    /// <summary>Chart height in pixels.</summary>
+    /// <summary>Chart height in pixels. The SVG viewBox scales to this height. Default is 300.</summary>
     [Parameter] public double Height { get; set; } = 300;
 
-    /// <summary>Chart width in pixels. 0 = responsive (fills container). Default is responsive.</summary>
+    /// <summary>Chart width in pixels. 0 = responsive (fills container via width="100%" and ResizeObserver). Default is 0 (responsive).</summary>
     [Parameter] public double Width { get; set; } = 0;
 
     // ── Titles ───────────────────────────────────────────
-    /// <summary>Chart title.</summary>
+    /// <summary>Primary title displayed above the chart area. When set, the layout engine reserves top margin space automatically.</summary>
     [Parameter] public string? Title { get; set; }
 
-    /// <summary>Chart subtitle (smaller, below title).</summary>
+    /// <summary>Secondary text rendered below the Title in a smaller font. Only visible when Title is also set. Useful for date ranges or data source attribution.</summary>
     [Parameter] public string? Subtitle { get; set; }
 
     // ── Axes ─────────────────────────────────────────────
-    /// <summary>X-axis title label.</summary>
+    /// <summary>Label below the X-axis describing the horizontal dimension (e.g., "Month", "Date"). Reserves additional bottom margin when set.</summary>
     [Parameter] public string? XAxisTitle { get; set; }
 
-    /// <summary>Y-axis title label.</summary>
+    /// <summary>Label alongside the primary Y-axis describing the vertical dimension (e.g., "Revenue ($)"). Reserves additional left margin when set.</summary>
     [Parameter] public string? YAxisTitle { get; set; }
 
-    /// <summary>Manual Y-axis minimum. Null = auto from data.</summary>
+    /// <summary>Manual Y-axis minimum. When null, auto-calculated from data with zero baseline included. Set to override (e.g., negative ranges).</summary>
     [Parameter] public double? YAxisMin { get; set; }
 
-    /// <summary>Manual Y-axis maximum. Null = auto from data.</summary>
+    /// <summary>Manual Y-axis maximum. When null, auto-calculated from data with 5% padding. Set to fix a consistent upper bound across chart updates.</summary>
     [Parameter] public double? YAxisMax { get; set; }
 
     /// <summary>Y-axis scale type: "linear" (default) or "log" (logarithmic). Log scale requires positive values.</summary>
@@ -48,36 +48,36 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <summary>Whether the Y-axis is logarithmic.</summary>
     protected bool IsLogScale => string.Equals(YAxisType, "log", StringComparison.OrdinalIgnoreCase);
 
-    /// <summary>Maximum number of Y-axis ticks.</summary>
+    /// <summary>Upper limit on the number of Y-axis tick marks. The tick generator may produce fewer for narrow ranges. Default is 8.</summary>
     [Parameter] public int YAxisMaxTicks { get; set; } = 8;
 
-    /// <summary>Maximum number of X-axis ticks.</summary>
+    /// <summary>Upper limit on the number of X-axis tick marks. The tick generator may produce fewer when data has few points. Default is 12.</summary>
     [Parameter] public int XAxisMaxTicks { get; set; } = 12;
 
-    /// <summary>Format string for Y-axis tick labels (e.g., "C0", "P1", "N2").</summary>
+    /// <summary>Format string for Y-axis tick labels (e.g., "C0" for currency, "P1" for percentage, "N2" for two decimal places). Uses FormatProvider for culture-specific formatting.</summary>
     [Parameter] public string? YAxisFormatString { get; set; }
 
-    /// <summary>Format string for X-axis tick labels.</summary>
+    /// <summary>Format string for X-axis tick labels (e.g., "MMM yyyy" for dates). Uses FormatProvider for culture-specific formatting.</summary>
     [Parameter] public string? XAxisFormatString { get; set; }
 
     // ── Secondary Y-Axis ──────────────────────────────────
-    /// <summary>Secondary Y-axis title label (right side).</summary>
+    /// <summary>Label alongside the secondary (right-side) Y-axis. Only rendered when at least one series targets YAxisIndex = 1.</summary>
     [Parameter] public string? YAxis2Title { get; set; }
 
-    /// <summary>Manual secondary Y-axis minimum. Null = auto from data.</summary>
+    /// <summary>Manual secondary Y-axis minimum. When null, auto-calculated from data of series with YAxisIndex = 1.</summary>
     [Parameter] public double? YAxis2Min { get; set; }
 
-    /// <summary>Manual secondary Y-axis maximum. Null = auto from data.</summary>
+    /// <summary>Manual secondary Y-axis maximum. When null, auto-calculated from data of series with YAxisIndex = 1.</summary>
     [Parameter] public double? YAxis2Max { get; set; }
 
-    /// <summary>Format string for secondary Y-axis tick labels (e.g., "P1", "N2").</summary>
+    /// <summary>Format string for secondary Y-axis tick labels (e.g., "P1" for percentage when paired with a rate series). Uses FormatProvider for culture-specific formatting.</summary>
     [Parameter] public string? YAxis2FormatString { get; set; }
 
-    /// <summary>Maximum number of secondary Y-axis ticks.</summary>
+    /// <summary>Upper limit on secondary Y-axis tick marks. Only rendered when at least one series targets YAxisIndex = 1. Default is 8.</summary>
     [Parameter] public int YAxis2MaxTicks { get; set; } = 8;
 
     // ── Grid ─────────────────────────────────────────────
-    /// <summary>Whether to show grid lines.</summary>
+    /// <summary>Controls visibility of background grid lines. When true, lines are drawn per ShowHorizontalGrid and ShowVerticalGrid. Default is true.</summary>
     [Parameter] public bool ShowGrid { get; set; } = true;
 
     /// <summary>Grid line color. Null = theme border color.</summary>
@@ -92,30 +92,30 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <summary>Axis line opacity. Default 0.2.</summary>
     [Parameter] public double AxisLineOpacity { get; set; } = 0.2;
 
-    /// <summary>Show horizontal grid lines.</summary>
+    /// <summary>Draw horizontal grid lines across the plot area. Only takes effect when ShowGrid is true. Default is true.</summary>
     [Parameter] public bool ShowHorizontalGrid { get; set; } = true;
 
-    /// <summary>Show vertical grid lines.</summary>
+    /// <summary>Draw vertical grid lines across the plot area. Only takes effect when ShowGrid is true. Default is false.</summary>
     [Parameter] public bool ShowVerticalGrid { get; set; } = false;
 
     // ── Legend ────────────────────────────────────────────
-    /// <summary>Whether to show the legend.</summary>
+    /// <summary>Show the series legend. Clicking a legend entry toggles that series' visibility. Position is set via LegendPosition. Default is true.</summary>
     [Parameter] public bool ShowLegend { get; set; } = true;
 
     /// <summary>Legend position: "top", "bottom", "left", "right".</summary>
     [Parameter] public string LegendPosition { get; set; } = "bottom";
 
     // ── Appearance ───────────────────────────────────────
-    /// <summary>Color palette for series.</summary>
+    /// <summary>Color palette for auto-assigning series colors. When null, ChartPalette.Default is used. Provide a custom palette to match your brand (e.g., ChartPalette.Accessible for color-blind safety).</summary>
     [Parameter] public ChartPalette? Palette { get; set; }
 
-    /// <summary>Whether to show the export toolbar (PNG/SVG) on hover. Default true.</summary>
+    /// <summary>Show the PNG/SVG export toolbar on hover. Allows users to download the chart as an image. Default is true.</summary>
     [Parameter] public bool ShowToolbar { get; set; } = true;
 
-    /// <summary>Whether to animate on load.</summary>
+    /// <summary>Play an entrance animation when the chart first renders. Set to false for instant rendering on prerendered pages or dashboards with many charts. Default is true.</summary>
     [Parameter] public bool AnimateOnLoad { get; set; } = true;
 
-    /// <summary>Animation duration in milliseconds.</summary>
+    /// <summary>Duration of the entrance animation in milliseconds. Only applies when AnimateOnLoad is true. Default is 800.</summary>
     [Parameter] public int AnimationDuration { get; set; } = 800;
 
     // ── Margins ──────────────────────────────────────────
@@ -132,28 +132,28 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     [Parameter] public double? MarginLeft { get; set; }
 
     // ── Points ─────────────────────────────────────────
-    /// <summary>Radius of data point circles in pixels.</summary>
+    /// <summary>Radius of data point marker circles in pixels. Can be overridden per-series via SeriesConfig.PointRadius. Default is 3.</summary>
     [Parameter] public double PointRadius { get; set; } = 3;
 
     // ── Data labels ──────────────────────────────────────
-    /// <summary>Whether to show value labels on data points/bars.</summary>
+    /// <summary>Render numeric value labels on each data point or bar segment. Formatted using DataLabelFormatString when set. Can cause clutter on dense charts. Default is false.</summary>
     [Parameter] public bool ShowDataLabels { get; set; }
 
-    /// <summary>Format string for data labels.</summary>
+    /// <summary>Format string for data label values (e.g., "C0" for currency, "P1" for percentage). When null, values render with G4 general format.</summary>
     [Parameter] public string? DataLabelFormatString { get; set; }
 
     // ── Pan/Zoom ─────────────────────────────────────
-    /// <summary>Enable mouse wheel zoom on the chart.</summary>
+    /// <summary>Enable mouse-wheel zooming on the chart canvas. Zoom direction is controlled by ZoomMode. Requires JS interop. Default is false.</summary>
     [Parameter] public bool EnableZoom { get; set; }
 
-    /// <summary>Enable click-drag pan on the chart.</summary>
+    /// <summary>Enable click-and-drag panning on the chart canvas. Works alongside zoom. Requires JS interop. Default is false.</summary>
     [Parameter] public bool EnablePan { get; set; }
 
     /// <summary>Zoom mode: "x" (horizontal only), "y" (vertical only), "xy" (both).</summary>
     [Parameter] public string ZoomMode { get; set; } = "x";
 
     // ── Crosshair ──────────────────────────────────
-    /// <summary>Whether to show a vertical crosshair line following the cursor.</summary>
+    /// <summary>Draw a vertical crosshair line that tracks the cursor, making it easier to align data points across series. Default is false.</summary>
     [Parameter] public bool ShowCrosshair { get; set; }
 
     // ── Annotations ─────────────────────────────────
@@ -168,17 +168,17 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     [Parameter] public EventCallback<int> OnSeriesClick { get; set; }
 
     // ── States ───────────────────────────────────────────
-    /// <summary>Whether the chart is in a loading state (shows skeleton).</summary>
+    /// <summary>When true, renders a skeleton shimmer placeholder instead of the chart SVG. Set while awaiting async data, then set back to false once Data is populated.</summary>
     [Parameter] public bool Loading { get; set; }
 
     /// <summary>Message to show when Data is null or empty.</summary>
     [Parameter] public string? NoDataMessage { get; set; } = "No data available";
 
     // ── Accessibility ────────────────────────────────────
-    /// <summary>Accessible description for screen readers.</summary>
+    /// <summary>ARIA label for the chart SVG element. Provide a meaningful summary (e.g., "Monthly revenue trend 2025") for WCAG compliance. When null, a generic label is generated from Title.</summary>
     [Parameter] public string? AriaLabel { get; set; }
 
-    /// <summary>Format provider for number/date formatting.</summary>
+    /// <summary>IFormatProvider (e.g., CultureInfo) for locale-specific number and date formatting in axis labels, tooltips, and data labels. When null, invariant formatting is used.</summary>
     [Parameter] public IFormatProvider? FormatProvider { get; set; }
 
     // ── Tooltip ──────────────────────────────────────────

@@ -15,6 +15,18 @@ public static class SchemaParser
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
     };
 
+    private static readonly JsonSerializerOptions _indentedOptions = new(Options)
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
+    private static readonly JsonSerializerOptions _compactOptions = new(Options)
+    {
+        WriteIndented = false,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
     /// <summary>
     /// Parses a JSON string into a FormSchema.
     /// </summary>
@@ -33,11 +45,7 @@ public static class SchemaParser
     /// <param name="indented">Whether to format with indentation.</param>
     public static string ToJson(FormSchema schema, bool indented = true)
     {
-        var options = new JsonSerializerOptions(Options)
-        {
-            WriteIndented = indented,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        };
+        var options = indented ? _indentedOptions : _compactOptions;
 
         return JsonSerializer.Serialize(schema, options);
     }

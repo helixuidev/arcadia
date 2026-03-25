@@ -43,7 +43,7 @@ public class SparklineTests : Arcadia.Tests.Unit.ChartTestBase
     public void NoData_NoPath()
     {
         var cut = Render<ArcadiaSparkline>(p =>
-            p.Add(c => c.Data, new double[] { }));
+            p.Add(c => c.Data, Array.Empty<double>()));
 
         cut.FindAll("path").Should().BeEmpty();
     }

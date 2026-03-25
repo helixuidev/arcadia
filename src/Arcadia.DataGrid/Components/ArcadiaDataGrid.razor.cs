@@ -12,7 +12,7 @@ namespace Arcadia.DataGrid.Components;
 /// </summary>
 public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDisposable
 {
-    /// <summary>Client-side data source.</summary>
+    /// <summary>In-memory collection of row items. When set alongside LoadData, client-side sorting/filtering is bypassed. When null, the grid shows EmptyMessage.</summary>
     [Parameter] public IReadOnlyList<TItem>? Data { get; set; }
 
     /// <summary>Rows per page. 0 = show all (no paging).</summary>
@@ -21,79 +21,79 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Page size options for the dropdown.</summary>
     [Parameter] public int[] PageSizeOptions { get; set; } = new[] { 10, 25, 50, 100 };
 
-    /// <summary>Enable column sorting.</summary>
+    /// <summary>Enable click-to-sort on column headers. Individual columns can override via their Sortable parameter. Default is true.</summary>
     [Parameter] public bool Sortable { get; set; } = true;
 
-    /// <summary>Alternate row shading.</summary>
+    /// <summary>Apply alternating background shading to even/odd rows for easier horizontal scanning. Default is true.</summary>
     [Parameter] public bool Striped { get; set; } = true;
 
-    /// <summary>Highlight row on hover.</summary>
+    /// <summary>Apply a background highlight to the row under the cursor. Default is true.</summary>
     [Parameter] public bool Hoverable { get; set; } = true;
 
-    /// <summary>Compact row height.</summary>
+    /// <summary>Reduce row height and cell padding for a denser layout showing more rows. Default is false.</summary>
     [Parameter] public bool Dense { get; set; }
 
-    /// <summary>Sticky header on scroll.</summary>
+    /// <summary>Keep column headers fixed at the top during vertical scroll. Requires Height to be set. Default is true.</summary>
     [Parameter] public bool FixedHeader { get; set; } = true;
 
     /// <summary>Fixed height with scroll. Null = auto height.</summary>
     [Parameter] public string? Height { get; set; }
 
-    /// <summary>Show skeleton loading state.</summary>
+    /// <summary>Render animated skeleton rows instead of data while awaiting an async fetch. Default is false.</summary>
     [Parameter] public bool Loading { get; set; }
 
-    /// <summary>Message shown when data is empty.</summary>
+    /// <summary>Text shown when Data is null or empty and Loading is false. Default is 'No data available'.</summary>
     [Parameter] public string EmptyMessage { get; set; } = "No data available";
 
     /// <summary>Show row selector column with row numbers and state indicators.</summary>
     [Parameter] public bool ShowRowSelector { get; set; }
 
-    /// <summary>Show row numbers in the row selector.</summary>
+    /// <summary>Display sequential row numbers in the row selector column. Only takes effect when ShowRowSelector is true. Default is true.</summary>
     [Parameter] public bool ShowRowNumbers { get; set; } = true;
 
-    /// <summary>Enable column filtering (filter row below header).</summary>
+    /// <summary>Add a filter input row below headers. Users can type per-column filter values. Default is false.</summary>
     [Parameter] public bool Filterable { get; set; }
 
-    /// <summary>Enable row selection.</summary>
+    /// <summary>Allow rows to be selected by clicking. Combine with MultiSelect for checkbox-based multi-select. Default is false.</summary>
     [Parameter] public bool Selectable { get; set; }
 
-    /// <summary>Allow multi-row selection (checkbox column).</summary>
+    /// <summary>Add a checkbox column for selecting multiple rows. Requires Selectable=true. Includes select-all header checkbox. Default is false.</summary>
     [Parameter] public bool MultiSelect { get; set; }
 
     /// <summary>Currently selected items. Two-way bindable.</summary>
     [Parameter] public HashSet<TItem>? SelectedItems { get; set; }
 
-    /// <summary>Fired when selection changes.</summary>
+    /// <summary>Callback invoked when the selection set changes. Receives the updated HashSet of selected items.</summary>
     [Parameter] public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
 
-    /// <summary>Server-side data loading callback.</summary>
+    /// <summary>Callback invoked when the grid needs data from the server (on page, sort, or filter change). When set, the grid operates in server-side mode.</summary>
     [Parameter] public EventCallback<DataGridLoadArgs> LoadData { get; set; }
 
-    /// <summary>Total row count for server-side paging.</summary>
+    /// <summary>Total matching rows on the server for page count calculation. Required alongside LoadData. Ignored in client-side mode.</summary>
     [Parameter] public int? ServerTotalCount { get; set; }
 
     /// <summary>Detail row template. When set, rows become expandable.</summary>
     [Parameter] public RenderFragment<TItem>? DetailTemplate { get; set; }
 
-    /// <summary>Column definitions (ArcadiaColumn child components).</summary>
+    /// <summary>Child content slot for ArcadiaColumn components that define the grid's columns.</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    /// <summary>Fired when sort changes.</summary>
+    /// <summary>Callback invoked when column sorting changes. Receives a SortDescriptor with column key and direction, or null when cleared.</summary>
     [Parameter] public EventCallback<SortDescriptor?> SortChanged { get; set; }
 
-    /// <summary>Fired when a row edit is committed.</summary>
+    /// <summary>Callback invoked when inline edit is committed (Enter or blur). Receives the edited item for persistence.</summary>
     [Parameter] public EventCallback<TItem> OnRowEdit { get; set; }
 
-    /// <summary>Column key to group rows by. Null = no grouping.</summary>
+    /// <summary>Key of the column whose values group rows into collapsible sections. Set to null to disable. Groups show expand/collapse toggles.</summary>
     [Parameter] public string? GroupBy { get; set; }
 
     /// <summary>Enable virtual scrolling for large datasets. Requires Height to be set. Disables pagination.</summary>
     [Parameter] public bool VirtualizeRows { get; set; }
 
-    /// <summary>Estimated row height in pixels for virtual scrolling.</summary>
+    /// <summary>Estimated row height in pixels for the virtualizer to calculate scroll position. Match your actual row height. Default is 40.</summary>
     [Parameter] public float ItemSize { get; set; } = 40;
 
-    /// <summary>Number of extra rows to render above/below the viewport.</summary>
+    /// <summary>Extra rows rendered outside the viewport to reduce flicker during fast scrolling. Default is 5.</summary>
     [Parameter] public int OverscanCount { get; set; } = 5;
 
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;

@@ -69,8 +69,72 @@ dotnet_diagnostic.CA1822.severity = suggestion
 # CA2007 — ConfigureAwait — disabled (Blazor requires sync context)
 dotnet_diagnostic.CA2007.severity = none
 
-# CA1031 — don't catch general exceptions — warning (we want specific catch blocks)
-dotnet_diagnostic.CA1031.severity = warning
+# CA1031 — don't catch general exceptions — suggestion (Blazor JS interop needs broad catches in disposal)
+dotnet_diagnostic.CA1031.severity = suggestion
+
+# CA1716 — reserved keyword in interface — disabled (IHasClass.Class is our established API, renaming would break every consumer)
+dotnet_diagnostic.CA1716.severity = none
+
+# CA1865 — Use char overload — suggestion (minor perf, not a blocker)
+dotnet_diagnostic.CA1865.severity = suggestion
+
+# CA1711 — EventArgs suffix — disabled (our event arg types follow Blazor conventions, not WinForms)
+dotnet_diagnostic.CA1711.severity = none
+
+# CA1805 — Default value initialization — disabled (explicit defaults improve readability for [Parameter] props)
+dotnet_diagnostic.CA1805.severity = none
+
+# CA1034 — Nested types should not be visible — disabled (chart layout types are intentionally nested)
+dotnet_diagnostic.CA1034.severity = none
+
+# CA2227 — Collection properties should be read-only — disabled (Blazor [Parameter] collections need setters)
+dotnet_diagnostic.CA2227.severity = none
+
+# CA1002 — Do not expose generic lists — disabled (IReadOnlyList in public API, List in internal)
+dotnet_diagnostic.CA1002.severity = none
+
+# CA1024 — Use properties instead of methods — suggestion only
+dotnet_diagnostic.CA1024.severity = suggestion
+
+# CA1051 — Do not declare visible instance fields — disabled (internal fields in partial classes used by .razor)
+dotnet_diagnostic.CA1051.severity = none
+
+# CA1819 — Properties should not return arrays — disabled (PageSizeOptions is a simple array param)
+dotnet_diagnostic.CA1819.severity = none
+
+# CA1305 — Specify IFormatProvider — suggestion (SVG rendering uses invariant culture intentionally)
+dotnet_diagnostic.CA1305.severity = suggestion
+
+# CA1310 — Specify StringComparison — suggestion
+dotnet_diagnostic.CA1310.severity = suggestion
+
+# CA1845 — Use span-based string.Concat — suggestion (minor perf)
+dotnet_diagnostic.CA1845.severity = suggestion
+
+# CA1854 — Prefer Dictionary.TryGetValue — suggestion
+dotnet_diagnostic.CA1854.severity = suggestion
+
+# CA1866 — Use char overload of string methods — suggestion
+dotnet_diagnostic.CA1866.severity = suggestion
+
+# CA1816 — Call GC.SuppressFinalize — suggestion (only relevant when finalizer exists)
+dotnet_diagnostic.CA1816.severity = suggestion
+
+# CA1852 — Seal internal types — suggestion (good practice but not blocking)
+dotnet_diagnostic.CA1852.severity = suggestion
+
+# CA1826 — Use indexable collection directly — suggestion
+dotnet_diagnostic.CA1826.severity = suggestion
+
+# CA1869 for tests — ignore (test helpers may create options)
+# CA1707 — Underscores in names — disabled globally (test convention uses Method_Scenario_Result)
+dotnet_diagnostic.CA1707.severity = none
+
+# CA1861 — Prefer static readonly array — suggestion (test code readability > micro-optimization)
+dotnet_diagnostic.CA1861.severity = suggestion
+
+# CA1869 — Cache JsonSerializerOptions — warning (real perf issue)
+dotnet_diagnostic.CA1869.severity = warning
 
 # CA1848 — use LoggerMessage — disabled (no ILogger in components)
 dotnet_diagnostic.CA1848.severity = none

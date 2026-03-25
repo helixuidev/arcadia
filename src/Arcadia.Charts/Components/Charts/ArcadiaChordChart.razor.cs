@@ -10,31 +10,31 @@ namespace Arcadia.Charts.Components.Charts;
 /// </summary>
 public partial class ArcadiaChordChart : ChartBase<ChordNode>
 {
-    /// <summary>The links (chords) between nodes.</summary>
+    /// <summary>Collection of ChordLink objects defining relationships between nodes. Links with invalid node IDs, self-references, or non-positive values are silently skipped.</summary>
     [Parameter] public IReadOnlyList<ChordLink>? Links { get; set; }
 
-    /// <summary>Inner radius of the outer ring. Null = auto (70% of outer radius).</summary>
+    /// <summary>Inner radius of the arc ring in pixels. Controls ring thickness — thinner ring leaves more space for chord ribbons. When null, defaults to 88% of OuterRadius.</summary>
     [Parameter] public double? InnerRadius { get; set; }
 
-    /// <summary>Outer radius of the ring. Null = auto from chart dimensions.</summary>
+    /// <summary>Outer radius of the arc ring in pixels. When null, auto-calculated to fit chart dimensions with label space reserved. Decrease to add whitespace around the diagram.</summary>
     [Parameter] public double? OuterRadius { get; set; }
 
-    /// <summary>Gap between arc segments in degrees.</summary>
+    /// <summary>Angular gap in degrees between adjacent arc segments on the outer ring. Increase for clearer visual separation between nodes. Default is 2.0.</summary>
     [Parameter] public double PadAngle { get; set; } = 2.0;
 
-    /// <summary>Whether to show node labels on the outer ring.</summary>
+    /// <summary>Display rotated text labels outside each arc segment. Labels are auto-hidden for arcs narrower than MinLabelAngle. Default is true.</summary>
     [Parameter] public bool ShowLabels { get; set; } = true;
 
-    /// <summary>Default fill opacity for chord ribbons.</summary>
+    /// <summary>Base fill opacity for chord ribbons (0 = invisible, 1 = opaque). Ribbons become more opaque on hover via ChordHoverOpacity. Default is 0.75.</summary>
     [Parameter] public double ChordOpacity { get; set; } = 0.75;
 
-    /// <summary>Fill opacity for chord ribbons on hover.</summary>
+    /// <summary>Fill opacity applied to a chord ribbon on hover for visual emphasis. Should be equal to or higher than ChordOpacity. Default is 1.0.</summary>
     [Parameter] public double ChordHoverOpacity { get; set; } = 1.0;
 
-    /// <summary>Minimum arc angle in degrees for a label to be shown. Arcs smaller than this are label-free.</summary>
+    /// <summary>Minimum arc span in degrees for a label to render. Arcs narrower than this skip their label to prevent text overlap. Default is 8.</summary>
     [Parameter] public double MinLabelAngle { get; set; } = 8;
 
-    /// <summary>Fired when a chord ribbon is clicked.</summary>
+    /// <summary>Callback invoked when a chord ribbon is clicked. Receives ChordClickEventArgs with source/target IDs, labels, and value. Use for drill-down navigation.</summary>
     [Parameter] public EventCallback<ChordClickEventArgs> OnChordClick { get; set; }
 
     private new bool HasData => Data is not null && Data.Count > 0 && Links is not null && Links.Count > 0;

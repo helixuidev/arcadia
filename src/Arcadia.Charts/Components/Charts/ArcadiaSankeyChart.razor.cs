@@ -11,28 +11,28 @@ namespace Arcadia.Charts.Components.Charts;
 /// </summary>
 public partial class ArcadiaSankeyChart : ChartBase<SankeyNode>
 {
-    /// <summary>The links (flows) between nodes.</summary>
+    /// <summary>Collection of SankeyLink objects defining flows between nodes. Links with invalid node IDs, self-references, or non-positive values are silently skipped.</summary>
     [Parameter] public IReadOnlyList<SankeyLink>? Links { get; set; }
 
-    /// <summary>Width of node rectangles in pixels.</summary>
+    /// <summary>Width of the vertical node rectangles in pixels. Increase for a bolder appearance. Default is 20.</summary>
     [Parameter] public double NodeWidth { get; set; } = 20;
 
-    /// <summary>Vertical padding between nodes in the same column.</summary>
+    /// <summary>Vertical spacing in pixels between adjacent nodes in the same column. Increase to improve readability with many nodes. Default is 15.</summary>
     [Parameter] public double NodePadding { get; set; } = 15;
 
-    /// <summary>Whether to show node labels.</summary>
+    /// <summary>Display text labels next to each node rectangle. Disable for small or thumbnail-sized diagrams. Default is true.</summary>
     [Parameter] public bool ShowLabels { get; set; } = true;
 
-    /// <summary>Whether to show value labels on links.</summary>
+    /// <summary>Display numeric flow values on link paths. Disable for cleaner visuals on dense diagrams. Default is true.</summary>
     [Parameter] public bool ShowValues { get; set; } = true;
 
-    /// <summary>Default fill opacity for link paths.</summary>
+    /// <summary>Base fill opacity for link ribbons (0 = invisible, 1 = opaque). Links become more opaque on hover via LinkHoverOpacity. Default is 0.3.</summary>
     [Parameter] public double LinkOpacity { get; set; } = 0.3;
 
-    /// <summary>Fill opacity for link paths on hover.</summary>
+    /// <summary>Fill opacity applied to a link ribbon on hover for visual emphasis. Should be higher than LinkOpacity. Default is 0.55.</summary>
     [Parameter] public double LinkHoverOpacity { get; set; } = 0.55;
 
-    /// <summary>Fired when a link is clicked.</summary>
+    /// <summary>Callback invoked when a link ribbon is clicked. Receives SankeyLinkClickEventArgs with source/target IDs, labels, and value. Use for drill-down navigation.</summary>
     [Parameter] public EventCallback<SankeyLinkClickEventArgs> OnLinkClick { get; set; }
 
     private new bool HasData => Data is not null && Data.Count > 0 && Links is not null && Links.Count > 0;
