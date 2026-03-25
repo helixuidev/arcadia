@@ -11,7 +11,16 @@
      style="@(Height is not null ? $"height:{Height};overflow:auto;" : "") @Style"
      @attributes="AdditionalAttributes"
      role="grid"
-     aria-busy="@(Loading ? "true" : "false")">
+     tabindex="0"
+     aria-busy="@(Loading ? "true" : "false")"
+     aria-activedescendant="@GetActiveDescendant()"
+     @onkeydown="HandleGridKeyDown"
+     @onkeydown:preventDefault="@(_gridHasFocus)"
+     @onfocus="@(() => _gridHasFocus = true)"
+     @onblur="@(() => _gridHasFocus = false)">
+
+    @* ARIA live region for screen reader announcements *@
+    <div class="arcadia-sr-only" role="status" aria-live="polite" aria-atomic="true">@_liveAnnouncement</div>
 
     @if (Loading)
     {
@@ -218,14 +227,17 @@
                                            @onclick="@(() => ToggleSelection(localItem))" />
                                 </td>
                             }
+                            @{ var bodyRowIdx = localRowIdx - 1; var bodyColIdx = 0; }
                             @foreach (var col in Columns.Where(c => c.IsVisible))
                             {
                                 var editCol = col;
                                 var cellClass = editCol.CellClass?.Invoke(item);
                                 var isEditCell = editCol.Editable && IsEditingCell(localItem, editCol.Key);
+                                var isFocused = IsFocusedCell(bodyRowIdx, bodyColIdx);
                                 <td role="gridcell"
+                                    id="@GetCellId(bodyRowIdx, bodyColIdx)"
                                     style="text-align:@editCol.Align;"
-                                    class="arcadia-grid__td @cellClass @(isEditCell ? "arcadia-grid__td--editing" : "")"
+                                    class="arcadia-grid__td @cellClass @(isEditCell ? "arcadia-grid__td--editing" : "") @(isFocused ? "arcadia-grid__td--focused" : "")"
                                     @ondblclick="@(editCol.Editable ? () => StartEdit(localItem, editCol.Key) : (Action)(() => {}))">
                                     @if (isEditCell)
                                     {
@@ -250,6 +262,7 @@
                                         @editCol.FormatValue(editCol.Field(item))
                                     }
                                 </td>
+                                bodyColIdx++;
                             }
                         </tr>
                         @if (DetailTemplate is not null && IsExpanded(localItem))

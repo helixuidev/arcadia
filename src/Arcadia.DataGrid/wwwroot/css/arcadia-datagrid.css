@@ -715,6 +715,35 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 }
 .arcadia-grid__th { position: relative; } /* enable resize handle positioning */
 
+/* ── Keyboard focus cell ── */
+.arcadia-grid__td--focused {
+  box-shadow: inset 0 0 0 2px var(--_accent) !important;
+}
+.arcadia-grid:focus-within .arcadia-grid__td--focused {
+  box-shadow: inset 0 0 0 2px var(--_accent) !important;
+}
+.arcadia-grid:focus { outline: none; }
+
+/* ── Frozen / pinned columns ── */
+.arcadia-grid__th--frozen,
+.arcadia-grid__td--frozen {
+  position: sticky !important;
+  z-index: 1;
+  background: var(--_bg) !important;
+}
+.arcadia-grid__th--frozen { z-index: 3 !important; }
+.arcadia-grid__th--frozen::after,
+.arcadia-grid__td--frozen::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to right, rgba(0,0,0,0.08), transparent);
+  pointer-events: none;
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .arcadia-grid__skeleton-row,

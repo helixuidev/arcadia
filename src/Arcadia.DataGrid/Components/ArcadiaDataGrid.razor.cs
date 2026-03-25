@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Arcadia.Core.Base;
 using Arcadia.DataGrid.Core;
@@ -106,6 +107,12 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     private TItem? _currentRow;
     private Dictionary<object, bool> _groupExpanded = new();
     private bool _isServerMode => LoadData.HasDelegate;
+
+    // ── Keyboard navigation ──
+    private int _focusRow;
+    private int _focusCol;
+    private bool _gridHasFocus;
+    private string? _liveAnnouncement;
 
     // ── Cached filtered data to avoid multiple LINQ enumerations ──
     private List<TItem>? _filteredDataCache;
@@ -577,6 +584,141 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             AggregateType.Max => values.Max(),
             _ => 0
         };
+    }
+
+    // ── Keyboard Navigation (WAI-ARIA Grid Pattern) ──
+
+    internal void HandleGridKeyDown(KeyboardEventArgs e)
+    {
+        if (_editingRow is not null && e.Key != "Escape" && e.Key != "Enter" && e.Key != "Tab")
+            return; // let edit input handle its own keys
+
+        var visibleCols = Columns.Where(c => c.IsVisible).ToList();
+        var maxCol = visibleCols.Count - 1;
+        var pageRows = GetPagedData().ToList();
+        var maxRow = pageRows.Count - 1;
+
+        switch (e.Key)
+        {
+            case "ArrowDown":
+                _focusRow = Math.Min(_focusRow + 1, maxRow);
+                UpdateCurrentFromFocus(pageRows);
+                break;
+            case "ArrowUp":
+                _focusRow = Math.Max(_focusRow - 1, 0);
+                UpdateCurrentFromFocus(pageRows);
+                break;
+            case "ArrowRight":
+                _focusCol = Math.Min(_focusCol + 1, maxCol);
+                break;
+            case "ArrowLeft":
+                _focusCol = Math.Max(_focusCol - 1, 0);
+                break;
+            case "Home":
+                _focusCol = 0;
+                if (e.CtrlKey) _focusRow = 0;
+                UpdateCurrentFromFocus(pageRows);
+                break;
+            case "End":
+                _focusCol = maxCol;
+                if (e.CtrlKey) _focusRow = maxRow;
+                UpdateCurrentFromFocus(pageRows);
+                break;
+            case "PageDown":
+                GoToPage(_pageIndex + 1);
+                _focusRow = 0;
+                Announce($"Page {_pageIndex + 1} of {PageCount}");
+                break;
+            case "PageUp":
+                GoToPage(_pageIndex - 1);
+                _focusRow = 0;
+                Announce($"Page {_pageIndex + 1} of {PageCount}");
+                break;
+            case "Enter":
+                if (_editingRow is not null)
+                {
+                    _ = CommitEdit();
+                    _focusRow = Math.Min(_focusRow + 1, maxRow);
+                }
+                else if (_focusRow >= 0 && _focusRow < pageRows.Count)
+                {
+                    var col = _focusCol >= 0 && _focusCol < visibleCols.Count ? visibleCols[_focusCol] : null;
+                    if (col?.Editable == true)
+                    {
+                        StartEdit(pageRows[_focusRow], col.Key);
+                        Announce($"Editing {col.Title}");
+                    }
+                }
+                break;
+            case "Escape":
+                if (_editingRow is not null)
+                {
+                    CancelEdit();
+                    Announce("Edit cancelled");
+                }
+                break;
+            case " ":
+                if (Selectable && _focusRow >= 0 && _focusRow < pageRows.Count)
+                {
+                    _ = ToggleSelection(pageRows[_focusRow]);
+                    var selected = IsSelected(pageRows[_focusRow]);
+                    Announce(selected ? "Row selected" : "Row deselected");
+                }
+                break;
+            default:
+                return; // don't prevent default for unhandled keys
+        }
+    }
+
+    private void UpdateCurrentFromFocus(List<TItem> pageRows)
+    {
+        if (_focusRow >= 0 && _focusRow < pageRows.Count)
+            SetCurrentRow(pageRows[_focusRow]);
+    }
+
+    internal bool IsFocusedCell(int rowIdx, int colIdx) => _gridHasFocus && rowIdx == _focusRow && colIdx == _focusCol;
+
+    internal string GetCellId(int rowIdx, int colIdx) => $"cell-{rowIdx}-{colIdx}";
+
+    internal string? GetActiveDescendant()
+    {
+        if (!_gridHasFocus) return null;
+        return GetCellId(_focusRow, _focusCol);
+    }
+
+    // ── ARIA Live Announcements ──
+
+    private void Announce(string message)
+    {
+        _liveAnnouncement = message;
+        StateHasChanged();
+        _ = ClearAnnouncementAsync();
+    }
+
+    private async Task ClearAnnouncementAsync()
+    {
+        await Task.Delay(150);
+        _liveAnnouncement = null;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    // ── Column Reorder (Drag & Drop) ──
+
+    private int _dragSourceCol = -1;
+    private int _dropTargetCol = -1;
+
+    internal void StartColumnDrag(int colIndex) { _dragSourceCol = colIndex; }
+    internal void SetDropTarget(int colIndex) { _dropTargetCol = colIndex; }
+    internal void EndColumnDrag() { _dragSourceCol = -1; _dropTargetCol = -1; }
+
+    internal void DropColumn(int targetIndex)
+    {
+        if (_dragSourceCol >= 0 && _dragSourceCol != targetIndex)
+        {
+            Collector.MoveColumn(_dragSourceCol, targetIndex);
+            Announce($"Column moved to position {targetIndex + 1}");
+        }
+        EndColumnDrag();
     }
 
     // ── Disposal ──

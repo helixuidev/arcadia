@@ -15,4 +15,13 @@ internal class ArcadiaDataGridColumnCollector<TItem>
         if (!_columns.Contains(column))
             _columns.Add(column);
     }
+
+    public void MoveColumn(int fromIndex, int toIndex)
+    {
+        if (fromIndex < 0 || fromIndex >= _columns.Count) return;
+        if (toIndex < 0 || toIndex >= _columns.Count) return;
+        var col = _columns[fromIndex];
+        _columns.RemoveAt(fromIndex);
+        _columns.Insert(toIndex, col);
+    }
 }

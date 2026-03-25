@@ -38,6 +38,9 @@
     /// <summary>Toggle visibility (called by grid column picker).</summary>
     internal void ToggleVisible() { IsVisible = !IsVisible; }
 
+    /// <summary>Pin this column to the left edge (stays visible on horizontal scroll). Requires Width to be set.</summary>
+    [Parameter] public bool Frozen { get; set; }
+
     /// <summary>Whether this column supports inline editing.</summary>
     [Parameter] public bool Editable { get; set; }
 
