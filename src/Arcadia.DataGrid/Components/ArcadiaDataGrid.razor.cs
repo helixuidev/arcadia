@@ -57,11 +57,23 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Fired when selection changes.</summary>
     [Parameter] public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
 
+    /// <summary>Server-side data loading callback. When set, grid delegates sort/filter/page to the server.</summary>
+    [Parameter] public EventCallback<DataGridLoadArgs> LoadData { get; set; }
+
+    /// <summary>Total row count for server-side paging. Required when using LoadData.</summary>
+    [Parameter] public int? ServerTotalCount { get; set; }
+
+    /// <summary>Detail row template. When set, rows become expandable.</summary>
+    [Parameter] public RenderFragment<TItem>? DetailTemplate { get; set; }
+
     /// <summary>Column definitions (ArcadiaColumn child components).</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     /// <summary>Fired when sort changes.</summary>
     [Parameter] public EventCallback<SortDescriptor?> SortChanged { get; set; }
+
+    /// <summary>Fired when a row is edited (inline edit commits).</summary>
+    [Parameter] public EventCallback<TItem> OnRowEdit { get; set; }
 
     // ── Internal state ──
     internal ArcadiaDataGridColumnCollector<TItem> Collector { get; } = new();
@@ -71,11 +83,15 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     private Dictionary<string, FilterDescriptor> _filters = new();
     private HashSet<TItem> _selectedItems = new();
     private bool _showFilters;
+    private bool _showColumnPicker;
+    private HashSet<TItem> _expandedRows = new();
+    private TItem? _editingRow;
+    private bool _isServerMode => LoadData.HasDelegate;
 
     private IReadOnlyList<ArcadiaColumn<TItem>> Columns => Collector.Columns;
-    private bool HasData => Data is not null && Data.Count > 0;
-    private int FilteredCount => GetFilteredData().Count();
-    private int TotalCount => Filterable && _filters.Values.Any(f => !string.IsNullOrEmpty(f.Value)) ? FilteredCount : (Data?.Count ?? 0);
+    private bool HasData => _isServerMode || (Data is not null && Data.Count > 0);
+    private int FilteredCount => _isServerMode ? (ServerTotalCount ?? 0) : GetFilteredData().Count();
+    private int TotalCount => _isServerMode ? (ServerTotalCount ?? 0) : (Filterable && _filters.Values.Any(f => !string.IsNullOrEmpty(f.Value)) ? GetFilteredData().Count() : (Data?.Count ?? 0));
     private int PageCount => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 1;
 
     protected override void OnAfterRender(bool firstRender)
@@ -276,6 +292,108 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
             SortDirection.Ascending => $"{column.Title}, sorted ascending",
             SortDirection.Descending => $"{column.Title}, sorted descending",
             _ => $"{column.Title}, click to sort"
+        };
+    }
+
+    // ── Server-side data ──
+
+    internal async Task InvokeLoadData()
+    {
+        if (!LoadData.HasDelegate) return;
+        var args = new DataGridLoadArgs
+        {
+            Skip = _pageIndex * PageSize,
+            Take = PageSize,
+            SortProperty = _currentSort?.Property,
+            SortDirection = _currentSort?.Direction ?? SortDirection.None,
+            Filters = _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)).ToList()
+        };
+        await LoadData.InvokeAsync(args);
+    }
+
+    internal async Task GoToPageAsync(int page)
+    {
+        GoToPage(page);
+        if (_isServerMode) await InvokeLoadData();
+    }
+
+    internal async Task SetPageSizeAsync(int size)
+    {
+        SetPageSize(size);
+        if (_isServerMode) await InvokeLoadData();
+    }
+
+    // ── Detail expansion ──
+
+    internal bool IsExpanded(TItem item) => _expandedRows.Contains(item);
+
+    internal void ToggleDetail(TItem item)
+    {
+        if (!_expandedRows.Remove(item))
+            _expandedRows.Add(item);
+    }
+
+    // ── Inline editing ──
+
+    internal bool IsEditing(TItem item) => _editingRow is not null && EqualityComparer<TItem>.Default.Equals(_editingRow, item);
+
+    internal void StartEdit(TItem item)
+    {
+        _editingRow = item;
+    }
+
+    internal async Task CommitEdit()
+    {
+        if (_editingRow is not null && OnRowEdit.HasDelegate)
+            await OnRowEdit.InvokeAsync(_editingRow);
+        _editingRow = default;
+    }
+
+    internal void CancelEdit()
+    {
+        _editingRow = default;
+    }
+
+    // ── Column picker ──
+
+    internal void ToggleColumnPicker()
+    {
+        _showColumnPicker = !_showColumnPicker;
+    }
+
+    internal void ToggleColumnVisibility(ArcadiaColumn<TItem> col)
+    {
+        col.ToggleVisible();
+    }
+
+    // ── Aggregate computation ──
+
+    internal double ComputeAggregate(ArcadiaColumn<TItem> col, AggregateType type)
+    {
+        if (col.Field is null || Data is null) return 0;
+        var values = Data.Select(item =>
+        {
+            var raw = col.Field(item);
+            return raw switch
+            {
+                double d => d,
+                int i => (double)i,
+                long l => (double)l,
+                decimal m => (double)m,
+                float f => (double)f,
+                _ => double.TryParse(raw?.ToString(), out var p) ? p : double.NaN
+            };
+        }).Where(v => !double.IsNaN(v)).ToList();
+
+        if (values.Count == 0) return 0;
+        return type switch
+        {
+            AggregateType.Sum => values.Sum(),
+            AggregateType.Average => values.Average(),
+            AggregateType.Count => values.Count,
+            AggregateType.Min => values.Min(),
+            AggregateType.Max => values.Max(),
+            _ => 0
         };
     }
 }

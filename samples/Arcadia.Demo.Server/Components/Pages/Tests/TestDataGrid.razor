@@ -1,36 +1,50 @@
 @page "/test/datagrid"
 @layout Arcadia.Demo.Server.Components.Layout.FullScreenLayout
 @using Arcadia.DataGrid.Components
+@using Arcadia.DataGrid.Core
 
-<div style="padding: 24px; max-width: 1000px; margin: 0 auto;">
-    <h2 style="color: white; margin-bottom: 16px;">ArcadiaDataGrid — Phase 1 Demo</h2>
+<div style="padding: 24px; max-width: 1100px; margin: 0 auto;">
+    <h2 style="color: white; margin-bottom: 16px;">ArcadiaDataGrid — Full Feature Demo</h2>
 
     <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="10"
                       Striped="true" Hoverable="true"
                       Filterable="true" Selectable="true" MultiSelect="true"
-                      SelectedItemsChanged="@(items => _selectedCount = items.Count)">
-        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Id)" Title="ID" Width="60px" Align="center" />
-        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Name)" Title="Name" />
-        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Department)" Title="Department" />
-        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Title)" Title="Job Title" />
-        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Salary)" Title="Salary" Format="C0" Align="right" />
-        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.StartDate)" Title="Start Date" Format="d" />
-        <ArcadiaColumn TItem="Employee" Title="Actions">
-            <Template Context="emp">
-                <button style="background:#8b5cf6;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.75rem;"
-                        @onclick="@(() => _selected = emp.Name)">View</button>
-            </Template>
-        </ArcadiaColumn>
+                      SelectedItemsChanged="@(items => _selectedCount = items.Count)"
+                      Height="500px">
+        <DetailTemplate Context="emp">
+            <div style="display:flex;gap:24px;color:#9490b3;font-size:0.85rem;">
+                <div><strong style="color:#c084fc;">Email:</strong> @(emp.Name.Split(' ')[0].ToLower())@("@arcadia.com")</div>
+                <div><strong style="color:#c084fc;">Years:</strong> @((int)((DateTime.Now - emp.StartDate).TotalDays / 365))</div>
+                <div><strong style="color:#c084fc;">Manager:</strong> @(emp.Department) Lead</div>
+            </div>
+        </DetailTemplate>
+        <ChildContent>
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Id)" Title="ID" Width="60px" Align="center" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Name)" Title="Name" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Department)" Title="Department" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Title)" Title="Job Title" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Salary)" Title="Salary" Format="C0" Align="right"
+                           Aggregate="AggregateType.Average" />
+            <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.StartDate)" Title="Start Date" Format="d" />
+            <ArcadiaColumn TItem="Employee" Title="Actions">
+                <Template Context="emp">
+                    <button style="background:#8b5cf6;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.75rem;"
+                            @onclick="@(() => _selected = emp.Name)">View</button>
+                </Template>
+            </ArcadiaColumn>
+        </ChildContent>
     </ArcadiaDataGrid>
 
-    @if (_selected is not null)
-    {
-        <div style="margin-top: 12px; color: #c084fc; font-size: 0.85rem;">Viewed: @_selected</div>
-    }
-    @if (_selectedCount > 0)
-    {
-        <div style="margin-top: 4px; color: #22c55e; font-size: 0.85rem;">@_selectedCount employees selected via checkbox</div>
-    }
+    <div style="margin-top: 12px; display:flex; gap: 16px; font-size: 0.85rem;">
+        @if (_selected is not null)
+        {
+            <span style="color: #c084fc;">Viewed: @_selected</span>
+        }
+        @if (_selectedCount > 0)
+        {
+            <span style="color: #22c55e;">@_selectedCount selected</span>
+        }
+    </div>
 </div>
 
 @code {

@@ -29,8 +29,26 @@
     /// <summary>Whether this column is filterable. Null inherits from grid.</summary>
     [Parameter] public bool? Filterable { get; set; }
 
-    /// <summary>Whether this column is visible.</summary>
+    /// <summary>Whether this column is visible. Defaults to true.</summary>
     [Parameter] public bool Visible { get; set; } = true;
+
+    /// <summary>Internal visibility state for column picker toggling.</summary>
+    internal bool IsVisible { get; set; } = true;
+
+    /// <summary>Toggle visibility (called by grid column picker).</summary>
+    internal void ToggleVisible() { IsVisible = !IsVisible; }
+
+    /// <summary>Whether this column supports inline editing.</summary>
+    [Parameter] public bool Editable { get; set; }
+
+    /// <summary>Custom edit template for inline editing.</summary>
+    [Parameter] public RenderFragment<TItem>? EditTemplate { get; set; }
+
+    /// <summary>Footer aggregate type: None, Sum, Average, Count, Min, Max.</summary>
+    [Parameter] public Arcadia.DataGrid.Core.AggregateType Aggregate { get; set; } = Arcadia.DataGrid.Core.AggregateType.None;
+
+    /// <summary>Custom footer template (overrides Aggregate when set).</summary>
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
     /// <summary>Dynamic CSS class for cells in this column.</summary>
     [Parameter] public Func<TItem, string?>? CellClass { get; set; }
@@ -52,6 +70,7 @@
 
     protected override void OnInitialized()
     {
+        IsVisible = Visible;
         Collector?.AddColumn(this);
     }
 }

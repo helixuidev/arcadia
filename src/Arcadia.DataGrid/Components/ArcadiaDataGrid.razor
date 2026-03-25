@@ -24,27 +24,47 @@
     }
     else if (_columnsCollected && Columns.Count > 0)
     {
-        <table class="arcadia-grid__table">
+        <div class="arcadia-grid__toolbar">
             @if (Filterable)
             {
-                <div class="arcadia-grid__toolbar">
-                    <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
-                            @onclick="ToggleFilters">Filter</button>
-                    @if (_selectedItems.Count > 0)
-                    {
-                        <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
-                    }
-                </div>
+                <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
+                        @onclick="ToggleFilters">Filter</button>
             }
+            <button class="arcadia-grid__filter-toggle @(_showColumnPicker ? "arcadia-grid__filter-toggle--active" : "")"
+                    @onclick="ToggleColumnPicker">Columns</button>
+            @if (_selectedItems.Count > 0)
+            {
+                <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
+            }
+        </div>
+        @if (_showColumnPicker)
+        {
+            <div class="arcadia-grid__column-picker">
+                @foreach (var col in Columns)
+                {
+                    var localCol = col;
+                    <label class="arcadia-grid__column-picker-item">
+                        <input type="checkbox" checked="@localCol.IsVisible"
+                               @onclick="@(() => ToggleColumnVisibility(localCol))" />
+                        <span>@localCol.Title</span>
+                    </label>
+                }
+            </div>
+        }
+        <table class="arcadia-grid__table">
             <thead class="@(FixedHeader ? "arcadia-grid__thead--sticky" : "")">
                 <tr role="row">
+                    @if (DetailTemplate is not null)
+                    {
+                        <th class="arcadia-grid__th" style="width:36px;"></th>
+                    }
                     @if (Selectable && MultiSelect)
                     {
                         <th class="arcadia-grid__th arcadia-grid__th--checkbox" style="width:40px;">
                             <input type="checkbox" checked="@IsAllSelected()" @onclick="ToggleSelectAll" />
                         </th>
                     }
-                    @foreach (var col in Columns.Where(c => c.Visible))
+                    @foreach (var col in Columns.Where(c => c.IsVisible))
                     {
                         var localCol = col;
                         var sortDir = GetSortDirection(localCol.Key);
@@ -87,7 +107,7 @@
                         {
                             <th class="arcadia-grid__th"></th>
                         }
-                        @foreach (var col in Columns.Where(c => c.Visible))
+                        @foreach (var col in Columns.Where(c => c.IsVisible))
                         {
                             var fCol = col;
                             var isFilterable = fCol.Filterable ?? (fCol.Field is not null);
@@ -105,7 +125,7 @@
                 }
             </thead>
             <tbody>
-                @{ var rows = GetPagedData().ToList(); var colSpan = Columns.Count(c => c.Visible) + (Selectable && MultiSelect ? 1 : 0); }
+                @{ var rows = GetPagedData().ToList(); var colSpan = Columns.Count(c => c.IsVisible) + (Selectable && MultiSelect ? 1 : 0); }
                 @if (rows.Count == 0)
                 {
                     <tr>
@@ -122,6 +142,13 @@
                         <tr role="row" class="@(IsSelected(localItem) ? "arcadia-grid__row--selected" : "")"
                             @onclick="@(Selectable ? async () => await ToggleSelection(localItem) : (Func<Task>)(() => Task.CompletedTask))"
                             style="@(Selectable ? "cursor:pointer;" : "")">
+                            @if (DetailTemplate is not null)
+                            {
+                                <td class="arcadia-grid__td arcadia-grid__td--expand" @onclick:stopPropagation="true"
+                                    @onclick="@(() => ToggleDetail(localItem))">
+                                    <span class="arcadia-grid__expand-icon @(IsExpanded(localItem) ? "arcadia-grid__expand-icon--open" : "")">&#9656;</span>
+                                </td>
+                            }
                             @if (Selectable && MultiSelect)
                             {
                                 <td class="arcadia-grid__td arcadia-grid__td--checkbox" @onclick:stopPropagation="true">
@@ -129,7 +156,7 @@
                                            @onclick="@(() => ToggleSelection(localItem))" />
                                 </td>
                             }
-                            @foreach (var col in Columns.Where(c => c.Visible))
+                            @foreach (var col in Columns.Where(c => c.IsVisible))
                             {
                                 var cellClass = col.CellClass?.Invoke(item);
                                 <td role="gridcell"
@@ -146,9 +173,41 @@
                                 </td>
                             }
                         </tr>
+                        @if (DetailTemplate is not null && IsExpanded(localItem))
+                        {
+                            <tr class="arcadia-grid__detail-row">
+                                <td colspan="@(colSpan + 1)" class="arcadia-grid__detail-cell">
+                                    @DetailTemplate(localItem)
+                                </td>
+                            </tr>
+                        }
                     }
                 }
             </tbody>
+            @* Footer aggregates *@
+            @if (Columns.Any(c => c.IsVisible && (c.Aggregate != Arcadia.DataGrid.Core.AggregateType.None || c.FooterTemplate is not null)))
+            {
+                <tfoot>
+                    <tr class="arcadia-grid__footer-row">
+                        @if (DetailTemplate is not null) { <td class="arcadia-grid__td"></td> }
+                        @if (Selectable && MultiSelect) { <td class="arcadia-grid__td"></td> }
+                        @foreach (var col in Columns.Where(c => c.IsVisible))
+                        {
+                            <td class="arcadia-grid__td arcadia-grid__td--footer" style="text-align:@col.Align;">
+                                @if (col.FooterTemplate is not null)
+                                {
+                                    @col.FooterTemplate
+                                }
+                                else if (col.Aggregate != Arcadia.DataGrid.Core.AggregateType.None)
+                                {
+                                    var agg = ComputeAggregate(col, col.Aggregate);
+                                    <span>@col.FormatValue(agg)</span>
+                                }
+                            </td>
+                        }
+                    </tr>
+                </tfoot>
+            }
         </table>
 
         @* Pagination *@
