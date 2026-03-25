@@ -42,6 +42,21 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Message shown when data is empty.</summary>
     [Parameter] public string EmptyMessage { get; set; } = "No data available";
 
+    /// <summary>Enable column filtering (filter row below header).</summary>
+    [Parameter] public bool Filterable { get; set; }
+
+    /// <summary>Enable row selection.</summary>
+    [Parameter] public bool Selectable { get; set; }
+
+    /// <summary>Allow multi-row selection (checkbox column). Requires Selectable=true.</summary>
+    [Parameter] public bool MultiSelect { get; set; }
+
+    /// <summary>Currently selected items. Two-way bindable.</summary>
+    [Parameter] public HashSet<TItem>? SelectedItems { get; set; }
+
+    /// <summary>Fired when selection changes.</summary>
+    [Parameter] public EventCallback<HashSet<TItem>> SelectedItemsChanged { get; set; }
+
     /// <summary>Column definitions (ArcadiaColumn child components).</summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
@@ -53,10 +68,14 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     private SortDescriptor? _currentSort;
     private int _pageIndex;
     private bool _columnsCollected;
+    private Dictionary<string, FilterDescriptor> _filters = new();
+    private HashSet<TItem> _selectedItems = new();
+    private bool _showFilters;
 
     private IReadOnlyList<ArcadiaColumn<TItem>> Columns => Collector.Columns;
     private bool HasData => Data is not null && Data.Count > 0;
-    private int TotalCount => Data?.Count ?? 0;
+    private int FilteredCount => GetFilteredData().Count();
+    private int TotalCount => Filterable && _filters.Values.Any(f => !string.IsNullOrEmpty(f.Value)) ? FilteredCount : (Data?.Count ?? 0);
     private int PageCount => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 1;
 
     protected override void OnAfterRender(bool firstRender)
@@ -68,12 +87,43 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         }
     }
 
-    /// <summary>Get the current page of data, sorted.</summary>
-    internal IEnumerable<TItem> GetPagedData()
+    /// <summary>Get filtered data (before paging).</summary>
+    internal IEnumerable<TItem> GetFilteredData()
     {
         if (Data is null) return Enumerable.Empty<TItem>();
-
         IEnumerable<TItem> result = Data;
+
+        // Apply filters
+        foreach (var filter in _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)))
+        {
+            var col = Columns.FirstOrDefault(c => c.Key == filter.Property);
+            if (col?.Field is null) continue;
+
+            var filterValue = filter.Value;
+            var op = filter.Operator;
+            result = result.Where(item =>
+            {
+                var cellValue = col.Field(item)?.ToString() ?? "";
+                return op switch
+                {
+                    FilterOperator.Contains => cellValue.Contains(filterValue, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.Equals => cellValue.Equals(filterValue, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.StartsWith => cellValue.StartsWith(filterValue, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.EndsWith => cellValue.EndsWith(filterValue, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.GreaterThan => double.TryParse(cellValue, out var cv) && double.TryParse(filterValue, out var fv) && cv > fv,
+                    FilterOperator.LessThan => double.TryParse(cellValue, out var cv2) && double.TryParse(filterValue, out var fv2) && cv2 < fv2,
+                    _ => true
+                };
+            });
+        }
+
+        return result;
+    }
+
+    /// <summary>Get the current page of data, filtered and sorted.</summary>
+    internal IEnumerable<TItem> GetPagedData()
+    {
+        var result = GetFilteredData();
 
         // Apply sort
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
@@ -94,6 +144,74 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         }
 
         return result;
+    }
+
+    // ── Filter methods ──
+
+    internal void SetFilter(string columnKey, string value)
+    {
+        if (!_filters.ContainsKey(columnKey))
+            _filters[columnKey] = new FilterDescriptor { Property = columnKey };
+        _filters[columnKey].Value = value;
+        _pageIndex = 0;
+    }
+
+    internal string GetFilterValue(string columnKey)
+    {
+        return _filters.TryGetValue(columnKey, out var f) ? f.Value : "";
+    }
+
+    internal void ToggleFilters()
+    {
+        _showFilters = !_showFilters;
+        if (!_showFilters) _filters.Clear();
+    }
+
+    // ── Selection methods ──
+
+    internal bool IsSelected(TItem item) => _selectedItems.Contains(item);
+
+    internal async Task ToggleSelection(TItem item)
+    {
+        if (!Selectable) return;
+
+        if (MultiSelect)
+        {
+            if (!_selectedItems.Add(item))
+                _selectedItems.Remove(item);
+        }
+        else
+        {
+            _selectedItems.Clear();
+            _selectedItems.Add(item);
+        }
+
+        SelectedItems = _selectedItems;
+        if (SelectedItemsChanged.HasDelegate)
+            await SelectedItemsChanged.InvokeAsync(_selectedItems);
+    }
+
+    internal async Task ToggleSelectAll()
+    {
+        var pageData = GetPagedData().ToList();
+        if (pageData.All(i => _selectedItems.Contains(i)))
+        {
+            foreach (var item in pageData) _selectedItems.Remove(item);
+        }
+        else
+        {
+            foreach (var item in pageData) _selectedItems.Add(item);
+        }
+
+        SelectedItems = _selectedItems;
+        if (SelectedItemsChanged.HasDelegate)
+            await SelectedItemsChanged.InvokeAsync(_selectedItems);
+    }
+
+    internal bool IsAllSelected()
+    {
+        var pageData = GetPagedData().ToList();
+        return pageData.Count > 0 && pageData.All(i => _selectedItems.Contains(i));
     }
 
     internal SortDirection GetSortDirection(string columnKey)

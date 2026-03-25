@@ -161,6 +161,77 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   white-space: nowrap;
 }
 
+/* Toolbar */
+.arcadia-grid__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
+  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
+}
+
+.arcadia-grid__filter-toggle {
+  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
+  background: transparent;
+  color: var(--arcadia-color-text-muted, #9490b3);
+  padding: 4px 12px;
+  border-radius: var(--arcadia-radius-sm, 0.25rem);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--arcadia-text-xs, 0.75rem);
+  transition: all 0.15s ease;
+}
+.arcadia-grid__filter-toggle:hover,
+.arcadia-grid__filter-toggle--active {
+  background: rgba(139,92,246,0.1);
+  color: var(--arcadia-color-primary, #8b5cf6);
+  border-color: var(--arcadia-color-primary, #8b5cf6);
+}
+
+.arcadia-grid__selection-count {
+  font-size: var(--arcadia-text-xs, 0.75rem);
+  color: var(--arcadia-color-primary, #8b5cf6);
+}
+
+/* Filter row */
+.arcadia-grid__filter-row .arcadia-grid__th {
+  padding: 4px 6px;
+  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
+}
+
+.arcadia-grid__filter-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
+  border-radius: var(--arcadia-radius-sm, 0.25rem);
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: var(--arcadia-text-xs, 0.75rem);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.arcadia-grid__filter-input:focus {
+  border-color: var(--arcadia-color-primary, #8b5cf6);
+}
+.arcadia-grid__filter-input::placeholder {
+  color: var(--arcadia-color-text-muted, #64748b);
+  opacity: 0.5;
+}
+
+/* Checkbox cells */
+.arcadia-grid__th--checkbox,
+.arcadia-grid__td--checkbox {
+  text-align: center;
+  width: 40px;
+}
+
+/* Selected row */
+.arcadia-grid__row--selected {
+  background: rgba(139,92,246,0.12) !important;
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .arcadia-grid__skeleton-row {

@@ -25,8 +25,25 @@
     else if (_columnsCollected && Columns.Count > 0)
     {
         <table class="arcadia-grid__table">
+            @if (Filterable)
+            {
+                <div class="arcadia-grid__toolbar">
+                    <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
+                            @onclick="ToggleFilters">Filter</button>
+                    @if (_selectedItems.Count > 0)
+                    {
+                        <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
+                    }
+                </div>
+            }
             <thead class="@(FixedHeader ? "arcadia-grid__thead--sticky" : "")">
                 <tr role="row">
+                    @if (Selectable && MultiSelect)
+                    {
+                        <th class="arcadia-grid__th arcadia-grid__th--checkbox" style="width:40px;">
+                            <input type="checkbox" checked="@IsAllSelected()" @onclick="ToggleSelectAll" />
+                        </th>
+                    }
                     @foreach (var col in Columns.Where(c => c.Visible))
                     {
                         var localCol = col;
@@ -63,13 +80,36 @@
                         </th>
                     }
                 </tr>
+                @if (_showFilters && Filterable)
+                {
+                    <tr class="arcadia-grid__filter-row">
+                        @if (Selectable && MultiSelect)
+                        {
+                            <th class="arcadia-grid__th"></th>
+                        }
+                        @foreach (var col in Columns.Where(c => c.Visible))
+                        {
+                            var fCol = col;
+                            var isFilterable = fCol.Filterable ?? (fCol.Field is not null);
+                            <th class="arcadia-grid__th arcadia-grid__th--filter">
+                                @if (isFilterable)
+                                {
+                                    <input type="text" class="arcadia-grid__filter-input"
+                                           placeholder="Filter..."
+                                           value="@GetFilterValue(fCol.Key)"
+                                           @oninput="@((ChangeEventArgs e) => SetFilter(fCol.Key, e.Value?.ToString() ?? ""))" />
+                                }
+                            </th>
+                        }
+                    </tr>
+                }
             </thead>
             <tbody>
-                @{ var rows = GetPagedData().ToList(); }
+                @{ var rows = GetPagedData().ToList(); var colSpan = Columns.Count(c => c.Visible) + (Selectable && MultiSelect ? 1 : 0); }
                 @if (rows.Count == 0)
                 {
                     <tr>
-                        <td colspan="@Columns.Count(c => c.Visible)" class="arcadia-grid__empty">
+                        <td colspan="@colSpan" class="arcadia-grid__empty">
                             @EmptyMessage
                         </td>
                     </tr>
@@ -78,7 +118,17 @@
                 {
                     @foreach (var item in rows)
                     {
-                        <tr role="row">
+                        var localItem = item;
+                        <tr role="row" class="@(IsSelected(localItem) ? "arcadia-grid__row--selected" : "")"
+                            @onclick="@(Selectable ? async () => await ToggleSelection(localItem) : (Func<Task>)(() => Task.CompletedTask))"
+                            style="@(Selectable ? "cursor:pointer;" : "")">
+                            @if (Selectable && MultiSelect)
+                            {
+                                <td class="arcadia-grid__td arcadia-grid__td--checkbox" @onclick:stopPropagation="true">
+                                    <input type="checkbox" checked="@IsSelected(localItem)"
+                                           @onclick="@(() => ToggleSelection(localItem))" />
+                                </td>
+                            }
                             @foreach (var col in Columns.Where(c => c.Visible))
                             {
                                 var cellClass = col.CellClass?.Invoke(item);

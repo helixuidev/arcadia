@@ -5,7 +5,10 @@
 <div style="padding: 24px; max-width: 1000px; margin: 0 auto;">
     <h2 style="color: white; margin-bottom: 16px;">ArcadiaDataGrid — Phase 1 Demo</h2>
 
-    <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="10" Striped="true" Hoverable="true">
+    <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="10"
+                      Striped="true" Hoverable="true"
+                      Filterable="true" Selectable="true" MultiSelect="true"
+                      SelectedItemsChanged="@(items => _selectedCount = items.Count)">
         <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Id)" Title="ID" Width="60px" Align="center" />
         <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Name)" Title="Name" />
         <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Department)" Title="Department" />
@@ -22,12 +25,17 @@
 
     @if (_selected is not null)
     {
-        <div style="margin-top: 12px; color: #c084fc; font-size: 0.85rem;">Selected: @_selected</div>
+        <div style="margin-top: 12px; color: #c084fc; font-size: 0.85rem;">Viewed: @_selected</div>
+    }
+    @if (_selectedCount > 0)
+    {
+        <div style="margin-top: 4px; color: #22c55e; font-size: 0.85rem;">@_selectedCount employees selected via checkbox</div>
     }
 </div>
 
 @code {
     string? _selected;
+    int _selectedCount;
 
     record Employee(int Id, string Name, string Department, string Title, double Salary, DateTime StartDate);
 

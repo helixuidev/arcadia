@@ -26,6 +26,9 @@
     /// <summary>Custom header content template.</summary>
     [Parameter] public RenderFragment? HeaderTemplate { get; set; }
 
+    /// <summary>Whether this column is filterable. Null inherits from grid.</summary>
+    [Parameter] public bool? Filterable { get; set; }
+
     /// <summary>Whether this column is visible.</summary>
     [Parameter] public bool Visible { get; set; } = true;
 
