@@ -351,22 +351,6 @@ svg .arcadia-chart__radar-fill:hover + .arcadia-chart__radar-line { opacity: 1 !
 .arcadia-chart__legend-btn--hidden:hover { opacity: 0.7; }
 .arcadia-chart__legend-btn .arcadia-chart__legend-swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; box-sizing: border-box; }
 
-/* Waterfall */
-.arcadia-waterfall__connector { stroke-dasharray: 3,3; }
-
-/* Funnel */
-.arcadia-funnel__stage { transition: opacity 0.15s ease; }
-.arcadia-funnel__stage:hover { opacity: 0.9; }
-
-/* Treemap */
-.arcadia-treemap__cell { transition: opacity 0.15s ease; }
-.arcadia-treemap__cell:hover { opacity: 0.85; filter: brightness(1.1); }
-
-/* Gauge sweep animation */
-@keyframes arcadia-gauge-sweep {
-  to { stroke-dashoffset: 0; }
-}
-
 /* Chart Toolbar */
 .arcadia-chart-toolbar {
   display: flex; gap: 4px; position: absolute; top: 8px; right: 8px; z-index: 5;

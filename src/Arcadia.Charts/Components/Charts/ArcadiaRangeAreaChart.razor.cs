@@ -200,13 +200,6 @@ public partial class ArcadiaRangeAreaChart<T> : ChartBase<T>
         return value.ToString() ?? "";
     }
 
-    internal string FormatYTick(double value)
-    {
-        if (YAxisFormatString is not null)
-            return value.ToString(YAxisFormatString, FormatProvider);
-        return _layout.YTicks.FirstOrDefault(t => Math.Abs(t.Value - value) < double.Epsilon)?.Label ?? value.ToString("G4");
-    }
-
     internal string FormatDataLabel(double value) => FormatValue(value, DataLabelFormatString);
 
     private string EffectiveMiddleColor => MiddleColor ?? StrokeColor;

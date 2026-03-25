@@ -91,6 +91,7 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   padding: 11px 16px;
   border-bottom: 1px solid var(--_border);
   background: var(--_row-bg);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ── Striped ── */
@@ -384,9 +385,6 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 /* ================================================================
    UNIVERSAL IMPROVEMENTS
    ================================================================ */
-
-/* Tabular numerals for numeric alignment */
-.arcadia-grid__td { font-variant-numeric: tabular-nums; }
 
 /* ── Row Selector ── */
 .arcadia-grid__th--row-selector {
@@ -728,9 +726,6 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 
 /* ── Keyboard focus cell ── */
 .arcadia-grid__td--focused {
-  box-shadow: inset 0 0 0 2px var(--_accent) !important;
-}
-.arcadia-grid:focus-within .arcadia-grid__td--focused {
   box-shadow: inset 0 0 0 2px var(--_accent) !important;
 }
 .arcadia-grid:focus { outline: none; }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Arcadia.Core.Utilities;
 using Arcadia.Charts.Core;
 using Arcadia.Charts.Core.Data;
@@ -361,13 +362,6 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
         return value.ToString() ?? "";
     }
 
-    internal string FormatYTick(double value)
-    {
-        if (YAxisFormatString is not null)
-            return value.ToString(YAxisFormatString, FormatProvider);
-        return _layout.YTicks.FirstOrDefault(t => Math.Abs(t.Value - value) < double.Epsilon)?.Label ?? value.ToString("G4");
-    }
-
     internal string FormatDataLabel(double value) => FormatValue(value, DataLabelFormatString);
 
     /// <summary>Appends a data point for live/streaming data. Triggers re-render.</summary>
@@ -410,7 +404,11 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
                 {
                     var stepWidth = _layout.PlotArea.Width / Data.Count;
                     try { await Interop.SlideChartContentAsync(ContainerRef, stepWidth, 300); }
-                    catch { /* disposed */ }
+                    catch (JSException) { } // JS interop unavailable during SSR
+#if NET6_0_OR_GREATER
+                    catch (JSDisconnectedException) { } // Circuit disconnected during Blazor Server navigation
+#endif
+                    catch (ObjectDisposedException) { } // Component already disposed
                 }
             });
         }

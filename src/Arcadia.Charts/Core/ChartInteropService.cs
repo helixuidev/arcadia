@@ -42,13 +42,6 @@ internal class ChartInteropService : IAsyncDisposable
 
     // ── Export ────────────────────────────────────────
 
-    /// <summary>Exports the chart SVG as a string.</summary>
-    public async ValueTask<string?> ExportSvgStringAsync(ElementReference container)
-    {
-        var module = await GetModuleAsync();
-        return await module.InvokeAsync<string?>("exportSvgAsString", container);
-    }
-
     /// <summary>Exports chart as PNG and triggers download.</summary>
     public async ValueTask ExportPngAsync(ElementReference container, string filename = "chart.png", int scale = 2)
     {
@@ -93,13 +86,6 @@ internal class ChartInteropService : IAsyncDisposable
     {
         var module = await GetModuleAsync();
         await module.InvokeVoidAsync("disablePanZoom", container);
-    }
-
-    /// <summary>Resets zoom to default.</summary>
-    public async ValueTask ResetZoomAsync<THandler>(ElementReference container, DotNetObjectReference<THandler> dotNetRef) where THandler : class
-    {
-        var module = await GetModuleAsync();
-        await module.InvokeVoidAsync("resetZoom", container, dotNetRef);
     }
 
     /// <summary>Triggers a slide-left animation on the chart content for streaming updates.</summary>

@@ -163,7 +163,11 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                     "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
                 await _jsModule.InvokeVoidAsync("initResizeHandles", TableRef, 50);
             }
-            catch { /* JS not available in SSR */ }
+            catch (JSException) { } // JS module load failed
+#if NET6_0_OR_GREATER
+            catch (JSDisconnectedException) { } // Circuit disconnected
+#endif
+            catch (InvalidOperationException) { } // JS interop unavailable during static prerendering
         }
     }
 
