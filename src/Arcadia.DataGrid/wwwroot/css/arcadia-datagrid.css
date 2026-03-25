@@ -1,24 +1,52 @@
 /* Arcadia DataGrid
-   Usage: <link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" /> */
+   Usage: <link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" />
 
+   Theme via CSS custom properties:
+   --arcadia-grid-bg           : body background
+   --arcadia-grid-header-bg    : header/footer/toolbar background
+   --arcadia-grid-header-hover : header hover
+   --arcadia-grid-row-bg       : default row background
+   --arcadia-grid-row-alt      : striped row background
+   --arcadia-grid-row-hover    : row hover
+   --arcadia-grid-row-selected : selected row background
+   --arcadia-grid-border       : all borders
+   --arcadia-grid-text         : cell text
+   --arcadia-grid-text-muted   : secondary text (headers, pagination)
+   --arcadia-grid-accent       : primary accent (sort icon, selection, edit border)
+*/
+
+/* ── Base ── */
 .arcadia-grid {
+  --_bg: var(--arcadia-grid-bg, var(--arcadia-color-surface, #0f0d1a));
+  --_header: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #16132a));
+  --_border: var(--arcadia-grid-border, var(--arcadia-color-border, rgba(139,92,246,0.12)));
+  --_text: var(--arcadia-grid-text, var(--arcadia-color-text, #e8e6f0));
+  --_muted: var(--arcadia-grid-text-muted, var(--arcadia-color-text-muted, #8a86a8));
+  --_accent: var(--arcadia-grid-accent, var(--arcadia-color-primary, #8b5cf6));
+  --_row-bg: var(--arcadia-grid-row-bg, transparent);
+  --_row-alt: var(--arcadia-grid-row-alt, rgba(139,92,246,0.03));
+  --_row-hover: var(--arcadia-grid-row-hover, rgba(139,92,246,0.07));
+  --_row-selected: var(--arcadia-grid-row-selected, rgba(139,92,246,0.14));
+
   position: relative;
   font-family: var(--arcadia-font-family, system-ui, -apple-system, sans-serif);
   font-size: var(--arcadia-text-sm, 0.875rem);
-  color: var(--arcadia-color-text, inherit);
-  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  border-radius: var(--arcadia-radius-md, 0.5rem);
+  color: var(--_text);
+  background: var(--_bg);
+  border: 1px solid var(--_border);
+  border-radius: var(--arcadia-radius-lg, 0.75rem);
   overflow: hidden;
 }
 
-/* Table */
+/* ── Table ── */
 .arcadia-grid__table {
   width: 100%;
   border-collapse: collapse;
   border-spacing: 0;
+  background: var(--_bg);
 }
 
-/* Header */
+/* ── Header ── */
 .arcadia-grid__thead--sticky {
   position: sticky;
   top: 0;
@@ -26,14 +54,14 @@
 }
 
 .arcadia-grid__th {
-  padding: 10px 14px;
+  padding: 12px 16px;
   font-weight: 600;
-  font-size: var(--arcadia-text-xs, 0.75rem);
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--arcadia-color-text-muted, #9490b3);
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
-  border-bottom: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
+  letter-spacing: 0.06em;
+  color: var(--_muted);
+  background: var(--_header);
+  border-bottom: 1px solid var(--_border);
   white-space: nowrap;
   user-select: none;
 }
@@ -43,78 +71,254 @@
   transition: color 0.15s ease, background 0.15s ease;
 }
 .arcadia-grid__th--sortable:hover {
-  color: var(--arcadia-color-text, #f1f0f9);
-  background: var(--arcadia-grid-header-hover, rgba(139,92,246,0.08));
+  color: var(--_text);
+  background: var(--arcadia-grid-header-hover, rgba(139,92,246,0.06));
 }
 
 .arcadia-grid__sort-icon {
   margin-left: 6px;
-  font-size: 0.65rem;
-  opacity: 0.5;
+  font-size: 0.6rem;
+  opacity: 0.4;
 }
 th[aria-sort="ascending"] .arcadia-grid__sort-icon,
 th[aria-sort="descending"] .arcadia-grid__sort-icon {
   opacity: 1;
-  color: var(--arcadia-color-primary, #8b5cf6);
+  color: var(--_accent);
 }
 
-/* Cells */
+/* ── Cells ── */
 .arcadia-grid__td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, rgba(139,92,246,0.08)));
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--_border);
+  background: var(--_row-bg);
 }
 
-/* Striped */
-.arcadia-grid--striped tbody tr:nth-child(even) {
-  background: var(--arcadia-grid-stripe, rgba(139,92,246,0.03));
+/* ── Striped ── */
+.arcadia-grid--striped tbody tr:nth-child(even) > .arcadia-grid__td {
+  background: var(--_row-alt);
 }
 
-/* Hover */
+/* ── Hover ── */
 .arcadia-grid--hoverable tbody tr {
   transition: background 0.1s ease;
 }
-.arcadia-grid--hoverable tbody tr:hover {
-  background: var(--arcadia-grid-row-hover, rgba(139,92,246,0.06));
+.arcadia-grid--hoverable tbody tr:hover > .arcadia-grid__td {
+  background: var(--_row-hover);
 }
 
-/* Dense */
+/* ── Dense ── */
 .arcadia-grid--dense .arcadia-grid__th,
 .arcadia-grid--dense .arcadia-grid__td {
-  padding: 6px 10px;
+  padding: 6px 12px;
 }
 
-/* Empty state */
+/* ── Empty state ── */
 .arcadia-grid__empty {
-  padding: 40px 14px;
+  padding: 48px 16px;
   text-align: center;
-  color: var(--arcadia-color-text-muted, #64748b);
+  color: var(--_muted);
   font-style: italic;
+  background: var(--_bg);
 }
 
-/* Loading skeleton */
+/* ── Loading skeleton ── */
 .arcadia-grid__loading {
-  padding: 14px;
+  padding: 16px;
+  background: var(--_bg);
 }
 .arcadia-grid__skeleton-row {
   height: 36px;
   margin-bottom: 8px;
   border-radius: var(--arcadia-radius-sm, 0.25rem);
-  background: linear-gradient(90deg, transparent 25%, var(--arcadia-color-surface-sunken, rgba(139,92,246,0.06)) 50%, transparent 75%);
+  background: linear-gradient(90deg, transparent 25%, rgba(139,92,246,0.06) 50%, transparent 75%);
   background-size: 200% 100%;
   animation: arcadia-grid-shimmer 1.5s infinite;
 }
 @keyframes arcadia-grid-shimmer { to { background-position: -200% 0; } }
 
-/* Pagination */
+/* ── Toolbar ── */
+.arcadia-grid__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--_border);
+  background: var(--_header);
+}
+
+.arcadia-grid__filter-toggle {
+  border: 1px solid var(--_border);
+  background: transparent;
+  color: var(--_muted);
+  padding: 5px 14px;
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.arcadia-grid__filter-toggle:hover,
+.arcadia-grid__filter-toggle--active {
+  background: rgba(139,92,246,0.1);
+  color: var(--_accent);
+  border-color: var(--_accent);
+}
+
+.arcadia-grid__selection-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--_accent);
+  margin-left: auto;
+}
+
+/* ── Filter row ── */
+.arcadia-grid__filter-row .arcadia-grid__th {
+  padding: 4px 8px;
+  background: var(--_header);
+}
+
+.arcadia-grid__filter-input {
+  width: 100%;
+  padding: 5px 10px;
+  border: 1px solid var(--_border);
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
+  background: var(--_bg);
+  color: var(--_text);
+  font-family: inherit;
+  font-size: 0.75rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.arcadia-grid__filter-input:focus {
+  border-color: var(--_accent);
+  box-shadow: 0 0 0 2px rgba(139,92,246,0.15);
+}
+.arcadia-grid__filter-input::placeholder {
+  color: var(--_muted);
+  opacity: 0.5;
+}
+
+/* ── Checkbox cells ── */
+.arcadia-grid__th--checkbox,
+.arcadia-grid__td--checkbox {
+  text-align: center;
+  width: 40px;
+}
+.arcadia-grid__td--checkbox input[type="checkbox"],
+.arcadia-grid__th--checkbox input[type="checkbox"] {
+  accent-color: var(--_accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+/* ── Selected row ── */
+.arcadia-grid__row--selected > .arcadia-grid__td {
+  background: var(--_row-selected) !important;
+}
+
+/* ── Column picker ── */
+.arcadia-grid__column-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--_border);
+  background: var(--_header);
+}
+.arcadia-grid__column-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--_muted);
+  transition: color 0.1s;
+}
+.arcadia-grid__column-picker-item:hover { color: var(--_text); }
+.arcadia-grid__column-picker-item input { accent-color: var(--_accent); }
+
+/* ── Detail / expand ── */
+.arcadia-grid__td--expand {
+  text-align: center;
+  cursor: pointer;
+  width: 36px;
+  padding: 6px !important;
+}
+.arcadia-grid__expand-icon {
+  display: inline-block;
+  transition: transform 0.2s ease, color 0.15s ease;
+  font-size: 0.7rem;
+  color: var(--_muted);
+}
+.arcadia-grid__td--expand:hover .arcadia-grid__expand-icon { color: var(--_accent); }
+.arcadia-grid__expand-icon--open { transform: rotate(90deg); color: var(--_accent); }
+
+.arcadia-grid__detail-row > .arcadia-grid__detail-cell {
+  background: rgba(139,92,246,0.03);
+  border-bottom: 1px solid var(--_border);
+}
+.arcadia-grid__detail-cell {
+  padding: 16px 16px 16px 52px !important;
+}
+
+/* ── Footer aggregates ── */
+.arcadia-grid__footer-row > .arcadia-grid__td--footer {
+  background: var(--_header);
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--_accent);
+  border-top: 2px solid var(--_border);
+}
+
+/* ── Inline editing ── */
+.arcadia-grid__td--editing {
+  padding: 3px 4px !important;
+  background: rgba(139,92,246,0.06) !important;
+}
+.arcadia-grid__edit-input {
+  width: 100%;
+  padding: 7px 10px;
+  border: 2px solid var(--_accent);
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
+  background: var(--_bg);
+  color: var(--_text);
+  font-family: inherit;
+  font-size: inherit;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+}
+
+/* ── Group header ── */
+.arcadia-grid__group-row > td {
+  background: var(--_header);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.arcadia-grid__group-row:hover > td { background: rgba(139,92,246,0.06); }
+.arcadia-grid__group-cell {
+  padding: 10px 16px !important;
+  font-weight: 600;
+  color: var(--_text);
+}
+.arcadia-grid__group-count {
+  font-weight: 400;
+  color: var(--_muted);
+  margin-left: 8px;
+  font-size: 0.75rem;
+}
+
+/* ── Pagination ── */
 .arcadia-grid__pagination {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 14px;
-  font-size: var(--arcadia-text-xs, 0.75rem);
-  color: var(--arcadia-color-text-muted, #9490b3);
-  border-top: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
+  padding: 10px 16px;
+  font-size: 0.75rem;
+  color: var(--_muted);
+  border-top: 1px solid var(--_border);
+  background: var(--_header);
 }
 
 .arcadia-grid__page-nav {
@@ -124,35 +328,38 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 }
 
 .arcadia-grid__page-btn {
-  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
+  border: 1px solid var(--_border);
   background: transparent;
-  color: inherit;
-  padding: 4px 8px;
-  border-radius: var(--arcadia-radius-sm, 0.25rem);
+  color: var(--_muted);
+  padding: 4px 10px;
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
   cursor: pointer;
   font-family: inherit;
   font-size: inherit;
-  transition: background 0.15s ease;
+  transition: all 0.15s ease;
 }
 .arcadia-grid__page-btn:hover:not(:disabled) {
   background: rgba(139,92,246,0.1);
+  color: var(--_text);
 }
 .arcadia-grid__page-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.3;
   cursor: default;
 }
 
 .arcadia-grid__page-current {
-  padding: 0 8px;
+  padding: 0 10px;
   white-space: nowrap;
+  color: var(--_text);
+  font-weight: 500;
 }
 
 .arcadia-grid__page-size {
-  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  background: transparent;
-  color: inherit;
-  padding: 4px 8px;
-  border-radius: var(--arcadia-radius-sm, 0.25rem);
+  border: 1px solid var(--_border);
+  background: var(--_bg);
+  color: var(--_text);
+  padding: 4px 10px;
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
   font-family: inherit;
   font-size: inherit;
 }
@@ -161,160 +368,20 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   white-space: nowrap;
 }
 
-/* Toolbar */
-.arcadia-grid__toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
+/* ── Light theme override ── */
+[data-arcadia-theme="light"] .arcadia-grid,
+.arcadia-grid[data-theme="light"] {
+  --_bg: var(--arcadia-grid-bg, #ffffff);
+  --_header: var(--arcadia-grid-header-bg, #f8f7fc);
+  --_border: var(--arcadia-grid-border, #e8e5f0);
+  --_text: var(--arcadia-grid-text, #1a1625);
+  --_muted: var(--arcadia-grid-text-muted, #6b6580);
+  --_row-alt: var(--arcadia-grid-row-alt, #faf9fd);
+  --_row-hover: var(--arcadia-grid-row-hover, #f3f0fa);
+  --_row-selected: var(--arcadia-grid-row-selected, #ece8f8);
 }
 
-.arcadia-grid__filter-toggle {
-  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  background: transparent;
-  color: var(--arcadia-color-text-muted, #9490b3);
-  padding: 4px 12px;
-  border-radius: var(--arcadia-radius-sm, 0.25rem);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: var(--arcadia-text-xs, 0.75rem);
-  transition: all 0.15s ease;
-}
-.arcadia-grid__filter-toggle:hover,
-.arcadia-grid__filter-toggle--active {
-  background: rgba(139,92,246,0.1);
-  color: var(--arcadia-color-primary, #8b5cf6);
-  border-color: var(--arcadia-color-primary, #8b5cf6);
-}
-
-.arcadia-grid__selection-count {
-  font-size: var(--arcadia-text-xs, 0.75rem);
-  color: var(--arcadia-color-primary, #8b5cf6);
-}
-
-/* Filter row */
-.arcadia-grid__filter-row .arcadia-grid__th {
-  padding: 4px 6px;
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
-}
-
-.arcadia-grid__filter-input {
-  width: 100%;
-  padding: 4px 8px;
-  border: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  border-radius: var(--arcadia-radius-sm, 0.25rem);
-  background: transparent;
-  color: inherit;
-  font-family: inherit;
-  font-size: var(--arcadia-text-xs, 0.75rem);
-  outline: none;
-  transition: border-color 0.15s ease;
-}
-.arcadia-grid__filter-input:focus {
-  border-color: var(--arcadia-color-primary, #8b5cf6);
-}
-.arcadia-grid__filter-input::placeholder {
-  color: var(--arcadia-color-text-muted, #64748b);
-  opacity: 0.5;
-}
-
-/* Checkbox cells */
-.arcadia-grid__th--checkbox,
-.arcadia-grid__td--checkbox {
-  text-align: center;
-  width: 40px;
-}
-
-/* Selected row */
-.arcadia-grid__row--selected {
-  background: rgba(139,92,246,0.12) !important;
-}
-
-/* Column picker */
-.arcadia-grid__column-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
-}
-.arcadia-grid__column-picker-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: var(--arcadia-text-xs, 0.75rem);
-  cursor: pointer;
-  color: var(--arcadia-color-text-muted, #9490b3);
-}
-.arcadia-grid__column-picker-item:hover { color: var(--arcadia-color-text, #f1f0f9); }
-
-/* Detail / expand */
-.arcadia-grid__td--expand {
-  text-align: center;
-  cursor: pointer;
-  width: 36px;
-  padding: 6px !important;
-}
-.arcadia-grid__expand-icon {
-  display: inline-block;
-  transition: transform 0.15s ease;
-  font-size: 0.75rem;
-  color: var(--arcadia-color-text-muted, #9490b3);
-}
-.arcadia-grid__expand-icon--open { transform: rotate(90deg); }
-.arcadia-grid__detail-row { background: rgba(139,92,246,0.04); }
-.arcadia-grid__detail-cell { padding: 16px 14px !important; }
-
-/* Footer aggregates */
-.arcadia-grid__footer-row {
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
-}
-.arcadia-grid__td--footer {
-  font-weight: 600;
-  font-size: var(--arcadia-text-xs, 0.75rem);
-  color: var(--arcadia-color-primary, #8b5cf6);
-  border-top: 2px solid var(--arcadia-grid-border, var(--arcadia-color-border, #2d2a3e));
-}
-
-/* Inline editing */
-.arcadia-grid__td--editing {
-  padding: 2px 4px !important;
-  background: rgba(139,92,246,0.08);
-}
-.arcadia-grid__edit-input {
-  width: 100%;
-  padding: 6px 8px;
-  border: 2px solid var(--arcadia-color-primary, #8b5cf6);
-  border-radius: var(--arcadia-radius-sm, 0.25rem);
-  background: var(--arcadia-color-surface, #0c0a1a);
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  outline: none;
-}
-
-/* Group header */
-.arcadia-grid__group-row {
-  background: var(--arcadia-grid-header-bg, var(--arcadia-color-surface-raised, #1e1b2e));
-  cursor: pointer;
-}
-.arcadia-grid__group-row:hover { background: rgba(139,92,246,0.08); }
-.arcadia-grid__group-cell {
-  padding: 8px 14px !important;
-  font-weight: 600;
-  color: var(--arcadia-color-text, #f1f0f9);
-}
-.arcadia-grid__group-count {
-  font-weight: 400;
-  color: var(--arcadia-color-text-muted, #9490b3);
-  margin-left: 8px;
-  font-size: var(--arcadia-text-xs, 0.75rem);
-}
-
-/* Reduced motion */
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .arcadia-grid__skeleton-row {
     animation: none;
