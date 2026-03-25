@@ -35,8 +35,19 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the list of <see cref="FormTab"/> definitions that describe each tab's title, content, and error count.
+    /// </summary>
     [Parameter] public List<FormTab> Tabs { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the zero-based index of the currently active tab.
+    /// </summary>
     [Parameter] public int ActiveTab { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when the active tab changes, enabling two-way binding on <see cref="ActiveTab"/>.
+    /// </summary>
     [Parameter] public EventCallback<int> ActiveTabChanged { get; set; }
 
     private async Task SetActiveTab(int index)

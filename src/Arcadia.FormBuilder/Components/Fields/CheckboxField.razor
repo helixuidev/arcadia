@@ -36,7 +36,14 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets whether the checkbox is currently checked. Supports two-way binding.
+    /// </summary>
     [Parameter] public bool Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user toggles the checkbox, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 
     private async Task HandleChange(ChangeEventArgs e)

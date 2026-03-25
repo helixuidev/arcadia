@@ -15,7 +15,14 @@
     /// </summary>
     [Parameter] public string Level { get; set; } = "info";
 
+    /// <summary>
+    /// Gets or sets the optional bold title displayed above the alert message.
+    /// </summary>
     [Parameter] public string? Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the alert body content rendered inside the message area.
+    /// </summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-form-alert")

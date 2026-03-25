@@ -38,7 +38,14 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets whether the toggle switch is currently in the on position. Supports two-way binding.
+    /// </summary>
     [Parameter] public bool Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user flips the toggle switch, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<bool> ValueChanged { get; set; }
 
     private async Task HandleChange(ChangeEventArgs e)

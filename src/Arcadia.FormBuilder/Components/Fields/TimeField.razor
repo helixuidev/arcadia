@@ -37,7 +37,14 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the selected time of day. Null when no time has been chosen. Displayed in HH:mm format. Supports two-way binding.
+    /// </summary>
     [Parameter] public TimeSpan? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user picks or clears a time, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<TimeSpan?> ValueChanged { get; set; }
 
     private string? FormattedValue => Value?.ToString(@"hh\:mm");

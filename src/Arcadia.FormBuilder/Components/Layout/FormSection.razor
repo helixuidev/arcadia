@@ -36,11 +36,36 @@
 </fieldset>
 
 @code {
+    /// <summary>
+    /// Gets or sets the section title rendered as a <c>&lt;legend&gt;</c> inside the fieldset.
+    /// </summary>
     [Parameter] public string? Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional description text displayed below the section title.
+    /// </summary>
     [Parameter] public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the number of equal-width columns for the section content grid. Defaults to 1.
+    /// Values greater than 1 enable a CSS grid layout for the section body.
+    /// </summary>
     [Parameter] public int Columns { get; set; } = 1;
+
+    /// <summary>
+    /// Gets or sets whether the section can be collapsed and expanded by the user.
+    /// When <c>true</c>, a toggle button is rendered in the legend.
+    /// </summary>
     [Parameter] public bool Collapsible { get; set; }
+
+    /// <summary>
+    /// Gets or sets the initial collapsed state of the section. Only applies when <see cref="Collapsible"/> is <c>true</c>.
+    /// </summary>
     [Parameter] public bool Collapsed { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content rendered inside the section body.
+    /// </summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
 
     private bool _collapsed;

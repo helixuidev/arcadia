@@ -3,7 +3,14 @@
 <input type="hidden" name="@Name" value="@Value" @attributes="AdditionalAttributes" />
 
 @code {
+    /// <summary>
+    /// Gets or sets the form field name submitted with the hidden input. Used to identify this value in the form's posted data.
+    /// </summary>
     [Parameter] public string? Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the hidden value submitted with the form. Use this to pass along identifiers, tokens, or other data that should not be visible or editable by the user.
+    /// </summary>
     [Parameter] public string? Value { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }

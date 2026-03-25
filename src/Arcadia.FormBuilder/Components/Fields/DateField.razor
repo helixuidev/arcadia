@@ -37,7 +37,14 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the selected date. Null when no date has been chosen. Supports two-way binding.
+    /// </summary>
     [Parameter] public DateTime? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user picks or clears a date, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<DateTime?> ValueChanged { get; set; }
 
     private string? FormattedValue => Value?.ToString("yyyy-MM-dd");

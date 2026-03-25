@@ -41,10 +41,32 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the current numeric value. Null when the field is empty. Supports two-way binding.
+    /// </summary>
     [Parameter] public double? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked whenever the user changes the numeric value, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<double?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the minimum allowed value. When set, the browser prevents input below this threshold.
+    /// Leave null to allow any lower bound.
+    /// </summary>
     [Parameter] public double? Min { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum allowed value. When set, the browser prevents input above this threshold.
+    /// Leave null to allow any upper bound.
+    /// </summary>
     [Parameter] public double? Max { get; set; }
+
+    /// <summary>
+    /// Gets or sets the increment granularity for the input's stepper controls (e.g., "1", "0.01", "any").
+    /// Leave null to use the browser default of 1. Use "any" to allow arbitrary decimal precision.
+    /// </summary>
     [Parameter] public string? Step { get; set; }
 
     private async Task HandleInput(ChangeEventArgs e)

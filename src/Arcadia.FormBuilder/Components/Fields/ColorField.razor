@@ -44,7 +44,14 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the selected color as a hex string (e.g., "#ff5733"). Null when no color has been chosen. Supports two-way binding.
+    /// </summary>
     [Parameter] public string? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user picks a color via the color picker or edits the hex text input, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
 
     private async Task HandleInput(ChangeEventArgs e)

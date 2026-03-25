@@ -45,8 +45,20 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the value of the currently selected option. Supports two-way binding.
+    /// </summary>
     [Parameter] public string? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user selects a different option, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the list of selectable options. When null, options are resolved from the field's schema definition.
+    /// Provide this parameter to override schema-driven options or when using the component outside of a FormBuilder.
+    /// </summary>
     [Parameter] public List<Schema.FieldOption>? Options { get; set; }
 
     private IReadOnlyList<Schema.FieldOption> EffectiveOptions =>

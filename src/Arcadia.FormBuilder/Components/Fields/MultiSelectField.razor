@@ -63,8 +63,21 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the list of currently selected option values. Defaults to an empty list.
+    /// Supports two-way binding for tracking multiple selections.
+    /// </summary>
     [Parameter] public List<string> Values { get; set; } = new();
+
+    /// <summary>
+    /// Callback invoked whenever a selection is added or removed, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<List<string>> ValuesChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the list of available options for multi-selection. When null, options are resolved from the field's schema definition.
+    /// Provide this parameter to override schema-driven options or when using the component outside of a FormBuilder.
+    /// </summary>
     [Parameter] public List<Arcadia.FormBuilder.Schema.FieldOption>? Options { get; set; }
 
     private IReadOnlyList<Arcadia.FormBuilder.Schema.FieldOption> EffectiveOptions =>

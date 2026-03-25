@@ -60,8 +60,20 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the current text in the autocomplete input, which may be a free-text query or a selected option value. Supports two-way binding.
+    /// </summary>
     [Parameter] public string? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user types in the input or selects a suggestion from the dropdown, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the list of suggestion options filtered as the user types. When null, options are resolved from the field's schema definition.
+    /// Provide this parameter to supply a custom option set or when using the component outside of a FormBuilder.
+    /// </summary>
     [Parameter] public List<Schema.FieldOption>? Options { get; set; }
 
     private bool _showDropdown;

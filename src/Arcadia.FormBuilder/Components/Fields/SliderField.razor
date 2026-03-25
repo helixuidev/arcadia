@@ -49,11 +49,36 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the current position of the slider thumb. Supports two-way binding.
+    /// </summary>
     [Parameter] public double Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked as the user drags the slider thumb, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<double> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the lower bound of the slider range. Defaults to 0.
+    /// </summary>
     [Parameter] public double Min { get; set; } = 0;
+
+    /// <summary>
+    /// Gets or sets the upper bound of the slider range. Defaults to 100.
+    /// </summary>
     [Parameter] public double Max { get; set; } = 100;
+
+    /// <summary>
+    /// Gets or sets the increment between selectable values on the slider. Defaults to 1.
+    /// Use a smaller step (e.g., 0.1) for finer granularity, or a larger step to snap to coarser intervals.
+    /// </summary>
     [Parameter] public double Step { get; set; } = 1;
+
+    /// <summary>
+    /// Gets or sets whether the minimum and maximum values are displayed as labels beneath the slider track. Defaults to true.
+    /// Set to false when the surrounding layout already communicates the range or when a cleaner appearance is preferred.
+    /// </summary>
     [Parameter] public bool ShowMinMax { get; set; } = true;
 
     private async Task HandleInput(ChangeEventArgs e)

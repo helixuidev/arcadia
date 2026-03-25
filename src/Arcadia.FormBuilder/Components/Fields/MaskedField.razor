@@ -38,7 +38,14 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the raw (unmasked) value containing only the user's alphanumeric input with formatting characters stripped. Supports two-way binding.
+    /// </summary>
     [Parameter] public string? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked whenever the user modifies the masked input, providing the raw unmasked value. Enables two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
 
     /// <summary>

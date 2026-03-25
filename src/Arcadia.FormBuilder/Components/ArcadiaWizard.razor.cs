@@ -55,8 +55,19 @@ public partial class ArcadiaWizard : Core.Base.ArcadiaComponentBase
     [Parameter]
     public Func<int, Task<bool>>? OnStepValidate { get; set; }
 
+    /// <summary>
+    /// Gets or sets the label text for the "Previous" navigation button. Defaults to "Previous".
+    /// </summary>
     [Parameter] public string PreviousText { get; set; } = "Previous";
+
+    /// <summary>
+    /// Gets or sets the label text for the "Next" navigation button. Defaults to "Next".
+    /// </summary>
     [Parameter] public string NextText { get; set; } = "Next";
+
+    /// <summary>
+    /// Gets or sets the label text for the final step completion button. Defaults to "Complete".
+    /// </summary>
     [Parameter] public string CompleteText { get; set; } = "Complete";
 
     /// <summary>

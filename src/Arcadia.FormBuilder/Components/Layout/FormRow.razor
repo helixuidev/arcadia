@@ -6,8 +6,19 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the child content rendered inside the grid row.
+    /// </summary>
     [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the number of equal-width columns in the grid layout. Defaults to 2.
+    /// </summary>
     [Parameter] public int Columns { get; set; } = 2;
+
+    /// <summary>
+    /// Gets or sets the CSS gap value between grid cells. Defaults to the <c>--arcadia-spacing-md</c> design token.
+    /// </summary>
     [Parameter] public string Gap { get; set; } = "var(--arcadia-spacing-md)";
 
     private new string? Style => Arcadia.Core.Utilities.StyleBuilder.Default()

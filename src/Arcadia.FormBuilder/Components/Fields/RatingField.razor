@@ -56,9 +56,26 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the current rating as an integer from 0 (no rating) up to <see cref="MaxRating"/>. Supports two-way binding.
+    /// </summary>
     [Parameter] public int Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user selects or clears a rating, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<int> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the highest selectable rating value, which determines how many stars are rendered. Defaults to 5.
+    /// Increase this for scales that require finer granularity (e.g., 10-point reviews).
+    /// </summary>
     [Parameter] public int MaxRating { get; set; } = 5;
+
+    /// <summary>
+    /// Gets or sets whether a clear button appears after the user has selected a rating. Defaults to true.
+    /// Set to false when a rating is mandatory and the user should not be able to revert to an unrated state.
+    /// </summary>
     [Parameter] public bool ShowClear { get; set; } = true;
 
     private async Task SetRating(int rating)

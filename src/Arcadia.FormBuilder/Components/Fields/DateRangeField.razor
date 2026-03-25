@@ -50,11 +50,36 @@
 </fieldset>
 
 @code {
+    /// <summary>
+    /// Gets or sets the beginning of the selected date range. Null when no start date has been chosen. Supports two-way binding.
+    /// </summary>
     [Parameter] public DateTime? StartDate { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user changes the start date, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<DateTime?> StartDateChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the end of the selected date range. Null when no end date has been chosen. Supports two-way binding.
+    /// </summary>
     [Parameter] public DateTime? EndDate { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the user changes the end date, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<DateTime?> EndDateChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the visible label for the start date input. Defaults to "Start".
+    /// Override this to provide domain-specific labeling such as "Check-in" or "Effective from".
+    /// </summary>
     [Parameter] public string StartLabel { get; set; } = "Start";
+
+    /// <summary>
+    /// Gets or sets the visible label for the end date input. Defaults to "End".
+    /// Override this to provide domain-specific labeling such as "Check-out" or "Expires on".
+    /// </summary>
     [Parameter] public string EndLabel { get; set; } = "End";
 
     private string? StartFormatted => StartDate?.ToString("yyyy-MM-dd");

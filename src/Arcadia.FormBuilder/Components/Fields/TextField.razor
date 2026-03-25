@@ -38,8 +38,20 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the current text entered by the user. Supports two-way binding.
+    /// </summary>
     [Parameter] public string? Value { get; set; }
+
+    /// <summary>
+    /// Callback invoked whenever the user modifies the text, enabling two-way binding with the parent component.
+    /// </summary>
     [Parameter] public EventCallback<string?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the HTML input type attribute. Defaults to "text".
+    /// Change this to leverage browser-native input behaviors such as "email", "url", or "tel".
+    /// </summary>
     [Parameter] public string InputType { get; set; } = "text";
 
     private async Task HandleInput(ChangeEventArgs e)

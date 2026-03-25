@@ -9,6 +9,10 @@
 </div>
 
 @code {
+    /// <summary>
+    /// Gets or sets the optional text label displayed inline on the divider.
+    /// When set, the divider renders a centered label; when <c>null</c>, a plain horizontal rule is shown.
+    /// </summary>
     [Parameter] public string? Label { get; set; }
 
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-form-divider")
