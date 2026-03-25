@@ -10,6 +10,7 @@
                       Striped="true" Hoverable="true"
                       Filterable="true" Selectable="true" MultiSelect="true"
                       SelectedItemsChanged="@(items => _selectedCount = items.Count)"
+                      GroupBy="@_groupBy"
                       Height="500px">
         <DetailTemplate Context="emp">
             <div style="display:flex;gap:24px;color:#9490b3;font-size:0.85rem;">
@@ -24,7 +25,7 @@
             <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Department)" Title="Department" />
             <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Title)" Title="Job Title" />
             <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Salary)" Title="Salary" Format="C0" Align="right"
-                           Aggregate="AggregateType.Average" />
+                           Aggregate="AggregateType.Average" Editable="true" />
             <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.StartDate)" Title="Start Date" Format="d" />
             <ArcadiaColumn TItem="Employee" Title="Actions">
                 <Template Context="emp">
@@ -35,7 +36,15 @@
         </ChildContent>
     </ArcadiaDataGrid>
 
-    <div style="margin-top: 12px; display:flex; gap: 16px; font-size: 0.85rem;">
+    <div style="margin-top: 12px; display:flex; gap: 12px; font-size: 0.85rem; align-items:center;">
+        <label style="color:#9490b3;">Group by:</label>
+        <select style="background:transparent;border:1px solid #2d2a3e;color:inherit;padding:4px 8px;border-radius:4px;font-size:inherit;"
+                @onchange="@((ChangeEventArgs e) => _groupBy = string.IsNullOrEmpty(e.Value?.ToString()) ? null : e.Value?.ToString())">
+            <option value="">None</option>
+            <option value="Department">Department</option>
+        </select>
+    </div>
+    <div style="margin-top: 8px; display:flex; gap: 16px; font-size: 0.85rem;">
         @if (_selected is not null)
         {
             <span style="color: #c084fc;">Viewed: @_selected</span>
@@ -45,11 +54,15 @@
             <span style="color: #22c55e;">@_selectedCount selected</span>
         }
     </div>
+    <div style="margin-top: 4px; color: #9490b3; font-size: 0.75rem;">
+        Double-click the Salary column to edit inline. Click Export CSV in toolbar. Click arrow to expand detail rows.
+    </div>
 </div>
 
 @code {
     string? _selected;
     int _selectedCount;
+    string? _groupBy;
 
     record Employee(int Id, string Name, string Department, string Title, double Salary, DateTime StartDate);
 

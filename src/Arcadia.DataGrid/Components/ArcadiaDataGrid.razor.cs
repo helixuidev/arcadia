@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Arcadia.Core.Base;
 using Arcadia.DataGrid.Core;
 
@@ -75,6 +76,12 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     /// <summary>Fired when a row is edited (inline edit commits).</summary>
     [Parameter] public EventCallback<TItem> OnRowEdit { get; set; }
 
+    /// <summary>Column key to group rows by. Null = no grouping.</summary>
+    [Parameter] public string? GroupBy { get; set; }
+
+    [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
+    private IJSObjectReference? _jsModule;
+
     // ── Internal state ──
     internal ArcadiaDataGridColumnCollector<TItem> Collector { get; } = new();
     private SortDescriptor? _currentSort;
@@ -86,6 +93,8 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     private bool _showColumnPicker;
     private HashSet<TItem> _expandedRows = new();
     private TItem? _editingRow;
+    private string? _editingColumn;
+    private Dictionary<object, bool> _groupExpanded = new();
     private bool _isServerMode => LoadData.HasDelegate;
 
     private IReadOnlyList<ArcadiaColumn<TItem>> Columns => Collector.Columns;
@@ -336,10 +345,12 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     // ── Inline editing ──
 
     internal bool IsEditing(TItem item) => _editingRow is not null && EqualityComparer<TItem>.Default.Equals(_editingRow, item);
+    internal bool IsEditingCell(TItem item, string colKey) => IsEditing(item) && _editingColumn == colKey;
 
-    internal void StartEdit(TItem item)
+    internal void StartEdit(TItem item, string colKey)
     {
         _editingRow = item;
+        _editingColumn = colKey;
     }
 
     internal async Task CommitEdit()
@@ -347,11 +358,105 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
         if (_editingRow is not null && OnRowEdit.HasDelegate)
             await OnRowEdit.InvokeAsync(_editingRow);
         _editingRow = default;
+        _editingColumn = null;
     }
 
     internal void CancelEdit()
     {
         _editingRow = default;
+        _editingColumn = null;
+    }
+
+    // ── Grouping ──
+
+    internal List<(object Key, string Label, List<TItem> Items)> GetGroupedData()
+    {
+        if (string.IsNullOrEmpty(GroupBy)) return new();
+        var col = Columns.FirstOrDefault(c => c.Key == GroupBy);
+        if (col?.Field is null) return new();
+
+        var sorted = GetFilteredData();
+        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
+        {
+            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            if (sortCol?.Field is not null)
+            {
+                sorted = _currentSort.Direction == SortDirection.Ascending
+                    ? sorted.OrderBy(item => sortCol.Field(item))
+                    : sorted.OrderByDescending(item => sortCol.Field(item));
+            }
+        }
+
+        return sorted
+            .GroupBy(item => col.Field(item)?.ToString() ?? "")
+            .Select(g => ((object)g.Key, g.Key.ToString() ?? "", g.ToList()))
+            .ToList();
+    }
+
+    internal bool IsGroupExpanded(object key)
+    {
+        return !_groupExpanded.ContainsKey(key) || _groupExpanded[key];
+    }
+
+    internal void ToggleGroup(object key)
+    {
+        if (_groupExpanded.ContainsKey(key))
+            _groupExpanded[key] = !_groupExpanded[key];
+        else
+            _groupExpanded[key] = false; // was expanded (default), now collapsed
+    }
+
+    // ── CSV Export ──
+
+    internal string ToCsv()
+    {
+        var sb = new System.Text.StringBuilder();
+        var visibleCols = Columns.Where(c => c.IsVisible && c.Field is not null).ToList();
+
+        // Header
+        sb.AppendLine(string.Join(",", visibleCols.Select(c => CsvQuote(c.Title))));
+
+        // Data (all filtered+sorted, not just current page)
+        var allData = GetFilteredData();
+        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
+        {
+            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            if (sortCol?.Field is not null)
+            {
+                allData = _currentSort.Direction == SortDirection.Ascending
+                    ? allData.OrderBy(item => sortCol.Field(item))
+                    : allData.OrderByDescending(item => sortCol.Field(item));
+            }
+        }
+
+        foreach (var item in allData)
+        {
+            sb.AppendLine(string.Join(",", visibleCols.Select(c => CsvQuote(c.FormatValue(c.Field!(item))))));
+        }
+
+        return sb.ToString();
+    }
+
+    internal async Task ExportCsvDownload()
+    {
+        try
+        {
+            _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
+            var csv = ToCsv();
+            await _jsModule.InvokeVoidAsync("downloadCsv", csv, "export.csv");
+        }
+        catch (JSException) { }
+#if NET6_0_OR_GREATER
+        catch (JSDisconnectedException) { }
+#endif
+    }
+
+    private static string CsvQuote(string value)
+    {
+        if (value.Contains(',') || value.Contains('"') || value.Contains('\n'))
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        return value;
     }
 
     // ── Column picker ──

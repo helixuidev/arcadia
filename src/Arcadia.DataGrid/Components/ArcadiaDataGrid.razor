@@ -32,6 +32,7 @@
             }
             <button class="arcadia-grid__filter-toggle @(_showColumnPicker ? "arcadia-grid__filter-toggle--active" : "")"
                     @onclick="ToggleColumnPicker">Columns</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">Export CSV</button>
             @if (_selectedItems.Count > 0)
             {
                 <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
@@ -125,8 +126,45 @@
                 }
             </thead>
             <tbody>
-                @{ var rows = GetPagedData().ToList(); var colSpan = Columns.Count(c => c.IsVisible) + (Selectable && MultiSelect ? 1 : 0); }
-                @if (rows.Count == 0)
+                @{ var rows = !string.IsNullOrEmpty(GroupBy) ? new List<TItem>() : GetPagedData().ToList();
+                   var colSpan = Columns.Count(c => c.IsVisible) + (Selectable && MultiSelect ? 1 : 0) + (DetailTemplate is not null ? 1 : 0); }
+
+                @* Grouped rendering *@
+                @if (!string.IsNullOrEmpty(GroupBy))
+                {
+                    var groups = GetGroupedData();
+                    @foreach (var group in groups)
+                    {
+                        var gKey = group.Key;
+                        <tr class="arcadia-grid__group-row" @onclick="@(() => ToggleGroup(gKey))">
+                            <td colspan="@colSpan" class="arcadia-grid__group-cell">
+                                <span class="arcadia-grid__expand-icon @(IsGroupExpanded(gKey) ? "arcadia-grid__expand-icon--open" : "")">&#9656;</span>
+                                @group.Label
+                                <span class="arcadia-grid__group-count">(@group.Items.Count)</span>
+                            </td>
+                        </tr>
+                        @if (IsGroupExpanded(gKey))
+                        {
+                            @foreach (var item in group.Items)
+                            {
+                                rows.Add(item); @* track for footer *@
+                                var localItem = item;
+                                <tr role="row">
+                                    @if (DetailTemplate is not null) { <td class="arcadia-grid__td"></td> }
+                                    @if (Selectable && MultiSelect) { <td class="arcadia-grid__td"></td> }
+                                    @foreach (var col in Columns.Where(c => c.IsVisible))
+                                    {
+                                        <td role="gridcell" style="text-align:@col.Align;" class="arcadia-grid__td">
+                                            @if (col.Template is not null) { @col.Template(item) }
+                                            else if (col.Field is not null) { @col.FormatValue(col.Field(item)) }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    }
+                }
+                else if (rows.Count == 0)
                 {
                     <tr>
                         <td colspan="@colSpan" class="arcadia-grid__empty">
@@ -158,17 +196,34 @@
                             }
                             @foreach (var col in Columns.Where(c => c.IsVisible))
                             {
-                                var cellClass = col.CellClass?.Invoke(item);
+                                var editCol = col;
+                                var cellClass = editCol.CellClass?.Invoke(item);
+                                var isEditCell = editCol.Editable && IsEditingCell(localItem, editCol.Key);
                                 <td role="gridcell"
-                                    style="text-align:@col.Align;"
-                                    class="arcadia-grid__td @cellClass">
-                                    @if (col.Template is not null)
+                                    style="text-align:@editCol.Align;"
+                                    class="arcadia-grid__td @cellClass @(isEditCell ? "arcadia-grid__td--editing" : "")"
+                                    @ondblclick="@(editCol.Editable ? () => StartEdit(localItem, editCol.Key) : (Action)(() => {}))">
+                                    @if (isEditCell)
                                     {
-                                        @col.Template(item)
+                                        @if (editCol.EditTemplate is not null)
+                                        {
+                                            @editCol.EditTemplate(localItem)
+                                        }
+                                        else
+                                        {
+                                            <input class="arcadia-grid__edit-input"
+                                                   value="@editCol.FormatValue(editCol.Field?.Invoke(localItem))"
+                                                   @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == "Enter") await CommitEdit(); else if (e.Key == "Escape") CancelEdit(); })"
+                                                   @onblur="@(async () => await CommitEdit())" />
+                                        }
                                     }
-                                    else if (col.Field is not null)
+                                    else if (editCol.Template is not null)
                                     {
-                                        @col.FormatValue(col.Field(item))
+                                        @editCol.Template(item)
+                                    }
+                                    else if (editCol.Field is not null)
+                                    {
+                                        @editCol.FormatValue(editCol.Field(item))
                                     }
                                 </td>
                             }
