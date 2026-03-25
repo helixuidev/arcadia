@@ -1,0 +1,54 @@
+@namespace Arcadia.DataGrid.Components
+@typeparam TItem
+
+@code {
+    /// <summary>Value accessor lambda for this column.</summary>
+    [Parameter] public Func<TItem, object>? Field { get; set; }
+
+    /// <summary>Column header text.</summary>
+    [Parameter] public string Title { get; set; } = "";
+
+    /// <summary>Whether this column is sortable. Null inherits from grid.</summary>
+    [Parameter] public bool? Sortable { get; set; }
+
+    /// <summary>CSS width (e.g., "200px", "30%"). Null = auto.</summary>
+    [Parameter] public string? Width { get; set; }
+
+    /// <summary>Text alignment: left, center, right.</summary>
+    [Parameter] public string Align { get; set; } = "left";
+
+    /// <summary>.NET format string for cell values (e.g., "C2", "d", "N0").</summary>
+    [Parameter] public string? Format { get; set; }
+
+    /// <summary>Custom cell content template.</summary>
+    [Parameter] public RenderFragment<TItem>? Template { get; set; }
+
+    /// <summary>Custom header content template.</summary>
+    [Parameter] public RenderFragment? HeaderTemplate { get; set; }
+
+    /// <summary>Whether this column is visible.</summary>
+    [Parameter] public bool Visible { get; set; } = true;
+
+    /// <summary>Dynamic CSS class for cells in this column.</summary>
+    [Parameter] public Func<TItem, string?>? CellClass { get; set; }
+
+    /// <summary>Unique key for this column (auto-generated from Title if not set).</summary>
+    public string Key => !string.IsNullOrEmpty(Title) ? Title : Field?.Method.Name ?? Guid.NewGuid().ToString();
+
+    /// <summary>Format a cell value using the column's Format string.</summary>
+    public string FormatValue(object? value)
+    {
+        if (value is null) return "";
+        if (Format is not null && value is IFormattable formattable)
+            return formattable.ToString(Format, null);
+        return value.ToString() ?? "";
+    }
+
+    /// <summary>Parent grid registers this column during rendering.</summary>
+    [CascadingParameter] internal ArcadiaDataGridColumnCollector<TItem>? Collector { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Collector?.AddColumn(this);
+    }
+}

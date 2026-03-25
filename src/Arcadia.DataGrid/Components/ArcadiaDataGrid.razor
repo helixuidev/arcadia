@@ -1,0 +1,134 @@
+@namespace Arcadia.DataGrid.Components
+@typeparam TItem
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+@* Collect column definitions from child components *@
+<CascadingValue Value="Collector" IsFixed="true">
+    @ChildContent
+</CascadingValue>
+
+<div class="arcadia-grid @(Dense ? "arcadia-grid--dense" : "") @(Striped ? "arcadia-grid--striped" : "") @(Hoverable ? "arcadia-grid--hoverable" : "") @Class"
+     style="@(Height is not null ? $"height:{Height};overflow:auto;" : "") @Style"
+     @attributes="AdditionalAttributes"
+     role="grid"
+     aria-busy="@(Loading ? "true" : "false")">
+
+    @if (Loading)
+    {
+        <div class="arcadia-grid__loading">
+            @for (var r = 0; r < 5; r++)
+            {
+                <div class="arcadia-grid__skeleton-row"></div>
+            }
+        </div>
+    }
+    else if (_columnsCollected && Columns.Count > 0)
+    {
+        <table class="arcadia-grid__table">
+            <thead class="@(FixedHeader ? "arcadia-grid__thead--sticky" : "")">
+                <tr role="row">
+                    @foreach (var col in Columns.Where(c => c.Visible))
+                    {
+                        var localCol = col;
+                        var sortDir = GetSortDirection(localCol.Key);
+                        var isSortable = localCol.Sortable ?? Sortable;
+                        var ariaSort = sortDir switch
+                        {
+                            SortDirection.Ascending => "ascending",
+                            SortDirection.Descending => "descending",
+                            _ => "none"
+                        };
+                        <th role="columnheader"
+                            aria-sort="@ariaSort"
+                            aria-label="@GetSortAriaLabel(localCol)"
+                            style="@(localCol.Width is not null ? $"width:{localCol.Width};" : "") text-align:@localCol.Align;"
+                            class="arcadia-grid__th @(isSortable ? "arcadia-grid__th--sortable" : "")"
+                            @onclick="@(() => HandleHeaderClick(localCol))">
+                            @if (localCol.HeaderTemplate is not null)
+                            {
+                                @localCol.HeaderTemplate
+                            }
+                            else
+                            {
+                                <span>@localCol.Title</span>
+                                @if (isSortable && localCol.Field is not null)
+                                {
+                                    <span class="arcadia-grid__sort-icon">
+                                        @if (sortDir == SortDirection.Ascending) { <text>&#9650;</text> }
+                                        else if (sortDir == SortDirection.Descending) { <text>&#9660;</text> }
+                                        else { <text>&#8693;</text> }
+                                    </span>
+                                }
+                            }
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @{ var rows = GetPagedData().ToList(); }
+                @if (rows.Count == 0)
+                {
+                    <tr>
+                        <td colspan="@Columns.Count(c => c.Visible)" class="arcadia-grid__empty">
+                            @EmptyMessage
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var item in rows)
+                    {
+                        <tr role="row">
+                            @foreach (var col in Columns.Where(c => c.Visible))
+                            {
+                                var cellClass = col.CellClass?.Invoke(item);
+                                <td role="gridcell"
+                                    style="text-align:@col.Align;"
+                                    class="arcadia-grid__td @cellClass">
+                                    @if (col.Template is not null)
+                                    {
+                                        @col.Template(item)
+                                    }
+                                    else if (col.Field is not null)
+                                    {
+                                        @col.FormatValue(col.Field(item))
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        @* Pagination *@
+        @if (PageSize > 0 && TotalCount > PageSize)
+        {
+            <div class="arcadia-grid__pagination" aria-label="Grid pagination">
+                <span class="arcadia-grid__page-info">
+                    @(_pageIndex * PageSize + 1)–@(Math.Min((_pageIndex + 1) * PageSize, TotalCount)) of @TotalCount
+                </span>
+                <div class="arcadia-grid__page-nav">
+                    <button class="arcadia-grid__page-btn" disabled="@(_pageIndex == 0)"
+                            @onclick="@(() => GoToPage(0))" aria-label="First page">&#171;</button>
+                    <button class="arcadia-grid__page-btn" disabled="@(_pageIndex == 0)"
+                            @onclick="@(() => GoToPage(_pageIndex - 1))" aria-label="Previous page">&#8249;</button>
+                    <span class="arcadia-grid__page-current">Page @(_pageIndex + 1) of @PageCount</span>
+                    <button class="arcadia-grid__page-btn" disabled="@(_pageIndex >= PageCount - 1)"
+                            @onclick="@(() => GoToPage(_pageIndex + 1))" aria-label="Next page">&#8250;</button>
+                    <button class="arcadia-grid__page-btn" disabled="@(_pageIndex >= PageCount - 1)"
+                            @onclick="@(() => GoToPage(PageCount - 1))" aria-label="Last page">&#187;</button>
+                </div>
+                <select class="arcadia-grid__page-size" value="@PageSize"
+                        @onchange="HandlePageSizeChange">
+                    @foreach (var opt in PageSizeOptions)
+                    {
+                        <option value="@opt" selected="@(opt == PageSize)">@opt rows</option>
+                    }
+                </select>
+            </div>
+        }
+    }
+
+    <CommunityWatermark />
+</div>

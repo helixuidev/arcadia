@@ -1,0 +1,55 @@
+@page "/test/datagrid"
+@layout Arcadia.Demo.Server.Components.Layout.FullScreenLayout
+@using Arcadia.DataGrid.Components
+
+<div style="padding: 24px; max-width: 1000px; margin: 0 auto;">
+    <h2 style="color: white; margin-bottom: 16px;">ArcadiaDataGrid — Phase 1 Demo</h2>
+
+    <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="10" Striped="true" Hoverable="true">
+        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Id)" Title="ID" Width="60px" Align="center" />
+        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Name)" Title="Name" />
+        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Department)" Title="Department" />
+        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Title)" Title="Job Title" />
+        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.Salary)" Title="Salary" Format="C0" Align="right" />
+        <ArcadiaColumn TItem="Employee" Field="@(e => (object)e.StartDate)" Title="Start Date" Format="d" />
+        <ArcadiaColumn TItem="Employee" Title="Actions">
+            <Template Context="emp">
+                <button style="background:#8b5cf6;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:0.75rem;"
+                        @onclick="@(() => _selected = emp.Name)">View</button>
+            </Template>
+        </ArcadiaColumn>
+    </ArcadiaDataGrid>
+
+    @if (_selected is not null)
+    {
+        <div style="margin-top: 12px; color: #c084fc; font-size: 0.85rem;">Selected: @_selected</div>
+    }
+</div>
+
+@code {
+    string? _selected;
+
+    record Employee(int Id, string Name, string Department, string Title, double Salary, DateTime StartDate);
+
+    List<Employee> _employees = new();
+
+    protected override void OnInitialized()
+    {
+        var departments = new[] { "Engineering", "Marketing", "Sales", "HR", "Finance", "Operations", "Design", "Product" };
+        var titles = new[] { "Junior", "Mid-Level", "Senior", "Lead", "Principal", "Director", "VP" };
+        var firstNames = new[] { "Alice", "Bob", "Carol", "Dave", "Eve", "Frank", "Grace", "Hank", "Iris", "Jack", "Kate", "Leo", "Maya", "Nick", "Olivia", "Pete", "Quinn", "Rose", "Sam", "Tina" };
+        var lastNames = new[] { "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Wilson", "Anderson", "Taylor", "Thomas", "Moore", "White", "Harris", "Clark", "Lewis", "Young" };
+
+        var rng = new Random(42);
+        for (var i = 1; i <= 75; i++)
+        {
+            var dept = departments[rng.Next(departments.Length)];
+            var title = titles[rng.Next(titles.Length)];
+            var first = firstNames[rng.Next(firstNames.Length)];
+            var last = lastNames[rng.Next(lastNames.Length)];
+            var salary = 55000 + rng.Next(120000);
+            var start = new DateTime(2018, 1, 1).AddDays(rng.Next(2500));
+            _employees.Add(new Employee(i, $"{first} {last}", dept, $"{title} {dept}", salary, start));
+        }
+    }
+}
