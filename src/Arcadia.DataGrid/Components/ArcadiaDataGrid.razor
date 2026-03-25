@@ -302,8 +302,8 @@
             }
         </table>
 
-        @* Pagination *@
-        @if (PageSize > 0 && TotalCount > PageSize)
+        @* Pagination — hidden in virtual scroll mode *@
+        @if (!VirtualizeRows && PageSize > 0 && TotalCount > PageSize)
         {
             <div class="arcadia-grid__pagination" aria-label="Grid pagination">
                 <span class="arcadia-grid__page-info">

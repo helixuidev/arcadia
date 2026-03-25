@@ -87,6 +87,15 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Column key to group rows by. Null = no grouping.</summary>
     [Parameter] public string? GroupBy { get; set; }
 
+    /// <summary>Enable virtual scrolling for large datasets. Requires Height to be set. Disables pagination.</summary>
+    [Parameter] public bool VirtualizeRows { get; set; }
+
+    /// <summary>Estimated row height in pixels for virtual scrolling.</summary>
+    [Parameter] public float ItemSize { get; set; } = 40;
+
+    /// <summary>Number of extra rows to render above/below the viewport.</summary>
+    [Parameter] public int OverscanCount { get; set; } = 5;
+
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     private IJSObjectReference? _jsModule;
     private bool _disposed;
@@ -209,9 +218,32 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         return result;
     }
 
+    /// <summary>Get all filtered and sorted data (no paging). Used by virtual scrolling and export.</summary>
+    internal IList<TItem> GetAllSortedData()
+    {
+        if (_isServerMode) return (IList<TItem>)(Data ?? (IReadOnlyList<TItem>)Array.Empty<TItem>());
+
+        IEnumerable<TItem> result = GetCachedFilteredData();
+
+        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
+        {
+            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            if (sortCol?.Field is not null)
+            {
+                result = _currentSort.Direction == SortDirection.Ascending
+                    ? result.OrderBy(item => sortCol.Field(item))
+                    : result.OrderByDescending(item => sortCol.Field(item));
+            }
+        }
+
+        return result.ToList();
+    }
+
     /// <summary>Get the current page of data, filtered and sorted.</summary>
     internal IEnumerable<TItem> GetPagedData()
     {
+        if (VirtualizeRows) return GetAllSortedData(); // virtual scrolling shows all
+
         if (_isServerMode) return Data ?? Enumerable.Empty<TItem>();
 
         IEnumerable<TItem> result = GetCachedFilteredData();
