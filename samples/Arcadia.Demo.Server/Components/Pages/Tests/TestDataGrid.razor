@@ -6,11 +6,29 @@
 <div style="padding: 24px; max-width: 1100px; margin: 0 auto;">
     <h2 style="color: white; margin-bottom: 16px;">ArcadiaDataGrid — Full Feature Demo</h2>
 
+    <div style="margin-bottom: 12px; display:flex; gap: 12px; align-items:center;">
+        <label style="color:#9490b3; font-size:0.8rem;">Theme:</label>
+        @foreach (var t in _themes)
+        {
+            var theme = t;
+            <button style="@($"padding:4px 12px;border-radius:6px;border:1px solid {(theme.Key == _theme ? "#8b5cf6" : "#2d2a3e")};background:{(theme.Key == _theme ? "rgba(139,92,246,0.15)" : "transparent")};color:{(theme.Key == _theme ? "#c084fc" : "#9490b3")};cursor:pointer;font-size:0.75rem;font-family:inherit;")"
+                    @onclick="@(() => _theme = theme.Key)">@theme.Value</button>
+        }
+        <label style="color:#9490b3; font-size:0.8rem; margin-left:12px;">Density:</label>
+        @foreach (var d in _densities)
+        {
+            var density = d;
+            <button style="@($"padding:4px 10px;border-radius:6px;border:1px solid {(density.Key == _density ? "#8b5cf6" : "#2d2a3e")};background:{(density.Key == _density ? "rgba(139,92,246,0.15)" : "transparent")};color:{(density.Key == _density ? "#c084fc" : "#9490b3")};cursor:pointer;font-size:0.75rem;font-family:inherit;")"
+                    @onclick="@(() => _density = density.Key)">@density.Value</button>
+        }
+    </div>
+
     <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="10"
                       Striped="true" Hoverable="true"
                       Filterable="true" Selectable="true" MultiSelect="true"
                       SelectedItemsChanged="@(items => _selectedCount = items.Count)"
                       GroupBy="@_groupBy"
+                      Class="@($"{_theme} {_density}")"
                       Height="500px">
         <DetailTemplate Context="emp">
             <div style="display:flex;gap:24px;color:#9490b3;font-size:0.85rem;">
@@ -63,6 +81,26 @@
     string? _selected;
     int _selectedCount;
     string? _groupBy;
+    string _theme = "arcadia-grid--obsidian";
+    string _density = "";
+
+    Dictionary<string, string> _themes = new()
+    {
+        { "", "Default" },
+        { "arcadia-grid--obsidian", "Obsidian" },
+        { "arcadia-grid--vapor", "Vapor" },
+        { "arcadia-grid--carbon", "Carbon" },
+        { "arcadia-grid--aurora", "Aurora" },
+        { "arcadia-grid--slate", "Slate" },
+        { "arcadia-grid--midnight", "Midnight" },
+    };
+
+    Dictionary<string, string> _densities = new()
+    {
+        { "", "Default" },
+        { "arcadia-grid--compact", "Compact" },
+        { "arcadia-grid--relaxed", "Relaxed" },
+    };
 
     record Employee(int Id, string Name, string Department, string Title, double Salary, DateTime StartDate);
 

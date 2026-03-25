@@ -381,6 +381,233 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   --_row-selected: var(--arcadia-grid-row-selected, #ece8f8);
 }
 
+/* ================================================================
+   UNIVERSAL IMPROVEMENTS
+   ================================================================ */
+
+/* Tabular numerals for numeric alignment */
+.arcadia-grid__td { font-variant-numeric: tabular-nums; }
+
+/* Cell text truncation */
+.arcadia-grid__td > span,
+.arcadia-grid__td > :not(button):not(input) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Focus-visible for keyboard nav */
+.arcadia-grid__th--sortable:focus-visible,
+.arcadia-grid__page-btn:focus-visible,
+.arcadia-grid__filter-toggle:focus-visible {
+  outline: 2px solid var(--_accent);
+  outline-offset: -2px;
+}
+
+/* Density modes */
+.arcadia-grid--compact .arcadia-grid__th,
+.arcadia-grid--compact .arcadia-grid__td { padding: 6px 12px; }
+.arcadia-grid--compact { font-size: 0.8rem; }
+
+.arcadia-grid--relaxed .arcadia-grid__th { padding: 14px 20px; }
+.arcadia-grid--relaxed .arcadia-grid__td { padding: 16px 20px; }
+.arcadia-grid--relaxed { font-size: 0.925rem; }
+
+/* ================================================================
+   THEMES — apply via class: <ArcadiaDataGrid Class="arcadia-grid--obsidian">
+   ================================================================ */
+
+/* ── 1. Obsidian — Ultra-minimal (Linear/shadcn) ── */
+.arcadia-grid--obsidian {
+  --_bg: #09090B;
+  --_header: #09090B;
+  --_border: #1F1F23;
+  --_text: #FAFAFA;
+  --_muted: #71717A;
+  --_accent: #6366F1;
+  --_row-bg: transparent;
+  --_row-alt: rgba(255,255,255,0.02);
+  --_row-hover: #1A1A1F;
+  --_row-selected: rgba(99,102,241,0.08);
+  border: 1px solid #1F1F23;
+}
+.arcadia-grid--obsidian .arcadia-grid__th {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+}
+.arcadia-grid--obsidian .arcadia-grid__td {
+  border-bottom-color: rgba(255,255,255,0.04);
+}
+
+/* ── 2. Vapor — Frosted Glass ── */
+.arcadia-grid--vapor {
+  --_bg: rgba(255,255,255,0.02);
+  --_header: rgba(255,255,255,0.04);
+  --_border: rgba(255,255,255,0.06);
+  --_text: #E4E4E7;
+  --_muted: #6B6B76;
+  --_accent: #818CF8;
+  --_row-bg: transparent;
+  --_row-alt: rgba(255,255,255,0.015);
+  --_row-hover: rgba(255,255,255,0.04);
+  --_row-selected: rgba(99,102,241,0.08);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.2);
+  border: none;
+}
+.arcadia-grid--vapor .arcadia-grid__thead--sticky {
+  backdrop-filter: blur(12px) saturate(180%);
+}
+.arcadia-grid--vapor .arcadia-grid__th {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  background: rgba(255,255,255,0.03);
+}
+.arcadia-grid--vapor .arcadia-grid__td {
+  padding: 14px 20px;
+}
+
+/* ── 3. Carbon — Stripe Enterprise ── */
+.arcadia-grid--carbon {
+  --_bg: #111118;
+  --_header: #19192A;
+  --_border: #25253A;
+  --_text: #F0F0F5;
+  --_muted: #8888A0;
+  --_accent: #635BFF;
+  --_row-bg: #111118;
+  --_row-alt: #0E0E18;
+  --_row-hover: #14142A;
+  --_row-selected: rgba(99,91,255,0.1);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.arcadia-grid--carbon .arcadia-grid__th {
+  text-transform: none;
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  border-right: 1px solid rgba(37,37,58,0.5);
+}
+.arcadia-grid--carbon .arcadia-grid__td {
+  border-right: 1px solid rgba(37,37,58,0.3);
+  padding: 9px 14px;
+}
+.arcadia-grid--carbon .arcadia-grid__th:last-child,
+.arcadia-grid--carbon .arcadia-grid__td:last-child { border-right: none; }
+
+/* ── 4. Aurora — Gradient Accent ── */
+.arcadia-grid--aurora {
+  --_bg: #0C0C0E;
+  --_header: #0C0C0E;
+  --_border: #232326;
+  --_text: #F5F5F7;
+  --_muted: #6E6E78;
+  --_accent: #8B5CF6;
+  --_row-bg: transparent;
+  --_row-alt: rgba(139,92,246,0.02);
+  --_row-hover: #1C1C20;
+  --_row-selected: transparent;
+  border-radius: 10px;
+}
+.arcadia-grid--aurora .arcadia-grid__row--selected > .arcadia-grid__td {
+  background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(59,130,246,0.06)) !important;
+}
+.arcadia-grid--aurora .arcadia-grid__th {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+}
+.arcadia-grid--aurora th[aria-sort="ascending"] .arcadia-grid__sort-icon,
+.arcadia-grid--aurora th[aria-sort="descending"] .arcadia-grid__sort-icon {
+  background: linear-gradient(135deg, #8B5CF6, #3B82F6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.arcadia-grid--aurora .arcadia-grid__filter-toggle--active {
+  background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.15));
+  border-image: linear-gradient(135deg, #8B5CF6, #3B82F6) 1;
+}
+
+/* ── 5. Slate — Notion Warm Neutral ── */
+.arcadia-grid--slate {
+  --_bg: #191919;
+  --_header: #191919;
+  --_border: #2E2E2E;
+  --_text: #E8E5E0;
+  --_muted: #9B9A97;
+  --_accent: #2EAADC;
+  --_row-bg: transparent;
+  --_row-alt: rgba(155,154,151,0.03);
+  --_row-hover: #252525;
+  --_row-selected: rgba(46,170,220,0.08);
+  border-radius: 4px;
+  border-color: #2E2E2E;
+}
+.arcadia-grid--slate .arcadia-grid__th {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  color: #787774;
+}
+.arcadia-grid--slate .arcadia-grid__td {
+  font-size: 0.9rem;
+  border-bottom-color: rgba(255,255,255,0.04);
+}
+
+/* ── 6. Midnight — Vercel High-Contrast ── */
+.arcadia-grid--midnight {
+  --_bg: #000000;
+  --_header: #0A0A0A;
+  --_border: #1A1A1A;
+  --_text: #EDEDED;
+  --_muted: #888888;
+  --_accent: #0070F3;
+  --_row-bg: #000000;
+  --_row-alt: #050505;
+  --_row-hover: #111111;
+  --_row-selected: rgba(0,112,243,0.08);
+  border-radius: 6px;
+  border-color: #1A1A1A;
+}
+.arcadia-grid--midnight .arcadia-grid__th {
+  text-transform: none;
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+.arcadia-grid--midnight .arcadia-grid__td {
+  border-right: 1px solid #0D0D0D;
+  padding: 9px 14px;
+}
+.arcadia-grid--midnight .arcadia-grid__td:last-child { border-right: none; }
+
+/* ── Light variants for themed grids ── */
+.arcadia-grid--obsidian-light {
+  --_bg: #FFFFFF; --_header: #FFFFFF; --_border: #E4E4E7; --_text: #09090B;
+  --_muted: #71717A; --_accent: #4F46E5; --_row-alt: #F4F4F5; --_row-hover: #F4F4F5; --_row-selected: #EEF2FF;
+}
+.arcadia-grid--carbon-light {
+  --_bg: #FFFFFF; --_header: #F6F8FA; --_border: #E3E8EE; --_text: #1A1F36;
+  --_muted: #697386; --_accent: #635BFF; --_row-alt: #F9FAFB; --_row-hover: #F0F2F5; --_row-selected: #F0EDFF;
+}
+.arcadia-grid--slate-light {
+  --_bg: #FFFFFF; --_header: #FFFFFF; --_border: #E9E9E7; --_text: #37352F;
+  --_muted: #787774; --_accent: #2EAADC; --_row-alt: #F7F6F3; --_row-hover: #F7F6F3; --_row-selected: #E8F6FC;
+}
+.arcadia-grid--midnight-light {
+  --_bg: #FFFFFF; --_header: #FAFAFA; --_border: #EAEAEA; --_text: #000000;
+  --_muted: #666666; --_accent: #0070F3; --_row-alt: #FAFAFA; --_row-hover: #F5F5F5; --_row-selected: #EBF5FF;
+}
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .arcadia-grid__skeleton-row {
