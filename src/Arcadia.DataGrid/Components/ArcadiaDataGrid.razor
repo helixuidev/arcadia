@@ -52,7 +52,7 @@
                 }
             </div>
         }
-        <table class="arcadia-grid__table">
+        <table class="arcadia-grid__table" @ref="TableRef">
             <thead class="@(FixedHeader ? "arcadia-grid__thead--sticky" : "")">
                 <tr role="row">
                     @if (ShowRowSelector)
@@ -102,6 +102,7 @@
                                     </span>
                                 }
                             }
+                            <div class="arcadia-grid__resize-handle"></div>
                         </th>
                     }
                 </tr>

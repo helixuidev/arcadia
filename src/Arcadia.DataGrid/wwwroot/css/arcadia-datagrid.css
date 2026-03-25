@@ -489,33 +489,38 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 
 /* ── 2. Vapor — Frosted Glass ── */
 .arcadia-grid--vapor {
-  --_bg: rgba(255,255,255,0.02);
-  --_header: rgba(255,255,255,0.04);
-  --_border: rgba(255,255,255,0.06);
+  --_bg: rgba(15,15,20,0.85);
+  --_header: rgba(20,20,28,0.9);
+  --_border: rgba(255,255,255,0.08);
   --_text: #E4E4E7;
-  --_muted: #6B6B76;
+  --_muted: #8888A0;
   --_accent: #818CF8;
-  --_row-bg: transparent;
-  --_row-alt: rgba(255,255,255,0.015);
-  --_row-hover: rgba(255,255,255,0.04);
-  --_row-selected: rgba(99,102,241,0.08);
+  --_row-bg: rgba(15,15,20,0.6);
+  --_row-alt: rgba(255,255,255,0.02);
+  --_row-hover: rgba(255,255,255,0.05);
+  --_row-selected: rgba(99,102,241,0.12);
   border-radius: 12px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 4px 24px rgba(0,0,0,0.2);
+  backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.3);
   border: none;
 }
 .arcadia-grid--vapor .arcadia-grid__thead--sticky {
-  backdrop-filter: blur(12px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
 }
 .arcadia-grid--vapor .arcadia-grid__th {
   text-transform: none;
   font-weight: 500;
   font-size: 0.8rem;
   letter-spacing: 0;
-  background: rgba(255,255,255,0.03);
+  background: rgba(20,20,28,0.9);
 }
 .arcadia-grid--vapor .arcadia-grid__td {
   padding: 14px 20px;
+  background: rgba(15,15,20,0.6);
+}
+.arcadia-grid--vapor .arcadia-grid__toolbar,
+.arcadia-grid--vapor .arcadia-grid__pagination {
+  background: rgba(20,20,28,0.9);
 }
 
 /* ── 3. Carbon — Stripe Enterprise ── */
@@ -654,9 +659,67 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   --_muted: #666666; --_accent: #0070F3; --_row-alt: #FAFAFA; --_row-hover: #F5F5F5; --_row-selected: #EBF5FF;
 }
 
+/* ================================================================
+   ANIMATIONS
+   ================================================================ */
+
+/* Row enter animation on page change */
+@keyframes arcadia-grid-row-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.arcadia-grid tbody tr[role="row"] {
+  animation: arcadia-grid-row-enter 0.15s ease-out both;
+}
+.arcadia-grid tbody tr[role="row"]:nth-child(1) { animation-delay: 0ms; }
+.arcadia-grid tbody tr[role="row"]:nth-child(2) { animation-delay: 15ms; }
+.arcadia-grid tbody tr[role="row"]:nth-child(3) { animation-delay: 30ms; }
+.arcadia-grid tbody tr[role="row"]:nth-child(4) { animation-delay: 45ms; }
+.arcadia-grid tbody tr[role="row"]:nth-child(5) { animation-delay: 60ms; }
+.arcadia-grid tbody tr[role="row"]:nth-child(n+6) { animation-delay: 75ms; }
+
+/* Detail row expand/collapse */
+.arcadia-grid__detail-row {
+  animation: arcadia-grid-row-enter 0.2s ease-out both;
+}
+
+/* Smooth background transitions on all interactive rows */
+.arcadia-grid tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+/* Column header drag states */
+.arcadia-grid__th--dragging {
+  opacity: 0.4;
+  background: var(--_accent) !important;
+}
+.arcadia-grid__th--drop-target {
+  box-shadow: inset -3px 0 0 var(--_accent);
+}
+
+/* Column resize handle */
+.arcadia-grid__resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  user-select: none;
+  z-index: 3;
+}
+.arcadia-grid__resize-handle:hover,
+.arcadia-grid__resize-handle--active {
+  background: var(--_accent);
+  opacity: 0.5;
+}
+.arcadia-grid__th { position: relative; } /* enable resize handle positioning */
+
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
-  .arcadia-grid__skeleton-row {
-    animation: none;
+  .arcadia-grid__skeleton-row,
+  .arcadia-grid tbody tr[role="row"],
+  .arcadia-grid__detail-row {
+    animation: none !important;
   }
 }

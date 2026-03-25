@@ -110,12 +110,28 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase
     private int TotalCount => _isServerMode ? (ServerTotalCount ?? 0) : (Filterable && _filters.Values.Any(f => !string.IsNullOrEmpty(f.Value)) ? GetFilteredData().Count() : (Data?.Count ?? 0));
     private int PageCount => PageSize > 0 ? (int)Math.Ceiling((double)TotalCount / PageSize) : 1;
 
-    protected override void OnAfterRender(bool firstRender)
+    internal ElementReference TableRef;
+    private bool _resizeInitialized;
+
+    protected override async void OnAfterRender(bool firstRender)
     {
         if (firstRender && !_columnsCollected && Columns.Count > 0)
         {
             _columnsCollected = true;
             StateHasChanged();
+        }
+
+        // Init column resize handles after columns render
+        if (_columnsCollected && !_resizeInitialized)
+        {
+            _resizeInitialized = true;
+            try
+            {
+                _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                    "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
+                await _jsModule.InvokeVoidAsync("initResizeHandles", TableRef, 50);
+            }
+            catch { /* JS not available in SSR */ }
         }
     }
 
