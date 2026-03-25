@@ -1,6 +1,7 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
 using Arcadia.Charts.Core.Layout;
+using Arcadia.Charts.Core.Scales;
 
 namespace Arcadia.Charts.Core;
 
@@ -40,6 +41,12 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
 
     /// <summary>Manual Y-axis maximum. Null = auto from data.</summary>
     [Parameter] public double? YAxisMax { get; set; }
+
+    /// <summary>Y-axis scale type: "linear" (default) or "log" (logarithmic). Log scale requires positive values.</summary>
+    [Parameter] public string YAxisType { get; set; } = "linear";
+
+    /// <summary>Whether the Y-axis is logarithmic.</summary>
+    protected bool IsLogScale => string.Equals(YAxisType, "log", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>Maximum number of Y-axis ticks.</summary>
     [Parameter] public int YAxisMaxTicks { get; set; } = 8;
@@ -410,6 +417,41 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
             builder.CloseElement();
         }
         : null;
+
+    /// <summary>Creates a Y-axis scale appropriate for the current YAxisType.</summary>
+    private protected LinearScale CreateYScale(double domainMin, double domainMax, double rangeMin, double rangeMax)
+    {
+        if (IsLogScale)
+        {
+            var logScale = new Scales.LogarithmicScale(domainMin, domainMax, rangeMin, rangeMax);
+            // Wrap in a LinearScale-compatible adapter using log transform
+            return new LogScaleAdapter(logScale, rangeMin, rangeMax);
+        }
+        return new LinearScale(domainMin, domainMax, rangeMin, rangeMax);
+    }
+
+    /// <summary>Generates Y-axis ticks appropriate for the current YAxisType.</summary>
+    private protected List<double> CreateYTicks(double domainMin, double domainMax)
+    {
+        if (IsLogScale)
+            return Scales.LogarithmicScale.GenerateTicks(domainMin, domainMax, YAxisMaxTicks);
+        return TickGenerator.GenerateNumericTicks(domainMin, domainMax, YAxisMaxTicks).ToList();
+    }
+
+    /// <summary>Adapter that makes LogarithmicScale usable where LinearScale is expected.</summary>
+    private protected class LogScaleAdapter : LinearScale
+    {
+        private readonly LogarithmicScale _logScale;
+
+        public LogScaleAdapter(LogarithmicScale logScale, double rangeMin, double rangeMax)
+            : base(logScale.DomainMin, logScale.DomainMax, rangeMin, rangeMax)
+        {
+            _logScale = logScale;
+        }
+
+        public new double Scale(double value) => _logScale.Scale(value);
+        public new double Invert(double pixel) => _logScale.Invert(pixel);
+    }
 
     /// <summary>Formats a value for screen reader tables, replacing NaN with "—".</summary>
     protected static string FormatSrValue(double value) =>
