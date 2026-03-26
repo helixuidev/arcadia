@@ -1,0 +1,65 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<span class="@CssClass"
+      style="@Style"
+      @attributes="AdditionalAttributes">
+    @if (ChildContent is not null)
+    {
+        <span class="arcadia-badge__anchor">
+            @ChildContent
+        </span>
+    }
+    <span class="@BadgeIndicatorClass"
+          role="status"
+          aria-label="@AriaLabel">
+        @if (!Dot && !string.IsNullOrEmpty(Content))
+        {
+            @Content
+        }
+    </span>
+</span>
+
+@code {
+    /// <summary>
+    /// Gets or sets the badge text content (e.g., "3", "New").
+    /// Ignored when Dot is true.
+    /// </summary>
+    [Parameter]
+    public string? Content { get; set; }
+
+    /// <summary>
+    /// Gets or sets the badge color variant.
+    /// Accepted values: "primary", "success", "danger", "warning". Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Gets or sets whether the badge is rendered as a dot (no text). Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Dot { get; set; }
+
+    /// <summary>
+    /// Gets or sets the element the badge attaches to.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-badge")
+        .AddClass("arcadia-badge--standalone", ChildContent is null)
+        .AddClass(Class)
+        .Build();
+
+    private string? BadgeIndicatorClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-badge__indicator")
+        .AddClass($"arcadia-badge__indicator--{Color}")
+        .AddClass("arcadia-badge__indicator--dot", Dot)
+        .Build();
+
+    private string AriaLabel => Dot
+        ? "Status indicator"
+        : !string.IsNullOrEmpty(Content)
+            ? Content
+            : "Badge";
+}

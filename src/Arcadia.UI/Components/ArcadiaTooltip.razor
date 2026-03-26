@@ -1,0 +1,63 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<span class="@CssClass"
+      style="@Style"
+      aria-describedby="@TooltipId"
+      @attributes="AdditionalAttributes">
+    @ChildContent
+
+    <span id="@TooltipId"
+          class="arcadia-tooltip__popup"
+          role="tooltip"
+          style="@PopupStyle">
+        <span class="arcadia-tooltip__arrow"></span>
+        <span class="arcadia-tooltip__text">@Text</span>
+    </span>
+</span>
+
+@code {
+    /// <summary>
+    /// Gets or sets the tooltip text content.
+    /// </summary>
+    [Parameter]
+    public string Text { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the tooltip position relative to the trigger element.
+    /// Valid values: "top", "bottom", "left", "right". Defaults to "top".
+    /// </summary>
+    [Parameter]
+    public string Position { get; set; } = "top";
+
+    /// <summary>
+    /// Gets or sets the delay in milliseconds before the tooltip appears. Defaults to 200.
+    /// </summary>
+    [Parameter]
+    public int Delay { get; set; } = 200;
+
+    /// <summary>
+    /// Gets or sets the trigger element content that the tooltip wraps.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string TooltipId => $"{ElementId}-tooltip";
+
+    private string NormalizedPosition => Position?.ToLowerInvariant() switch
+    {
+        "bottom" => "bottom",
+        "left" => "left",
+        "right" => "right",
+        _ => "top"
+    };
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-tooltip")
+        .AddClass($"arcadia-tooltip--{NormalizedPosition}")
+        .AddClass(Class)
+        .Build();
+
+    private string? PopupStyle => Arcadia.Core.Utilities.StyleBuilder.Default()
+        .AddStyle("--arcadia-tooltip-delay", $"{Delay}ms")
+        .Build();
+}

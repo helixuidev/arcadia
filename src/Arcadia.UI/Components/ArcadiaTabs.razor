@@ -1,0 +1,142 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass" @attributes="AdditionalAttributes">
+    <div class="arcadia-tabs__header"
+         role="tablist"
+         aria-label="Tabs"
+         @onkeydown="OnKeyDownAsync">
+        @foreach (var panel in _panels)
+        {
+            var index = panel.Index;
+            var isSelected = index == ActiveIndex;
+            <button class="@TabButtonClass(panel, isSelected)"
+                    id="@panel.TabId"
+                    type="button"
+                    role="tab"
+                    aria-selected="@isSelected.ToString().ToLowerInvariant()"
+                    aria-controls="@panel.PanelId"
+                    tabindex="@Arcadia.Core.Accessibility.KeyboardNavigation.GetTabIndex(index, ActiveIndex)"
+                    disabled="@panel.Disabled"
+                    @onclick="() => SelectTabAsync(index)">
+                @if (!string.IsNullOrEmpty(panel.Icon))
+                {
+                    <span class="arcadia-tabs__icon" aria-hidden="true">@panel.Icon</span>
+                }
+                <span class="arcadia-tabs__label">@panel.Title</span>
+            </button>
+        }
+    </div>
+
+    <CascadingValue Value="this" IsFixed="true">
+        <div class="arcadia-tabs__content">
+            @ChildContent
+        </div>
+    </CascadingValue>
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the index of the currently active tab. Defaults to 0.
+    /// </summary>
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="ActiveIndex"/> changes. Supports two-way binding.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content, which should be <see cref="ArcadiaTabPanel"/> components.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private readonly List<ArcadiaTabPanel> _panels = new();
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-tabs")
+        .AddClass(Class)
+        .Build();
+
+    private static string? TabButtonClass(ArcadiaTabPanel panel, bool isSelected)
+    {
+        return Arcadia.Core.Utilities.CssBuilder.Default("arcadia-tabs__tab")
+            .AddClass("arcadia-tabs__tab--active", isSelected)
+            .AddClass("arcadia-tabs__tab--disabled", panel.Disabled)
+            .Build();
+    }
+
+    /// <summary>
+    /// Registers a child <see cref="ArcadiaTabPanel"/> with this tab container.
+    /// Called internally by child panels.
+    /// </summary>
+    internal void AddPanel(ArcadiaTabPanel panel)
+    {
+        panel.Index = _panels.Count;
+        _panels.Add(panel);
+        UpdatePanelStates();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Removes a child <see cref="ArcadiaTabPanel"/> from this tab container.
+    /// Called internally by child panels on disposal.
+    /// </summary>
+    internal void RemovePanel(ArcadiaTabPanel panel)
+    {
+        _panels.Remove(panel);
+        for (var i = 0; i < _panels.Count; i++)
+        {
+            _panels[i].Index = i;
+        }
+        UpdatePanelStates();
+        StateHasChanged();
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        UpdatePanelStates();
+    }
+
+    private void UpdatePanelStates()
+    {
+        for (var i = 0; i < _panels.Count; i++)
+        {
+            _panels[i].IsActive = i == ActiveIndex;
+        }
+    }
+
+    private async Task SelectTabAsync(int index)
+    {
+        if (index < 0 || index >= _panels.Count)
+            return;
+
+        if (_panels[index].Disabled)
+            return;
+
+        ActiveIndex = index;
+        UpdatePanelStates();
+        await ActiveIndexChanged.InvokeAsync(ActiveIndex);
+    }
+
+    private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        var direction = Arcadia.Core.Accessibility.KeyboardNavigation.MapHorizontalKey(args.Key);
+        if (direction is null)
+            return;
+
+        var nextIndex = Arcadia.Core.Accessibility.KeyboardNavigation.GetNextEnabledIndex(
+            ActiveIndex,
+            _panels.Count,
+            direction.Value,
+            i => _panels[i].Disabled);
+
+        if (nextIndex != ActiveIndex)
+        {
+            await SelectTabAsync(nextIndex);
+        }
+    }
+}

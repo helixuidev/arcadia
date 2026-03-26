@@ -1,0 +1,104 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="@(Clickable ? "button" : null)"
+     tabindex="@(Clickable ? 0 : -1)"
+     @onclick="HandleClick"
+     @onkeydown="HandleKeyDown"
+     @attributes="AdditionalAttributes">
+
+    @if (HeaderTemplate is not null)
+    {
+        <div class="arcadia-card__header">
+            @HeaderTemplate
+        </div>
+    }
+    else if (!string.IsNullOrEmpty(Title))
+    {
+        <div class="arcadia-card__header">
+            <h3 class="arcadia-card__title">@Title</h3>
+            @if (!string.IsNullOrEmpty(Subtitle))
+            {
+                <p class="arcadia-card__subtitle">@Subtitle</p>
+            }
+        </div>
+    }
+
+    <div class="arcadia-card__body">
+        @ChildContent
+    </div>
+
+    @if (FooterTemplate is not null)
+    {
+        <div class="arcadia-card__footer">
+            @FooterTemplate
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the card title displayed in the header. Ignored when HeaderTemplate is set.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the card subtitle displayed below the title. Ignored when HeaderTemplate is set.
+    /// </summary>
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    /// <summary>
+    /// Gets or sets a custom header template. When set, Title and Subtitle are ignored.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? HeaderTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets a custom footer template for action buttons or additional content.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? FooterTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the card body content.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the card is clickable with a hover effect. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Clickable { get; set; }
+
+    /// <summary>
+    /// Event callback fired when the card is clicked (only when Clickable is true).
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-card")
+        .AddClass("arcadia-card--clickable", Clickable)
+        .AddClass(Class)
+        .Build();
+
+    private async Task HandleClick()
+    {
+        if (Clickable)
+        {
+            await OnClick.InvokeAsync();
+        }
+    }
+
+    private async Task HandleKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e)
+    {
+        if (Clickable && (e.Key == "Enter" || e.Key == " "))
+        {
+            await OnClick.InvokeAsync();
+        }
+    }
+}

@@ -1,0 +1,104 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<aside class="@CssClass"
+       style="@ComputedStyle"
+       role="navigation"
+       aria-label="Sidebar navigation"
+       @attributes="AdditionalAttributes">
+
+    @if (Visible || !string.IsNullOrEmpty(CollapsedWidth))
+    {
+        <div class="arcadia-sidebar__content">
+            @ChildContent
+        </div>
+    }
+
+    <button type="button"
+            class="arcadia-sidebar__toggle"
+            @onclick="ToggleVisibility"
+            aria-expanded="@Visible.ToString().ToLowerInvariant()"
+            aria-label="@(Visible ? "Collapse sidebar" : "Expand sidebar")">
+        <svg class="arcadia-sidebar__toggle-icon"
+             viewBox="0 0 20 20" fill="currentColor"
+             aria-hidden="true">
+            @if (Visible)
+            {
+                <path fill-rule="evenodd" d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z" clip-rule="evenodd" />
+            }
+            else
+            {
+                <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
+            }
+        </svg>
+    </button>
+</aside>
+
+@if (Overlay && Visible)
+{
+    <div class="arcadia-sidebar__overlay"
+         @onclick="ToggleVisibility"
+         aria-hidden="true"></div>
+}
+
+@code {
+    /// <summary>
+    /// Gets or sets whether the sidebar is visible (expanded). Default is true.
+    /// </summary>
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    /// <summary>
+    /// Event callback fired when the sidebar visibility changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> VisibleChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the expanded width of the sidebar. Default is "260px".
+    /// </summary>
+    [Parameter]
+    public string Width { get; set; } = "260px";
+
+    /// <summary>
+    /// Gets or sets the collapsed width of the sidebar. Default is "64px".
+    /// </summary>
+    [Parameter]
+    public string CollapsedWidth { get; set; } = "64px";
+
+    /// <summary>
+    /// Gets or sets the sidebar position. Must be "left" or "right". Default is "left".
+    /// </summary>
+    [Parameter]
+    public string Position { get; set; } = "left";
+
+    /// <summary>
+    /// Gets or sets whether the sidebar uses overlay mode on mobile. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Overlay { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content (navigation items) of the sidebar.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-sidebar")
+        .AddClass("arcadia-sidebar--collapsed", !Visible)
+        .AddClass("arcadia-sidebar--right", Position == "right")
+        .AddClass("arcadia-sidebar--overlay", Overlay)
+        .AddClass(Class)
+        .Build();
+
+    private string? ComputedStyle => Arcadia.Core.Utilities.StyleBuilder.Default(Style)
+        .AddStyle("--arcadia-sidebar-width", Width)
+        .AddStyle("--arcadia-sidebar-collapsed-width", CollapsedWidth)
+        .Build();
+
+    private async Task ToggleVisibility()
+    {
+        Visible = !Visible;
+        await VisibleChanged.InvokeAsync(Visible);
+    }
+}

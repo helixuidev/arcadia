@@ -1,0 +1,112 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    <h3 class="arcadia-accordion-item__heading">
+        <button type="button"
+                class="arcadia-accordion-item__trigger"
+                id="@HeaderId"
+                aria-expanded="@Expanded.ToString().ToLowerInvariant()"
+                aria-controls="@PanelId"
+                disabled="@Disabled"
+                @onclick="ToggleExpanded">
+            <span class="arcadia-accordion-item__title">@Title</span>
+            <svg class="arcadia-accordion-item__chevron"
+                 viewBox="0 0 20 20" fill="currentColor"
+                 aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+            </svg>
+        </button>
+    </h3>
+
+    <div class="arcadia-accordion-item__panel @(Expanded ? "arcadia-accordion-item__panel--open" : "")"
+         id="@PanelId"
+         role="region"
+         aria-labelledby="@HeaderId"
+         hidden="@(!Expanded)">
+        <div class="arcadia-accordion-item__content">
+            @ChildContent
+        </div>
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// The parent accordion component, received via CascadingParameter.
+    /// </summary>
+    [CascadingParameter]
+    private ArcadiaAccordion? Accordion { get; set; }
+
+    /// <summary>
+    /// Gets or sets the header text for this accordion item.
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets whether this accordion item is expanded. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Expanded { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether this accordion item is disabled. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content displayed when the item is expanded.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string HeaderId => $"{ElementId}-header";
+    private string PanelId => $"{ElementId}-panel";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-accordion-item")
+        .AddClass("arcadia-accordion-item--expanded", Expanded)
+        .AddClass("arcadia-accordion-item--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    protected override void OnInitialized()
+    {
+        Accordion?.RegisterItem(this);
+    }
+
+    private void ToggleExpanded()
+    {
+        if (Disabled) return;
+
+        Expanded = !Expanded;
+
+        if (Expanded)
+        {
+            Accordion?.OnItemExpanding(this);
+        }
+
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Collapses this item without triggering user-facing events.
+    /// Called internally by the parent accordion in single-expand mode.
+    /// </summary>
+    internal void CollapseInternal()
+    {
+        if (Expanded)
+        {
+            Expanded = false;
+            StateHasChanged();
+        }
+    }
+
+    public void Dispose()
+    {
+        Accordion?.UnregisterItem(this);
+    }
+}

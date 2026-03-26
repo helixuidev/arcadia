@@ -1,0 +1,79 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<span class="@CssClass"
+      style="@Style"
+      role="img"
+      aria-label="@AriaLabel"
+      @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrEmpty(Src))
+    {
+        <img class="arcadia-avatar__image"
+             src="@Src"
+             alt="@(Name ?? "User avatar")"
+             @onerror="HandleImageError" />
+    }
+    else
+    {
+        <span class="arcadia-avatar__initials">@Initials</span>
+    }
+</span>
+
+@code {
+    private bool _imageError;
+
+    /// <summary>
+    /// Gets or sets the user's display name. Used to generate initials when no image is provided.
+    /// </summary>
+    [Parameter]
+    public string? Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the image URL for the avatar.
+    /// </summary>
+    [Parameter]
+    public string? Src { get; set; }
+
+    /// <summary>
+    /// Gets or sets the avatar size. Accepted values: "sm", "md", "lg". Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    /// <summary>
+    /// Gets or sets the background color for the initials avatar.
+    /// Accepted values: "primary", "success", "danger", "warning". Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-avatar")
+        .AddClass($"arcadia-avatar--{Size}")
+        .AddClass($"arcadia-avatar--{Color}", string.IsNullOrEmpty(Src) || _imageError)
+        .AddClass(Class)
+        .Build();
+
+    private string Initials => GenerateInitials(Name);
+
+    private string AriaLabel => !string.IsNullOrEmpty(Name) ? $"Avatar for {Name}" : "User avatar";
+
+    private static string GenerateInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "?";
+
+        var parts = name.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return parts.Length switch
+        {
+            0 => "?",
+            1 => parts[0][..1].ToUpperInvariant(),
+            _ => $"{parts[0][..1]}{parts[^1][..1]}".ToUpperInvariant()
+        };
+    }
+
+    private void HandleImageError()
+    {
+        _imageError = true;
+        StateHasChanged();
+    }
+}

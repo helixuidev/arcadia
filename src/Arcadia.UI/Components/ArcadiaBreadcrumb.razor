@@ -1,0 +1,70 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<nav class="@CssClass"
+     style="@Style"
+     aria-label="Breadcrumb"
+     @attributes="AdditionalAttributes">
+    <ol class="arcadia-breadcrumb__list">
+        <CascadingValue Value="this" IsFixed="true">
+            @ChildContent
+        </CascadingValue>
+    </ol>
+</nav>
+
+@code {
+    private readonly List<ArcadiaBreadcrumbItem> _items = new();
+
+    /// <summary>
+    /// Gets or sets the separator character between breadcrumb items. Default is "/".
+    /// </summary>
+    [Parameter]
+    public string Separator { get; set; } = "/";
+
+    /// <summary>
+    /// Gets or sets the child content (ArcadiaBreadcrumbItem elements).
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-breadcrumb")
+        .AddClass(Class)
+        .Build();
+
+    /// <summary>
+    /// Registers a breadcrumb item with this breadcrumb. Called internally by ArcadiaBreadcrumbItem.
+    /// </summary>
+    internal void RegisterItem(ArcadiaBreadcrumbItem item)
+    {
+        if (!_items.Contains(item))
+        {
+            _items.Add(item);
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Unregisters a breadcrumb item from this breadcrumb. Called internally by ArcadiaBreadcrumbItem.
+    /// </summary>
+    internal void UnregisterItem(ArcadiaBreadcrumbItem item)
+    {
+        _items.Remove(item);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Determines whether the given item is the last item in the breadcrumb.
+    /// </summary>
+    internal bool IsLastItem(ArcadiaBreadcrumbItem item)
+    {
+        return _items.Count > 0 && _items[^1] == item;
+    }
+
+    /// <summary>
+    /// Determines whether the given item should show a separator after it.
+    /// </summary>
+    internal bool ShowSeparator(ArcadiaBreadcrumbItem item)
+    {
+        return !IsLastItem(item);
+    }
+}

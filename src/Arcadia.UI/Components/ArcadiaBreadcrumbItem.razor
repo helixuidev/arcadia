@@ -1,0 +1,58 @@
+@namespace Arcadia.UI.Components
+@implements IDisposable
+
+<li class="arcadia-breadcrumb-item">
+    @if (!string.IsNullOrEmpty(Href) && !IsLast)
+    {
+        <a class="arcadia-breadcrumb-item__link" href="@Href">
+            @ChildContent
+        </a>
+    }
+    else
+    {
+        <span class="arcadia-breadcrumb-item__current"
+              aria-current="@(IsLast ? "page" : null)">
+            @ChildContent
+        </span>
+    }
+
+    @if (Breadcrumb?.ShowSeparator(this) == true)
+    {
+        <span class="arcadia-breadcrumb-item__separator" aria-hidden="true">
+            @Breadcrumb.Separator
+        </span>
+    }
+</li>
+
+@code {
+    /// <summary>
+    /// The parent breadcrumb component, received via CascadingParameter.
+    /// </summary>
+    [CascadingParameter]
+    private ArcadiaBreadcrumb? Breadcrumb { get; set; }
+
+    /// <summary>
+    /// Gets or sets the URL for this breadcrumb item.
+    /// If null, the item is rendered as plain text (current page).
+    /// </summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content (label) for this breadcrumb item.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool IsLast => Breadcrumb?.IsLastItem(this) == true;
+
+    protected override void OnInitialized()
+    {
+        Breadcrumb?.RegisterItem(this);
+    }
+
+    public void Dispose()
+    {
+        Breadcrumb?.UnregisterItem(this);
+    }
+}

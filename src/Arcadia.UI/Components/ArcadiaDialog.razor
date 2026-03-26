@@ -1,0 +1,149 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+@if (Visible)
+{
+    <div class="arcadia-dialog-overlay"
+         @onclick="OnOverlayClickAsync"
+         @onkeydown="OnKeyDownAsync">
+        <div class="@CssClass"
+             style="@ComputedStyle"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="@TitleId"
+             tabindex="-1"
+             @onclick:stopPropagation="true"
+             @attributes="AdditionalAttributes">
+
+            @if (!string.IsNullOrEmpty(Title) || ShowCloseButton)
+            {
+                <div class="arcadia-dialog__header">
+                    @if (!string.IsNullOrEmpty(Title))
+                    {
+                        <h2 id="@TitleId" class="arcadia-dialog__title">@Title</h2>
+                    }
+                    @if (ShowCloseButton)
+                    {
+                        <button class="arcadia-dialog__close"
+                                type="button"
+                                aria-label="Close dialog"
+                                @onclick="CloseAsync">
+                            <svg class="arcadia-dialog__close-icon" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" aria-hidden="true">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                        </button>
+                    }
+                </div>
+            }
+
+            <div class="arcadia-dialog__body">
+                @ChildContent
+            </div>
+
+            @if (FooterTemplate is not null)
+            {
+                <div class="arcadia-dialog__footer">
+                    @FooterTemplate
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    /// <summary>
+    /// Gets or sets whether the dialog is visible.
+    /// </summary>
+    [Parameter]
+    public bool Visible { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Visible"/> changes. Supports two-way binding.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> VisibleChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the dialog title displayed in the header.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the CSS width of the dialog. Defaults to "480px".
+    /// </summary>
+    [Parameter]
+    public string Width { get; set; } = "480px";
+
+    /// <summary>
+    /// Gets or sets whether the close button is shown in the header. Defaults to true.
+    /// </summary>
+    [Parameter]
+    public bool ShowCloseButton { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether clicking the overlay backdrop closes the dialog. Defaults to true.
+    /// </summary>
+    [Parameter]
+    public bool CloseOnOverlayClick { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether pressing Escape closes the dialog. Defaults to true.
+    /// </summary>
+    [Parameter]
+    public bool CloseOnEscape { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the dialog body content.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional footer template for action buttons.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? FooterTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when the dialog is closed.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private string TitleId => $"{ElementId}-title";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-dialog")
+        .AddClass(Class)
+        .Build();
+
+    private string? ComputedStyle => Arcadia.Core.Utilities.StyleBuilder.Default(Style)
+        .AddStyle("--arcadia-dialog-width", Width)
+        .Build();
+
+    private async Task CloseAsync()
+    {
+        Visible = false;
+        await VisibleChanged.InvokeAsync(false);
+        await OnClose.InvokeAsync();
+    }
+
+    private async Task OnOverlayClickAsync()
+    {
+        if (CloseOnOverlayClick)
+        {
+            await CloseAsync();
+        }
+    }
+
+    private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (CloseOnEscape && args.Key == "Escape")
+        {
+            await CloseAsync();
+        }
+    }
+}

@@ -1,0 +1,68 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    <CascadingValue Value="this" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    private readonly List<ArcadiaAccordionItem> _items = new();
+
+    /// <summary>
+    /// Gets or sets whether multiple accordion items can be expanded simultaneously.
+    /// Default is false (only one item open at a time).
+    /// </summary>
+    [Parameter]
+    public bool Multiple { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content (ArcadiaAccordionItem elements).
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-accordion")
+        .AddClass(Class)
+        .Build();
+
+    /// <summary>
+    /// Registers an accordion item with this accordion. Called internally by ArcadiaAccordionItem.
+    /// </summary>
+    internal void RegisterItem(ArcadiaAccordionItem item)
+    {
+        if (!_items.Contains(item))
+        {
+            _items.Add(item);
+        }
+    }
+
+    /// <summary>
+    /// Unregisters an accordion item from this accordion. Called internally by ArcadiaAccordionItem.
+    /// </summary>
+    internal void UnregisterItem(ArcadiaAccordionItem item)
+    {
+        _items.Remove(item);
+    }
+
+    /// <summary>
+    /// Notifies the accordion that an item is expanding.
+    /// In single mode, collapses all other items.
+    /// </summary>
+    internal void OnItemExpanding(ArcadiaAccordionItem expandingItem)
+    {
+        if (!Multiple)
+        {
+            foreach (var item in _items)
+            {
+                if (item != expandingItem && item.Expanded)
+                {
+                    item.CollapseInternal();
+                }
+            }
+        }
+    }
+}
