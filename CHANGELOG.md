@@ -2,6 +2,22 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.10] — 2026-03-26
+
+### Added
+- **Arcadia.DataGrid on NuGet** — first public release of the DataGrid package
+- **10 DataGrid documentation pages** — overview, sorting, filtering, selection, editing, grouping, templates, virtual scrolling, themes, export
+- **DataGrid in demo gallery** — 3 showcases (sortable/filterable, editable with selection, grouping) in both Server and WASM demos
+- **DataGrid on homepage** — feature card, pricing tiers, FAQ, JSON-LD structured data
+- **DataGrid NuGet README** — package page with feature table, quick start, render mode matrix
+
+### Fixed
+- **Delta indicator contrast** — replaced `opacity: 0.6` with explicit muted color for WCAG AA compliance
+- **Sparkline missing alt text** — auto-generates `aria-label` with data range when none provided
+- **Empty table headers in DataGrid** — added `aria-label` and sr-only text to utility columns (detail expand, filter row, checkbox)
+- **DataGrid missing from solution file** — caused CI pack to fail with NU5026
+- **DataGrid missing from CI/release workflows** — pack step now includes all 6 packages
+
 ## [1.0.0-beta.9] — 2026-03-26
 
 ### Added
