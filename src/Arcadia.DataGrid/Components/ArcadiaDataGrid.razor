@@ -206,10 +206,25 @@
                             <th class="arcadia-grid__th arcadia-grid__th--filter">
                                 @if (isFilterable)
                                 {
-                                    <input type="text" class="arcadia-grid__filter-input"
-                                           placeholder="Filter..."
-                                           value="@GetFilterValue(fCol.ResolvedKey)"
-                                           @oninput="@((ChangeEventArgs e) => SetFilter(fCol.ResolvedKey, e.Value?.ToString() ?? ""))" />
+                                    <div class="arcadia-grid__filter-cell">
+                                        <select class="arcadia-grid__filter-op"
+                                                value="@GetFilterOperator(fCol.ResolvedKey)"
+                                                @onchange="@((ChangeEventArgs e) => SetFilterOperator(fCol.ResolvedKey, e.Value?.ToString() ?? "Contains"))">
+                                            <option value="Contains">Contains</option>
+                                            <option value="Equals">Equals</option>
+                                            <option value="StartsWith">Starts</option>
+                                            <option value="EndsWith">Ends</option>
+                                            <option value="NotEquals">Not Eq</option>
+                                            <option value="GreaterThan">&gt;</option>
+                                            <option value="LessThan">&lt;</option>
+                                            <option value="IsEmpty">Empty</option>
+                                            <option value="IsNotEmpty">Not Empty</option>
+                                        </select>
+                                        <input type="text" class="arcadia-grid__filter-input"
+                                               placeholder="Filter..."
+                                               value="@GetFilterValue(fCol.ResolvedKey)"
+                                               @oninput="@((ChangeEventArgs e) => SetFilter(fCol.ResolvedKey, e.Value?.ToString() ?? ""))" />
+                                    </div>
                                 }
                             </th>
                         }

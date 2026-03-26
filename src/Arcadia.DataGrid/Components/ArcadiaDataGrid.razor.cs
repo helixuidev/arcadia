@@ -233,6 +233,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                     FilterOperator.EndsWith => cellValue.EndsWith(filterValue, StringComparison.OrdinalIgnoreCase),
                     FilterOperator.GreaterThan => double.TryParse(cellValue, out var cv) && double.TryParse(filterValue, out var fv) && cv > fv,
                     FilterOperator.LessThan => double.TryParse(cellValue, out var cv2) && double.TryParse(filterValue, out var fv2) && cv2 < fv2,
+                    FilterOperator.NotEquals => !cellValue.Equals(filterValue, StringComparison.OrdinalIgnoreCase),
+                    FilterOperator.IsEmpty => string.IsNullOrEmpty(cellValue),
+                    FilterOperator.IsNotEmpty => !string.IsNullOrEmpty(cellValue),
                     _ => true
                 };
             });
@@ -300,6 +303,22 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     internal string GetFilterValue(string columnKey)
     {
         return _filters.TryGetValue(columnKey, out var f) ? f.Value : "";
+    }
+
+    internal string GetFilterOperator(string columnKey)
+    {
+        return _filters.TryGetValue(columnKey, out var f) ? f.Operator.ToString() : "Contains";
+    }
+
+    internal void SetFilterOperator(string columnKey, string operatorName)
+    {
+        if (!_filters.ContainsKey(columnKey))
+            _filters[columnKey] = new FilterDescriptor { Property = columnKey };
+        if (Enum.TryParse<FilterOperator>(operatorName, out var op))
+            _filters[columnKey].Operator = op;
+        InvalidateCache();
+        _pageIndex = 0;
+        if (_isServerMode) _ = InvokeLoadData();
     }
 
     internal void ToggleFilters()

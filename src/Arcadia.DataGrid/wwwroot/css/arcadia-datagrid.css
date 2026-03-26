@@ -834,6 +834,17 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   }
 }
 
+/* Filter cell with operator dropdown */
+.arcadia-grid__filter-cell { display: flex; gap: 2px; }
+.arcadia-grid__filter-op {
+  background: var(--_row, rgba(255,255,255,0.03));
+  border: 1px solid var(--_border, rgba(139,92,246,0.12));
+  border-radius: 4px; color: var(--_muted, #6b6890);
+  font-size: 10px; padding: 2px; cursor: pointer;
+  width: 56px; flex-shrink: 0;
+}
+.arcadia-grid__filter-op:focus { border-color: var(--_accent, #8b5cf6); outline: none; }
+
 /* Quick filter search input */
 .arcadia-grid__search-input {
   background: var(--_row, rgba(255,255,255,0.03));

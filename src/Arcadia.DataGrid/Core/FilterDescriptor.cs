@@ -31,5 +31,11 @@ public enum FilterOperator
     /// <summary>Cell value is greater than the filter value (numeric).</summary>
     GreaterThan,
     /// <summary>Cell value is less than the filter value (numeric).</summary>
-    LessThan
+    LessThan,
+    /// <summary>Cell value does not equal the filter text.</summary>
+    NotEquals,
+    /// <summary>Cell value is null or empty.</summary>
+    IsEmpty,
+    /// <summary>Cell value is not null or empty.</summary>
+    IsNotEmpty
 }
