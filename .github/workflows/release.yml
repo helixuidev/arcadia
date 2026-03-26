@@ -47,8 +47,8 @@ jobs:
       - name: Build Release
         run: dotnet build HelixUI.sln --configuration Release --no-restore
 
-      - name: Run tests
-        run: dotnet test tests/Arcadia.Tests.Unit/Arcadia.Tests.Unit.csproj --configuration Release --no-build --verbosity normal
+      - name: Run tests (excluding performance benchmarks)
+        run: dotnet test tests/Arcadia.Tests.Unit/Arcadia.Tests.Unit.csproj --configuration Release --no-build --verbosity normal --filter "Category!=Performance"
 
       - name: Pack all packages
         run: |

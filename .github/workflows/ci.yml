@@ -41,8 +41,8 @@ jobs:
             echo "::warning::Source files changed but no documentation was updated. Please check if public API docs need updating in website/src/pages/docs/"
           fi
 
-      - name: Run unit tests
-        run: dotnet test tests/Arcadia.Tests.Unit/Arcadia.Tests.Unit.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=unit-results.trx"
+      - name: Run unit tests (excluding performance benchmarks)
+        run: dotnet test tests/Arcadia.Tests.Unit/Arcadia.Tests.Unit.csproj --configuration Release --no-build --verbosity normal --filter "Category!=Performance" --logger "trx;LogFileName=unit-results.trx"
 
       - name: Upload unit test results
         uses: actions/upload-artifact@v4

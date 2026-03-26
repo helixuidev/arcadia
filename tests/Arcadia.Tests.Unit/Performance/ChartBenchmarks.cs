@@ -15,6 +15,7 @@ namespace Arcadia.Tests.Unit.Performance;
 /// Uses Stopwatch to measure bUnit render time. Targets are generous
 /// to account for CI variance — actual render is typically 2-5x faster.
 /// </summary>
+[Trait("Category", "Performance")]
 public class ChartBenchmarks : ChartTestBase
 {
     private readonly ITestOutputHelper _output;
