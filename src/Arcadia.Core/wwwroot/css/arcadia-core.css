@@ -1,17 +1,19 @@
 /* Arcadia Community Watermark — shown on pro components when unlicensed */
 .arcadia-watermark {
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  padding: 8px 12px 6px;
+  display: block;
+  text-align: center;
+  padding: 14px 16px 12px;
+  margin: 12px 12px 8px;
   z-index: 10;
   pointer-events: none;
-  opacity: 0.35;
+  opacity: 0.3;
+  border-top: 1px solid rgba(148, 163, 184, 0.08);
 }
 .arcadia-watermark__text {
-  font-size: 9px;
+  font-size: 10px;
   font-family: system-ui, sans-serif;
   color: #94a3b8;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   user-select: none;
 }
