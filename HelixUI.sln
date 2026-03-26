@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{4F33ABEA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcadia.Tests.E2E", "tests\Arcadia.Tests.E2E\Arcadia.Tests.E2E.csproj", "{F783CEC1-7217-415F-90C8-ECDC550F4CA4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{626FE9C2-CC33-4C1B-A7A3-8D9BD667CAF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arcadia.DataGrid", "src\Arcadia.DataGrid\Arcadia.DataGrid.csproj", "{FF0104B9-6C3E-4743-9888-618BAB7259FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,8 +69,13 @@ Global
 		{F783CEC1-7217-415F-90C8-ECDC550F4CA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F783CEC1-7217-415F-90C8-ECDC550F4CA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F783CEC1-7217-415F-90C8-ECDC550F4CA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF0104B9-6C3E-4743-9888-618BAB7259FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF0104B9-6C3E-4743-9888-618BAB7259FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF0104B9-6C3E-4743-9888-618BAB7259FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF0104B9-6C3E-4743-9888-618BAB7259FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F783CEC1-7217-415F-90C8-ECDC550F4CA4} = {4F33ABEA-3D06-48BD-971F-5BD69DF6B125}
+		{FF0104B9-6C3E-4743-9888-618BAB7259FE} = {626FE9C2-CC33-4C1B-A7A3-8D9BD667CAF0}
 	EndGlobalSection
 EndGlobal
