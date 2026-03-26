@@ -102,8 +102,11 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Callback invoked when a row is right-clicked.</summary>
     [Parameter] public EventCallback<TItem> OnContextMenu { get; set; }
 
-    /// <summary>Key of the column whose values group rows into collapsible sections. Set to null to disable. Groups show expand/collapse toggles.</summary>
+    /// <summary>Group rows by this column key or property name. When set, rows are organized into collapsible sections. Can reference a displayed column key OR any property on TItem (e.g., "Department" groups by the Department property even if no Department column is shown).</summary>
     [Parameter] public string? GroupBy { get; set; }
+
+    /// <summary>Lambda accessor for the group value. Takes precedence over GroupBy string when set. Use for computed grouping (e.g., GroupByField="@(e => e.Salary > 100000 ? "Senior" : "Junior")").</summary>
+    [Parameter] public Func<TItem, object>? GroupByField { get; set; }
 
     /// <summary>Enable virtual scrolling for large datasets. Requires Height to be set. Disables pagination.</summary>
     [Parameter] public bool VirtualizeRows { get; set; }
@@ -588,16 +591,34 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     internal List<(object Key, string Label, List<TItem> Items)> GetGroupedData()
     {
-        if (string.IsNullOrEmpty(GroupBy)) return new();
-        var col = Columns.FirstOrDefault(c => c.ResolvedKey == GroupBy);
-        if (col?.ResolvedField is null) return new();
+        var groupAccessor = ResolveGroupAccessor();
+        if (groupAccessor is null) return new();
 
         IEnumerable<TItem> sorted = ApplySort(GetCachedFilteredData());
 
         return sorted
-            .GroupBy(item => col.ResolvedField(item)?.ToString() ?? "")
+            .GroupBy(item => groupAccessor(item)?.ToString() ?? "")
             .Select(g => ((object)g.Key, g.Key.ToString() ?? "", g.ToList()))
             .ToList();
+    }
+
+    private Func<TItem, object>? ResolveGroupAccessor()
+    {
+        // 1. Explicit lambda takes precedence
+        if (GroupByField is not null) return GroupByField;
+
+        if (string.IsNullOrEmpty(GroupBy)) return null;
+
+        // 2. Try matching a displayed column by key
+        var col = Columns.FirstOrDefault(c => c.ResolvedKey == GroupBy);
+        if (col?.ResolvedField is not null) return col.ResolvedField;
+
+        // 3. Fall back to reflection on TItem property
+        var prop = typeof(TItem).GetProperty(GroupBy,
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.IgnoreCase);
+        if (prop is not null) return item => prop.GetValue(item)!;
+
+        return null;
     }
 
     internal bool IsGroupExpanded(object key)
