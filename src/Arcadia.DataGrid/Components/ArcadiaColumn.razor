@@ -56,8 +56,11 @@
     /// <summary>Dynamic CSS class for cells in this column.</summary>
     [Parameter] public Func<TItem, string?>? CellClass { get; set; }
 
-    /// <summary>Unique key for this column (auto-generated from Title if not set).</summary>
-    public string Key => !string.IsNullOrEmpty(Title) ? Title : Field?.Method.Name ?? Guid.NewGuid().ToString();
+    /// <summary>Unique key for this column. Auto-generated from Title when not set.</summary>
+    [Parameter] public string? Key { get; set; }
+
+    /// <summary>Resolved column key (user-provided or auto-generated).</summary>
+    internal string ResolvedKey => Key ?? (!string.IsNullOrEmpty(Title) ? Title : Field?.Method.Name ?? Guid.NewGuid().ToString());
 
     /// <summary>Format a cell value using the column's Format string.</summary>
     public string FormatValue(object? value)

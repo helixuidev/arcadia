@@ -104,7 +104,6 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     internal ArcadiaDataGridColumnCollector<TItem> Collector { get; } = new();
     private SortDescriptor? _currentSort;
     private int _pageIndex;
-    private bool _columnsCollected;
     private Dictionary<string, FilterDescriptor> _filters = new();
     private HashSet<TItem> _selectedItems = new();
     private bool _showFilters;
@@ -148,13 +147,8 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     protected override async void OnAfterRender(bool firstRender)
     {
         if (_disposed) return;
-        if (firstRender && !_columnsCollected && Columns.Count > 0)
-        {
-            _columnsCollected = true;
-            StateHasChanged();
-        }
 
-        if (_columnsCollected && !_resizeInitialized)
+        if (!_resizeInitialized && Columns.Count > 0)
         {
             _resizeInitialized = true;
             try
@@ -198,7 +192,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
         foreach (var filter in _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)))
         {
-            var col = Columns.FirstOrDefault(c => c.Key == filter.Property);
+            var col = Columns.FirstOrDefault(c => c.ResolvedKey == filter.Property);
             if (col?.Field is null) continue;
 
             var filterValue = filter.Value;
@@ -231,7 +225,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
-            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
             if (sortCol?.Field is not null)
             {
                 result = _currentSort.Direction == SortDirection.Ascending
@@ -254,7 +248,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
-            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
             if (sortCol?.Field is not null)
             {
                 result = _currentSort.Direction == SortDirection.Ascending
@@ -353,7 +347,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         var isSortable = column.Sortable ?? Sortable;
         if (!isSortable || column.Field is null) return;
 
-        var key = column.Key;
+        var key = column.ResolvedKey;
         if (_currentSort?.Property == key)
         {
             _currentSort.Direction = _currentSort.Direction switch
@@ -402,7 +396,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     internal string GetSortAriaLabel(ArcadiaColumn<TItem> column)
     {
-        var dir = GetSortDirection(column.Key);
+        var dir = GetSortDirection(column.ResolvedKey);
         return dir switch
         {
             SortDirection.Ascending => $"{column.Title}, sorted ascending",
@@ -490,13 +484,13 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     internal List<(object Key, string Label, List<TItem> Items)> GetGroupedData()
     {
         if (string.IsNullOrEmpty(GroupBy)) return new();
-        var col = Columns.FirstOrDefault(c => c.Key == GroupBy);
+        var col = Columns.FirstOrDefault(c => c.ResolvedKey == GroupBy);
         if (col?.Field is null) return new();
 
         IEnumerable<TItem> sorted = GetCachedFilteredData();
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
-            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
             if (sortCol?.Field is not null)
             {
                 sorted = _currentSort.Direction == SortDirection.Ascending
@@ -536,7 +530,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         IEnumerable<TItem> allData = GetCachedFilteredData();
         if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
         {
-            var sortCol = Columns.FirstOrDefault(c => c.Key == _currentSort.Property);
+            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
             if (sortCol?.Field is not null)
             {
                 allData = _currentSort.Direction == SortDirection.Ascending
@@ -721,7 +715,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                     var col = _focusCol >= 0 && _focusCol < visibleCols.Count ? visibleCols[_focusCol] : null;
                     if (col?.Editable == true)
                     {
-                        StartEdit(pageRows[_focusRow], col.Key);
+                        StartEdit(pageRows[_focusRow], col.ResolvedKey);
                         Announce($"Editing {col.Title}");
                     }
                 }

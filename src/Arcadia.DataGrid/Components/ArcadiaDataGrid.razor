@@ -31,7 +31,7 @@
             }
         </div>
     }
-    else if (VirtualizeRows && _columnsCollected && Columns.Count > 0)
+    else if (VirtualizeRows && Columns.Count > 0)
     {
         @* ── Virtual scroll mode: CSS Grid layout ── *@
         <div class="arcadia-grid__toolbar">
@@ -49,7 +49,7 @@
                 @foreach (var col in Columns.Where(c => c.IsVisible))
                 {
                     var vCol = col;
-                    var sortDir = GetSortDirection(vCol.Key);
+                    var sortDir = GetSortDirection(vCol.ResolvedKey);
                     <div class="arcadia-grid__virtual-hcell @(sortDir != SortDirection.None ? "arcadia-grid__virtual-hcell--sorted" : "")"
                          @onclick="@(() => HandleHeaderClick(vCol))">
                         @vCol.Title
@@ -86,7 +86,7 @@
         </div>
         <CommunityWatermark />
     }
-    else if (_columnsCollected && Columns.Count > 0)
+    else if (Columns.Count > 0)
     {
         <div class="arcadia-grid__toolbar">
             @if (Filterable)
@@ -138,7 +138,7 @@
                     {
                         var localCol = col;
                         var localHeaderIdx = headerColIdx++;
-                        var sortDir = GetSortDirection(localCol.Key);
+                        var sortDir = GetSortDirection(localCol.ResolvedKey);
                         var isSortable = localCol.Sortable ?? Sortable;
                         var ariaSort = sortDir switch
                         {
@@ -196,8 +196,8 @@
                                 {
                                     <input type="text" class="arcadia-grid__filter-input"
                                            placeholder="Filter..."
-                                           value="@GetFilterValue(fCol.Key)"
-                                           @oninput="@((ChangeEventArgs e) => SetFilter(fCol.Key, e.Value?.ToString() ?? ""))" />
+                                           value="@GetFilterValue(fCol.ResolvedKey)"
+                                           @oninput="@((ChangeEventArgs e) => SetFilter(fCol.ResolvedKey, e.Value?.ToString() ?? ""))" />
                                 }
                             </th>
                         }
@@ -295,13 +295,13 @@
                             {
                                 var editCol = col;
                                 var cellClass = editCol.CellClass?.Invoke(item);
-                                var isEditCell = editCol.Editable && IsEditingCell(localItem, editCol.Key);
+                                var isEditCell = editCol.Editable && IsEditingCell(localItem, editCol.ResolvedKey);
                                 var isFocused = IsFocusedCell(bodyRowIdx, bodyColIdx);
                                 <td role="gridcell"
                                     id="@GetCellId(bodyRowIdx, bodyColIdx)"
                                     style="text-align:@editCol.Align;"
                                     class="arcadia-grid__td @cellClass @(isEditCell ? "arcadia-grid__td--editing" : "") @(isFocused ? "arcadia-grid__td--focused" : "")"
-                                    @ondblclick="@(editCol.Editable ? () => StartEdit(localItem, editCol.Key) : (Action)(() => {}))">
+                                    @ondblclick="@(editCol.Editable ? () => StartEdit(localItem, editCol.ResolvedKey) : (Action)(() => {}))">
                                     @if (isEditCell)
                                     {
                                         @if (editCol.EditTemplate is not null)
