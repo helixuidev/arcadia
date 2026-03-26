@@ -152,6 +152,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <summary>Zoom mode: "x" (horizontal only), "y" (vertical only), "xy" (both).</summary>
     [Parameter] public string ZoomMode { get; set; } = "x";
 
+    /// <summary>Synchronization group name. Charts in the same group share crosshair position and zoom level. Null = no sync.</summary>
+    [Parameter] public string? SyncGroup { get; set; }
+
     // ── Crosshair ──────────────────────────────────
     /// <summary>Draw a vertical crosshair line that tracks the cursor, making it easier to align data points across series. Default is false.</summary>
     [Parameter] public bool ShowCrosshair { get; set; }
