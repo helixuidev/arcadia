@@ -834,5 +834,26 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   }
 }
 
+/* Quick filter search input */
+.arcadia-grid__search-input {
+  background: var(--_row, rgba(255,255,255,0.03));
+  border: 1px solid var(--_border, rgba(139,92,246,0.12));
+  border-radius: 6px; color: var(--_text, #e2e0f0);
+  padding: 4px 10px; font-size: 12px; width: 200px;
+  outline: none; transition: border-color 0.15s;
+}
+.arcadia-grid__search-input:focus {
+  border-color: var(--_accent, #8b5cf6);
+}
+.arcadia-grid__search-input::placeholder { color: var(--_muted, #6b6890); }
+
+/* Sort priority badge (multi-column sort) */
+.arcadia-grid__sort-priority {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 14px; height: 14px; font-size: 9px; font-weight: 700;
+  border-radius: 7px; background: var(--_accent, #8b5cf6); color: #fff;
+  margin-left: 2px; padding: 0 3px; line-height: 1;
+}
+
 /* Screen reader only */
 .arcadia-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0; }

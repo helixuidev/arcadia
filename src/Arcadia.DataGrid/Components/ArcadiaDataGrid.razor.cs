@@ -106,9 +106,18 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     private IJSObjectReference? _jsModule;
     private bool _disposed;
 
+    /// <summary>Display toolbar with search, filter toggle, and export. Default is false.</summary>
+    [Parameter] public bool ShowToolbar { get; set; }
+
+    /// <summary>Quick filter text that searches across all visible columns. Two-way bindable.</summary>
+    [Parameter] public string? QuickFilter { get; set; }
+
+    /// <summary>Callback invoked when QuickFilter text changes.</summary>
+    [Parameter] public EventCallback<string?> QuickFilterChanged { get; set; }
+
     // ── Internal state ──
     internal ArcadiaDataGridColumnCollector<TItem> Collector { get; } = new();
-    private SortDescriptor? _currentSort;
+    private List<SortDescriptor> _sortStack = new();
     private int _pageIndex;
     private Dictionary<string, FilterDescriptor> _filters = new();
     private HashSet<TItem> _selectedItems = new();
@@ -229,7 +238,25 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             });
         }
 
+        // Apply quick filter across all visible columns
+        if (!string.IsNullOrEmpty(QuickFilter))
+        {
+            var qf = QuickFilter;
+            var searchCols = Columns.Where(c => c.IsVisible && c.ResolvedField is not null).ToList();
+            result = result.Where(item => searchCols.Any(c =>
+                (c.ResolvedField!(item)?.ToString() ?? "").Contains(qf, StringComparison.OrdinalIgnoreCase)));
+        }
+
         return result;
+    }
+
+    internal async Task SetQuickFilter(string? value)
+    {
+        QuickFilter = value;
+        InvalidateCache();
+        _pageIndex = 0;
+        if (QuickFilterChanged.HasDelegate)
+            await QuickFilterChanged.InvokeAsync(value);
     }
 
     /// <summary>Get all filtered and sorted data (no paging). Used by virtual scrolling and export.</summary>
@@ -237,19 +264,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     {
         if (_isServerMode) return (IList<TItem>)(Data ?? (IReadOnlyList<TItem>)Array.Empty<TItem>());
 
-        IEnumerable<TItem> result = GetCachedFilteredData();
-
-        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
-        {
-            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
-            if (sortCol?.ResolvedField is not null)
-            {
-                result = _currentSort.Direction == SortDirection.Ascending
-                    ? result.OrderBy(item => sortCol.ResolvedField(item))
-                    : result.OrderByDescending(item => sortCol.ResolvedField(item));
-            }
-        }
-
+        IEnumerable<TItem> result = ApplySort(GetCachedFilteredData());
         return result.ToList();
     }
 
@@ -260,18 +275,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
         if (_isServerMode) return Data ?? Enumerable.Empty<TItem>();
 
-        IEnumerable<TItem> result = GetCachedFilteredData();
-
-        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
-        {
-            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
-            if (sortCol?.ResolvedField is not null)
-            {
-                result = _currentSort.Direction == SortDirection.Ascending
-                    ? result.OrderBy(item => sortCol.ResolvedField(item))
-                    : result.OrderByDescending(item => sortCol.ResolvedField(item));
-            }
-        }
+        IEnumerable<TItem> result = ApplySort(GetCachedFilteredData());
 
         if (PageSize > 0)
         {
@@ -353,38 +357,73 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     internal SortDirection GetSortDirection(string columnKey)
     {
-        if (_currentSort is not null && _currentSort.Property == columnKey)
-            return _currentSort.Direction;
-        return SortDirection.None;
+        var match = _sortStack.FirstOrDefault(s => s.Property == columnKey);
+        return match?.Direction ?? SortDirection.None;
     }
 
-    internal async Task HandleHeaderClick(ArcadiaColumn<TItem> column)
+    internal int GetSortPriority(string columnKey)
+    {
+        var idx = _sortStack.FindIndex(s => s.Property == columnKey);
+        return idx >= 0 ? idx + 1 : 0;
+    }
+
+    internal async Task HandleHeaderClick(ArcadiaColumn<TItem> column, bool addToStack = false)
     {
         var isSortable = column.Sortable ?? Sortable;
         if (!isSortable || column.ResolvedField is null) return;
 
         var key = column.ResolvedKey;
-        if (_currentSort?.Property == key)
+        var existing = _sortStack.FirstOrDefault(s => s.Property == key);
+
+        if (existing is not null)
         {
-            _currentSort.Direction = _currentSort.Direction switch
+            existing.Direction = existing.Direction switch
             {
                 SortDirection.Ascending => SortDirection.Descending,
                 SortDirection.Descending => SortDirection.None,
                 _ => SortDirection.Ascending
             };
-            if (_currentSort.Direction == SortDirection.None)
-                _currentSort = null;
+            if (existing.Direction == SortDirection.None)
+                _sortStack.Remove(existing);
         }
         else
         {
-            _currentSort = new SortDescriptor { Property = key, Direction = SortDirection.Ascending };
+            if (!addToStack) _sortStack.Clear();
+            _sortStack.Add(new SortDescriptor { Property = key, Direction = SortDirection.Ascending });
         }
 
         _pageIndex = 0;
-        CancelEdit(); // Clear edit state on sort change
+        InvalidateCache();
+        CancelEdit();
         if (SortChanged.HasDelegate)
-            await SortChanged.InvokeAsync(_currentSort);
+            await SortChanged.InvokeAsync(_sortStack.Count > 0 ? _sortStack[0] : null);
         if (_isServerMode) await InvokeLoadData();
+    }
+
+    private IEnumerable<TItem> ApplySort(IEnumerable<TItem> data)
+    {
+        if (_sortStack.Count == 0) return data;
+
+        IOrderedEnumerable<TItem>? ordered = null;
+        foreach (var sort in _sortStack)
+        {
+            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == sort.Property);
+            if (sortCol?.ResolvedField is null) continue;
+
+            if (ordered is null)
+            {
+                ordered = sort.Direction == SortDirection.Ascending
+                    ? data.OrderBy(item => sortCol.ResolvedField(item))
+                    : data.OrderByDescending(item => sortCol.ResolvedField(item));
+            }
+            else
+            {
+                ordered = sort.Direction == SortDirection.Ascending
+                    ? ordered.ThenBy(item => sortCol.ResolvedField(item))
+                    : ordered.ThenByDescending(item => sortCol.ResolvedField(item));
+            }
+        }
+        return ordered ?? data;
     }
 
     internal void GoToPage(int page)
@@ -430,8 +469,8 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         {
             Skip = _pageIndex * PageSize,
             Take = PageSize,
-            SortProperty = _currentSort?.Property,
-            SortDirection = _currentSort?.Direction ?? SortDirection.None,
+            SortProperty = _sortStack.Count > 0 ? _sortStack[0].Property : null,
+            SortDirection = _sortStack.Count > 0 ? _sortStack[0].Direction : SortDirection.None,
             Filters = _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)).ToList()
         };
         await LoadData.InvokeAsync(args);
@@ -503,17 +542,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         var col = Columns.FirstOrDefault(c => c.ResolvedKey == GroupBy);
         if (col?.ResolvedField is null) return new();
 
-        IEnumerable<TItem> sorted = GetCachedFilteredData();
-        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
-        {
-            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
-            if (sortCol?.ResolvedField is not null)
-            {
-                sorted = _currentSort.Direction == SortDirection.Ascending
-                    ? sorted.OrderBy(item => sortCol.ResolvedField(item))
-                    : sorted.OrderByDescending(item => sortCol.ResolvedField(item));
-            }
-        }
+        IEnumerable<TItem> sorted = ApplySort(GetCachedFilteredData());
 
         return sorted
             .GroupBy(item => col.ResolvedField(item)?.ToString() ?? "")
@@ -543,17 +572,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
         sb.AppendLine(string.Join(",", visibleCols.Select(c => CsvQuote(c.Title))));
 
-        IEnumerable<TItem> allData = GetCachedFilteredData();
-        if (_currentSort is not null && _currentSort.Direction != SortDirection.None)
-        {
-            var sortCol = Columns.FirstOrDefault(c => c.ResolvedKey == _currentSort.Property);
-            if (sortCol?.ResolvedField is not null)
-            {
-                allData = _currentSort.Direction == SortDirection.Ascending
-                    ? allData.OrderBy(item => sortCol.ResolvedField(item))
-                    : allData.OrderByDescending(item => sortCol.ResolvedField(item));
-            }
-        }
+        IEnumerable<TItem> allData = ApplySort(GetCachedFilteredData());
 
         foreach (var item in allData)
         {
@@ -661,8 +680,8 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         {
             Skip = request.StartIndex,
             Take = request.Count,
-            SortProperty = _currentSort?.Property,
-            SortDirection = _currentSort?.Direction ?? SortDirection.None,
+            SortProperty = _sortStack.Count > 0 ? _sortStack[0].Property : null,
+            SortDirection = _sortStack.Count > 0 ? _sortStack[0].Direction : SortDirection.None,
             Filters = _filters.Values.Where(f => !string.IsNullOrEmpty(f.Value)).ToList()
         };
         await LoadData.InvokeAsync(args);

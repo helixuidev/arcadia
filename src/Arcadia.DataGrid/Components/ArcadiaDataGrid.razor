@@ -50,11 +50,13 @@
                 {
                     var vCol = col;
                     var sortDir = GetSortDirection(vCol.ResolvedKey);
+                    var sortPri = GetSortPriority(vCol.ResolvedKey);
                     <div class="arcadia-grid__virtual-hcell @(sortDir != SortDirection.None ? "arcadia-grid__virtual-hcell--sorted" : "")"
-                         @onclick="@(() => HandleHeaderClick(vCol))">
+                         @onclick="@((MouseEventArgs e) => HandleHeaderClick(vCol, e.ShiftKey))">
                         @vCol.Title
                         @if (sortDir == SortDirection.Ascending) { <span class="arcadia-grid__sort-icon" style="opacity:1;color:var(--_accent);">&#9650;</span> }
                         else if (sortDir == SortDirection.Descending) { <span class="arcadia-grid__sort-icon" style="opacity:1;color:var(--_accent);">&#9660;</span> }
+                        @if (sortPri > 1) { <span class="arcadia-grid__sort-priority">@sortPri</span> }
                     </div>
                 }
             </div>
@@ -90,7 +92,12 @@
     }
     else if (Columns.Count > 0)
     {
+        @if (ShowToolbar || Filterable)
+        {
         <div class="arcadia-grid__toolbar">
+            <input type="text" class="arcadia-grid__search-input" placeholder="Search..."
+                   value="@QuickFilter"
+                   @oninput="@((ChangeEventArgs e) => SetQuickFilter(e.Value?.ToString()))" />
             @if (Filterable)
             {
                 <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
@@ -104,6 +111,7 @@
                 <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
             }
         </div>
+        }
         @if (_showColumnPicker)
         {
             <div class="arcadia-grid__column-picker">
@@ -159,13 +167,14 @@
                             @ondragover:preventDefault
                             @ondrop="@(() => DropColumn(localHeaderIdx))"
                             @ondragend="EndColumnDrag"
-                            @onclick="@(() => HandleHeaderClick(localCol))">
+                            @onclick="@((MouseEventArgs e) => HandleHeaderClick(localCol, e.ShiftKey))">
                             @if (localCol.HeaderTemplate is not null)
                             {
                                 @localCol.HeaderTemplate
                             }
                             else
                             {
+                                var sortPri = GetSortPriority(localCol.ResolvedKey);
                                 <span>@localCol.Title</span>
                                 @if (isSortable && localCol.ResolvedField is not null)
                                 {
@@ -174,6 +183,7 @@
                                         else if (sortDir == SortDirection.Descending) { <text>&#9660;</text> }
                                         else { <text>&#8693;</text> }
                                     </span>
+                                    @if (sortPri > 1) { <span class="arcadia-grid__sort-priority">@sortPri</span> }
                                 }
                             }
                             <div class="arcadia-grid__resize-handle"></div>
