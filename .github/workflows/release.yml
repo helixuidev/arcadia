@@ -56,7 +56,8 @@ jobs:
                       src/Arcadia.Theme/Arcadia.Theme.csproj \
                       src/Arcadia.Notifications/Arcadia.Notifications.csproj \
                       src/Arcadia.FormBuilder/Arcadia.FormBuilder.csproj \
-                      src/Arcadia.Charts/Arcadia.Charts.csproj; do
+                      src/Arcadia.Charts/Arcadia.Charts.csproj \
+                      src/Arcadia.DataGrid/Arcadia.DataGrid.csproj; do
             dotnet pack "$proj" \
               --configuration Release \
               --no-build \

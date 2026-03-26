@@ -1,0 +1,175 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Themes
+description: 6 built-in themes (Obsidian, Vapor, Carbon, Aurora, Slate, Midnight), 3 density modes, and CSS custom properties for the Arcadia DataGrid.
+---
+
+# Themes
+
+The DataGrid ships with six built-in themes and three density modes. Themes control colors and typography. Density modes control spacing and row height. Both can be combined freely and customized further with CSS custom properties.
+
+## Applying a Theme
+
+Set the `Theme` parameter to one of the six theme names:
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees" Theme="obsidian">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+## Built-in Themes
+
+| Theme | Value | Description |
+|---|---|---|
+| Obsidian | `"obsidian"` | Dark background with warm amber accents. High contrast for data-heavy dashboards |
+| Vapor | `"vapor"` | Soft purple and pink gradients on a dark base. Modern and vibrant |
+| Carbon | `"carbon"` | Neutral gray tones with blue accents. Clean and professional |
+| Aurora | `"aurora"` | Dark background with green and teal highlights. Inspired by northern lights |
+| Slate | `"slate"` | Light gray background with dark text. The classic light-mode theme |
+| Midnight | `"midnight"` | Deep navy background with cool blue accents. Easy on the eyes for extended use |
+
+When no `Theme` is set, the grid uses its default styling which inherits from your application's CSS. Set a theme to apply a self-contained color scheme.
+
+## Switching Themes Dynamically
+
+Bind the `Theme` parameter to a variable to let users switch themes at runtime:
+
+```razor
+<select @bind="currentTheme">
+    <option value="">Default</option>
+    <option value="obsidian">Obsidian</option>
+    <option value="vapor">Vapor</option>
+    <option value="carbon">Carbon</option>
+    <option value="aurora">Aurora</option>
+    <option value="slate">Slate</option>
+    <option value="midnight">Midnight</option>
+</select>
+
+<ArcadiaDataGrid TItem="Employee" Data="@employees" Theme="@currentTheme">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+@code {
+    private string? currentTheme = "obsidian";
+}
+```
+
+## Density Modes
+
+The `Density` parameter controls row height and cell padding. Three modes are available:
+
+| Density | Value | Row Height | Description |
+|---|---|---|---|
+| Comfortable | `"comfortable"` | ~48px | Default. Generous padding for readability |
+| Compact | `"compact"` | ~36px | Reduced padding. Shows more rows in the same viewport height |
+| Dense | `"dense"` | ~28px | Minimal padding. Maximum data density for power users |
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Theme="carbon" Density="compact">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+## Combining Theme and Density
+
+Theme and density are independent. Any theme works with any density mode:
+
+```razor
+@* Dark theme, tight spacing *@
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Theme="midnight" Density="dense">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+@* Light theme, comfortable spacing *@
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Theme="slate" Density="comfortable">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+## CSS Custom Properties
+
+All theme values are exposed as CSS custom properties with the `--arcadia-dg-*` prefix. Override these in your own stylesheet to fine-tune any theme or create a fully custom look.
+
+### Color Properties
+
+| Property | Description |
+|---|---|
+| `--arcadia-dg-bg` | Grid background color |
+| `--arcadia-dg-bg-alt` | Alternating (striped) row background |
+| `--arcadia-dg-bg-hover` | Row hover background |
+| `--arcadia-dg-bg-selected` | Selected row background |
+| `--arcadia-dg-text` | Primary text color |
+| `--arcadia-dg-text-secondary` | Secondary/muted text color |
+| `--arcadia-dg-border` | Cell and header border color |
+| `--arcadia-dg-accent` | Accent color for sort icons, focus rings, and interactive elements |
+| `--arcadia-dg-header-bg` | Header row background |
+| `--arcadia-dg-header-text` | Header row text color |
+| `--arcadia-dg-footer-bg` | Footer row background |
+
+### Spacing Properties
+
+| Property | Description |
+|---|---|
+| `--arcadia-dg-cell-padding-x` | Horizontal cell padding |
+| `--arcadia-dg-cell-padding-y` | Vertical cell padding |
+| `--arcadia-dg-row-height` | Row height |
+| `--arcadia-dg-header-height` | Header row height |
+| `--arcadia-dg-font-size` | Base font size |
+
+### Typography Properties
+
+| Property | Description |
+|---|---|
+| `--arcadia-dg-font-family` | Font family for the entire grid |
+| `--arcadia-dg-header-font-weight` | Header text weight |
+
+## Custom Theme Example
+
+Override CSS custom properties to create a branded theme. Apply overrides to the grid's root element using the `Class` parameter:
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Theme="obsidian" Class="my-brand-grid">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+```css
+.my-brand-grid {
+    --arcadia-dg-accent: #e85d04;
+    --arcadia-dg-bg: #1a1a2e;
+    --arcadia-dg-bg-alt: #16213e;
+    --arcadia-dg-header-bg: #0f3460;
+    --arcadia-dg-bg-hover: #1a3a5c;
+    --arcadia-dg-bg-selected: #e85d0422;
+    --arcadia-dg-border: #2a2a4a;
+    --arcadia-dg-text: #eaeaea;
+    --arcadia-dg-header-text: #ffffff;
+}
+```
+
+## Animations
+
+The grid includes subtle animations that respect `prefers-reduced-motion`:
+
+- **Row enter**: Rows fade in with a slight upward slide on page change (staggered 15ms per row)
+- **Detail expand**: Detail rows animate in on expand
+- **Background transitions**: Hover and selection states transition smoothly (120ms)
+- **Group toggle**: Expand/collapse icon rotates 90 degrees
+
+All animations are disabled when the user has `prefers-reduced-motion: reduce` set.
+
+> **Note:** The `Class` parameter adds CSS classes to the grid's root element without replacing the built-in classes. Use it to layer your custom property overrides on top of a base theme.

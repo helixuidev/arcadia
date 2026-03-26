@@ -1,0 +1,142 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Virtual Scrolling
+description: Virtual scrolling for the Arcadia DataGrid using Blazor's built-in Virtualize component with CSS Grid layout. Render 10K+ rows at 60fps.
+---
+
+# Virtual Scrolling
+
+Render large datasets without pagination by enabling virtual scrolling. The grid only renders the rows visible in the viewport, keeping DOM size small and scroll performance smooth even with tens of thousands of rows.
+
+## How It Works
+
+Virtual scrolling uses Blazor's built-in `Virtualize<TItem>` component under the hood. Instead of rendering an HTML table, the grid switches to a CSS Grid layout so that rows can be added and removed from the DOM without triggering table reflow. A spacer element above and below the visible rows maintains the correct scroll position and scrollbar size.
+
+## Enabling Virtual Scrolling
+
+Set `VirtualizeRows="true"` along with a fixed `Height` and an `ItemSize` that matches your row height in pixels. All three parameters are required for virtual scrolling to work correctly.
+
+```razor
+<ArcadiaDataGrid TItem="StockTick" Data="@ticks"
+                 VirtualizeRows="true"
+                 Height="500px"
+                 ItemSize="36">
+    <ArcadiaColumn TItem="StockTick" Title="Symbol" Field="@(t => t.Symbol)" Width="100px" />
+    <ArcadiaColumn TItem="StockTick" Title="Price" Field="@(t => t.Price)" Format="C2" Align="right" />
+    <ArcadiaColumn TItem="StockTick" Title="Change" Field="@(t => t.Change)" Format="P2" Align="right" />
+    <ArcadiaColumn TItem="StockTick" Title="Volume" Field="@(t => t.Volume)" Format="N0" Align="right" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<StockTick> ticks = Enumerable.Range(1, 50_000)
+        .Select(i => new StockTick(
+            Symbol: $"SYM{i:D5}",
+            Price: 100m + (i % 200),
+            Change: (i % 50 - 25) / 100.0,
+            Volume: i * 1000))
+        .ToList();
+
+    record StockTick(string Symbol, decimal Price, double Change, int Volume);
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `VirtualizeRows` | `bool` | `false` | Enable virtual scrolling. When `true`, pagination is disabled and the grid uses CSS Grid layout |
+| `Height` | `string` | `null` | Fixed height of the scrollable viewport (e.g., `"500px"`, `"60vh"`). Required when `VirtualizeRows` is `true` |
+| `ItemSize` | `float` | `40` | Estimated row height in pixels. Used by the virtualizer to calculate scroll position and the visible row range |
+| `OverscanCount` | `int` | `5` | Extra rows rendered above and below the viewport to reduce flicker during fast scrolling |
+
+## ItemSize Tuning
+
+The `ItemSize` parameter tells the virtualizer how tall each row is. When the estimated row height matches the actual rendered height, the scrollbar position is precise and the virtualizer avoids unnecessary re-renders. Measure your rendered row height in the browser dev tools and set `ItemSize` accordingly.
+
+If you use a compact density mode, adjust `ItemSize` to match the reduced row height:
+
+```razor
+@* Compact density has shorter rows -- match with ItemSize *@
+<ArcadiaDataGrid TItem="StockTick" Data="@ticks"
+                 VirtualizeRows="true"
+                 Height="500px"
+                 Density="compact"
+                 ItemSize="30">
+    <ArcadiaColumn TItem="StockTick" Title="Symbol" Field="@(t => t.Symbol)" />
+    <ArcadiaColumn TItem="StockTick" Title="Price" Field="@(t => t.Price)" Format="C2" />
+</ArcadiaDataGrid>
+```
+
+## OverscanCount
+
+The `OverscanCount` (default 5) controls how many extra rows are rendered above and below the viewport. Higher values reduce blank flicker during fast scrolling at the cost of rendering more DOM nodes.
+
+```razor
+<ArcadiaDataGrid TItem="StockTick" Data="@ticks"
+                 VirtualizeRows="true"
+                 Height="500px"
+                 ItemSize="36"
+                 OverscanCount="10">
+    <ArcadiaColumn TItem="StockTick" Title="Symbol" Field="@(t => t.Symbol)" />
+    <ArcadiaColumn TItem="StockTick" Title="Price" Field="@(t => t.Price)" Format="C2" />
+</ArcadiaDataGrid>
+```
+
+## Virtual Scrolling with Features
+
+Virtual scrolling works with sorting, filtering, selection, and templates. The grid applies these features to the full dataset and then virtualizes the result.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 VirtualizeRows="true"
+                 Height="400px"
+                 ItemSize="40"
+                 Sortable="true"
+                 Filterable="true"
+                 Selectable="true"
+                 MultiSelect="true"
+                 SelectedItems="@selected"
+                 SelectedItemsChanged="@(s => selected = s)">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" Align="right" />
+</ArcadiaDataGrid>
+
+@code {
+    private HashSet<Employee> selected = new();
+}
+```
+
+## Performance Tips
+
+- **Set `ItemSize` accurately.** Measure your rendered row height in the browser dev tools. An accurate value keeps the scrollbar position precise and avoids unnecessary re-renders.
+- **Avoid variable-height rows.** The virtualizer assumes a fixed row height. If rows vary significantly in height, the scrollbar thumb will jump. Use consistent `ItemSize` and keep row content uniform.
+- **Use `Width` on columns.** Fixed column widths prevent layout recalculation as rows enter and leave the DOM.
+- **Prefer `Field` over `Template` for simple values.** The default renderer is faster than a custom RenderFragment for plain text and formatted numbers.
+- **Keep `OverscanCount` reasonable.** The default of 5 works well for most cases. Values above 20 negate much of the virtualization benefit.
+
+## Performance Benchmarks
+
+| Metric | Target |
+|---|---|
+| Initial render (10K rows) | < 100ms |
+| Sort/filter (10K rows) | < 50ms |
+| Scroll frame rate | 60fps |
+| DOM nodes (visible rows) | ~15--25 depending on viewport |
+
+## Pagination vs. Virtual Scrolling
+
+Virtual scrolling and pagination are mutually exclusive. When `VirtualizeRows` is `true`, the `PageSize` parameter is ignored and the pager UI is hidden. To switch back to pagination, set `VirtualizeRows="false"`.
+
+| | Pagination | Virtual Scrolling |
+|---|---|---|
+| DOM nodes | One page of rows | Visible rows + overscan |
+| Scrollbar | No vertical scroll (use page buttons) | Native browser scrollbar |
+| Best for | Moderate datasets with page-by-page browsing | Large datasets where users scroll freely |
+| `Height` required | No | Yes |
+
+## Server-Side Virtual Scrolling
+
+When using `LoadData` for server-side data, the grid fetches only the visible range from your callback. Your server callback receives `args.Skip` and `args.Take` values that correspond to the current scroll position.
+
+> **Note:** Virtual scrolling requires `Height` and `ItemSize` to be set. Without them, the virtualizer cannot calculate which rows are visible.

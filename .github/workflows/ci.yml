@@ -132,6 +132,9 @@ jobs:
       - name: Pack Arcadia.Charts
         run: dotnet pack src/Arcadia.Charts/Arcadia.Charts.csproj --configuration Release --no-build --output ./nupkgs
 
+      - name: Pack Arcadia.DataGrid
+        run: dotnet pack src/Arcadia.DataGrid/Arcadia.DataGrid.csproj --configuration Release --no-build --output ./nupkgs
+
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v4
         with:

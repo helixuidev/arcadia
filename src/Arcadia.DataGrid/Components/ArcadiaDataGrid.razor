@@ -125,7 +125,7 @@
                     }
                     @if (DetailTemplate is not null)
                     {
-                        <th class="arcadia-grid__th" style="width:36px;"></th>
+                        <th class="arcadia-grid__th" style="width:36px;" aria-label="Expand row details"><span class="arcadia-sr-only">Details</span></th>
                     }
                     @if (Selectable && MultiSelect)
                     {
@@ -181,11 +181,11 @@
                 @if (_showFilters && Filterable)
                 {
                     <tr class="arcadia-grid__filter-row">
-                        @if (ShowRowSelector) { <th class="arcadia-grid__th"></th> }
-                        @if (DetailTemplate is not null) { <th class="arcadia-grid__th"></th> }
+                        @if (ShowRowSelector) { <th class="arcadia-grid__th" aria-label="Row number filter"><span class="arcadia-sr-only">Row</span></th> }
+                        @if (DetailTemplate is not null) { <th class="arcadia-grid__th" aria-label="Details filter"><span class="arcadia-sr-only">Details</span></th> }
                         @if (Selectable && MultiSelect)
                         {
-                            <th class="arcadia-grid__th"></th>
+                            <th class="arcadia-grid__th" aria-label="Selection filter"><span class="arcadia-sr-only">Select</span></th>
                         }
                         @foreach (var col in Columns.Where(c => c.IsVisible))
                         {

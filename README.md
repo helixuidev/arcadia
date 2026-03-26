@@ -1,6 +1,6 @@
 <p align="center">
   <strong>Arcadia Controls</strong><br>
-  <em>16 chart types, dashboard widgets, form builder & notifications for Blazor</em>
+  <em>16 chart types, high-performance DataGrid, dashboard widgets, form builder & notifications for Blazor</em>
 </p>
 
 <p align="center">
@@ -44,7 +44,7 @@ A commercial Blazor component library for enterprise .NET developers. Pure SVG c
 | Sankey | `ArcadiaSankeyChart` | Pro |
 | Chord | `ArcadiaChordChart` | Pro |
 
-**Plus:** 7 dashboard widgets (KPI Card, Sparkline, Progress Bar, Delta Indicator, Bar List, Tracker, Category Bar), Form Builder with 21 field types, and Toast Notifications.
+**Plus:** DataGrid with virtual scrolling, 7 dashboard widgets (KPI Card, Sparkline, Progress Bar, Delta Indicator, Bar List, Tracker, Category Bar), Form Builder with 21 field types, and Toast Notifications.
 
 ## Quick Start
 
@@ -52,6 +52,7 @@ A commercial Blazor component library for enterprise .NET developers. Pure SVG c
 
 ```bash
 dotnet add package Arcadia.Charts
+dotnet add package Arcadia.DataGrid
 dotnet add package Arcadia.Theme
 ```
 
@@ -105,6 +106,11 @@ dotnet add package Arcadia.Theme
 - **Smooth curves** — Catmull-Rom interpolation for elegant line charts
 - **Anti-collision layout engine** — labels never overlap
 - **Accessibility** — WCAG 2.1 AA, screen reader tables, `prefers-reduced-motion`
+- **DataGrid** — sorting, filtering, paging, grouping, inline editing, and CSV export
+- **Virtual scrolling** — DataGrid handles 100K+ rows at 60fps
+- **Selection modes** — single, multi, and checkbox selection in the DataGrid
+- **Column templates** — cell, header, footer, and detail row templates
+- **6 built-in grid themes** — Obsidian, Vapor, Carbon, Aurora, Slate, Midnight + 3 density modes
 - **Form Builder** — 21 field types, schema-driven or model-driven, wizard mode
 - **Toast Notifications** — fire-and-forget with auto-dismiss and stacking
 
@@ -115,6 +121,7 @@ dotnet add package Arcadia.Theme
 | `Arcadia.Core` | Base classes, theming engine, accessibility utilities |
 | `Arcadia.Theme` | Design tokens, CSS custom properties, Tailwind plugin |
 | `Arcadia.Charts` | All 16 chart types + 7 dashboard widgets |
+| `Arcadia.DataGrid` | High-performance data grid with sorting, filtering, virtual scrolling, inline editing, and CSV export |
 | `Arcadia.FormBuilder` | Dynamic forms, validation, wizards |
 | `Arcadia.Notifications` | Toast notification system |
 
@@ -141,7 +148,7 @@ See [tools/snippets/README.md](tools/snippets/README.md) for installation.
 | Tier | Price | Includes |
 |------|-------|----------|
 | **Community** | Free (MIT) | Line, Bar, Pie, Scatter charts + Sparklines |
-| **Pro** | $299/dev/year | All 16 chart types + Form Builder + Notifications |
+| **Pro** | $299/dev/year | All 16 chart types + DataGrid + Form Builder + Notifications |
 | **Enterprise** | $799/dev/year | Pro + priority support + source code access |
 
 [View pricing](https://arcadiaui.com/#pricing)

@@ -5,7 +5,7 @@
      width="@Width" height="@Height"
      viewBox="0 0 @Width @Height"
      role="img"
-     aria-label="@AriaLabel"
+     aria-label="@(AriaLabel ?? DefaultAriaLabel)"
      @attributes="AdditionalAttributes">
 
     @if (ShowArea && _pathData is not null)

@@ -1,0 +1,154 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Export
+description: CSV export for the Arcadia DataGrid with a built-in toolbar button and programmatic ExportToCsvAsync method. Respects current sort and filters.
+---
+
+# CSV Export
+
+Export the current grid data to a CSV file. The export respects the active sort order, filters, and column visibility, so the user gets exactly what they see.
+
+## Toolbar Export Button
+
+The simplest way to enable export is to show the built-in toolbar. Set `ShowToolbar="true"` and an export button appears in the toolbar area above the grid.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 ShowToolbar="true"
+                 Sortable="true"
+                 Filterable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" Align="right" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new()
+    {
+        new("Alice", "Engineering", 95000),
+        new("Bob", "Marketing", 72000),
+        new("Carol", "Engineering", 105000),
+    };
+
+    record Employee(string Name, string Department, decimal Salary);
+}
+```
+
+When the user clicks the export button, the browser downloads a `.csv` file with the current data.
+
+## Programmatic Export
+
+For custom export triggers -- a button outside the grid, a keyboard shortcut, or an automated workflow -- use a component reference and call `ExportToCsvAsync()` directly.
+
+```razor
+<button @onclick="ExportData">Export to CSV</button>
+
+<ArcadiaDataGrid @ref="grid" TItem="Employee" Data="@employees"
+                 Sortable="true"
+                 Filterable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" Align="right" />
+</ArcadiaDataGrid>
+
+@code {
+    private ArcadiaDataGrid<Employee> grid = default!;
+
+    private List<Employee> employees = new()
+    {
+        new("Alice", "Engineering", 95000),
+        new("Bob", "Marketing", 72000),
+        new("Carol", "Engineering", 105000),
+    };
+
+    private async Task ExportData()
+    {
+        await grid.ExportToCsvAsync();
+    }
+
+    record Employee(string Name, string Department, decimal Salary);
+}
+```
+
+## Custom File Name
+
+Pass a file name to `ExportToCsvAsync` to control the download name. The default is `export.csv`.
+
+```csharp
+await grid.ExportToCsvAsync("employees-report.csv");
+```
+
+## ExportToCsvAsync Method
+
+```csharp
+public async Task ExportToCsvAsync(string fileName = "export.csv")
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `fileName` | `string` | `"export.csv"` | Name of the downloaded CSV file |
+
+The method triggers a browser file download via JS interop. It returns after the download has been initiated.
+
+## What Gets Exported
+
+The CSV export includes:
+
+1. **A header row** with each visible column's `Title`
+2. **Data rows** in the current sort order
+3. **Only filtered rows** when filters are active
+4. **Only visible columns** -- columns with `Visible="false"` are excluded
+5. **Formatted values** using each column's `Format` string (e.g., currency, dates)
+
+Columns without a `Field` accessor (e.g., template-only columns like action buttons), hidden columns, detail templates, and selection checkboxes are not included in the export.
+
+## Export with Filters Active
+
+When filters are active, only matching rows are exported. This lets users filter down to a subset and export just that subset.
+
+```razor
+@* User filters "Department" to "Engineering", then clicks Export CSV *@
+@* Only Engineering employees are included in the CSV *@
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 ShowToolbar="true"
+                 Filterable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+## Export with Selection
+
+When both selection and the toolbar are enabled, the export button exports only the selected rows if any rows are selected. When no rows are selected, it exports all visible rows.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 ShowToolbar="true"
+                 Selectable="true"
+                 MultiSelect="true"
+                 SelectedItems="@selected"
+                 SelectedItemsChanged="@(s => selected = s)">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" Align="right" />
+</ArcadiaDataGrid>
+
+@code {
+    private HashSet<Employee> selected = new();
+}
+```
+
+## CSV Output Example
+
+For a grid with Name, Department, and Salary columns:
+
+```csv
+Name,Department,Salary
+Alice,Engineering,"$95,000"
+Carol,Engineering,"$105,000"
+```
+
+Values containing commas, double-quotes, or newlines are automatically quoted per RFC 4180.
+
+> **Note:** CSV export operates on the client-side processed data. When using `LoadData` for server-side mode, only the currently loaded rows are exported. To export the full server-side dataset, fetch all rows in your application code and pass them to a separate export utility.

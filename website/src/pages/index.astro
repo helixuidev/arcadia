@@ -19,8 +19,8 @@ import Layout from '../layouts/Layout.astro';
         </h1>
 
         <p class="text-xl text-[var(--arc-text-muted)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Charts, KPI cards, forms, and notifications for .NET developers.
-          Native SVG rendering. Zero JavaScript. Ships in one <code class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-base">dotnet add package</code>.
+          Charts, DataGrid, KPI cards, forms, and notifications for .NET developers.
+          Native SVG rendering. Virtual scrolling. Ships in one <code class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-base">dotnet add package</code>.
         </p>
 
         <div class="flex flex-wrap items-center justify-center gap-4 mb-6">
@@ -193,7 +193,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-4xl font-bold mb-4">Everything you need to <span class="gradient-text">ship faster</span></h2>
-        <p class="text-[var(--arc-text-muted)] text-lg max-w-2xl mx-auto">Five packages, one design system. Tree-shakeable, accessible, and works across all Blazor render modes.</p>
+        <p class="text-[var(--arc-text-muted)] text-lg max-w-2xl mx-auto">Six packages, one design system. Tree-shakeable, accessible, and works across all Blazor render modes.</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
@@ -205,6 +205,16 @@ import Layout from '../layouts/Layout.astro';
           </div>
           <p class="text-[var(--arc-text-muted)] mb-4">Line, Bar, Pie, Scatter + Candlestick, Radar, Gauge, Heatmap, Waterfall, Funnel, Treemap. Plus 7 dashboard widgets. Native SVG, animated, accessible.</p>
           <a href="/docs/charts" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
+        </div>
+
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>
+            <h3 class="text-xl font-semibold">DataGrid</h3>
+            <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Pro</span>
+          </div>
+          <p class="text-[var(--arc-text-muted)] mb-4">Sort, filter, group & select. Virtual scrolling handles 100K+ rows. Inline editing with templates, CSV export, and 6 built-in themes.</p>
+          <a href="/docs/datagrid" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
         <div class="glass-card p-8">
@@ -284,8 +294,9 @@ import Layout from '../layouts/Layout.astro';
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Community</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> All 16 chart types + animations</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 7 dashboard widgets (KPI, Gauge, etc.)</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> DataGrid — sort, filter, group, 100K+ rows</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Form Builder — 21 field types, wizard forms</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Trendlines, data labels, export</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Trendlines, data labels, CSV export</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> All future packages & updates</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Email support</li>
             </ul>
@@ -299,7 +310,7 @@ import Layout from '../layouts/Layout.astro';
           <div class="text-4xl font-extrabold mb-1">$799</div>
           <div class="text-sm text-[var(--arc-text-muted)] mb-6">per developer / year</div>
           <ul class="space-y-3 text-sm text-[var(--arc-text-muted)] mb-8">
-            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Pro</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Pro (Charts, DataGrid, Forms)</li>
             <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Custom feature requests</li>
             <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Private roadmap access</li>
             <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Priority bug fixes</li>
@@ -346,7 +357,7 @@ import Layout from '../layouts/Layout.astro';
         "name": "What is Arcadia Controls?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Arcadia Controls is a commercial Blazor component library with 16 chart types, dashboard widgets, a form builder, and toast notifications. It uses native SVG rendering with zero JavaScript dependencies."
+          "text": "Arcadia Controls is a commercial Blazor component library with 16 chart types, a high-performance DataGrid, dashboard widgets, a form builder, and toast notifications. It uses native SVG rendering with zero JavaScript dependencies."
         }
       },
       {
@@ -354,7 +365,7 @@ import Layout from '../layouts/Layout.astro';
         "name": "Is Arcadia Controls free?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Arcadia Controls offers a free Community Edition with 4 chart types (Line, Bar, Pie, Scatter). Pro ($299/dev/year) and Enterprise ($799/dev/year) tiers include all 16 chart types plus priority support."
+          "text": "Arcadia Controls offers a free Community Edition with 4 chart types (Line, Bar, Pie, Scatter). Pro ($299/dev/year) and Enterprise ($799/dev/year) tiers include all 16 chart types, the DataGrid component, Form Builder, and priority support."
         }
       },
       {

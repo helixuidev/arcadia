@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\src\Arcadia.Notifications\Arcadia.Notifications.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.FormBuilder\Arcadia.FormBuilder.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.Charts\Arcadia.Charts.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.DataGrid\Arcadia.DataGrid.csproj" />
   </ItemGroup>
 
 </Project>

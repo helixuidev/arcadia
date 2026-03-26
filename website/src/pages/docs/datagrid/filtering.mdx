@@ -1,0 +1,110 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Filtering
+description: Per-column filtering for the Arcadia DataGrid with a filter row UI, FilterDescriptor type, and six filter operators.
+---
+
+# Filtering
+
+Enable per-column filtering with a text input row below the headers. Filters run client-side by default, or are passed to your server callback in server-side mode.
+
+## Enabling Filters
+
+Set `Filterable="true"` on the grid. A "Filter" toggle button appears in the toolbar. Click it to show or hide the filter row.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees" Filterable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+When the filter row is visible, each column with a `Field` accessor gets a text input. Typing into the input filters the grid in real time.
+
+## Column-Level Control
+
+Individual columns can opt out of filtering by setting `Filterable="false"`. When `Filterable` is null (the default), the column is filterable if it has a `Field` accessor.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees" Filterable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Actions" Filterable="false">
+        <Template Context="emp">
+            <button @onclick="@(() => Edit(emp))">Edit</button>
+        </Template>
+    </ArcadiaColumn>
+</ArcadiaDataGrid>
+```
+
+## FilterDescriptor Type
+
+Each active filter is represented by a `FilterDescriptor`:
+
+```csharp
+public class FilterDescriptor
+{
+    public string Property { get; set; }        // Column key
+    public FilterOperator Operator { get; set; } // Default: Contains
+    public string Value { get; set; }            // User-entered text
+}
+```
+
+## Filter Operators
+
+The `FilterOperator` enum supports six operators:
+
+| Operator | Description | Example |
+|---|---|---|
+| `Contains` | Cell value contains the filter text (case-insensitive) | "ali" matches "Alice" |
+| `Equals` | Cell value equals the filter text (case-insensitive) | "alice" matches "Alice" |
+| `StartsWith` | Cell value starts with the filter text | "Al" matches "Alice" |
+| `EndsWith` | Cell value ends with the filter text | "ce" matches "Alice" |
+| `GreaterThan` | Numeric: cell value > filter value | "80000" matches 95000 |
+| `LessThan` | Numeric: cell value < filter value | "80000" matches 72000 |
+
+The default operator is `Contains`. The built-in filter row uses `Contains` for all columns.
+
+## Client-Side Behavior
+
+In client-side mode (no `LoadData`), the grid applies filters internally using LINQ. Filters are:
+
+- Case-insensitive
+- Applied to the string representation of the cell value
+- Combined with AND logic (all filters must match)
+- Applied before sorting and paging
+
+Filtering resets the page index to 0.
+
+## Server-Side Filtering
+
+When `LoadData` is set, all active filters are passed in `DataGridLoadArgs.Filters` as an `IReadOnlyList<FilterDescriptor>`. The grid does not filter client-side -- your callback handles filtering.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Filterable="true"
+                 LoadData="@LoadEmployees"
+                 ServerTotalCount="@totalCount">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new();
+    private int totalCount;
+
+    private async Task LoadEmployees(DataGridLoadArgs args)
+    {
+        // args.Filters contains active FilterDescriptor entries
+        var result = await EmployeeService.QueryAsync(
+            skip: args.Skip,
+            take: args.Take,
+            filters: args.Filters);
+
+        employees = result.Items;
+        totalCount = result.TotalCount;
+    }
+}
+```
+
+> **Note:** Toggling the filter row visibility does not clear the filter values. Filters persist until the user clears the input text.

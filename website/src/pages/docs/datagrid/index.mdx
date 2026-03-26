@@ -1,0 +1,112 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Overview
+description: Blazor DataGrid with sorting, filtering, paging, virtual scrolling, grouping, inline editing, selection, and CSV export. Part of Arcadia Controls.
+---
+
+# DataGrid
+
+A full-featured data grid for Blazor with sorting, filtering, paging, virtual scrolling, grouping, inline editing, row selection, column templates, and CSV export. Works in Server, WebAssembly, and Auto render modes.
+
+## Installation
+
+```bash
+dotnet add package Arcadia.DataGrid
+```
+
+Add the stylesheet to your `App.razor` or `_Host.cshtml`:
+
+```html
+<link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" />
+```
+
+No service registration is required. The component is ready to use after adding the package and stylesheet.
+
+## Basic Usage
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" Align="right" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new()
+    {
+        new("Alice", "Engineering", 95000),
+        new("Bob", "Marketing", 72000),
+        new("Carol", "Engineering", 105000),
+    };
+
+    record Employee(string Name, string Department, decimal Salary);
+}
+```
+
+## ArcadiaDataGrid Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Data` | `IReadOnlyList<TItem>?` | `null` | In-memory collection of row items. When null, the grid shows `EmptyMessage` |
+| `PageSize` | `int` | `25` | Rows per page. 0 = show all (no paging) |
+| `PageSizeOptions` | `int[]` | `[10, 25, 50, 100]` | Page size options for the dropdown |
+| `Sortable` | `bool` | `true` | Enable click-to-sort on column headers. Individual columns can override |
+| `Striped` | `bool` | `true` | Alternating background shading on even/odd rows |
+| `Hoverable` | `bool` | `true` | Background highlight on the row under the cursor |
+| `Dense` | `bool` | `false` | Reduce row height and cell padding for a denser layout |
+| `FixedHeader` | `bool` | `true` | Keep column headers fixed at the top during vertical scroll. Requires `Height` |
+| `Height` | `string?` | `null` | Fixed height with scroll (e.g., `"400px"`). Null = auto height |
+| `Loading` | `bool` | `false` | Render animated skeleton rows while awaiting an async fetch |
+| `EmptyMessage` | `string` | `"No data available"` | Text shown when Data is null or empty and Loading is false |
+| `ShowRowSelector` | `bool` | `false` | Show row selector column with row numbers and state indicators |
+| `ShowRowNumbers` | `bool` | `true` | Display row numbers in the row selector column. Requires `ShowRowSelector` |
+| `Filterable` | `bool` | `false` | Add a filter input row below headers |
+| `Selectable` | `bool` | `false` | Allow rows to be selected by clicking |
+| `MultiSelect` | `bool` | `false` | Add a checkbox column for multi-select. Requires `Selectable` |
+| `SelectedItems` | `HashSet<TItem>?` | `null` | Currently selected items. Two-way bindable |
+| `SelectedItemsChanged` | `EventCallback<HashSet<TItem>>` | -- | Callback when the selection set changes |
+| `LoadData` | `EventCallback<DataGridLoadArgs>` | -- | Server-side data loading callback. When set, the grid operates in server-side mode |
+| `ServerTotalCount` | `int?` | `null` | Total matching rows on the server for page count calculation. Required with `LoadData` |
+| `DetailTemplate` | `RenderFragment<TItem>?` | `null` | Detail row template. When set, rows become expandable |
+| `ChildContent` | `RenderFragment?` | `null` | Child content slot for `ArcadiaColumn` components |
+| `SortChanged` | `EventCallback<SortDescriptor?>` | -- | Callback when column sorting changes |
+| `OnRowEdit` | `EventCallback<TItem>` | -- | Callback when an inline edit is committed (Enter or blur) |
+| `GroupBy` | `string?` | `null` | Column key whose values group rows into collapsible sections |
+| `VirtualizeRows` | `bool` | `false` | Enable virtual scrolling for large datasets. Requires `Height`. Disables pagination |
+| `ItemSize` | `float` | `40` | Estimated row height in pixels for the virtualizer |
+| `OverscanCount` | `int` | `5` | Extra rows rendered outside the viewport to reduce flicker |
+| `Class` | `string?` | `null` | Additional CSS classes on the root element |
+| `Style` | `string?` | `null` | Inline style on the root element |
+
+## ArcadiaColumn Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Field` | `Func<TItem, object>?` | `null` | Value accessor lambda for this column |
+| `Title` | `string` | `""` | Column header text |
+| `Sortable` | `bool?` | `null` | Whether this column is sortable. Null inherits from grid-level `Sortable` |
+| `Width` | `string?` | `null` | CSS width (e.g., `"200px"`, `"30%"`). Null = auto |
+| `Align` | `string` | `"left"` | Text alignment: `left`, `center`, `right` |
+| `Format` | `string?` | `null` | .NET format string for cell values (e.g., `"C2"`, `"d"`, `"N0"`) |
+| `Template` | `RenderFragment<TItem>?` | `null` | Custom cell content template |
+| `HeaderTemplate` | `RenderFragment?` | `null` | Custom header content template |
+| `Filterable` | `bool?` | `null` | Whether this column is filterable. Null inherits from grid |
+| `Visible` | `bool` | `true` | Whether this column is visible |
+| `Frozen` | `bool` | `false` | Pin this column to the left edge. Requires `Width` to be set |
+| `Editable` | `bool` | `false` | Whether this column supports inline editing |
+| `EditTemplate` | `RenderFragment<TItem>?` | `null` | Custom edit template for inline editing |
+| `Aggregate` | `AggregateType` | `None` | Footer aggregate: `None`, `Sum`, `Average`, `Count`, `Min`, `Max` |
+| `FooterTemplate` | `RenderFragment?` | `null` | Custom footer template (overrides `Aggregate` when set) |
+| `CellClass` | `Func<TItem, string?>?` | `null` | Dynamic CSS class for cells in this column |
+
+## Feature Pages
+
+- [Sorting](/docs/datagrid/sorting) -- Click-to-sort, multi-direction cycling, SortChanged event
+- [Filtering](/docs/datagrid/filtering) -- Per-column filter row, FilterDescriptor, operators
+- [Selection](/docs/datagrid/selection) -- Single and multi-select, checkbox column, SelectedItems binding
+- [Editing](/docs/datagrid/editing) -- Inline editing, EditTemplate, OnRowEdit event
+- [Grouping](/docs/datagrid/grouping) -- GroupBy column key, collapsible groups
+- [Templates](/docs/datagrid/templates) -- Cell, header, footer, detail templates and aggregates
+- [Virtual Scrolling](/docs/datagrid/virtual-scrolling) -- Render 10K+ rows at 60fps
+- [Themes](/docs/datagrid/themes) -- 6 built-in themes, 3 density modes, CSS custom properties
+- [Export](/docs/datagrid/export) -- CSV export respecting current sort and filters

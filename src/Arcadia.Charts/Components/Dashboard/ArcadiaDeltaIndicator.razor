@@ -1,7 +1,7 @@
 @namespace Arcadia.Charts.Components.Dashboard
 @inherits Arcadia.Core.Base.ArcadiaComponentBase
 
-<span class="@CssClass" @attributes="AdditionalAttributes">
+<span class="@CssClass" role="status" aria-label="@AriaDescription" @attributes="AdditionalAttributes">
     <span class="arcadia-delta__arrow" aria-hidden="true">@Arrow</span>
     <span class="arcadia-delta__value">@Value</span>
 </span>
@@ -18,6 +18,13 @@
         DeltaType.Increase => "↑",
         DeltaType.Decrease => "↓",
         _ => "→"
+    };
+
+    private string AriaDescription => Type switch
+    {
+        DeltaType.Increase => $"Increased by {Value}",
+        DeltaType.Decrease => $"Decreased by {Value}",
+        _ => $"Change: {Value}"
     };
 
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-delta")

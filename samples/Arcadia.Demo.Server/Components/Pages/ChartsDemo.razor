@@ -4,6 +4,7 @@
 @using Arcadia.Charts.Core
 @using Arcadia.Charts.Components.Charts
 @using Arcadia.Charts.Components.Dashboard
+@using Arcadia.DataGrid.Components
 @using Arcadia.FormBuilder.Schema
 @using Arcadia.FormBuilder.Components
 @using Arcadia.FormBuilder.Components.Fields
@@ -35,6 +36,9 @@
             <button class="gallery__nav-btn @(_tab == "sankey" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "sankey"'>Sankey</button>
             <button class="gallery__nav-btn @(_tab == "chord" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "chord"'>Chord</button>
             <button class="gallery__nav-btn @(_tab == "advanced" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "advanced"'>Advanced</button>
+
+            <div class="gallery__nav-group">DataGrid</div>
+            <button class="gallery__nav-btn @(_tab == "datagrid" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "datagrid"'>DataGrid</button>
 
             <div class="gallery__nav-group">Forms</div>
             <button class="gallery__nav-btn @(_tab == "fields" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "fields"'>Field Types</button>
@@ -662,6 +666,48 @@
             </div>
         }
 
+        @* ─── DATAGRID ─── *@
+
+        @if (_tab == "datagrid")
+        {
+            <div class="gallery__section-header">
+                <h1>DataGrid</h1>
+                <p>High-performance data grid with sorting, filtering, grouping, selection, inline editing, virtual scrolling, and 6 built-in themes.</p>
+                <div class="gallery__hint">Click column headers to sort · Double-click cells to edit · Use toolbar to export CSV</div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Sortable & Filterable Grid</div>
+                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Sortable="true" Filterable="true" Pageable="true" PageSize="5" ShowToolbar="true" Striped="true">
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Id)" Title="ID" Width="80px" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Name)" Title="Name" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Department)" Title="Department" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Role)" Title="Role" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Salary)" Title="Salary" Format="C0" Align="right" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.StartDate)" Title="Start Date" Format="d" />
+                </ArcadiaDataGrid>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Editable Grid with Selection</div>
+                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Editable="true" SelectionMode="DataGridSelectionMode.Multiple" Pageable="true" PageSize="5">
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Name)" Title="Name" Editable="true" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Department)" Title="Department" Editable="true" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Role)" Title="Role" Editable="true" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Salary)" Title="Salary" Format="C0" Align="right" />
+                </ArcadiaDataGrid>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Grouping</div>
+                <ArcadiaDataGrid TItem="Employee" Data="@_employees" GroupBy="Department" Sortable="true">
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Name)" Title="Name" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Role)" Title="Role" />
+                    <ArcadiaColumn TItem="Employee" Field="@(e => e.Salary)" Title="Salary" Format="C0" Align="right" />
+                </ArcadiaDataGrid>
+            </div>
+        }
+
         @* ─── NOTIFICATIONS ─── *@
 
         @if (_tab == "toasts")
@@ -752,6 +798,23 @@
     record MonthActivity(string Month, double Hours);
     record NullablePoint(string Label, double Value);
     record StreamPoint(string Time, double Value);
+    record Employee(int Id, string Name, string Department, string Role, double Salary, DateTime StartDate);
+
+    List<Employee> _employees = new()
+    {
+        new(1, "Alice Chen", "Engineering", "Senior Developer", 135000, new DateTime(2021, 3, 15)),
+        new(2, "Bob Martinez", "Engineering", "Tech Lead", 155000, new DateTime(2019, 7, 1)),
+        new(3, "Carol Kim", "Design", "UX Designer", 110000, new DateTime(2022, 1, 10)),
+        new(4, "David Patel", "Marketing", "Marketing Manager", 105000, new DateTime(2020, 6, 22)),
+        new(5, "Eva Novak", "Engineering", "DevOps Engineer", 128000, new DateTime(2021, 9, 5)),
+        new(6, "Frank Wu", "Sales", "Account Executive", 95000, new DateTime(2023, 2, 14)),
+        new(7, "Grace Lee", "Design", "Product Designer", 118000, new DateTime(2022, 5, 30)),
+        new(8, "Hiro Tanaka", "Engineering", "Backend Developer", 125000, new DateTime(2020, 11, 8)),
+        new(9, "Isabel Santos", "Marketing", "Content Strategist", 92000, new DateTime(2023, 4, 1)),
+        new(10, "James O'Brien", "Sales", "Sales Director", 145000, new DateTime(2018, 8, 20)),
+        new(11, "Kira Johansson", "Engineering", "Frontend Developer", 122000, new DateTime(2022, 7, 12)),
+        new(12, "Liam Cooper", "Design", "Design Lead", 130000, new DateTime(2019, 3, 25)),
+    };
 
     double[] _revenueSparkline = { 42, 48, 45, 52, 49, 55, 58, 62, 59, 65, 68, 72 };
     double[] _usersSparkline = { 85, 82, 88, 84, 80, 78, 82, 79, 76, 74, 78, 72 };

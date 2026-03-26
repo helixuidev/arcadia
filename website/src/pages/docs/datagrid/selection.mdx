@@ -1,0 +1,94 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Selection
+description: Row selection for the Arcadia DataGrid with single-select, multi-select, checkbox column, select-all header, and two-way SelectedItems binding.
+---
+
+# Selection
+
+Enable row selection with click-to-select, an optional checkbox column, and two-way binding to a `HashSet<TItem>`.
+
+## Single Selection
+
+Set `Selectable="true"` to allow clicking a row to select it. Only one row can be selected at a time in single-select mode.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Selectable="true"
+                 @bind-SelectedItems="selected">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+</ArcadiaDataGrid>
+
+<p>Selected: @(selected?.FirstOrDefault()?.Name ?? "None")</p>
+
+@code {
+    private HashSet<Employee> selected = new();
+}
+```
+
+In single-select mode, clicking a new row clears the previous selection and selects the clicked row.
+
+## Multi-Select with Checkboxes
+
+Add `MultiSelect="true"` alongside `Selectable="true"` to show a checkbox column. Multiple rows can be selected simultaneously.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Selectable="true"
+                 MultiSelect="true"
+                 @bind-SelectedItems="selected">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+<p>@selected.Count employee(s) selected</p>
+
+@code {
+    private HashSet<Employee> selected = new();
+}
+```
+
+## Select-All Header Checkbox
+
+When `MultiSelect` is enabled, the checkbox column header includes a select-all checkbox. It toggles all rows on the current page:
+
+- If all rows on the page are selected, clicking deselects all of them
+- Otherwise, clicking selects all rows on the current page
+
+The toolbar also displays a selection count indicator (e.g., "3 selected") when one or more rows are selected.
+
+## SelectedItems Binding
+
+The `SelectedItems` parameter is a `HashSet<TItem>` that supports two-way binding via `@bind-SelectedItems`. You can also use the `SelectedItemsChanged` event callback directly.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 Selectable="true"
+                 MultiSelect="true"
+                 SelectedItems="@selected"
+                 SelectedItemsChanged="@OnSelectionChanged">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+</ArcadiaDataGrid>
+
+@code {
+    private HashSet<Employee> selected = new();
+
+    private void OnSelectionChanged(HashSet<Employee> items)
+    {
+        selected = items;
+        Console.WriteLine($"Selected {items.Count} items");
+    }
+}
+```
+
+## Keyboard Selection
+
+When the grid has focus, press **Space** on a focused row to toggle its selection. The grid announces "Row selected" or "Row deselected" via an ARIA live region for screen reader users.
+
+## Visual Indicators
+
+Selected rows receive the `arcadia-grid__row--selected` class, which applies a highlighted background color. The current (focused) row receives `arcadia-grid__row--current` with a left accent border.
+
+When `ShowRowSelector` is enabled, selected rows show a bold row number and the current row shows a pointer glyph.

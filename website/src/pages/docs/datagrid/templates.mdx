@@ -1,0 +1,130 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Templates
+description: Cell, header, footer, detail, and edit templates for the Arcadia DataGrid. Includes footer aggregates (Sum, Average, Count, Min, Max).
+---
+
+# Templates
+
+Customize every part of the grid with RenderFragment templates for cells, headers, footers, detail rows, and edit mode.
+
+## Cell Template
+
+The `Template` parameter on `ArcadiaColumn` replaces the default cell rendering with custom markup. The template receives the row item as its `Context`.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)">
+        <Template Context="emp">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <img src="@emp.AvatarUrl" alt="" style="width:24px; height:24px; border-radius:50%;" />
+                <strong>@emp.Name</strong>
+            </div>
+        </Template>
+    </ArcadiaColumn>
+    <ArcadiaColumn TItem="Employee" Title="Status" Field="@(e => e.Status)">
+        <Template Context="emp">
+            <span class="badge badge-@emp.Status.ToLower()">@emp.Status</span>
+        </Template>
+    </ArcadiaColumn>
+</ArcadiaDataGrid>
+```
+
+When a column has both `Template` and `Field`, the `Field` is still used for sorting and filtering, but the `Template` controls rendering.
+
+## Header Template
+
+The `HeaderTemplate` parameter replaces the default header text with custom markup:
+
+```razor
+<ArcadiaColumn TItem="Employee" Title="Revenue" Field="@(e => e.Revenue)">
+    <HeaderTemplate>
+        <span style="color: var(--arcadia-grid-accent);">Revenue ($)</span>
+    </HeaderTemplate>
+</ArcadiaColumn>
+```
+
+> **Note:** When `HeaderTemplate` is set, the default sort icon is not rendered. You can add your own sort indicator if needed.
+
+## Footer Template
+
+The `FooterTemplate` parameter renders custom content in the column footer. It overrides the `Aggregate` parameter when both are set.
+
+```razor
+<ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0">
+    <FooterTemplate>
+        <span>Budget: $1,000,000</span>
+    </FooterTemplate>
+</ArcadiaColumn>
+```
+
+The footer row only appears when at least one visible column has an `Aggregate` or `FooterTemplate`.
+
+## Footer Aggregates
+
+Use the `Aggregate` parameter for built-in footer calculations. The aggregate runs on the filtered dataset (not the raw data) and formats the result using the column's `Format` string.
+
+```razor
+<ArcadiaDataGrid TItem="Order" Data="@orders" Filterable="true">
+    <ArcadiaColumn TItem="Order" Title="Product" Field="@(o => o.Product)" />
+    <ArcadiaColumn TItem="Order" Title="Quantity" Field="@(o => o.Quantity)"
+                   Align="right" Aggregate="AggregateType.Sum" />
+    <ArcadiaColumn TItem="Order" Title="Price" Field="@(o => o.Price)"
+                   Align="right" Format="C2" Aggregate="AggregateType.Average" />
+    <ArcadiaColumn TItem="Order" Title="Total" Field="@(o => o.Total)"
+                   Align="right" Format="C2" Aggregate="AggregateType.Sum" />
+</ArcadiaDataGrid>
+```
+
+### AggregateType Enum
+
+| Value | Description |
+|---|---|
+| `None` | No aggregate (default) |
+| `Sum` | Sum of all values in the column |
+| `Average` | Average of all values |
+| `Count` | Count of rows |
+| `Min` | Minimum value |
+| `Max` | Maximum value |
+
+Aggregates work with numeric types (`int`, `long`, `float`, `double`, `decimal`) and fall back to parsing the string representation for other types.
+
+## Detail Template
+
+The `DetailTemplate` parameter on the grid renders an expandable detail row beneath each data row. When set, an expand/collapse toggle appears in each row.
+
+```razor
+<ArcadiaDataGrid TItem="Order" Data="@orders">
+    <DetailTemplate Context="order">
+        <div style="padding: 16px;">
+            <h4>Order #@order.Id</h4>
+            <p>Customer: @order.CustomerName</p>
+            <p>Ship date: @order.ShipDate.ToShortDateString()</p>
+            <ul>
+                @foreach (var line in order.Lines)
+                {
+                    <li>@line.Product x @line.Quantity = @line.Total.ToString("C2")</li>
+                }
+            </ul>
+        </div>
+    </DetailTemplate>
+    <ArcadiaColumn TItem="Order" Title="Order #" Field="@(o => o.Id)" />
+    <ArcadiaColumn TItem="Order" Title="Customer" Field="@(o => o.CustomerName)" />
+    <ArcadiaColumn TItem="Order" Title="Total" Field="@(o => o.Total)" Format="C2" />
+</ArcadiaDataGrid>
+```
+
+Click the expand icon to show the detail row. Click again to collapse. The detail row spans all columns and animates on expand.
+
+## Edit Template
+
+The `EditTemplate` parameter on a column provides custom UI for inline edit mode. See the [Editing](/docs/datagrid/editing) page for details.
+
+## CellClass
+
+The `CellClass` parameter is a lambda that returns a CSS class string per row, enabling conditional cell styling:
+
+```razor
+<ArcadiaColumn TItem="Order" Title="Status" Field="@(o => o.Status)"
+               CellClass="@(o => o.Status == "Overdue" ? "cell-danger" : null)" />
+```

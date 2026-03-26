@@ -1,0 +1,106 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Sorting
+description: Column sorting for the Arcadia DataGrid with click-to-sort headers, ascending/descending/none cycling, and the SortChanged event callback.
+---
+
+# Sorting
+
+Sorting is enabled by default. Click any column header to cycle through ascending, descending, and unsorted states.
+
+## How It Works
+
+1. Click a column header to sort ascending
+2. Click again to sort descending
+3. Click a third time to clear the sort
+
+The sort indicator appears in the header: an up arrow for ascending, a down arrow for descending, and a neutral icon when unsorted. Headers include `aria-sort` attributes for screen readers.
+
+## Grid-Level vs. Column-Level
+
+The grid-level `Sortable` parameter (default `true`) controls the default for all columns. Individual columns can override this with their own `Sortable` parameter.
+
+```razor
+@* Grid-level: sorting on by default, but disable it for the Notes column *@
+<ArcadiaDataGrid TItem="Employee" Data="@employees" Sortable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+    <ArcadiaColumn TItem="Employee" Title="Notes" Field="@(e => e.Notes)" Sortable="false" />
+</ArcadiaDataGrid>
+```
+
+## SortChanged Event
+
+Use the `SortChanged` callback to react to sort changes. The callback receives a `SortDescriptor?` -- the descriptor contains the column key and direction, or `null` when the sort is cleared.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 SortChanged="@OnSortChanged">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+<p>Current sort: @sortInfo</p>
+
+@code {
+    private string sortInfo = "None";
+
+    private void OnSortChanged(SortDescriptor? sort)
+    {
+        sortInfo = sort is null
+            ? "None"
+            : $"{sort.Property} {sort.Direction}";
+    }
+}
+```
+
+## SortDescriptor Type
+
+```csharp
+public class SortDescriptor
+{
+    public string Property { get; set; }    // Column key (matches Title)
+    public SortDirection Direction { get; set; }
+}
+
+public enum SortDirection
+{
+    None,
+    Ascending,
+    Descending
+}
+```
+
+## Server-Side Sorting
+
+When using `LoadData` for server-side data, the sort state is included in the `DataGridLoadArgs`. The grid does not sort client-side in server mode -- your callback is responsible for applying the sort.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 LoadData="@LoadEmployees"
+                 ServerTotalCount="@totalCount">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new();
+    private int totalCount;
+
+    private async Task LoadEmployees(DataGridLoadArgs args)
+    {
+        // args.SortProperty = "Salary"
+        // args.SortDirection = SortDirection.Ascending
+        var result = await EmployeeService.QueryAsync(
+            skip: args.Skip,
+            take: args.Take,
+            sortBy: args.SortProperty,
+            sortDir: args.SortDirection);
+
+        employees = result.Items;
+        totalCount = result.TotalCount;
+    }
+}
+```
+
+> **Note:** Sorting resets the page index to 0 and cancels any active inline edit.

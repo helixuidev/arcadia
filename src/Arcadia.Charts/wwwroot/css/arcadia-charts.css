@@ -43,7 +43,7 @@
 .arcadia-delta { display: inline-flex; align-items: center; gap: 2px; font-size: var(--arcadia-text-sm, 0.875rem); font-weight: var(--arcadia-font-medium, 500); border-radius: var(--arcadia-radius-sm, 0.25rem); padding: 1px 6px; }
 .arcadia-delta--increase { color: var(--arcadia-color-success, #16a34a); background: rgba(22, 163, 74, 0.15); }
 .arcadia-delta--decrease { color: var(--arcadia-color-danger, #dc2626); background: rgba(220, 38, 38, 0.15); }
-.arcadia-delta--neutral { color: inherit; opacity: 0.6; background: rgba(128, 128, 128, 0.1); }
+.arcadia-delta--neutral { color: var(--arcadia-color-muted, #9ca3af); background: rgba(128, 128, 128, 0.1); }
 .arcadia-delta__arrow { font-size: 0.75em; }
 
 /* Progress Bar */

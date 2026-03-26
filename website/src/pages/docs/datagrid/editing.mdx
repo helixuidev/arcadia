@@ -1,0 +1,107 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Editing
+description: Inline editing for the Arcadia DataGrid with double-click to edit, custom EditTemplate, commit/cancel behavior, and the OnRowEdit event.
+---
+
+# Inline Editing
+
+Enable cell-level inline editing with double-click activation, keyboard commit/cancel, and a custom edit template option.
+
+## Enabling Editing
+
+Set `Editable="true"` on any `ArcadiaColumn` to make its cells editable. Double-click a cell to enter edit mode.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 OnRowEdit="@HandleEdit">
+    <ArcadiaColumn TItem="Employee" Title="Name"
+                   Field="@(e => e.Name)" Editable="true" />
+    <ArcadiaColumn TItem="Employee" Title="Department"
+                   Field="@(e => e.Department)" Editable="true" />
+    <ArcadiaColumn TItem="Employee" Title="Salary"
+                   Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new()
+    {
+        new() { Name = "Alice", Department = "Engineering", Salary = 95000 },
+        new() { Name = "Bob", Department = "Marketing", Salary = 72000 },
+    };
+
+    private async Task HandleEdit(Employee edited)
+    {
+        // Persist the edited item
+        await EmployeeService.UpdateAsync(edited);
+    }
+
+    public class Employee
+    {
+        public string Name { get; set; } = "";
+        public string Department { get; set; } = "";
+        public decimal Salary { get; set; }
+    }
+}
+```
+
+## Edit Behavior
+
+- **Double-click** a cell to enter edit mode
+- **Enter** commits the edit and invokes `OnRowEdit`
+- **Escape** cancels the edit without saving
+- **Blur** (clicking away) also commits the edit
+- Only one cell can be edited at a time
+- A double-commit guard prevents duplicate `OnRowEdit` invocations from simultaneous blur and Enter events
+
+When a cell is in edit mode, the row selector (if enabled) displays a pencil glyph.
+
+## Keyboard Editing
+
+When the grid has keyboard focus:
+
+- Press **Enter** on a focused editable cell to start editing
+- Press **Enter** to commit, then focus moves down one row
+- Press **Escape** to cancel editing (announced via ARIA live region)
+
+## Default Edit Input
+
+When no `EditTemplate` is provided, the grid renders a default text input pre-filled with the current cell value. The input is styled with a focused accent border and shadow.
+
+## Custom EditTemplate
+
+Use the `EditTemplate` parameter for custom edit UI such as dropdowns, date pickers, or numeric inputs:
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 OnRowEdit="@HandleEdit">
+    <ArcadiaColumn TItem="Employee" Title="Department"
+                   Field="@(e => e.Department)" Editable="true">
+        <EditTemplate Context="emp">
+            <select @bind="emp.Department" class="arcadia-grid__edit-input">
+                <option>Engineering</option>
+                <option>Marketing</option>
+                <option>Sales</option>
+                <option>HR</option>
+            </select>
+        </EditTemplate>
+    </ArcadiaColumn>
+    <ArcadiaColumn TItem="Employee" Title="Salary"
+                   Field="@(e => e.Salary)" Format="C0" Editable="true">
+        <EditTemplate Context="emp">
+            <input type="number" @bind="emp.Salary"
+                   class="arcadia-grid__edit-input" />
+        </EditTemplate>
+    </ArcadiaColumn>
+</ArcadiaDataGrid>
+```
+
+## OnRowEdit Event
+
+The `OnRowEdit` callback fires when an edit is committed (Enter or blur). It receives the full `TItem` object with the updated values, so you can persist the changes to your data store.
+
+```csharp
+[Parameter] public EventCallback<TItem> OnRowEdit { get; set; }
+```
+
+> **Note:** Sorting or changing pages cancels any active edit without invoking `OnRowEdit`.

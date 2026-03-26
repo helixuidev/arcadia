@@ -2,7 +2,8 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.DataGrid</PackageId>
-    <Description>Blazor DataGrid with sorting, filtering, paging, virtual scrolling, and column templates. Part of Arcadia Controls. arcadiaui.com</Description>
+    <Description>Blazor DataGrid with sorting, filtering, paging, grouping, selection, inline editing, virtual scrolling, column templates, CSV export, keyboard navigation, and 6 built-in themes. WCAG 2.1 AA accessible. Supports Blazor Server, WebAssembly, and Auto render modes. Part of Arcadia Controls. arcadiaui.com</Description>
+    <PackageTags>blazor;datagrid;data-grid;table;sorting;filtering;paging;virtual-scrolling;grouping;editing;csv-export;dotnet;aspnetcore;blazor-components;wcag;accessible</PackageTags>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -37,6 +38,7 @@
 
   <ItemGroup>
     <None Include="../../icon.png" Pack="true" PackagePath="/" />
+    <None Include="README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 
   <ItemGroup>

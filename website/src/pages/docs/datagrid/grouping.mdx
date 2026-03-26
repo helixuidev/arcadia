@@ -1,0 +1,97 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: DataGrid Grouping
+description: Row grouping for the Arcadia DataGrid with collapsible group headers, group counts, and the GroupBy parameter.
+---
+
+# Grouping
+
+Group rows into collapsible sections by setting the `GroupBy` parameter to a column key.
+
+## Basic Grouping
+
+Set `GroupBy` to the `Title` (key) of the column whose values should define the groups. The grid renders a group header row for each unique value with an expand/collapse toggle and a row count.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees" GroupBy="Department">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new()
+    {
+        new("Alice", "Engineering", 95000),
+        new("Bob", "Marketing", 72000),
+        new("Carol", "Engineering", 105000),
+        new("Dave", "Sales", 68000),
+        new("Eve", "Marketing", 77000),
+    };
+
+    record Employee(string Name, string Department, decimal Salary);
+}
+```
+
+This produces group headers like:
+
+- **Engineering** (2)
+- **Marketing** (2)
+- **Sales** (1)
+
+## Expand and Collapse
+
+All groups are expanded by default. Click a group header to collapse its rows. Click again to expand. The expand/collapse icon rotates 90 degrees when open.
+
+Group state is maintained internally. Collapsing one group does not affect others.
+
+## How GroupBy Works
+
+The `GroupBy` value must match a column's `Key`. A column's key is its `Title` by default (or the method name of the `Field` lambda if `Title` is empty).
+
+The grid:
+
+1. Filters the data (respects active filters)
+2. Sorts the data (respects current sort)
+3. Groups by the specified column's `Field` value
+4. Renders each group with a header row spanning all columns
+
+## Grouping with Sorting
+
+Sorting applies within groups. If you sort by "Salary" while grouped by "Department", each department's rows are sorted by salary. The group order follows the natural data order.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 GroupBy="Department" Sortable="true">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Salary" Field="@(e => e.Salary)" Format="C0" />
+</ArcadiaDataGrid>
+```
+
+## Dynamic Grouping
+
+Change the `GroupBy` parameter dynamically to regroup on the fly:
+
+```razor
+<select @bind="groupColumn">
+    <option value="">No grouping</option>
+    <option value="Department">By Department</option>
+    <option value="Level">By Level</option>
+</select>
+
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 GroupBy="@groupColumn">
+    <ArcadiaColumn TItem="Employee" Title="Name" Field="@(e => e.Name)" />
+    <ArcadiaColumn TItem="Employee" Title="Department" Field="@(e => e.Department)" />
+    <ArcadiaColumn TItem="Employee" Title="Level" Field="@(e => e.Level)" />
+</ArcadiaDataGrid>
+
+@code {
+    private string? groupColumn;
+}
+```
+
+Set `GroupBy` to `null` or an empty string to disable grouping.
+
+> **Note:** Grouping is a client-side feature. When using `LoadData` for server-side data, group the data in your server callback before returning it to the grid.

@@ -31,6 +31,10 @@ public partial class ArcadiaSparkline : Arcadia.Core.Base.ArcadiaComponentBase
     /// <summary>Accessible label for the sparkline.</summary>
     [Parameter] public string? AriaLabel { get; set; }
 
+    private string DefaultAriaLabel => Data is { Count: > 0 }
+        ? $"Sparkline chart with {Data.Count} data points, range {Data.Min():G4} to {Data.Max():G4}"
+        : "Sparkline chart";
+
     private string? _pathData;
     private string? _areaPath;
 
