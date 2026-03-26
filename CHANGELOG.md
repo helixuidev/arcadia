@@ -6,15 +6,31 @@ All notable changes to Arcadia Controls are documented here. This project uses [
 
 ### Added
 - **Arcadia.DataGrid on NuGet** — first public release of the DataGrid package
-- **10 DataGrid documentation pages** — overview, sorting, filtering, selection, editing, grouping, templates, virtual scrolling, themes, export
-- **DataGrid in demo gallery** — 3 showcases (sortable/filterable, editable with selection, grouping) in both Server and WASM demos
+- **`Property` parameter** on ArcadiaColumn — string-based column binding without boxing (`Property="Salary"` instead of `Field="@(e => (object)e.Salary)"`)
+- **Multi-column sort** — Shift+Click to add secondary/tertiary sort columns with numbered priority badges on headers
+- **Quick filter** — toolbar search input that filters across all visible columns (`ShowToolbar="true"`, `QuickFilter` parameter)
+- **Clipboard copy** — Ctrl+C (Cmd+C) copies selected rows as TSV; if no selection, copies all visible rows with headers
+- **Filter operator dropdown** — per-column filter operator selection (Contains, Equals, StartsWith, EndsWith, NotEquals, GreaterThan, LessThan, IsEmpty, IsNotEmpty)
+- **Batch editing** — `BatchEdit="true"` enables change tracking with Save/Discard toolbar buttons and `OnBatchCommit` callback
+- **Context menu** — `ContextMenuTemplate` for custom right-click menus, `OnContextMenu` callback
+- **State persistence** — `StateKey` parameter auto-saves sort/filter/page/column state to localStorage; `OnStateChanged` callback for server-side persistence
+- **`SelectionMode` enum** — `None`/`SingleRow`/`Multiple` as cleaner alternative to separate `Selectable`/`MultiSelect` booleans
+- **`EmptyTemplate`** — custom RenderFragment for empty state content
+- **4 financial indicators** — SMA, EMA, Bollinger Bands, RSI in `Arcadia.Charts.Core.Indicators`
+- **`SyncGroup` parameter** — link charts together for synchronized crosshair and zoom
+- **Rubber band zoom** — `ZoomMode="selection"` for click-drag region zoom
+- **`OnPrint` callback** — print-optimized chart rendering
+- **973 unit tests** — 162 DataGrid tests + 136 FormBuilder field type tests added (was 669)
+- **13 DataGrid documentation pages** — overview, sorting, filtering, selection, editing, grouping, templates, virtual scrolling, themes, export, state persistence, batch editing, context menu
+- **DataGrid in demo gallery** — showcases in both Server and WASM demos (in sync)
 - **DataGrid on homepage** — feature card, pricing tiers, FAQ, JSON-LD structured data
-- **DataGrid NuGet README** — package page with feature table, quick start, render mode matrix
 
 ### Fixed
+- **DataGrid `Key` parameter** — was a computed property without `[Parameter]`, causing `InvalidOperationException` when set in Razor. Now a proper parameter with auto-generation fallback.
+- **DataGrid SSR blank render** — grid rendered zero data during server-side prerendering because column collection was gated on `OnAfterRender`. Columns now render on first pass.
 - **Delta indicator contrast** — replaced `opacity: 0.6` with explicit muted color for WCAG AA compliance
 - **Sparkline missing alt text** — auto-generates `aria-label` with data range when none provided
-- **Empty table headers in DataGrid** — added `aria-label` and sr-only text to utility columns (detail expand, filter row, checkbox)
+- **Empty table headers in DataGrid** — added `aria-label` and sr-only text to utility columns
 - **DataGrid missing from solution file** — caused CI pack to fail with NU5026
 - **DataGrid missing from CI/release workflows** — pack step now includes all 6 packages
 

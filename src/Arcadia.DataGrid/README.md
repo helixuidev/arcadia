@@ -14,16 +14,20 @@
 
 | Feature | Details |
 |---------|---------|
-| Sorting | Single and multi-column, configurable per column |
-| Filtering | Text, number, date, and boolean filter operators per column |
+| Sorting | Multi-column sort with Shift+Click and priority badges |
+| Filtering | 9 operators per column + quick filter toolbar search |
 | Paging | Built-in pager with configurable page sizes |
-| Selection | Single, multi-select, and checkbox column |
+| Selection | Single, multi-select, checkbox column, `SelectionMode` enum |
 | Grouping | Group by any column with collapsible headers |
 | Inline editing | Double-click to edit, custom edit templates |
+| Batch editing | Track changes, save/discard all with `OnBatchCommit` |
 | Virtual scrolling | CSS Grid layout for 100K+ rows |
 | Column templates | Cell, header, footer, and detail row templates |
 | CSV export | One-click export with column/row filtering |
-| Keyboard nav | Arrow keys, Enter to edit, Escape to cancel |
+| Clipboard copy | Ctrl+C copies selected rows as TSV |
+| Context menu | Custom right-click menus via `ContextMenuTemplate` |
+| State persistence | Auto-save sort/filter/columns to localStorage |
+| Keyboard nav | Arrow keys, Enter to edit, Escape to cancel, Ctrl+C to copy |
 | 6 Themes | Obsidian, Vapor, Carbon, Aurora, Slate, Midnight |
 | 3 Density modes | Comfortable, Compact, Dense |
 
@@ -44,10 +48,10 @@ Drop in a grid:
 ```razor
 @using Arcadia.DataGrid.Components
 
-<ArcadiaDataGrid TItem="Employee" Data="@employees" Sortable="true" Filterable="true">
-    <ArcadiaColumn TItem="Employee" Field="@(e => e.Name)" Title="Name" />
-    <ArcadiaColumn TItem="Employee" Field="@(e => e.Department)" Title="Department" />
-    <ArcadiaColumn TItem="Employee" Field="@(e => e.Salary)" Title="Salary" Format="C0" Align="right" />
+<ArcadiaDataGrid TItem="Employee" Data="@employees" Sortable="true" Filterable="true" ShowToolbar="true">
+    <ArcadiaColumn TItem="Employee" Property="Name" />
+    <ArcadiaColumn TItem="Employee" Property="Department" />
+    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
 </ArcadiaDataGrid>
 ```
 

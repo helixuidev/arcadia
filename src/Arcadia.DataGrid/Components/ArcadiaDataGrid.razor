@@ -96,6 +96,8 @@
         {
         <div class="arcadia-grid__toolbar">
             <input type="text" class="arcadia-grid__search-input" placeholder="Search..."
+                   aria-label="Quick filter — search across all columns"
+                   autocomplete="off"
                    value="@QuickFilter"
                    @oninput="@((ChangeEventArgs e) => SetQuickFilter(e.Value?.ToString()))" />
             @if (Filterable)
@@ -112,10 +114,14 @@
             }
             @if (BatchEdit && _batchChanges.Count > 0)
             {
-                <span class="arcadia-grid__batch-info" style="margin-left:auto;">
+                <span class="arcadia-grid__batch-info" role="status" aria-live="polite" style="margin-left:auto;">
                     @_batchChanges.Count pending
-                    <button class="arcadia-grid__batch-btn arcadia-grid__batch-btn--save" @onclick="CommitBatchAsync">Save</button>
-                    <button class="arcadia-grid__batch-btn arcadia-grid__batch-btn--discard" @onclick="DiscardBatch">Discard</button>
+                    <button class="arcadia-grid__batch-btn arcadia-grid__batch-btn--save"
+                            aria-label="@($"Save {_batchChanges.Count} pending changes")"
+                            @onclick="CommitBatchAsync">Save</button>
+                    <button class="arcadia-grid__batch-btn arcadia-grid__batch-btn--discard"
+                            aria-label="Discard all pending changes"
+                            @onclick="DiscardBatch">Discard</button>
                 </span>
             }
         </div>
@@ -431,8 +437,14 @@
 
     @if (_showContextMenu && _contextMenuItem is not null && ContextMenuTemplate is not null)
     {
-        <div class="arcadia-grid__context-menu" style="position:fixed;left:@(_contextMenuX)px;top:@(_contextMenuY)px;z-index:1000;"
-             @onclick="CloseContextMenu" @onblur="CloseContextMenu">
+        <div class="arcadia-grid__context-menu"
+             role="menu"
+             aria-label="Row actions"
+             tabindex="-1"
+             style="position:fixed;left:@(_contextMenuX)px;top:@(_contextMenuY)px;z-index:1000;"
+             @onclick="CloseContextMenu"
+             @onblur="CloseContextMenu"
+             @onkeydown="@((KeyboardEventArgs e) => { if (e.Key == "Escape") CloseContextMenu(); })">
             @ContextMenuTemplate(_contextMenuItem)
         </div>
     }
