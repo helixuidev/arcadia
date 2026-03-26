@@ -220,7 +220,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     private List<TItem> GetCachedFilteredData()
     {
         var dataHash = Data?.Count ?? 0;
-        var filterHash = _filters.Values.Sum(f => f.Value?.GetHashCode() ?? 0);
+        var filterHash = unchecked(_filters.Values.Aggregate(0, (h, f) => h ^ (f.Value?.GetHashCode() ?? 0) ^ (f.Operator.GetHashCode() << 16)));
         if (_filteredDataCache is null || dataHash != _lastDataHash || filterHash != _lastFilterHash)
         {
             _filteredDataCache = GetFilteredDataInternal().ToList();

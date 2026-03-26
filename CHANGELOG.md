@@ -2,6 +2,15 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.11] — 2026-03-26
+
+### Fixed
+- **Filter hash overflow** — multi-column filter cache hash used `Sum()` of `GetHashCode()` values, causing `OverflowException` with certain filter value combinations. Replaced with `unchecked` XOR aggregate.
+
+### Changed
+- **13 DataGrid documentation pages** — 3 new pages (state persistence, batch editing, context menu) plus multi-sort, quick filter, clipboard copy, and operator dropdown sections added to existing pages
+- **Comprehensive CHANGELOG** — beta.10 entry expanded with all 17 features listed by name
+
 ## [1.0.0-beta.10] — 2026-03-26
 
 ### Added
