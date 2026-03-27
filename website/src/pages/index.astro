@@ -14,13 +14,13 @@ import Layout from '../layouts/Layout.astro';
         </div>
 
         <h1 class="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
-          The dashboard toolkit<br/>
+          The complete UI framework<br/>
           <span class="gradient-text">Blazor deserves</span>
         </h1>
 
         <p class="text-xl text-[var(--arc-text-muted)] max-w-2xl mx-auto mb-10 leading-relaxed">
-          Charts, DataGrid, KPI cards, forms, and notifications for .NET developers.
-          Native SVG rendering. Virtual scrolling. Ships in one <code class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-base">dotnet add package</code>.
+          57+ components across 7 packages — Charts, DataGrid, Forms, UI Components, Notifications, Theme Engine, and more.
+          Zero JavaScript. Pure .NET. Ships with one <code class="text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded text-base">dotnet add package</code>.
         </p>
 
         <div class="flex flex-wrap items-center justify-center gap-4 mb-6">
@@ -28,13 +28,20 @@ import Layout from '../layouts/Layout.astro';
             Get Started Free
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
           </a>
+          <a href="/playground/" class="btn-gradient text-lg !py-3.5 !px-8" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6);">
+            Live Playground
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </a>
           <a href="https://github.com/helixuidev/arcadia" class="btn-outline text-lg !py-3.5 !px-8">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
             Star on GitHub
           </a>
         </div>
-        <div class="text-sm text-[var(--arc-text-muted)]">
+        <div class="text-sm text-[var(--arc-text-muted)] space-y-1">
           <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300">dotnet add package Arcadia.Charts</code>
+          <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300 ml-2">Arcadia.DataGrid</code>
+          <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300 ml-2">Arcadia.UI</code>
+          <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300 ml-2">Arcadia.Theme</code>
         </div>
       </div>
 
@@ -142,13 +149,13 @@ import Layout from '../layouts/Layout.astro';
     </div>
   </section>
 
-  <!-- TRUSTED BY / STATS -->
+  <!-- STATS ROW -->
   <section class="py-12 px-6 border-y border-purple-500/10">
     <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div><div class="text-3xl font-bold gradient-text">16</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Chart Types</div></div>
-      <div><div class="text-3xl font-bold gradient-text">21</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Form Fields</div></div>
-      <div><div class="text-3xl font-bold gradient-text">677+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Unit Tests</div></div>
-      <div><div class="text-3xl font-bold gradient-text">.NET 5–10</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Multi-target</div></div>
+      <div><div class="text-3xl font-bold gradient-text">57+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Components</div></div>
+      <div><div class="text-3xl font-bold gradient-text">973</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Tests</div></div>
+      <div><div class="text-3xl font-bold gradient-text">7</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Packages</div></div>
+      <div><div class="text-3xl font-bold gradient-text">0 KB</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">JavaScript</div></div>
     </div>
   </section>
 
@@ -156,7 +163,7 @@ import Layout from '../layouts/Layout.astro';
   <section class="py-24 px-6">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
       <div>
-        <h2 class="text-3xl font-bold mb-4">Ship dashboards<br/><span class="gradient-text">in 6 lines of Razor</span></h2>
+        <h2 class="text-3xl font-bold mb-4">Ship full apps<br/><span class="gradient-text">in pure Razor</span></h2>
         <p class="text-[var(--arc-text-muted)] text-lg leading-relaxed mb-6">
           No JavaScript. No npm. No webpack. Just <code class="text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded text-sm">dotnet add package</code> and you're building.
           Every component is strongly typed, fully accessible, and works across Server, WASM, and Auto render modes.
@@ -193,7 +200,7 @@ import Layout from '../layouts/Layout.astro';
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-16">
         <h2 class="text-4xl font-bold mb-4">Everything you need to <span class="gradient-text">ship faster</span></h2>
-        <p class="text-[var(--arc-text-muted)] text-lg max-w-2xl mx-auto">Six packages, one design system. Tree-shakeable, accessible, and works across all Blazor render modes.</p>
+        <p class="text-[var(--arc-text-muted)] text-lg max-w-2xl mx-auto">Seven packages, one design system. Tree-shakeable, accessible, and works across all Blazor render modes.</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-6">
@@ -203,7 +210,7 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="text-xl font-semibold">Charts & Dashboard</h3>
             <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">Line, Bar, Pie, Scatter + Candlestick, Radar, Gauge, Heatmap, Waterfall, Funnel, Treemap. Plus 7 dashboard widgets. Native SVG, animated, accessible.</p>
+          <p class="text-[var(--arc-text-muted)] mb-4">16 chart types + 7 dashboard widgets. Pure SVG rendering, streaming data, financial indicators, SyncGroup for linked charts. Candlestick, Radar, Gauge, Heatmap, Waterfall, Funnel, Treemap, Sankey and more.</p>
           <a href="/docs/charts" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
@@ -213,7 +220,7 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="text-xl font-semibold">DataGrid</h3>
             <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Pro</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">Sort, filter, group & select. Virtual scrolling handles 100K+ rows. Inline editing with templates, CSV export, and 6 built-in themes.</p>
+          <p class="text-[var(--arc-text-muted)] mb-4">Multi-column sort, quick filter, batch editing, virtual scrolling for 100K+ rows. State persistence, context menu, clipboard support, and 6 built-in themes.</p>
           <a href="/docs/datagrid" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
@@ -223,8 +230,18 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="text-xl font-semibold">Form Builder</h3>
             <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Pro</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">21 field types. Schema-driven or model-driven. Wizard forms, cross-field validation, auto-save.</p>
+          <p class="text-[var(--arc-text-muted)] mb-4">20+ field types. Schema-driven or model-driven. Wizard forms, cross-field validation, conditional fields, repeater groups, and auto-save.</p>
           <a href="/docs/forms" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
+        </div>
+
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg></div>
+            <h3 class="text-xl font-semibold">UI Components</h3>
+            <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Pro</span>
+          </div>
+          <p class="text-[var(--arc-text-muted)] mb-4">Dialog, Tabs, Tooltip, Sidebar, Accordion, Breadcrumb, Card, Badge, and Avatar. Composable building blocks for any enterprise application.</p>
+          <a href="/docs/ui" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
         <div class="glass-card p-8">
@@ -233,7 +250,7 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="text-xl font-semibold">Notifications</h3>
             <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">Toast notifications with auto-dismiss, stacking, 4 severity levels, and full ARIA support.</p>
+          <p class="text-[var(--arc-text-muted)] mb-4">Toast notifications with auto-dismiss, stacking, severity levels, and full ARIA support.</p>
           <a href="/docs/notifications" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
@@ -243,7 +260,7 @@ import Layout from '../layouts/Layout.astro';
             <h3 class="text-xl font-semibold">Theme Engine</h3>
             <span class="ml-auto text-xs bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full">Free</span>
           </div>
-          <p class="text-[var(--arc-text-muted)] mb-4">CSS custom property tokens. Light/dark themes. 3 density modes. Tailwind CSS 4.x plugin.</p>
+          <p class="text-[var(--arc-text-muted)] mb-4">6 named themes (Obsidian, Vapor, Carbon, Aurora, Slate, Midnight). Design tokens, dark/light modes, and Tailwind CSS 4.x plugin.</p>
           <a href="/docs/theme" class="text-sm text-purple-400 hover:text-purple-300">View documentation →</a>
         </div>
 
@@ -252,7 +269,7 @@ import Layout from '../layouts/Layout.astro';
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
             <h3 class="text-xl font-semibold">Accessibility First</h3>
           </div>
-          <p class="text-[var(--arc-text-muted)]">WCAG 2.1 AA. Focus traps, live regions, hidden data tables, keyboard navigation. Pass audits your competitors can't.</p>
+          <p class="text-[var(--arc-text-muted)]">WCAG 2.1 AA. Focus traps, keyboard navigation, screen reader data tables, and 973 unit tests to keep it that way.</p>
         </div>
       </div>
     </div>
@@ -293,10 +310,11 @@ import Layout from '../layouts/Layout.astro';
             <ul class="space-y-3 text-sm text-[var(--arc-text-muted)] mb-8">
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Community</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> All 16 chart types + animations</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 7 dashboard widgets (KPI, Gauge, etc.)</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> DataGrid — sort, filter, group, 100K+ rows</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Form Builder — 21 field types, wizard forms</li>
-              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Trendlines, data labels, CSV export</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> 7 dashboard widgets</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> DataGrid — multi-sort, batch edit, virtual scroll, state persistence</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> UI Components — Dialog, Tabs, Tooltip, Sidebar, Accordion, Card, Badge, Avatar</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Form Builder — 20+ field types, wizard forms</li>
+              <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Trendlines, financial indicators, CSV export</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> All future packages & updates</li>
               <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Email support</li>
             </ul>
@@ -310,7 +328,7 @@ import Layout from '../layouts/Layout.astro';
           <div class="text-4xl font-extrabold mb-1">$799</div>
           <div class="text-sm text-[var(--arc-text-muted)] mb-6">per developer / year</div>
           <ul class="space-y-3 text-sm text-[var(--arc-text-muted)] mb-8">
-            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Pro (Charts, DataGrid, Forms)</li>
+            <li class="flex items-center gap-2"><span class="text-green-400">✓</span> Everything in Pro (Charts, DataGrid, Forms, UI Components)</li>
             <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Custom feature requests</li>
             <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Private roadmap access</li>
             <li class="flex items-center gap-2"><span class="text-purple-400">★</span> Priority bug fixes</li>
@@ -337,10 +355,17 @@ import Layout from '../layouts/Layout.astro';
               Read the Docs
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </a>
+            <a href="/playground/" class="btn-gradient text-lg !py-3.5 !px-8" style="background: linear-gradient(135deg, #06b6d4, #8b5cf6);">
+              Try the Playground
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </a>
             <a href="https://github.com/helixuidev/arcadia" class="btn-outline text-lg !py-3.5 !px-8">View on GitHub</a>
           </div>
-          <div class="mt-6 text-sm text-[var(--arc-text-muted)]">
+          <div class="mt-6 text-sm text-[var(--arc-text-muted)] space-y-1">
             <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300">dotnet add package Arcadia.Charts</code>
+            <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300 ml-2">Arcadia.DataGrid</code>
+            <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300 ml-2">Arcadia.UI</code>
+            <code class="bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20 text-purple-300 ml-2">Arcadia.Theme</code>
           </div>
         </div>
       </div>
@@ -357,7 +382,7 @@ import Layout from '../layouts/Layout.astro';
         "name": "What is Arcadia Controls?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Arcadia Controls is a commercial Blazor component library with 16 chart types, a high-performance DataGrid, dashboard widgets, a form builder, and toast notifications. It uses native SVG rendering with zero JavaScript dependencies."
+          "text": "Arcadia Controls is a commercial Blazor component library with 57+ components across 7 packages — including 16 chart types, a high-performance DataGrid, UI Components (Dialog, Tabs, Tooltip, Sidebar, Accordion, and more), a form builder, dashboard widgets, and toast notifications. It uses native SVG rendering with zero JavaScript dependencies and 973 unit tests."
         }
       },
       {
@@ -365,7 +390,7 @@ import Layout from '../layouts/Layout.astro';
         "name": "Is Arcadia Controls free?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Arcadia Controls offers a free Community Edition with 4 chart types (Line, Bar, Pie, Scatter). Pro ($299/dev/year) and Enterprise ($799/dev/year) tiers include all 16 chart types, the DataGrid component, Form Builder, and priority support."
+          "text": "Arcadia Controls offers a free Community Edition with 4 chart types (Line, Bar, Pie, Scatter). Pro ($299/dev/year) and Enterprise ($799/dev/year) tiers include all 57+ components across 7 packages: 16 chart types, DataGrid, UI Components (Dialog, Tabs, Tooltip, etc.), Form Builder, and priority support."
         }
       },
       {
@@ -373,7 +398,7 @@ import Layout from '../layouts/Layout.astro';
         "name": "What Blazor render modes does Arcadia Controls support?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Arcadia Controls supports all Blazor render modes: Server, WebAssembly, and Auto (net8+). It multi-targets .NET 5 through .NET 10."
+          "text": "Arcadia Controls supports all Blazor render modes: Server, WebAssembly, and Auto (net8+). It multi-targets net5.0 through net9.0."
         }
       },
       {
@@ -381,7 +406,7 @@ import Layout from '../layouts/Layout.astro';
         "name": "How does Arcadia Controls compare to Telerik and Syncfusion?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Arcadia Controls uses pure SVG rendering with no JavaScript dependencies for chart rendering, resulting in smaller bundle sizes and better server-side rendering. At $299/dev/year it's also significantly cheaper than Telerik ($1,249+) or Syncfusion ($995+)."
+          "text": "Arcadia Controls uses pure SVG rendering with no JavaScript dependencies for chart rendering, resulting in smaller bundle sizes and better server-side rendering. With 57+ components across 7 packages and 973 unit tests, it offers a comprehensive toolkit. At $299/dev/year it's also significantly cheaper than Telerik ($1,249+) or Syncfusion ($995+)."
         }
       },
       {
