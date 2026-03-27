@@ -386,6 +386,19 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
         }
     }
 
+    // ── Slide animation state (CSS-driven, no JS) ──
+    private bool _slidePhase1; // true = render offset, false = render final (transition animates)
+    private double _slideStepWidth;
+
+    private string GetSlideStyle()
+    {
+        if (_slidePhase1)
+            return $"transform: translateX({_slideStepWidth.ToString("F1")}px); transition: none;";
+        if (_slideStepWidth > 0)
+            return "transform: translateX(0); transition: transform 400ms cubic-bezier(0.25, 0.1, 0.25, 1);";
+        return "";
+    }
+
     /// <summary>Appends a point and removes the first (sliding window in one call). Animates the transition.</summary>
     public void AppendAndSlide(T item)
     {
@@ -395,22 +408,28 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
             list.Add(item);
             if (list.Count > SlidingWindow && SlidingWindow > 0)
                 list.RemoveAt(0);
-            OnParametersSet();
-            InvokeAsync(async () =>
+
+            if (wasAtCapacity && Data is not null && Data.Count > 1)
             {
-                StateHasChanged();
-                // Trigger slide animation if we removed a point
-                if (wasAtCapacity && Interop is not null && Data is not null && Data.Count > 1)
-                {
-                    var stepWidth = _layout.PlotArea.Width / Data.Count;
-                    try { await Interop.SlideChartContentAsync(ContainerRef, stepWidth, 400); }
-                    catch (JSException) { } // JS interop unavailable during SSR
-#if NET6_0_OR_GREATER
-                    catch (JSDisconnectedException) { } // Circuit disconnected during Blazor Server navigation
-#endif
-                    catch (ObjectDisposedException) { } // Component already disposed
-                }
-            });
+                // Phase 1: render new data BUT offset right (looks like old position)
+                _slideStepWidth = _layout.PlotArea.Width / Data.Count;
+                _slidePhase1 = true;
+            }
+
+            OnParametersSet();
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        // Phase 2: remove offset, CSS transition slides to final position
+        if (_slidePhase1)
+        {
+            _slidePhase1 = false;
+            InvokeAsync(StateHasChanged);
         }
     }
 

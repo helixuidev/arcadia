@@ -78,7 +78,8 @@ else if (Data is not null && Data.Count > 1 && XField is not null && Series is n
             }
 
             @* Series *@
-            <g class="arcadia-slide-group" clip-path="@(SlidingWindow > 0 ? "url(#arcadia-slide-clip)" : "")">
+            <g class="arcadia-slide-group" clip-path="@(SlidingWindow > 0 ? "url(#arcadia-slide-clip)" : "")"
+               style="@GetSlideStyle()">
             @for (var si = 0; si < Series.Count; si++)
             {
                 var series = Series[si];
