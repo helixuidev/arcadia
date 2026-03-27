@@ -6,6 +6,7 @@
 @using Arcadia.Charts.Components.Dashboard
 @using Arcadia.DataGrid.Components
 @using Arcadia.DataGrid.Core
+@using Arcadia.UI.Components
 @using Arcadia.FormBuilder.Schema
 @using Arcadia.FormBuilder.Components
 @using Arcadia.FormBuilder.Components.Fields
@@ -48,7 +49,8 @@
             <button class="gallery__nav-btn @(_tab == "schema" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "schema"'>Schema Form</button>
             <button class="gallery__nav-btn @(_tab == "wizard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "wizard"'>Wizard</button>
 
-            <div class="gallery__nav-group">Other</div>
+            <div class="gallery__nav-group">UI Components</div>
+            <button class="gallery__nav-btn @(_tab == "ui" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "ui"'>Dialog / Tabs / Tooltip</button>
             <button class="gallery__nav-btn @(_tab == "toasts" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "toasts"'>Notifications</button>
 
             <div class="gallery__nav-group">Tools</div>
@@ -794,6 +796,124 @@ dotnet add package Arcadia.Theme</code></pre>
             </div>
         }
 
+        @* ─── UI COMPONENTS ─── *@
+
+        @if (_tab == "ui")
+        {
+            <div class="gallery__section-header">
+                <h1>UI Components</h1>
+                <p>Essential infrastructure: dialogs, tabs, tooltips, cards, badges, and more. All accessible, themeable, zero JavaScript.</p>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Dialog / Modal</div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="gallery__toast-btn" @onclick="() => _showDialog = true">Open Dialog</button>
+                </div>
+                <ArcadiaDialog @bind-Visible="_showDialog" Title="Confirm Action" Width="440px">
+                    <ChildContent>
+                        <p style="color: #9490b3; margin: 0;">Are you sure you want to proceed? This action cannot be undone.</p>
+                    </ChildContent>
+                    <FooterTemplate>
+                        <button style="padding: 8px 20px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: transparent; color: #e2e0f0; cursor: pointer;" @onclick="() => _showDialog = false">Cancel</button>
+                        <button style="padding: 8px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; cursor: pointer; font-weight: 500;" @onclick="HandleDialogConfirm">Confirm</button>
+                    </FooterTemplate>
+                </ArcadiaDialog>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Tabs</div>
+                <ArcadiaTabs>
+                    <ArcadiaTabPanel Title="Overview">
+                        <div style="padding: 16px 0; color: #9490b3;">This is the overview panel. Tabs use arrow key navigation and ARIA tablist/tabpanel roles.</div>
+                    </ArcadiaTabPanel>
+                    <ArcadiaTabPanel Title="Features">
+                        <div style="padding: 16px 0; color: #9490b3;">Feature details go here. Each panel is lazily rendered — only the active panel is in the DOM.</div>
+                    </ArcadiaTabPanel>
+                    <ArcadiaTabPanel Title="API Reference">
+                        <div style="padding: 16px 0; color: #9490b3;">API documentation content. Parameters, events, and code examples.</div>
+                    </ArcadiaTabPanel>
+                    <ArcadiaTabPanel Title="Disabled" Disabled="true">
+                        <div>This panel is disabled.</div>
+                    </ArcadiaTabPanel>
+                </ArcadiaTabs>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Tooltip</div>
+                <div style="display: flex; gap: 32px; align-items: center; padding: 24px 0;">
+                    <ArcadiaTooltip Text="Tooltip on top (default)" Position="top">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0; cursor: pointer;">Top</button>
+                    </ArcadiaTooltip>
+                    <ArcadiaTooltip Text="Tooltip on the right" Position="right">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0; cursor: pointer;">Right</button>
+                    </ArcadiaTooltip>
+                    <ArcadiaTooltip Text="Tooltip on the bottom" Position="bottom">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0; cursor: pointer;">Bottom</button>
+                    </ArcadiaTooltip>
+                    <ArcadiaTooltip Text="Tooltip on the left" Position="left">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0; cursor: pointer;">Left</button>
+                    </ArcadiaTooltip>
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Card</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <ArcadiaCard Title="Revenue Report" Subtitle="Q4 2026">
+                        <p style="color: #9490b3; margin: 0;">Total revenue increased by 23% compared to the previous quarter, driven by enterprise subscriptions.</p>
+                    </ArcadiaCard>
+                    <ArcadiaCard Title="Clickable Card" Clickable="true" OnClick="HandleCardClick">
+                        <p style="color: #9490b3; margin: 0;">This card has a hover effect and fires an OnClick event. Try clicking it.</p>
+                    </ArcadiaCard>
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Badge & Avatar</div>
+                <div style="display: flex; gap: 32px; align-items: center; padding: 16px 0;">
+                    <ArcadiaBadge Content="3" Color="primary">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0;">Inbox</button>
+                    </ArcadiaBadge>
+                    <ArcadiaBadge Content="99+" Color="danger">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0;">Alerts</button>
+                    </ArcadiaBadge>
+                    <ArcadiaBadge Dot="true" Color="success">
+                        <button style="padding: 8px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2); background: rgba(139,92,246,0.06); color: #e2e0f0;">Online</button>
+                    </ArcadiaBadge>
+                    <span style="margin-left: 16px;"></span>
+                    <ArcadiaAvatar Name="Alice Chen" Size="lg" Color="primary" />
+                    <ArcadiaAvatar Name="Bob Martinez" Size="md" Color="success" />
+                    <ArcadiaAvatar Name="Carol Kim" Size="sm" Color="warning" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Accordion</div>
+                <ArcadiaAccordion>
+                    <ArcadiaAccordionItem Title="What is Arcadia Controls?">
+                        <p style="color: #9490b3; margin: 0;">Arcadia Controls is a commercial Blazor component library with charts, DataGrid, forms, and UI components. Pure C# rendering with zero JavaScript.</p>
+                    </ArcadiaAccordionItem>
+                    <ArcadiaAccordionItem Title="How do I install it?">
+                        <p style="color: #9490b3; margin: 0;">Run <code style="color: #c084fc;">dotnet add package Arcadia.Charts</code> and add the CSS link to your App.razor.</p>
+                    </ArcadiaAccordionItem>
+                    <ArcadiaAccordionItem Title="Is it free?">
+                        <p style="color: #9490b3; margin: 0;">Community Edition includes 4 chart types for free. Pro ($299/dev/year) adds all 16 charts, DataGrid, Form Builder, and more.</p>
+                    </ArcadiaAccordionItem>
+                </ArcadiaAccordion>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Breadcrumb</div>
+                <ArcadiaBreadcrumb>
+                    <ArcadiaBreadcrumbItem Href="/">Home</ArcadiaBreadcrumbItem>
+                    <ArcadiaBreadcrumbItem Href="/docs">Documentation</ArcadiaBreadcrumbItem>
+                    <ArcadiaBreadcrumbItem Href="/docs/charts">Charts</ArcadiaBreadcrumbItem>
+                    <ArcadiaBreadcrumbItem>Line Chart</ArcadiaBreadcrumbItem>
+                </ArcadiaBreadcrumb>
+            </div>
+        }
+
         @* ─── NOTIFICATIONS ─── *@
 
         @if (_tab == "toasts")
@@ -821,6 +941,10 @@ dotnet add package Arcadia.Theme</code></pre>
 
 @code {
     string _tab = "home";
+    bool _showDialog;
+
+    void HandleDialogConfirm() { _showDialog = false; ToastService.ShowSuccess("Action confirmed!"); }
+    void HandleCardClick() { ToastService.ShowInfo("Card clicked!"); }
     string? _clickedItem;
 
     void HandleBarClick(PointClickEventArgs<QuarterlySales> e)
