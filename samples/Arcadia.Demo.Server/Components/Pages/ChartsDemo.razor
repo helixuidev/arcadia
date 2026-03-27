@@ -524,8 +524,6 @@ dotnet add package Arcadia.Theme</code></pre>
                 <div class="gallery__showcase-title">Sliding Window — Last 20 Data Points</div>
                 <div style="display: flex; gap: 10px; margin-bottom: 12px;">
                     <button class="gallery__toast-btn gallery__toast-btn--info" @onclick="AddStreamPoint">Add Point</button>
-                    <button class="gallery__toast-btn gallery__toast-btn--success" @onclick="StartAutoStream">Auto Stream</button>
-                    <button class="gallery__toast-btn" @onclick="StopAutoStream">Stop</button>
                 </div>
                 <div class="gallery__chart-container">
                     <ArcadiaLineChart @ref="_streamChart" TItem="StreamPoint" Data="@_streamData"
