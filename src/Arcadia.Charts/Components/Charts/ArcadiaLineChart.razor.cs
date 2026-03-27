@@ -403,7 +403,7 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
                 if (wasAtCapacity && Interop is not null && Data is not null && Data.Count > 1)
                 {
                     var stepWidth = _layout.PlotArea.Width / Data.Count;
-                    try { await Interop.SlideChartContentAsync(ContainerRef, stepWidth, 300); }
+                    try { await Interop.SlideChartContentAsync(ContainerRef, stepWidth, 400); }
                     catch (JSException) { } // JS interop unavailable during SSR
 #if NET6_0_OR_GREATER
                     catch (JSDisconnectedException) { } // Circuit disconnected during Blazor Server navigation

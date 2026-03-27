@@ -267,20 +267,32 @@ export function slideChartContent(containerEl, stepWidth, durationMs) {
   const group = svg.querySelector('.arcadia-slide-group');
   if (!group) return;
 
-  // Start offset to the right by one step
+  // Cancel any in-progress animation
+  if (group._slideRaf) cancelAnimationFrame(group._slideRaf);
+
+  // Immediately offset right by one step (positions are already at final state)
   group.style.transition = 'none';
   group.style.transform = `translateX(${stepWidth}px)`;
 
-  // Force reflow, then animate to 0
-  group.getBoundingClientRect();
-  group.style.transition = `transform ${durationMs}ms ease-out`;
-  group.style.transform = 'translateX(0)';
+  // Use rAF to ensure the browser paints the offset, then animate to final
+  group._slideRaf = requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      group.style.transition = `transform ${durationMs}ms cubic-bezier(0.25, 0.1, 0.25, 1)`;
+      group.style.transform = 'translateX(0)';
 
-  // Clean up after animation
-  setTimeout(() => {
-    group.style.transition = '';
-    group.style.transform = '';
-  }, durationMs + 50);
+      // Clean up after animation
+      const cleanup = () => {
+        group.style.transition = '';
+        group.style.transform = '';
+        group._slideRaf = null;
+        group.removeEventListener('transitionend', cleanup);
+      };
+      group.addEventListener('transitionend', cleanup, { once: true });
+
+      // Fallback cleanup if transitionend doesn't fire
+      setTimeout(cleanup, durationMs + 100);
+    });
+  });
 }
 
 // ── Get Element Bounds ───────────────────────────────
