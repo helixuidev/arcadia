@@ -858,6 +858,20 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 }
 .arcadia-grid__search-input::placeholder { color: var(--_muted, #6b6890); }
 
+/* Column header menu (right-click pin/hide) */
+.arcadia-grid__col-menu {
+  background: var(--_header, #151023); border: 1px solid var(--_border, rgba(139,92,246,0.2));
+  border-radius: 8px; padding: 4px 0; min-width: 150px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-size: 13px;
+}
+.arcadia-grid__col-menu-item {
+  display: block; width: 100%; text-align: left; padding: 8px 14px;
+  background: transparent; border: none; color: var(--_text, #e2e0f0);
+  cursor: pointer; font-size: 0.8125rem; font-family: inherit;
+  transition: background 0.1s;
+}
+.arcadia-grid__col-menu-item:hover { background: rgba(139,92,246,0.1); }
+
 /* Context menu */
 .arcadia-grid__context-menu {
   background: var(--_header, #151023); border: 1px solid var(--_border, rgba(139,92,246,0.2));

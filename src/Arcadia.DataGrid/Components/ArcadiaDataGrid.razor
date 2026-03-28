@@ -38,10 +38,10 @@
             @if (Filterable)
             {
                 <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
-                        @onclick="ToggleFilters">Filter</button>
+                        @onclick="ToggleFilters">@TextFilter</button>
             }
-            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">CSV</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">Excel</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">@TextCsv</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">@TextExcel</button>
             <span class="arcadia-grid__page-info" style="margin-left:auto;">@TotalCount rows</span>
         </div>
         <div class="arcadia-grid__scroll-container" style="height: @(Height ?? "400px");">
@@ -96,7 +96,7 @@
         @if (ShowToolbar || Filterable)
         {
         <div class="arcadia-grid__toolbar">
-            <input type="text" class="arcadia-grid__search-input" placeholder="Search..."
+            <input type="text" class="arcadia-grid__search-input" placeholder="@TextSearch"
                    aria-label="Quick filter — search across all columns"
                    autocomplete="off"
                    value="@QuickFilter"
@@ -104,12 +104,12 @@
             @if (Filterable)
             {
                 <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
-                        @onclick="ToggleFilters">Filter</button>
+                        @onclick="ToggleFilters">@TextFilter</button>
             }
             <button class="arcadia-grid__filter-toggle @(_showColumnPicker ? "arcadia-grid__filter-toggle--active" : "")"
-                    @onclick="ToggleColumnPicker">Columns</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">CSV</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">Excel</button>
+                    @onclick="ToggleColumnPicker">@TextColumns</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">@TextCsv</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">@TextExcel</button>
             @if (_selectedItems.Count > 0)
             {
                 <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
@@ -117,13 +117,13 @@
             @if (BatchEdit && _batchChanges.Count > 0)
             {
                 <span class="arcadia-grid__batch-info" role="status" aria-live="polite" style="margin-left:auto;">
-                    @_batchChanges.Count pending
+                    @string.Format(TextPending, _batchChanges.Count)
                     <button class="arcadia-grid__batch-btn arcadia-grid__batch-btn--save"
                             aria-label="@($"Save {_batchChanges.Count} pending changes")"
-                            @onclick="CommitBatchAsync">Save</button>
+                            @onclick="CommitBatchAsync">@TextSave</button>
                     <button class="arcadia-grid__batch-btn arcadia-grid__batch-btn--discard"
                             aria-label="Discard all pending changes"
-                            @onclick="DiscardBatch">Discard</button>
+                            @onclick="DiscardBatch">@TextDiscard</button>
                 </span>
             }
         </div>
@@ -175,7 +175,7 @@
                         <th role="columnheader"
                             aria-sort="@ariaSort"
                             aria-label="@GetSortAriaLabel(localCol)"
-                            style="@(localCol.Width is not null ? $"width:{localCol.Width};" : "") text-align:@localCol.Align; @(localCol.Frozen ? $"position:sticky;left:0;z-index:3;background:var(--_header);" : "")"
+                            style="@(localCol.Width is not null ? $"width:{localCol.Width};" : "") text-align:@localCol.Align; @(localCol.IsFrozen ? $"position:sticky;left:0;z-index:3;background:var(--_header);" : "")"
                             class="arcadia-grid__th @(isSortable ? "arcadia-grid__th--sortable" : "") @(localHeaderIdx == _dragSourceCol ? "arcadia-grid__th--dragging" : "") @(localHeaderIdx == _dropTargetCol ? "arcadia-grid__th--drop-target" : "")"
                             draggable="true"
                             @ondragstart="@(() => StartColumnDrag(localHeaderIdx))"
@@ -183,7 +183,9 @@
                             @ondragover:preventDefault
                             @ondrop="@(() => DropColumn(localHeaderIdx))"
                             @ondragend="EndColumnDrag"
-                            @onclick="@((MouseEventArgs e) => HandleHeaderClick(localCol, e.ShiftKey))">
+                            @onclick="@((MouseEventArgs e) => HandleHeaderClick(localCol, e.ShiftKey))"
+                            @oncontextmenu="@((MouseEventArgs e) => ShowColumnMenu(localCol, e))"
+                            @oncontextmenu:preventDefault>
                             @if (localCol.HeaderTemplate is not null)
                             {
                                 @localCol.HeaderTemplate
@@ -270,6 +272,31 @@
                     </tr>
                 }
             </thead>
+
+            @if (_showColumnMenu && _columnMenuTarget is not null)
+            {
+                <div class="arcadia-grid__col-menu" role="menu" aria-label="Column actions"
+                     style="position:fixed;left:@(_columnMenuX)px;top:@(_columnMenuY)px;z-index:1000;"
+                     @onclick="CloseColumnMenu" @onblur="CloseColumnMenu"
+                     @onkeydown="@((KeyboardEventArgs e) => { if (e.Key == "Escape") CloseColumnMenu(); })">
+                    <button class="arcadia-grid__col-menu-item" role="menuitem"
+                            @onclick="() => TogglePin(_columnMenuTarget)" @onclick:stopPropagation>
+                        @(_columnMenuTarget.IsFrozen ? TextUnpinColumn : TextPinColumn)
+                    </button>
+                    <button class="arcadia-grid__col-menu-item" role="menuitem"
+                            @onclick="() => HideColumn(_columnMenuTarget)" @onclick:stopPropagation>
+                        @TextHideColumn
+                    </button>
+                    @if (Sortable)
+                    {
+                        <button class="arcadia-grid__col-menu-item" role="menuitem"
+                                @onclick="async () => { await HandleHeaderClick(_columnMenuTarget!); CloseColumnMenu(); }" @onclick:stopPropagation>
+                            Sort Ascending
+                        </button>
+                    }
+                </div>
+            }
+
             <tbody>
                 @{ var rows = !string.IsNullOrEmpty(GroupBy) ? new List<TItem>() : GetPagedData().ToList();
                    var rowIdx = _pageIndex * PageSize;
@@ -443,7 +470,7 @@
                             @onclick="@(() => GoToPage(0))" aria-label="First page">&#171;</button>
                     <button class="arcadia-grid__page-btn" disabled="@(_pageIndex == 0)"
                             @onclick="@(() => GoToPage(_pageIndex - 1))" aria-label="Previous page">&#8249;</button>
-                    <span class="arcadia-grid__page-current">Page @(_pageIndex + 1) of @PageCount</span>
+                    <span class="arcadia-grid__page-current">@string.Format(TextPageInfo, _pageIndex + 1, PageCount)</span>
                     <button class="arcadia-grid__page-btn" disabled="@(_pageIndex >= PageCount - 1)"
                             @onclick="@(() => GoToPage(_pageIndex + 1))" aria-label="Next page">&#8250;</button>
                     <button class="arcadia-grid__page-btn" disabled="@(_pageIndex >= PageCount - 1)"

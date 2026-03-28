@@ -51,6 +51,50 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Selection behavior: None (default), Single (click to select one row), Multiple (checkbox column with select-all). Overrides Selectable/MultiSelect when set explicitly.</summary>
     [Parameter] public DataGridSelectionMode SelectionMode { get; set; } = DataGridSelectionMode.None;
 
+    // ── Localization strings (override for i18n) ──
+
+    /// <summary>Search input placeholder text. Default: "Search..."</summary>
+    [Parameter] public string TextSearch { get; set; } = "Search...";
+
+    /// <summary>Filter toggle button text. Default: "Filter"</summary>
+    [Parameter] public string TextFilter { get; set; } = "Filter";
+
+    /// <summary>Column picker button text. Default: "Columns"</summary>
+    [Parameter] public string TextColumns { get; set; } = "Columns";
+
+    /// <summary>CSV export button text. Default: "CSV"</summary>
+    [Parameter] public string TextCsv { get; set; } = "CSV";
+
+    /// <summary>Excel export button text. Default: "Excel"</summary>
+    [Parameter] public string TextExcel { get; set; } = "Excel";
+
+    /// <summary>Page info format. Use {0} for current page and {1} for total pages. Default: "Page {0} of {1}"</summary>
+    [Parameter] public string TextPageInfo { get; set; } = "Page {0} of {1}";
+
+    /// <summary>Rows info format. Use {0} for start, {1} for end, {2} for total. Default: "{0}–{1} of {2}"</summary>
+    [Parameter] public string TextRowsInfo { get; set; } = "{0}\u2013{1} of {2}";
+
+    /// <summary>Batch save button text. Default: "Save"</summary>
+    [Parameter] public string TextSave { get; set; } = "Save";
+
+    /// <summary>Batch discard button text. Default: "Discard"</summary>
+    [Parameter] public string TextDiscard { get; set; } = "Discard";
+
+    /// <summary>Pending changes format. Use {0} for count. Default: "{0} pending"</summary>
+    [Parameter] public string TextPending { get; set; } = "{0} pending";
+
+    /// <summary>Pin column menu item. Default: "Pin to Left"</summary>
+    [Parameter] public string TextPinColumn { get; set; } = "Pin to Left";
+
+    /// <summary>Unpin column menu item. Default: "Unpin Column"</summary>
+    [Parameter] public string TextUnpinColumn { get; set; } = "Unpin Column";
+
+    /// <summary>Hide column menu item. Default: "Hide Column"</summary>
+    [Parameter] public string TextHideColumn { get; set; } = "Hide Column";
+
+    /// <summary>Sort ascending menu item. Default: "Sort Ascending"</summary>
+    [Parameter] public string TextSortAscending { get; set; } = "Sort Ascending";
+
     /// <summary>Show row selector column with row numbers and state indicators.</summary>
     [Parameter] public bool ShowRowSelector { get; set; }
 
@@ -951,6 +995,36 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             Announce($"Copied {(_selectedItems.Count > 0 ? _selectedItems.Count : "all")} rows to clipboard");
         }
         catch { } // Clipboard API may not be available
+    }
+
+    // ── Column Header Menu (Pin/Hide) ──
+
+    private ArcadiaColumn<TItem>? _columnMenuTarget;
+    private double _columnMenuX, _columnMenuY;
+    private bool _showColumnMenu;
+
+    internal void ShowColumnMenu(ArcadiaColumn<TItem> col, MouseEventArgs e)
+    {
+        _columnMenuTarget = col;
+        _columnMenuX = e.ClientX;
+        _columnMenuY = e.ClientY;
+        _showColumnMenu = true;
+    }
+
+    internal void CloseColumnMenu() { _showColumnMenu = false; _columnMenuTarget = null; }
+
+    internal void TogglePin(ArcadiaColumn<TItem> col)
+    {
+        col.IsFrozen = !col.IsFrozen;
+        CloseColumnMenu();
+        StateHasChanged();
+    }
+
+    internal void HideColumn(ArcadiaColumn<TItem> col)
+    {
+        col.IsVisible = false;
+        CloseColumnMenu();
+        StateHasChanged();
     }
 
     // ── Context Menu ──

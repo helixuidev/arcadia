@@ -44,6 +44,9 @@
     /// <summary>Pin this column to the left edge (stays visible on horizontal scroll). Requires Width to be set.</summary>
     [Parameter] public bool Frozen { get; set; }
 
+    /// <summary>Internal frozen state for runtime pin/unpin toggling.</summary>
+    internal bool IsFrozen { get; set; }
+
     /// <summary>Whether this column supports inline editing.</summary>
     [Parameter] public bool Editable { get; set; }
 
@@ -88,6 +91,7 @@
     protected override void OnInitialized()
     {
         IsVisible = Visible;
+        IsFrozen = Frozen;
         BuildPropertyAccessor();
         DetectDataType();
         Collector?.AddColumn(this);
