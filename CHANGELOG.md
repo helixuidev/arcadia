@@ -2,6 +2,24 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.14] — 2026-03-28
+
+### Added
+- **Excel (XLSX) export** — zero-dependency SpreadsheetML writer, no DocumentFormat.OpenXml needed
+- **Published benchmarks page** — 11 benchmarks with real numbers at /docs/benchmarks
+- **Boolean + date typed filters** — auto-detects column type via reflection (boolean → tri-state dropdown, date → date picker, number → number input)
+- **Column pinning UI** — right-click column header → Pin to Left / Unpin / Hide / Sort
+- **Localization** — 14 Text* parameters for all UI strings (TextSearch, TextFilter, TextPageInfo, etc.)
+- **Charts-in-grid demo** — sparklines, delta indicators, progress bars embedded in DataGrid cells
+- **24 DataGrid demo scenarios** across 4 categories (Basics, Editing, Advanced, Enterprise) on separate pages
+- **Collapsible sidebar** — section headers toggle open/closed with chevron + SVG icons
+- **1,095 unit tests** — 122 new tests covering UI components, Excel export, typed filters, indicators
+- **3 new DataGrid benchmarks** — 10K render (1ms), 10K sort (2ms), 10K filter (3ms)
+
+### Changed
+- DataGrid demos extracted to 4 separate routes (/datagrid/basics, /editing, /advanced, /enterprise) for faster loading
+- Homepage updated: test count 1,095, DataGrid features include Excel export + typed filters
+
 ## [1.0.0-beta.13] — 2026-03-27
 
 ### Added
