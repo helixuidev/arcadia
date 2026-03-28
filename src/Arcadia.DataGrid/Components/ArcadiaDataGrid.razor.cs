@@ -634,7 +634,27 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             _groupExpanded[key] = false;
     }
 
-    // ── CSV Export ──
+    // ── Export (CSV + Excel) ──
+
+    /// <summary>Export grid data as an Excel (.xlsx) file download. Respects current sort, filter, and column visibility.</summary>
+    public async Task ExportToExcelAsync(string filename = "export.xlsx")
+    {
+        try
+        {
+            var visibleCols = Columns.Where(c => c.IsVisible && c.ResolvedField is not null).ToList();
+            IEnumerable<TItem> allData = ApplySort(GetCachedFilteredData());
+            var bytes = Services.ExcelExportService.ToXlsx(visibleCols, allData);
+
+            _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
+            await _jsModule.InvokeVoidAsync("downloadBlob", bytes, filename,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+        catch (JSException) { }
+#if NET6_0_OR_GREATER
+        catch (JSDisconnectedException) { }
+#endif
+    }
 
     internal string ToCsv()
     {

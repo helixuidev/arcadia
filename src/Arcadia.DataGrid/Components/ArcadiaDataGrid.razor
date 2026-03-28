@@ -40,7 +40,8 @@
                 <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
                         @onclick="ToggleFilters">Filter</button>
             }
-            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">Export CSV</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">CSV</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">Excel</button>
             <span class="arcadia-grid__page-info" style="margin-left:auto;">@TotalCount rows</span>
         </div>
         <div class="arcadia-grid__scroll-container" style="height: @(Height ?? "400px");">
@@ -107,7 +108,8 @@
             }
             <button class="arcadia-grid__filter-toggle @(_showColumnPicker ? "arcadia-grid__filter-toggle--active" : "")"
                     @onclick="ToggleColumnPicker">Columns</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">Export CSV</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">CSV</button>
+            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">Excel</button>
             @if (_selectedItems.Count > 0)
             {
                 <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>

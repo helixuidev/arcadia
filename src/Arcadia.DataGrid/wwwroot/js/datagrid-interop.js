@@ -12,6 +12,19 @@ export function downloadCsv(csv, filename) {
     URL.revokeObjectURL(url);
 }
 
+// Download binary blob (Excel, etc.)
+export function downloadBlob(bytes, filename, mimeType) {
+    const blob = new Blob([new Uint8Array(bytes)], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 // Copy text to clipboard
 export function copyToClipboard(text) {
     if (navigator.clipboard) {
