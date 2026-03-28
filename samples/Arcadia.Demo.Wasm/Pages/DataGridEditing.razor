@@ -1,0 +1,251 @@
+@page "/datagrid/editing"
+@using Arcadia.Charts.Core
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Components.Dashboard
+@using Arcadia.DataGrid.Components
+@using Arcadia.DataGrid.Core
+@using Arcadia.UI.Components
+@using Arcadia.FormBuilder.Schema
+@using Arcadia.FormBuilder.Components
+@using Arcadia.FormBuilder.Components.Fields
+@using Arcadia.FormBuilder.Components.Layout
+@inject Arcadia.Notifications.ToastService ToastService
+
+<PageTitle>Arcadia Controls — DataGrid Editing</PageTitle>
+
+<div class="gallery">
+    <div class="gallery__sidebar">
+        <h2 class="gallery__title">Arcadia Controls</h2>
+        <p class="gallery__subtitle">Component Gallery</p>
+        <nav class="gallery__nav">
+            <a href="/" class="gallery__nav-btn gallery__nav-btn--home" style="text-decoration:none;font-weight:600;margin-bottom:8px;">Home</a>
+
+            <button class="gallery__nav-group" @onclick="() => _chartsOpen = !_chartsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Charts
+                </span>
+                <span style="font-size:0.7em;">@(_chartsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_chartsOpen)
+            {
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Dashboard Widgets</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Line & Area</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Bar</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Pie & Donut</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Scatter</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Candlestick</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Gauges</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Radar</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Heatmap</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Rose / Polar</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Box Plot</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Range Area</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Interactive</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Streaming</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Sankey</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Chord</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Advanced</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _datagridOpen = !_datagridOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    DataGrid
+                </span>
+                <span style="font-size:0.7em;">@(_datagridOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_datagridOpen)
+            {
+                <a href="/datagrid/basics" class="gallery__nav-btn" style="text-decoration:none;">Basics</a>
+                <a href="/datagrid/editing" class="gallery__nav-btn gallery__nav-btn--active" style="text-decoration:none;">Editing</a>
+                <a href="/datagrid/advanced" class="gallery__nav-btn" style="text-decoration:none;">Advanced</a>
+                <a href="/datagrid/enterprise" class="gallery__nav-btn" style="text-decoration:none;">Enterprise</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _formsOpen = !_formsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Forms
+                </span>
+                <span style="font-size:0.7em;">@(_formsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_formsOpen)
+            {
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Field Types</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Schema Form</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Wizard</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _uiOpen = !_uiOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+                    UI Components
+                </span>
+                <span style="font-size:0.7em;">@(_uiOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_uiOpen)
+            {
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Dialog / Tabs / Tooltip</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Notifications</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _toolsOpen = !_toolsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.09a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.09a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Tools
+                </span>
+                <span style="font-size:0.7em;">@(_toolsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_toolsOpen)
+            {
+                <a href="/playground-builder" class="gallery__nav-btn" style="text-decoration:none;">Playground Builder</a>
+            }
+        </nav>
+        <div class="gallery__cta">
+            <a href="https://arcadiaui.com" class="gallery__admin-link" target="_blank">arcadiaui.com &#8594;</a>
+        </div>
+    </div>
+
+    <div class="gallery__content">
+
+        <div class="gallery__section-header">
+            <h1>DataGrid — Editing</h1>
+            <p>Inline editing, custom edit templates, batch mode, selection, and row numbers.</p>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Inline Edit</div>
+            <div class="gallery__hint">Double-click a cell to edit. Press Enter to save, Escape to cancel.</div>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" OnRowEdit="HandleRowEdit" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Department" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Role" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Custom Edit Templates</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Department uses a dropdown select for constrained editing.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" OnRowEdit="HandleRowEdit" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Name" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Department" Editable="true">
+                    <EditTemplate Context="item">
+                        <select style="background: #1a1833; color: #e2e0f0; border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; padding: 4px 8px; width: 100%;">
+                            @foreach (var dept in new[] { "Engineering", "Design", "Marketing", "Sales" })
+                            {
+                                <option value="@dept" selected="@(item.Department == dept)">@dept</option>
+                            }
+                        </select>
+                    </EditTemplate>
+                </ArcadiaColumn>
+                <ArcadiaColumn TItem="Employee" Property="Role" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Batch Editing</div>
+            <div class="gallery__hint">Edit multiple cells, then Save or Discard all changes at once.</div>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" BatchEdit="true" ShowToolbar="true" OnBatchCommit="HandleBatchCommit" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Department" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Role" Editable="true" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" Editable="true" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Single Row Selection</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Click a row to select it. Details appear below.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" SelectionMode="DataGridSelectionMode.SingleRow" PageSize="0"
+                             SelectedItems="@_selectedEmployeeSet" SelectedItemsChanged="HandleSingleSelect">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+            </ArcadiaDataGrid>
+            @if (_selectedEmployee is not null)
+            {
+                <div style="margin-top: 12px; padding: 12px 16px; border-radius: 8px; background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.15); color: #c4c0e0; font-size: 0.8125rem;">
+                    Selected: <strong style="color: #e2e0f0;">@_selectedEmployee.Name</strong> — @_selectedEmployee.Role in @_selectedEmployee.Department (@_selectedEmployee.Salary.ToString("C0"))
+                </div>
+            }
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Multi-Row Selection</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Checkbox selection with row count display.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" SelectionMode="DataGridSelectionMode.Multiple" ShowRowSelector="true" PageSize="0"
+                             SelectedItems="@_selectedEmployees" SelectedItemsChanged="@(items => { _selectedEmployees = items; StateHasChanged(); })">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+            </ArcadiaDataGrid>
+            <div style="margin-top: 8px; color: #8a86a8; font-size: 0.8125rem;">
+                @(_selectedEmployees?.Count ?? 0) row(s) selected
+            </div>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Row Numbers</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Auto-generated row numbers alongside a row selector column.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" ShowRowSelector="true" ShowRowNumbers="true" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+                <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
+            </ArcadiaDataGrid>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    bool _chartsOpen = false;
+    bool _datagridOpen = true;
+    bool _formsOpen = false;
+    bool _uiOpen = false;
+    bool _toolsOpen = false;
+
+    Employee? _selectedEmployee;
+    HashSet<Employee> _selectedEmployeeSet = new();
+    HashSet<Employee> _selectedEmployees = new();
+
+    record Employee(int Id, string Name, string Department, string Role, double Salary, DateTime StartDate);
+
+    List<Employee> _employees = new()
+    {
+        new(1, "Alice Chen", "Engineering", "Senior Developer", 135000, new DateTime(2021, 3, 15)),
+        new(2, "Bob Martinez", "Engineering", "Tech Lead", 155000, new DateTime(2019, 7, 1)),
+        new(3, "Carol Kim", "Design", "UX Designer", 110000, new DateTime(2022, 1, 10)),
+        new(4, "David Patel", "Marketing", "Marketing Manager", 105000, new DateTime(2020, 6, 22)),
+        new(5, "Eva Novak", "Engineering", "DevOps Engineer", 128000, new DateTime(2021, 9, 5)),
+        new(6, "Frank Wu", "Sales", "Account Executive", 95000, new DateTime(2023, 2, 14)),
+        new(7, "Grace Lee", "Design", "Product Designer", 118000, new DateTime(2022, 5, 30)),
+        new(8, "Hiro Tanaka", "Engineering", "Backend Developer", 125000, new DateTime(2020, 11, 8)),
+        new(9, "Isabel Santos", "Marketing", "Content Strategist", 92000, new DateTime(2023, 4, 1)),
+        new(10, "James O'Brien", "Sales", "Sales Director", 145000, new DateTime(2018, 8, 20)),
+        new(11, "Kira Johansson", "Engineering", "Frontend Developer", 122000, new DateTime(2022, 7, 12)),
+        new(12, "Liam Cooper", "Design", "Design Lead", 130000, new DateTime(2019, 3, 25)),
+    };
+
+    void HandleRowEdit(Employee e) => ToastService.ShowSuccess($"Saved changes for {e.Name}");
+
+    void HandleBatchCommit(List<BatchEditChange<Employee>> changes) =>
+        ToastService.ShowSuccess($"Committed {changes.Count} change(s)");
+
+    void HandleSingleSelect(HashSet<Employee> items)
+    {
+        _selectedEmployeeSet = items;
+        _selectedEmployee = items.FirstOrDefault();
+        StateHasChanged();
+    }
+}

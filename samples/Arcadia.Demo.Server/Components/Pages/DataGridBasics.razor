@@ -1,0 +1,298 @@
+@page "/datagrid/basics"
+@layout Arcadia.Demo.Server.Components.Layout.FullScreenLayout
+@using Arcadia.Charts.Core
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Components.Dashboard
+@using Arcadia.DataGrid.Components
+@using Arcadia.DataGrid.Core
+@using Arcadia.UI.Components
+@using Arcadia.FormBuilder.Schema
+@using Arcadia.FormBuilder.Components
+@using Arcadia.FormBuilder.Components.Fields
+@using Arcadia.FormBuilder.Components.Layout
+@inject Arcadia.Notifications.ToastService ToastService
+
+<PageTitle>Arcadia Controls — DataGrid Basics</PageTitle>
+
+<div class="gallery">
+    <div class="gallery__sidebar">
+        <h2 class="gallery__title">Arcadia Controls</h2>
+        <p class="gallery__subtitle">Component Gallery</p>
+        <nav class="gallery__nav">
+            <a href="/" class="gallery__nav-btn gallery__nav-btn--home" style="text-decoration:none;font-weight:600;margin-bottom:8px;">Home</a>
+
+            <button class="gallery__nav-group" @onclick="() => _chartsOpen = !_chartsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Charts
+                </span>
+                <span style="font-size:0.7em;">@(_chartsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_chartsOpen)
+            {
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;" @onclick='() => {}'>Dashboard Widgets</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Line & Area</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Bar</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Pie & Donut</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Scatter</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Candlestick</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Gauges</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Radar</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Heatmap</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Rose / Polar</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Box Plot</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Range Area</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Interactive</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Streaming</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Sankey</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Chord</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Advanced</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _datagridOpen = !_datagridOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    DataGrid
+                </span>
+                <span style="font-size:0.7em;">@(_datagridOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_datagridOpen)
+            {
+                <a href="/datagrid/basics" class="gallery__nav-btn gallery__nav-btn--active" style="text-decoration:none;">Basics</a>
+                <a href="/datagrid/editing" class="gallery__nav-btn" style="text-decoration:none;">Editing</a>
+                <a href="/datagrid/advanced" class="gallery__nav-btn" style="text-decoration:none;">Advanced</a>
+                <a href="/datagrid/enterprise" class="gallery__nav-btn" style="text-decoration:none;">Enterprise</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _formsOpen = !_formsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Forms
+                </span>
+                <span style="font-size:0.7em;">@(_formsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_formsOpen)
+            {
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Field Types</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Schema Form</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Wizard</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _uiOpen = !_uiOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+                    UI Components
+                </span>
+                <span style="font-size:0.7em;">@(_uiOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_uiOpen)
+            {
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Dialog / Tabs / Tooltip</a>
+                <a href="/charts" class="gallery__nav-btn" style="text-decoration:none;">Notifications</a>
+            }
+
+            <button class="gallery__nav-group" @onclick="() => _toolsOpen = !_toolsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.09a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.09a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Tools
+                </span>
+                <span style="font-size:0.7em;">@(_toolsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_toolsOpen)
+            {
+                <a href="/playground-builder" class="gallery__nav-btn" style="text-decoration:none;">Playground Builder</a>
+            }
+        </nav>
+        <div class="gallery__cta">
+            <a href="https://arcadiaui.com" class="gallery__admin-link" target="_blank">arcadiaui.com &#8594;</a>
+        </div>
+    </div>
+
+    <div class="gallery__content">
+
+        <div class="gallery__section-header">
+            <h1>DataGrid — Basics</h1>
+            <p>Core grid features: rendering, sorting, filtering, pagination, toolbar, and column formatting.</p>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Default Grid</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Minimal setup — just data and columns, no sorting or filtering.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" Sortable="false" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+                <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Sorting</div>
+            <div class="gallery__hint">Shift+Click column headers for multi-sort</div>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" Sortable="true" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+                <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Column Filtering</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Type-aware filters: text contains, numeric range, date range, boolean toggle.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" Filterable="true" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+                <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Pagination</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">50 rows with configurable page sizes.</p>
+            <ArcadiaDataGrid TItem="Order" Data="@_orders" Sortable="true" PageSize="10" PageSizeOptions="@(new[]{5,10,25,50})">
+                <ArcadiaColumn TItem="Order" Property="OrderId" Title="Order #" Width="90px" />
+                <ArcadiaColumn TItem="Order" Property="Customer" />
+                <ArcadiaColumn TItem="Order" Property="Product" />
+                <ArcadiaColumn TItem="Order" Property="Amount" Format="C2" Align="right" />
+                <ArcadiaColumn TItem="Order" Property="Date" Format="d" />
+                <ArcadiaColumn TItem="Order" Property="Status" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Toolbar &amp; Quick Search</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Built-in toolbar with search, column picker, and export buttons.</p>
+            <ArcadiaDataGrid TItem="Employee" Data="@_employees" ShowToolbar="true" Sortable="true" PageSize="0">
+                <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
+                <ArcadiaColumn TItem="Employee" Property="Name" />
+                <ArcadiaColumn TItem="Employee" Property="Department" />
+                <ArcadiaColumn TItem="Employee" Property="Role" />
+                <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
+                <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
+            </ArcadiaDataGrid>
+        </div>
+
+        <div class="gallery__showcase">
+            <div class="gallery__showcase-title">Column Formatting</div>
+            <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Currency, percentage, date, and alignment formatting on financial data.</p>
+            <ArcadiaDataGrid TItem="FinancialRow" Data="@_financialData" Sortable="true" PageSize="0" Striped="true">
+                <ArcadiaColumn TItem="FinancialRow" Property="Ticker" Title="Ticker" Width="100px" />
+                <ArcadiaColumn TItem="FinancialRow" Property="Price" Title="Price" Format="C2" Align="right" Width="120px" />
+                <ArcadiaColumn TItem="FinancialRow" Property="Change" Title="Change" Format="F2" Align="right" Width="100px" />
+                <ArcadiaColumn TItem="FinancialRow" Property="ChangePct" Title="Change %" Format="P1" Align="right" Width="110px" />
+                <ArcadiaColumn TItem="FinancialRow" Property="Volume" Title="Volume" Format="N0" Align="right" Width="120px" />
+                <ArcadiaColumn TItem="FinancialRow" Property="TradeDate" Title="Trade Date" Format="d" />
+            </ArcadiaDataGrid>
+        </div>
+
+    </div>
+</div>
+
+@code {
+    bool _chartsOpen = false;
+    bool _datagridOpen = true;
+    bool _formsOpen = false;
+    bool _uiOpen = false;
+    bool _toolsOpen = false;
+
+    record Employee(int Id, string Name, string Department, string Role, double Salary, DateTime StartDate);
+    record Order(int OrderId, string Customer, string Product, double Amount, DateTime Date, string Status);
+    record FinancialRow(string Ticker, double Price, double Change, double ChangePct, int Volume, DateTime TradeDate);
+
+    List<Employee> _employees = new()
+    {
+        new(1, "Alice Chen", "Engineering", "Senior Developer", 135000, new DateTime(2021, 3, 15)),
+        new(2, "Bob Martinez", "Engineering", "Tech Lead", 155000, new DateTime(2019, 7, 1)),
+        new(3, "Carol Kim", "Design", "UX Designer", 110000, new DateTime(2022, 1, 10)),
+        new(4, "David Patel", "Marketing", "Marketing Manager", 105000, new DateTime(2020, 6, 22)),
+        new(5, "Eva Novak", "Engineering", "DevOps Engineer", 128000, new DateTime(2021, 9, 5)),
+        new(6, "Frank Wu", "Sales", "Account Executive", 95000, new DateTime(2023, 2, 14)),
+        new(7, "Grace Lee", "Design", "Product Designer", 118000, new DateTime(2022, 5, 30)),
+        new(8, "Hiro Tanaka", "Engineering", "Backend Developer", 125000, new DateTime(2020, 11, 8)),
+        new(9, "Isabel Santos", "Marketing", "Content Strategist", 92000, new DateTime(2023, 4, 1)),
+        new(10, "James O'Brien", "Sales", "Sales Director", 145000, new DateTime(2018, 8, 20)),
+        new(11, "Kira Johansson", "Engineering", "Frontend Developer", 122000, new DateTime(2022, 7, 12)),
+        new(12, "Liam Cooper", "Design", "Design Lead", 130000, new DateTime(2019, 3, 25)),
+    };
+
+    List<Order> _orders = new()
+    {
+        new(1001,"Acme Corp","Widget Pro",1250.00,new DateTime(2026,1,5),"Shipped"),
+        new(1002,"Globex Inc","Bolt Pack",340.50,new DateTime(2026,1,7),"Delivered"),
+        new(1003,"Initech","Gadget X",890.00,new DateTime(2026,1,10),"Processing"),
+        new(1004,"Umbrella Co","Widget Pro",1250.00,new DateTime(2026,1,12),"Shipped"),
+        new(1005,"Stark Ind","Flux Cap",4500.00,new DateTime(2026,1,14),"Delivered"),
+        new(1006,"Wayne Ent","Bolt Pack",680.00,new DateTime(2026,1,15),"Shipped"),
+        new(1007,"Acme Corp","Gadget X",890.00,new DateTime(2026,1,18),"Cancelled"),
+        new(1008,"Globex Inc","Flux Cap",4500.00,new DateTime(2026,1,20),"Processing"),
+        new(1009,"Initech","Widget Pro",2500.00,new DateTime(2026,1,22),"Delivered"),
+        new(1010,"Umbrella Co","Gadget X",1780.00,new DateTime(2026,1,24),"Shipped"),
+        new(1011,"Stark Ind","Bolt Pack",510.00,new DateTime(2026,1,26),"Delivered"),
+        new(1012,"Wayne Ent","Widget Pro",1250.00,new DateTime(2026,1,28),"Processing"),
+        new(1013,"Acme Corp","Flux Cap",4500.00,new DateTime(2026,2,1),"Shipped"),
+        new(1014,"Globex Inc","Widget Pro",1250.00,new DateTime(2026,2,3),"Delivered"),
+        new(1015,"Initech","Bolt Pack",340.50,new DateTime(2026,2,5),"Shipped"),
+        new(1016,"Umbrella Co","Flux Cap",4500.00,new DateTime(2026,2,8),"Cancelled"),
+        new(1017,"Stark Ind","Gadget X",890.00,new DateTime(2026,2,10),"Delivered"),
+        new(1018,"Wayne Ent","Bolt Pack",680.00,new DateTime(2026,2,12),"Shipped"),
+        new(1019,"Acme Corp","Widget Pro",2500.00,new DateTime(2026,2,14),"Processing"),
+        new(1020,"Globex Inc","Gadget X",1780.00,new DateTime(2026,2,16),"Delivered"),
+        new(1021,"Initech","Flux Cap",4500.00,new DateTime(2026,2,18),"Shipped"),
+        new(1022,"Umbrella Co","Widget Pro",1250.00,new DateTime(2026,2,20),"Delivered"),
+        new(1023,"Stark Ind","Bolt Pack",510.00,new DateTime(2026,2,22),"Processing"),
+        new(1024,"Wayne Ent","Gadget X",890.00,new DateTime(2026,2,24),"Shipped"),
+        new(1025,"Acme Corp","Flux Cap",4500.00,new DateTime(2026,2,26),"Delivered"),
+        new(1026,"Globex Inc","Widget Pro",1250.00,new DateTime(2026,2,28),"Cancelled"),
+        new(1027,"Initech","Gadget X",1780.00,new DateTime(2026,3,2),"Shipped"),
+        new(1028,"Umbrella Co","Bolt Pack",340.50,new DateTime(2026,3,4),"Delivered"),
+        new(1029,"Stark Ind","Widget Pro",2500.00,new DateTime(2026,3,6),"Processing"),
+        new(1030,"Wayne Ent","Flux Cap",4500.00,new DateTime(2026,3,8),"Shipped"),
+        new(1031,"Acme Corp","Bolt Pack",680.00,new DateTime(2026,3,10),"Delivered"),
+        new(1032,"Globex Inc","Gadget X",890.00,new DateTime(2026,3,12),"Shipped"),
+        new(1033,"Initech","Widget Pro",1250.00,new DateTime(2026,3,14),"Processing"),
+        new(1034,"Umbrella Co","Flux Cap",4500.00,new DateTime(2026,3,16),"Delivered"),
+        new(1035,"Stark Ind","Bolt Pack",510.00,new DateTime(2026,3,18),"Shipped"),
+        new(1036,"Wayne Ent","Widget Pro",2500.00,new DateTime(2026,3,20),"Cancelled"),
+        new(1037,"Acme Corp","Gadget X",1780.00,new DateTime(2026,3,22),"Delivered"),
+        new(1038,"Globex Inc","Bolt Pack",340.50,new DateTime(2026,3,24),"Processing"),
+        new(1039,"Initech","Flux Cap",4500.00,new DateTime(2026,3,26),"Shipped"),
+        new(1040,"Umbrella Co","Widget Pro",1250.00,new DateTime(2026,3,28),"Delivered"),
+        new(1041,"Stark Ind","Gadget X",890.00,new DateTime(2026,3,30),"Shipped"),
+        new(1042,"Wayne Ent","Bolt Pack",680.00,new DateTime(2026,4,1),"Processing"),
+        new(1043,"Acme Corp","Widget Pro",2500.00,new DateTime(2026,4,3),"Delivered"),
+        new(1044,"Globex Inc","Flux Cap",4500.00,new DateTime(2026,4,5),"Shipped"),
+        new(1045,"Initech","Bolt Pack",340.50,new DateTime(2026,4,7),"Delivered"),
+        new(1046,"Umbrella Co","Gadget X",1780.00,new DateTime(2026,4,9),"Cancelled"),
+        new(1047,"Stark Ind","Widget Pro",1250.00,new DateTime(2026,4,11),"Processing"),
+        new(1048,"Wayne Ent","Flux Cap",4500.00,new DateTime(2026,4,13),"Shipped"),
+        new(1049,"Acme Corp","Bolt Pack",510.00,new DateTime(2026,4,15),"Delivered"),
+        new(1050,"Globex Inc","Widget Pro",2500.00,new DateTime(2026,4,17),"Shipped"),
+    };
+
+    List<FinancialRow> _financialData = new()
+    {
+        new("AAPL", 178.52, 2.34, 0.0133, 52_340_000, new DateTime(2026, 3, 25)),
+        new("MSFT", 415.80, -1.20, -0.0029, 28_190_000, new DateTime(2026, 3, 25)),
+        new("GOOGL", 162.45, 3.15, 0.0198, 31_450_000, new DateTime(2026, 3, 25)),
+        new("AMZN", 195.20, 0.85, 0.0044, 41_200_000, new DateTime(2026, 3, 25)),
+        new("TSLA", 248.90, -5.60, -0.0220, 68_900_000, new DateTime(2026, 3, 25)),
+        new("NVDA", 892.30, 12.40, 0.0141, 45_600_000, new DateTime(2026, 3, 25)),
+        new("META", 502.15, 4.80, 0.0097, 22_100_000, new DateTime(2026, 3, 25)),
+        new("JPM", 198.40, -0.55, -0.0028, 12_800_000, new DateTime(2026, 3, 25)),
+        new("V", 285.60, 1.90, 0.0067, 8_900_000, new DateTime(2026, 3, 25)),
+        new("JNJ", 156.30, 0.45, 0.0029, 7_400_000, new DateTime(2026, 3, 25)),
+        new("WMT", 172.80, -0.90, -0.0052, 11_200_000, new DateTime(2026, 3, 25)),
+        new("PG", 164.50, 0.70, 0.0043, 6_300_000, new DateTime(2026, 3, 25)),
+        new("UNH", 528.40, 3.20, 0.0061, 4_100_000, new DateTime(2026, 3, 25)),
+        new("HD", 362.10, -2.15, -0.0059, 5_800_000, new DateTime(2026, 3, 25)),
+        new("DIS", 112.40, 1.05, 0.0094, 15_600_000, new DateTime(2026, 3, 25)),
+    };
+}

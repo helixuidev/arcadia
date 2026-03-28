@@ -4,8 +4,6 @@
 @using Arcadia.Charts.Core
 @using Arcadia.Charts.Components.Charts
 @using Arcadia.Charts.Components.Dashboard
-@using Arcadia.DataGrid.Components
-@using Arcadia.DataGrid.Core
 @using Arcadia.UI.Components
 @using Arcadia.FormBuilder.Schema
 @using Arcadia.FormBuilder.Components
@@ -22,42 +20,87 @@
         <nav class="gallery__nav">
             <button class="gallery__nav-btn gallery__nav-btn--home @(_tab == "home" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "home"' style="font-weight:600;margin-bottom:8px;">Home</button>
 
-            <div class="gallery__nav-group">Charts</div>
-            <button class="gallery__nav-btn @(_tab == "dashboard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dashboard"'>Dashboard Widgets</button>
-            <button class="gallery__nav-btn @(_tab == "line" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "line"'>Line & Area</button>
-            <button class="gallery__nav-btn @(_tab == "bar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "bar"'>Bar</button>
-            <button class="gallery__nav-btn @(_tab == "pie" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "pie"'>Pie & Donut</button>
-            <button class="gallery__nav-btn @(_tab == "scatter" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "scatter"'>Scatter</button>
-            <button class="gallery__nav-btn @(_tab == "candle" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "candle"'>Candlestick</button>
-            <button class="gallery__nav-btn @(_tab == "gauge" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "gauge"'>Gauges</button>
-            <button class="gallery__nav-btn @(_tab == "radar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "radar"'>Radar</button>
-            <button class="gallery__nav-btn @(_tab == "heatmap" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "heatmap"'>Heatmap</button>
-            <button class="gallery__nav-btn @(_tab == "rose" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rose"'>Rose / Polar</button>
-            <button class="gallery__nav-btn @(_tab == "boxplot" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "boxplot"'>Box Plot</button>
-            <button class="gallery__nav-btn @(_tab == "rangearea" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rangearea"'>Range Area</button>
-            <button class="gallery__nav-btn @(_tab == "interactive" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "interactive"'>Interactive</button>
-            <button class="gallery__nav-btn @(_tab == "streaming" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "streaming"'>Streaming</button>
-            <button class="gallery__nav-btn @(_tab == "sankey" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "sankey"'>Sankey</button>
-            <button class="gallery__nav-btn @(_tab == "chord" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "chord"'>Chord</button>
-            <button class="gallery__nav-btn @(_tab == "advanced" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "advanced"'>Advanced</button>
+            <button class="gallery__nav-group" @onclick="() => _chartsOpen = !_chartsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    Charts
+                </span>
+                <span style="font-size:0.7em;">@(_chartsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_chartsOpen)
+            {
+                <button class="gallery__nav-btn @(_tab == "dashboard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dashboard"'>Dashboard Widgets</button>
+                <button class="gallery__nav-btn @(_tab == "line" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "line"'>Line & Area</button>
+                <button class="gallery__nav-btn @(_tab == "bar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "bar"'>Bar</button>
+                <button class="gallery__nav-btn @(_tab == "pie" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "pie"'>Pie & Donut</button>
+                <button class="gallery__nav-btn @(_tab == "scatter" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "scatter"'>Scatter</button>
+                <button class="gallery__nav-btn @(_tab == "candle" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "candle"'>Candlestick</button>
+                <button class="gallery__nav-btn @(_tab == "gauge" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "gauge"'>Gauges</button>
+                <button class="gallery__nav-btn @(_tab == "radar" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "radar"'>Radar</button>
+                <button class="gallery__nav-btn @(_tab == "heatmap" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "heatmap"'>Heatmap</button>
+                <button class="gallery__nav-btn @(_tab == "rose" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rose"'>Rose / Polar</button>
+                <button class="gallery__nav-btn @(_tab == "boxplot" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "boxplot"'>Box Plot</button>
+                <button class="gallery__nav-btn @(_tab == "rangearea" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "rangearea"'>Range Area</button>
+                <button class="gallery__nav-btn @(_tab == "interactive" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "interactive"'>Interactive</button>
+                <button class="gallery__nav-btn @(_tab == "streaming" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "streaming"'>Streaming</button>
+                <button class="gallery__nav-btn @(_tab == "sankey" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "sankey"'>Sankey</button>
+                <button class="gallery__nav-btn @(_tab == "chord" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "chord"'>Chord</button>
+                <button class="gallery__nav-btn @(_tab == "advanced" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "advanced"'>Advanced</button>
+            }
 
-            <div class="gallery__nav-group">DataGrid</div>
-            <button class="gallery__nav-btn @(_tab == "dg-basics" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dg-basics"'>Basics</button>
-            <button class="gallery__nav-btn @(_tab == "dg-editing" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dg-editing"'>Editing</button>
-            <button class="gallery__nav-btn @(_tab == "dg-advanced" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dg-advanced"'>Advanced</button>
-            <button class="gallery__nav-btn @(_tab == "dg-enterprise" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "dg-enterprise"'>Enterprise</button>
+            <button class="gallery__nav-group" @onclick="() => _datagridOpen = !_datagridOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+                    DataGrid
+                </span>
+                <span style="font-size:0.7em;">@(_datagridOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_datagridOpen)
+            {
+                <a href="/datagrid/basics" class="gallery__nav-btn" style="text-decoration:none;">Basics</a>
+                <a href="/datagrid/editing" class="gallery__nav-btn" style="text-decoration:none;">Editing</a>
+                <a href="/datagrid/advanced" class="gallery__nav-btn" style="text-decoration:none;">Advanced</a>
+                <a href="/datagrid/enterprise" class="gallery__nav-btn" style="text-decoration:none;">Enterprise</a>
+            }
 
-            <div class="gallery__nav-group">Forms</div>
-            <button class="gallery__nav-btn @(_tab == "fields" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "fields"'>Field Types</button>
-            <button class="gallery__nav-btn @(_tab == "schema" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "schema"'>Schema Form</button>
-            <button class="gallery__nav-btn @(_tab == "wizard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "wizard"'>Wizard</button>
+            <button class="gallery__nav-group" @onclick="() => _formsOpen = !_formsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Forms
+                </span>
+                <span style="font-size:0.7em;">@(_formsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_formsOpen)
+            {
+                <button class="gallery__nav-btn @(_tab == "fields" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "fields"'>Field Types</button>
+                <button class="gallery__nav-btn @(_tab == "schema" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "schema"'>Schema Form</button>
+                <button class="gallery__nav-btn @(_tab == "wizard" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "wizard"'>Wizard</button>
+            }
 
-            <div class="gallery__nav-group">UI Components</div>
-            <button class="gallery__nav-btn @(_tab == "ui" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "ui"'>Dialog / Tabs / Tooltip</button>
-            <button class="gallery__nav-btn @(_tab == "toasts" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "toasts"'>Notifications</button>
+            <button class="gallery__nav-group" @onclick="() => _uiOpen = !_uiOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a4 4 0 00-8 0v2"/></svg>
+                    UI Components
+                </span>
+                <span style="font-size:0.7em;">@(_uiOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_uiOpen)
+            {
+                <button class="gallery__nav-btn @(_tab == "ui" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "ui"'>Dialog / Tabs / Tooltip</button>
+                <button class="gallery__nav-btn @(_tab == "toasts" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "toasts"'>Notifications</button>
+            }
 
-            <div class="gallery__nav-group">Tools</div>
-            <a href="/playground-builder" class="gallery__nav-btn" style="text-decoration: none;">Playground Builder</a>
+            <button class="gallery__nav-group" @onclick="() => _toolsOpen = !_toolsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;">
+                <span style="display:flex;align-items:center;gap:6px;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.09a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.09a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                    Tools
+                </span>
+                <span style="font-size:0.7em;">@(_toolsOpen ? "▾" : "▸")</span>
+            </button>
+            @if (_toolsOpen)
+            {
+                <a href="/playground-builder" class="gallery__nav-btn" style="text-decoration:none;">Playground Builder</a>
+            }
         </nav>
         <div class="gallery__cta">
             <a href="https://arcadiaui.com" class="gallery__admin-link" target="_blank">arcadiaui.com →</a>
@@ -90,14 +133,14 @@
                         <div style="font-size: 0.8125rem; color: #8b5cf6; font-weight: 500;">Explore charts <span style="margin-left: 2px;">&#8594;</span></div>
                     </button>
 
-                    <button @onclick='() => _tab = "dg-basics"' style="background: rgba(34,211,238,0.03); border: 1px solid rgba(34,211,238,0.12); border-radius: 16px; padding: 32px; text-align: left; cursor: pointer; transition: all 0.2s; color: inherit; font-family: inherit;" onmouseover="this.style.borderColor='rgba(34,211,238,0.35)';this.style.background='rgba(34,211,238,0.06)'" onmouseout="this.style.borderColor='rgba(34,211,238,0.12)';this.style.background='rgba(34,211,238,0.03)'">
+                    <a href="/datagrid/basics" style="background: rgba(34,211,238,0.03); border: 1px solid rgba(34,211,238,0.12); border-radius: 16px; padding: 32px; text-align: left; cursor: pointer; transition: all 0.2s; color: inherit; font-family: inherit; text-decoration: none; display: block;" onmouseover="this.style.borderColor='rgba(34,211,238,0.35)';this.style.background='rgba(34,211,238,0.06)'" onmouseout="this.style.borderColor='rgba(34,211,238,0.12)';this.style.background='rgba(34,211,238,0.03)'">
                         <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #22d3ee, #0891b2); display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
                         </div>
                         <div style="font-size: 1.0625rem; font-weight: 600; color: #f1f0f9; margin-bottom: 8px;">DataGrid</div>
                         <div style="font-size: 0.8125rem; color: #6b6890; line-height: 1.65; margin-bottom: 16px;">Multi-column sort, quick filter, batch editing, virtual scrolling, state persistence, and 6 built-in themes.</div>
                         <div style="font-size: 0.8125rem; color: #22d3ee; font-weight: 500;">Explore grid <span style="margin-left: 2px;">&#8594;</span></div>
-                    </button>
+                    </a>
 
                     <button @onclick='() => _tab = "fields"' style="background: rgba(236,72,153,0.03); border: 1px solid rgba(236,72,153,0.12); border-radius: 16px; padding: 32px; text-align: left; cursor: pointer; transition: all 0.2s; color: inherit; font-family: inherit;" onmouseover="this.style.borderColor='rgba(236,72,153,0.35)';this.style.background='rgba(236,72,153,0.06)'" onmouseout="this.style.borderColor='rgba(236,72,153,0.12)';this.style.background='rgba(236,72,153,0.03)'">
                         <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #ec4899, #db2777); display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
@@ -755,411 +798,6 @@ dotnet add package Arcadia.Theme</code></pre>
             </div>
         }
 
-        @* ─── DATAGRID ─── *@
-
-        @* ─── DATAGRID: BASICS ─── *@
-
-        @if (_tab == "dg-basics")
-        {
-            <div class="gallery__section-header">
-                <h1>DataGrid — Basics</h1>
-                <p>Core grid features: rendering, sorting, filtering, pagination, toolbar, and column formatting.</p>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Default Grid</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Minimal setup — just data and columns, no sorting or filtering.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Sortable="false" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Sorting</div>
-                <div class="gallery__hint">Shift+Click column headers for multi-sort</div>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Sortable="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Column Filtering</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Type-aware filters: text contains, numeric range, date range, boolean toggle.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Filterable="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Pagination</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">50 rows with configurable page sizes.</p>
-                <ArcadiaDataGrid TItem="Order" Data="@_orders" Sortable="true" PageSize="10" PageSizeOptions="@(new[]{5,10,25,50})">
-                    <ArcadiaColumn TItem="Order" Property="OrderId" Title="Order #" Width="90px" />
-                    <ArcadiaColumn TItem="Order" Property="Customer" />
-                    <ArcadiaColumn TItem="Order" Property="Product" />
-                    <ArcadiaColumn TItem="Order" Property="Amount" Format="C2" Align="right" />
-                    <ArcadiaColumn TItem="Order" Property="Date" Format="d" />
-                    <ArcadiaColumn TItem="Order" Property="Status" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Toolbar &amp; Quick Search</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Built-in toolbar with search, column picker, and export buttons.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" ShowToolbar="true" Sortable="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Column Formatting</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Currency, percentage, date, and alignment formatting on financial data.</p>
-                <ArcadiaDataGrid TItem="FinancialRow" Data="@_financialData" Sortable="true" PageSize="0" Striped="true">
-                    <ArcadiaColumn TItem="FinancialRow" Property="Ticker" Title="Ticker" Width="100px" />
-                    <ArcadiaColumn TItem="FinancialRow" Property="Price" Title="Price" Format="C2" Align="right" Width="120px" />
-                    <ArcadiaColumn TItem="FinancialRow" Property="Change" Title="Change" Format="F2" Align="right" Width="100px" />
-                    <ArcadiaColumn TItem="FinancialRow" Property="ChangePct" Title="Change %" Format="P1" Align="right" Width="110px" />
-                    <ArcadiaColumn TItem="FinancialRow" Property="Volume" Title="Volume" Format="N0" Align="right" Width="120px" />
-                    <ArcadiaColumn TItem="FinancialRow" Property="TradeDate" Title="Trade Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-        }
-
-        @* ─── DATAGRID: EDITING ─── *@
-
-        @if (_tab == "dg-editing")
-        {
-            <div class="gallery__section-header">
-                <h1>DataGrid — Editing</h1>
-                <p>Inline editing, custom edit templates, batch mode, selection, and row numbers.</p>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Inline Edit</div>
-                <div class="gallery__hint">Double-click a cell to edit. Press Enter to save, Escape to cancel.</div>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" OnRowEdit="HandleRowEdit" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Custom Edit Templates</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Department uses a dropdown select for constrained editing.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" OnRowEdit="HandleRowEdit" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Name" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" Editable="true">
-                        <EditTemplate Context="item">
-                            <select style="background: #1a1833; color: #e2e0f0; border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; padding: 4px 8px; width: 100%;">
-                                @foreach (var dept in new[] { "Engineering", "Design", "Marketing", "Sales" })
-                                {
-                                    <option value="@dept" selected="@(item.Department == dept)">@dept</option>
-                                }
-                            </select>
-                        </EditTemplate>
-                    </ArcadiaColumn>
-                    <ArcadiaColumn TItem="Employee" Property="Role" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Batch Editing</div>
-                <div class="gallery__hint">Edit multiple cells, then Save or Discard all changes at once.</div>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" BatchEdit="true" ShowToolbar="true" OnBatchCommit="HandleBatchCommit" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" Editable="true" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" Editable="true" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Single Row Selection</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Click a row to select it. Details appear below.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" SelectionMode="DataGridSelectionMode.SingleRow" PageSize="0"
-                                 SelectedItems="@_selectedEmployeeSet" SelectedItemsChanged="HandleSingleSelect">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-                @if (_selectedEmployee is not null)
-                {
-                    <div style="margin-top: 12px; padding: 12px 16px; border-radius: 8px; background: rgba(139,92,246,0.06); border: 1px solid rgba(139,92,246,0.15); color: #c4c0e0; font-size: 0.8125rem;">
-                        Selected: <strong style="color: #e2e0f0;">@_selectedEmployee.Name</strong> — @_selectedEmployee.Role in @_selectedEmployee.Department (@_selectedEmployee.Salary.ToString("C0"))
-                    </div>
-                }
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Multi-Row Selection</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Checkbox selection with row count display.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" SelectionMode="DataGridSelectionMode.Multiple" ShowRowSelector="true" PageSize="0"
-                                 SelectedItems="@_selectedEmployees" SelectedItemsChanged="@(items => { _selectedEmployees = items; StateHasChanged(); })">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-                <div style="margin-top: 8px; color: #8a86a8; font-size: 0.8125rem;">
-                    @(_selectedEmployees?.Count ?? 0) row(s) selected
-                </div>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Row Numbers</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Auto-generated row numbers alongside a row selector column.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" ShowRowSelector="true" ShowRowNumbers="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-        }
-
-        @* ─── DATAGRID: ADVANCED ─── *@
-
-        @if (_tab == "dg-advanced")
-        {
-            <div class="gallery__section-header">
-                <h1>DataGrid — Advanced</h1>
-                <p>Grouping, embedded charts, master-detail, virtual scrolling, and frozen columns.</p>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Grouping</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Rows grouped by Department with collapsible group headers.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" GroupBy="Department" Sortable="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Computed Grouping</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Group by a computed expression: salary above $120k = "Senior", below = "Standard".</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" GroupByField="@(e => (object)(e.Salary > 120000 ? "Senior ($120k+)" : "Standard"))" Sortable="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Charts in Grid Cells</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Sparklines, delta indicators, and progress bars embedded in grid columns.</p>
-                <ArcadiaDataGrid TItem="ProductMetric" Data="@_productMetrics" Striped="true" PageSize="0">
-                    <ArcadiaColumn TItem="ProductMetric" Field="@(p => p.Product)" Title="Product" />
-                    <ArcadiaColumn TItem="ProductMetric" Field="@(p => p.Revenue)" Title="Revenue" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="ProductMetric" Title="Trend (6mo)">
-                        <Template Context="item">
-                            <ArcadiaSparkline Data="@item.Trend" Width="100" Height="24" Color="@(item.Delta >= 0 ? "success" : "danger")" ShowArea="true" />
-                        </Template>
-                    </ArcadiaColumn>
-                    <ArcadiaColumn TItem="ProductMetric" Title="Change">
-                        <Template Context="item">
-                            <ArcadiaDeltaIndicator Value="@($"{item.Delta:+0.0;-0.0}%")" Type="@(item.Delta >= 0 ? DeltaType.Increase : DeltaType.Decrease)" />
-                        </Template>
-                    </ArcadiaColumn>
-                    <ArcadiaColumn TItem="ProductMetric" Title="Quota">
-                        <Template Context="item">
-                            <ArcadiaProgressBar Value="@item.QuotaPct" Max="100" Color="@(item.QuotaPct >= 80 ? "success" : item.QuotaPct >= 50 ? "warning" : "danger")" />
-                        </Template>
-                    </ArcadiaColumn>
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Master-Detail</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Expand a row to see that employee's project assignments.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Sortable="true" PageSize="0">
-                    <DetailTemplate Context="emp">
-                        <div style="padding: 12px 24px; background: rgba(139,92,246,0.03);">
-                            <strong style="color: #c4c0e0; font-size: 0.8125rem;">Projects for @emp.Name</strong>
-                            <table style="width: 100%; margin-top: 8px; font-size: 0.8125rem; color: #9490b3;">
-                                <thead><tr style="border-bottom: 1px solid rgba(139,92,246,0.1);"><th style="text-align: left; padding: 4px 8px;">Project</th><th style="text-align: left; padding: 4px 8px;">Status</th><th style="text-align: right; padding: 4px 8px;">Hours</th></tr></thead>
-                                <tbody>
-                                    @foreach (var p in GetProjects(emp.Id))
-                                    {
-                                        <tr><td style="padding: 4px 8px;">@p.Name</td><td style="padding: 4px 8px;">@p.Status</td><td style="text-align: right; padding: 4px 8px;">@p.Hours</td></tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </DetailTemplate>
-                    <ChildContent>
-                        <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                        <ArcadiaColumn TItem="Employee" Property="Name" />
-                        <ArcadiaColumn TItem="Employee" Property="Department" />
-                        <ArcadiaColumn TItem="Employee" Property="Role" />
-                        <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    </ChildContent>
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Virtual Scrolling</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">10,000 rows rendered on demand with virtualization.</p>
-                <ArcadiaDataGrid TItem="LargeItem" Data="@_largeDataset" VirtualizeRows="true" Height="400px" ItemSize="40" Sortable="true" Filterable="true" PageSize="0">
-                    <ArcadiaColumn TItem="LargeItem" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="LargeItem" Property="Name" />
-                    <ArcadiaColumn TItem="LargeItem" Property="Category" />
-                    <ArcadiaColumn TItem="LargeItem" Property="Value" Format="C2" Align="right" />
-                    <ArcadiaColumn TItem="LargeItem" Property="Created" Title="Created" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Frozen Columns</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">First two columns stay fixed during horizontal scroll.</p>
-                <ArcadiaDataGrid TItem="WideRow" Data="@_wideData" PageSize="0" Height="360px">
-                    <ArcadiaColumn TItem="WideRow" Property="Id" Title="ID" Width="70px" Frozen="true" />
-                    <ArcadiaColumn TItem="WideRow" Property="Name" Width="140px" Frozen="true" />
-                    <ArcadiaColumn TItem="WideRow" Property="A" Title="Col A" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="B" Title="Col B" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="C" Title="Col C" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="D" Title="Col D" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="E" Title="Col E" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="F" Title="Col F" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="G" Title="Col G" Width="130px" />
-                    <ArcadiaColumn TItem="WideRow" Property="H" Title="Col H" Width="130px" />
-                </ArcadiaDataGrid>
-            </div>
-        }
-
-        @* ─── DATAGRID: ENTERPRISE ─── *@
-
-        @if (_tab == "dg-enterprise")
-        {
-            <div class="gallery__section-header">
-                <h1>DataGrid — Enterprise</h1>
-                <p>Export, column management, state persistence, context menus, footer aggregates, and theming.</p>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">CSV &amp; Excel Export</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Click the CSV or Excel buttons in the toolbar to download grid data.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" ShowToolbar="true" Sortable="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Column Picker</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Use the Columns button in the toolbar to show/hide columns dynamically.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" ShowToolbar="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">State Persistence</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Sort or filter, then refresh the page — grid state is restored from local storage.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" StateKey="demo-grid" Sortable="true" Filterable="true" ShowToolbar="true" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Context Menu</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Right-click a row to see View, Edit, and Delete actions.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="0">
-                    <ContextMenuTemplate Context="emp">
-                        <div style="background: #1e1b38; border: 1px solid rgba(139,92,246,0.2); border-radius: 8px; padding: 4px 0; min-width: 160px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
-                            <button style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; color: #e2e0f0; cursor: pointer; font-size: 0.8125rem;" @onclick="@(() => ToastService.ShowInfo($"Viewing {emp.Name}"))">View Details</button>
-                            <button style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; color: #e2e0f0; cursor: pointer; font-size: 0.8125rem;" @onclick="@(() => ToastService.ShowInfo($"Editing {emp.Name}"))">Edit</button>
-                            <button style="display: block; width: 100%; text-align: left; padding: 8px 16px; background: none; border: none; color: #f87171; cursor: pointer; font-size: 0.8125rem;" @onclick="@(() => ToastService.ShowWarning($"Delete {emp.Name}?"))">Delete</button>
-                        </div>
-                    </ContextMenuTemplate>
-                    <ChildContent>
-                        <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                        <ArcadiaColumn TItem="Employee" Property="Name" />
-                        <ArcadiaColumn TItem="Employee" Property="Department" />
-                        <ArcadiaColumn TItem="Employee" Property="Role" />
-                        <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                    </ChildContent>
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Footer Aggregates</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Sum of Salary and Average of Salary computed in the footer row.</p>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" PageSize="0">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" Aggregate="AggregateType.Count" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" Aggregate="AggregateType.Sum" />
-                    <ArcadiaColumn TItem="Employee" Property="StartDate" Title="Start Date" Format="d" />
-                </ArcadiaDataGrid>
-            </div>
-
-            <div class="gallery__showcase">
-                <div class="gallery__showcase-title">Theme Showcase</div>
-                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Switch between grid visual styles using CSS class overrides.</p>
-                <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
-                    @foreach (var theme in new[] { ("", "Default"), ("arcadia-grid--compact", "Compact"), ("arcadia-grid--bordered", "Bordered"), ("arcadia-grid--rounded", "Rounded"), ("arcadia-grid--flat", "Flat"), ("arcadia-grid--neon", "Neon") })
-                    {
-                        <button class="gallery__toast-btn @(_selectedTheme == theme.Item1 ? "gallery__toast-btn--info" : "")"
-                                @onclick="@(() => _selectedTheme = theme.Item1)">@theme.Item2</button>
-                    }
-                </div>
-                <ArcadiaDataGrid TItem="Employee" Data="@_employees" Class="@_selectedTheme" Sortable="true" PageSize="0" Striped="true">
-                    <ArcadiaColumn TItem="Employee" Property="Id" Title="ID" Width="80px" />
-                    <ArcadiaColumn TItem="Employee" Property="Name" />
-                    <ArcadiaColumn TItem="Employee" Property="Department" />
-                    <ArcadiaColumn TItem="Employee" Property="Role" />
-                    <ArcadiaColumn TItem="Employee" Property="Salary" Format="C0" Align="right" />
-                </ArcadiaDataGrid>
-            </div>
-        }
-
         @* ─── UI COMPONENTS ─── *@
 
         @if (_tab == "ui")
@@ -1306,6 +944,11 @@ dotnet add package Arcadia.Theme</code></pre>
 @code {
     string _tab = "home";
     bool _showDialog;
+    bool _chartsOpen = true;
+    bool _datagridOpen = true;
+    bool _formsOpen = true;
+    bool _uiOpen = true;
+    bool _toolsOpen = true;
 
     void HandleDialogConfirm() { _showDialog = false; ToastService.ShowSuccess("Action confirmed!"); }
     void HandleCardClick() { ToastService.ShowInfo("Card clicked!"); }
@@ -1372,155 +1015,8 @@ dotnet add package Arcadia.Theme</code></pre>
     record MonthActivity(string Month, double Hours);
     record NullablePoint(string Label, double Value);
     record StreamPoint(string Time, double Value);
-    record Employee(int Id, string Name, string Department, string Role, double Salary, DateTime StartDate);
-    record ProductMetric(string Product, double Revenue, double[] Trend, double Delta, double QuotaPct);
-    record Order(int OrderId, string Customer, string Product, double Amount, DateTime Date, string Status);
-    record FinancialRow(string Ticker, double Price, double Change, double ChangePct, int Volume, DateTime TradeDate);
-    record WideRow(int Id, string Name, string A, string B, string C, string D, string E, string F, string G, string H);
-    record ProjectInfo(string Name, string Status, int Hours);
-    record LargeItem(int Id, string Name, string Category, double Value, DateTime Created);
 
-    List<ProductMetric> _productMetrics = new()
-    {
-        new("Enterprise Suite", 2_340_000, new double[] { 180, 195, 210, 225, 248, 260 }, 12.3, 92),
-        new("Developer Tools", 890_000, new double[] { 72, 75, 71, 78, 82, 89 }, 8.1, 74),
-        new("Cloud Platform", 1_560_000, new double[] { 140, 135, 128, 132, 130, 125 }, -4.2, 63),
-        new("Analytics Pro", 670_000, new double[] { 45, 52, 58, 55, 61, 67 }, 18.5, 110),
-        new("Mobile SDK", 420_000, new double[] { 38, 36, 35, 33, 34, 32 }, -8.9, 45),
-        new("Security Gateway", 1_100_000, new double[] { 88, 92, 95, 98, 102, 110 }, 6.7, 85),
-    };
 
-    List<Employee> _employees = new()
-    {
-        new(1, "Alice Chen", "Engineering", "Senior Developer", 135000, new DateTime(2021, 3, 15)),
-        new(2, "Bob Martinez", "Engineering", "Tech Lead", 155000, new DateTime(2019, 7, 1)),
-        new(3, "Carol Kim", "Design", "UX Designer", 110000, new DateTime(2022, 1, 10)),
-        new(4, "David Patel", "Marketing", "Marketing Manager", 105000, new DateTime(2020, 6, 22)),
-        new(5, "Eva Novak", "Engineering", "DevOps Engineer", 128000, new DateTime(2021, 9, 5)),
-        new(6, "Frank Wu", "Sales", "Account Executive", 95000, new DateTime(2023, 2, 14)),
-        new(7, "Grace Lee", "Design", "Product Designer", 118000, new DateTime(2022, 5, 30)),
-        new(8, "Hiro Tanaka", "Engineering", "Backend Developer", 125000, new DateTime(2020, 11, 8)),
-        new(9, "Isabel Santos", "Marketing", "Content Strategist", 92000, new DateTime(2023, 4, 1)),
-        new(10, "James O'Brien", "Sales", "Sales Director", 145000, new DateTime(2018, 8, 20)),
-        new(11, "Kira Johansson", "Engineering", "Frontend Developer", 122000, new DateTime(2022, 7, 12)),
-        new(12, "Liam Cooper", "Design", "Design Lead", 130000, new DateTime(2019, 3, 25)),
-    };
-
-    // ── DataGrid demo data ──
-    string _selectedTheme = "";
-    Employee? _selectedEmployee;
-    HashSet<Employee> _selectedEmployeeSet = new();
-    HashSet<Employee> _selectedEmployees = new();
-    List<LargeItem> _largeDataset = new();
-
-    List<Order> _orders = new()
-    {
-        new(1001,"Acme Corp","Widget Pro",1250.00,new DateTime(2026,1,5),"Shipped"),
-        new(1002,"Globex Inc","Bolt Pack",340.50,new DateTime(2026,1,7),"Delivered"),
-        new(1003,"Initech","Gadget X",890.00,new DateTime(2026,1,10),"Processing"),
-        new(1004,"Umbrella Co","Widget Pro",1250.00,new DateTime(2026,1,12),"Shipped"),
-        new(1005,"Stark Ind","Flux Cap",4500.00,new DateTime(2026,1,14),"Delivered"),
-        new(1006,"Wayne Ent","Bolt Pack",680.00,new DateTime(2026,1,15),"Shipped"),
-        new(1007,"Acme Corp","Gadget X",890.00,new DateTime(2026,1,18),"Cancelled"),
-        new(1008,"Globex Inc","Flux Cap",4500.00,new DateTime(2026,1,20),"Processing"),
-        new(1009,"Initech","Widget Pro",2500.00,new DateTime(2026,1,22),"Delivered"),
-        new(1010,"Umbrella Co","Gadget X",1780.00,new DateTime(2026,1,24),"Shipped"),
-        new(1011,"Stark Ind","Bolt Pack",510.00,new DateTime(2026,1,26),"Delivered"),
-        new(1012,"Wayne Ent","Widget Pro",1250.00,new DateTime(2026,1,28),"Processing"),
-        new(1013,"Acme Corp","Flux Cap",4500.00,new DateTime(2026,2,1),"Shipped"),
-        new(1014,"Globex Inc","Widget Pro",1250.00,new DateTime(2026,2,3),"Delivered"),
-        new(1015,"Initech","Bolt Pack",340.50,new DateTime(2026,2,5),"Shipped"),
-        new(1016,"Umbrella Co","Flux Cap",4500.00,new DateTime(2026,2,8),"Cancelled"),
-        new(1017,"Stark Ind","Gadget X",890.00,new DateTime(2026,2,10),"Delivered"),
-        new(1018,"Wayne Ent","Bolt Pack",680.00,new DateTime(2026,2,12),"Shipped"),
-        new(1019,"Acme Corp","Widget Pro",2500.00,new DateTime(2026,2,14),"Processing"),
-        new(1020,"Globex Inc","Gadget X",1780.00,new DateTime(2026,2,16),"Delivered"),
-        new(1021,"Initech","Flux Cap",4500.00,new DateTime(2026,2,18),"Shipped"),
-        new(1022,"Umbrella Co","Widget Pro",1250.00,new DateTime(2026,2,20),"Delivered"),
-        new(1023,"Stark Ind","Bolt Pack",510.00,new DateTime(2026,2,22),"Processing"),
-        new(1024,"Wayne Ent","Gadget X",890.00,new DateTime(2026,2,24),"Shipped"),
-        new(1025,"Acme Corp","Flux Cap",4500.00,new DateTime(2026,2,26),"Delivered"),
-        new(1026,"Globex Inc","Widget Pro",1250.00,new DateTime(2026,2,28),"Cancelled"),
-        new(1027,"Initech","Gadget X",1780.00,new DateTime(2026,3,2),"Shipped"),
-        new(1028,"Umbrella Co","Bolt Pack",340.50,new DateTime(2026,3,4),"Delivered"),
-        new(1029,"Stark Ind","Widget Pro",2500.00,new DateTime(2026,3,6),"Processing"),
-        new(1030,"Wayne Ent","Flux Cap",4500.00,new DateTime(2026,3,8),"Shipped"),
-        new(1031,"Acme Corp","Bolt Pack",680.00,new DateTime(2026,3,10),"Delivered"),
-        new(1032,"Globex Inc","Gadget X",890.00,new DateTime(2026,3,12),"Shipped"),
-        new(1033,"Initech","Widget Pro",1250.00,new DateTime(2026,3,14),"Processing"),
-        new(1034,"Umbrella Co","Flux Cap",4500.00,new DateTime(2026,3,16),"Delivered"),
-        new(1035,"Stark Ind","Bolt Pack",510.00,new DateTime(2026,3,18),"Shipped"),
-        new(1036,"Wayne Ent","Widget Pro",2500.00,new DateTime(2026,3,20),"Cancelled"),
-        new(1037,"Acme Corp","Gadget X",1780.00,new DateTime(2026,3,22),"Delivered"),
-        new(1038,"Globex Inc","Bolt Pack",340.50,new DateTime(2026,3,24),"Processing"),
-        new(1039,"Initech","Flux Cap",4500.00,new DateTime(2026,3,26),"Shipped"),
-        new(1040,"Umbrella Co","Widget Pro",1250.00,new DateTime(2026,3,28),"Delivered"),
-        new(1041,"Stark Ind","Gadget X",890.00,new DateTime(2026,3,30),"Shipped"),
-        new(1042,"Wayne Ent","Bolt Pack",680.00,new DateTime(2026,4,1),"Processing"),
-        new(1043,"Acme Corp","Widget Pro",2500.00,new DateTime(2026,4,3),"Delivered"),
-        new(1044,"Globex Inc","Flux Cap",4500.00,new DateTime(2026,4,5),"Shipped"),
-        new(1045,"Initech","Bolt Pack",340.50,new DateTime(2026,4,7),"Delivered"),
-        new(1046,"Umbrella Co","Gadget X",1780.00,new DateTime(2026,4,9),"Cancelled"),
-        new(1047,"Stark Ind","Widget Pro",1250.00,new DateTime(2026,4,11),"Processing"),
-        new(1048,"Wayne Ent","Flux Cap",4500.00,new DateTime(2026,4,13),"Shipped"),
-        new(1049,"Acme Corp","Bolt Pack",510.00,new DateTime(2026,4,15),"Delivered"),
-        new(1050,"Globex Inc","Widget Pro",2500.00,new DateTime(2026,4,17),"Shipped"),
-    };
-
-    List<FinancialRow> _financialData = new()
-    {
-        new("AAPL", 178.52, 2.34, 0.0133, 52_340_000, new DateTime(2026, 3, 25)),
-        new("MSFT", 415.80, -1.20, -0.0029, 28_190_000, new DateTime(2026, 3, 25)),
-        new("GOOGL", 162.45, 3.15, 0.0198, 31_450_000, new DateTime(2026, 3, 25)),
-        new("AMZN", 195.20, 0.85, 0.0044, 41_200_000, new DateTime(2026, 3, 25)),
-        new("TSLA", 248.90, -5.60, -0.0220, 68_900_000, new DateTime(2026, 3, 25)),
-        new("NVDA", 892.30, 12.40, 0.0141, 45_600_000, new DateTime(2026, 3, 25)),
-        new("META", 502.15, 4.80, 0.0097, 22_100_000, new DateTime(2026, 3, 25)),
-        new("JPM", 198.40, -0.55, -0.0028, 12_800_000, new DateTime(2026, 3, 25)),
-        new("V", 285.60, 1.90, 0.0067, 8_900_000, new DateTime(2026, 3, 25)),
-        new("JNJ", 156.30, 0.45, 0.0029, 7_400_000, new DateTime(2026, 3, 25)),
-        new("WMT", 172.80, -0.90, -0.0052, 11_200_000, new DateTime(2026, 3, 25)),
-        new("PG", 164.50, 0.70, 0.0043, 6_300_000, new DateTime(2026, 3, 25)),
-        new("UNH", 528.40, 3.20, 0.0061, 4_100_000, new DateTime(2026, 3, 25)),
-        new("HD", 362.10, -2.15, -0.0059, 5_800_000, new DateTime(2026, 3, 25)),
-        new("DIS", 112.40, 1.05, 0.0094, 15_600_000, new DateTime(2026, 3, 25)),
-    };
-
-    List<WideRow> _wideData = Enumerable.Range(1, 20).Select(i => new WideRow(
-        i, $"Row {i}",
-        $"Alpha-{i}", $"Beta-{i * 2}", $"Charlie-{i + 10}", $"Delta-{i * 3}",
-        $"Echo-{i}", $"Foxtrot-{i * 4}", $"Golf-{i + 5}", $"Hotel-{i * 2 + 1}"
-    )).ToList();
-
-    Dictionary<int, List<ProjectInfo>> _projectsByEmployee = new()
-    {
-        { 1, new() { new("Cloud Migration", "Active", 240), new("API Redesign", "Complete", 180) } },
-        { 2, new() { new("Platform v3", "Active", 400), new("Cloud Migration", "Active", 120), new("Hiring", "Active", 60) } },
-        { 3, new() { new("Design System", "Active", 320), new("UX Audit", "Complete", 80) } },
-        { 4, new() { new("Q1 Campaign", "Complete", 200), new("Brand Refresh", "Active", 150) } },
-        { 5, new() { new("CI/CD Pipeline", "Active", 280), new("Monitoring", "Active", 100) } },
-        { 6, new() { new("Enterprise Deal", "Active", 160), new("Demo Prep", "Complete", 40) } },
-        { 7, new() { new("Design System", "Active", 260), new("Mobile App", "Active", 180) } },
-        { 8, new() { new("API Redesign", "Active", 300), new("Performance", "Complete", 120) } },
-        { 9, new() { new("Blog Series", "Active", 140), new("SEO Audit", "Complete", 60) } },
-        { 10, new() { new("Enterprise Deal", "Active", 350), new("Pricing Review", "Active", 80) } },
-        { 11, new() { new("Dashboard UI", "Active", 220), new("A11y Fixes", "Complete", 90) } },
-        { 12, new() { new("Design System", "Active", 380), new("Figma Library", "Active", 200) } },
-    };
-
-    List<ProjectInfo> GetProjects(int empId) => _projectsByEmployee.TryGetValue(empId, out var list) ? list : new() { new("No projects", "-", 0) };
-
-    void HandleRowEdit(Employee e) => ToastService.ShowSuccess($"Saved changes for {e.Name}");
-
-    void HandleBatchCommit(List<BatchEditChange<Employee>> changes) =>
-        ToastService.ShowSuccess($"Committed {changes.Count} change(s)");
-
-    void HandleSingleSelect(HashSet<Employee> items)
-    {
-        _selectedEmployeeSet = items;
-        _selectedEmployee = items.FirstOrDefault();
-        StateHasChanged();
-    }
 
     double[] _revenueSparkline = { 42, 48, 45, 52, 49, 55, 58, 62, 59, 65, 68, 72 };
     double[] _usersSparkline = { 85, 82, 88, 84, 80, 78, 82, 79, 76, 74, 78, 72 };
@@ -1883,14 +1379,6 @@ dotnet add package Arcadia.Theme</code></pre>
 
     protected override void OnInitialized()
     {
-        // Generate 10,000-row dataset for virtual scrolling demo
-        var lgRng = new Random(99);
-        var lgCategories = new[] { "Electronics", "Clothing", "Food", "Books" };
-        _largeDataset = Enumerable.Range(1, 10000).Select(i => new LargeItem(
-            i, $"Item {i}", lgCategories[lgRng.Next(4)],
-            Math.Round(lgRng.NextDouble() * 500, 2), DateTime.Today.AddDays(-lgRng.Next(365))
-        )).ToList();
-
         var days = new[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
         var hours = new[] { "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm", "4pm", "5pm" };
         var rng = new Random(42);
