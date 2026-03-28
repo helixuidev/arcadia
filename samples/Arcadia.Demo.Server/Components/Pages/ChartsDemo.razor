@@ -792,6 +792,30 @@ dotnet add package Arcadia.Theme</code></pre>
                     <ArcadiaColumn TItem="Employee" Field="@(e => e.Salary)" Title="Salary" Format="C0" Align="right" />
                 </ArcadiaDataGrid>
             </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Charts in Grid Cells</div>
+                <p style="color: #8a86a8; font-size: 0.8125rem; margin-bottom: 12px;">Embed sparklines, progress bars, and delta indicators directly in grid cells using column templates. The DataGrid and Charts packages work together seamlessly.</p>
+                <ArcadiaDataGrid TItem="ProductMetric" Data="@_productMetrics" Striped="true" PageSize="0">
+                    <ArcadiaColumn TItem="ProductMetric" Field="@(p => p.Product)" Title="Product" />
+                    <ArcadiaColumn TItem="ProductMetric" Field="@(p => p.Revenue)" Title="Revenue" Format="C0" Align="right" />
+                    <ArcadiaColumn TItem="ProductMetric" Title="Trend (6mo)">
+                        <Template Context="item">
+                            <ArcadiaSparkline Data="@item.Trend" Width="100" Height="24" Color="@(item.Delta >= 0 ? "success" : "danger")" ShowArea="true" />
+                        </Template>
+                    </ArcadiaColumn>
+                    <ArcadiaColumn TItem="ProductMetric" Title="Change">
+                        <Template Context="item">
+                            <ArcadiaDeltaIndicator Value="@($"{item.Delta:+0.0;-0.0}%")" Type="@(item.Delta >= 0 ? DeltaType.Increase : DeltaType.Decrease)" />
+                        </Template>
+                    </ArcadiaColumn>
+                    <ArcadiaColumn TItem="ProductMetric" Title="Quota">
+                        <Template Context="item">
+                            <ArcadiaProgressBar Value="@item.QuotaPct" Max="100" Color="@(item.QuotaPct >= 80 ? "success" : item.QuotaPct >= 50 ? "warning" : "danger")" />
+                        </Template>
+                    </ArcadiaColumn>
+                </ArcadiaDataGrid>
+            </div>
         }
 
         @* ─── UI COMPONENTS ─── *@
@@ -1007,6 +1031,17 @@ dotnet add package Arcadia.Theme</code></pre>
     record NullablePoint(string Label, double Value);
     record StreamPoint(string Time, double Value);
     record Employee(int Id, string Name, string Department, string Role, double Salary, DateTime StartDate);
+    record ProductMetric(string Product, double Revenue, double[] Trend, double Delta, double QuotaPct);
+
+    List<ProductMetric> _productMetrics = new()
+    {
+        new("Enterprise Suite", 2_340_000, new double[] { 180, 195, 210, 225, 248, 260 }, 12.3, 92),
+        new("Developer Tools", 890_000, new double[] { 72, 75, 71, 78, 82, 89 }, 8.1, 74),
+        new("Cloud Platform", 1_560_000, new double[] { 140, 135, 128, 132, 130, 125 }, -4.2, 63),
+        new("Analytics Pro", 670_000, new double[] { 45, 52, 58, 55, 61, 67 }, 18.5, 110),
+        new("Mobile SDK", 420_000, new double[] { 38, 36, 35, 33, 34, 32 }, -8.9, 45),
+        new("Security Gateway", 1_100_000, new double[] { 88, 92, 95, 98, 102, 110 }, 6.7, 85),
+    };
 
     List<Employee> _employees = new()
     {
