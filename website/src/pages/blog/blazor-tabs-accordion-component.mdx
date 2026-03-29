@@ -1,0 +1,205 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Free Blazor Tabs & Accordion Components — ARIA Accessible, Zero JS"
+description: "Build accessible Blazor tabs and accordion components with keyboard navigation, ARIA roles, disabled tabs, and CSS animations. Free, zero JavaScript."
+date: "2026-03-29"
+author: "Arcadia Controls"
+tags: ["blazor", "tabs", "accordion", "accessible", "free", "c#", "component"]
+---
+
+# Free Blazor Tabs & Accordion Components — ARIA Accessible, Zero JS
+
+Tabs and accordions are two of the most common UI patterns, yet most Blazor implementations skip critical **keyboard navigation** and **ARIA attributes**. Arcadia Controls provides both components with full WAI-ARIA compliance, smooth CSS animations, and zero JavaScript.
+
+## Why Accessibility Matters Here
+
+The WAI-ARIA Authoring Practices define specific keyboard behaviors for tabs and accordions that most Blazor libraries don't implement:
+
+- **Arrow keys** navigate between tab headers (not just Tab key)
+- **Home/End** jump to first/last tab
+- **`role="tablist"`**, **`role="tab"`**, **`role="tabpanel"`** must be present
+- **`aria-selected`**, **`aria-controls`**, **`aria-labelledby`** must link tabs to panels
+- Accordion headers need **`role="button"`** inside a heading element
+
+Arcadia implements all of these automatically.
+
+## Quick Start
+
+```bash
+dotnet add package Arcadia.Core
+dotnet add package Arcadia.Theme
+```
+
+Add CSS to your `App.razor`:
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.Core/css/arcadia-core.css" rel="stylesheet" />
+```
+
+## Tabs — Basic Usage
+
+```razor
+@using Arcadia.Core.Components
+
+<ArcadiaTabs @bind-ActiveTab="activeTab">
+    <ArcadiaTab Id="overview" Title="Overview">
+        <h3>Product Overview</h3>
+        <p>The Arcadia DataGrid is a high-performance Blazor component
+           built on AG Grid with virtual scrolling for 100K+ rows.</p>
+    </ArcadiaTab>
+    <ArcadiaTab Id="features" Title="Features">
+        <ul>
+            <li>Multi-column sorting</li>
+            <li>Quick filter and column filters</li>
+            <li>Excel and CSV export</li>
+            <li>Batch editing with undo</li>
+        </ul>
+    </ArcadiaTab>
+    <ArcadiaTab Id="pricing" Title="Pricing">
+        <p>Free in the Community Edition. No watermarks, no row limits.</p>
+    </ArcadiaTab>
+</ArcadiaTabs>
+
+@code {
+    private string activeTab = "overview";
+}
+```
+
+## Tabs with Icons and Badges
+
+```razor
+<ArcadiaTabs>
+    <ArcadiaTab Id="inbox" Title="Inbox" Icon="mail" Badge="3">
+        <p>You have 3 unread messages.</p>
+    </ArcadiaTab>
+    <ArcadiaTab Id="sent" Title="Sent" Icon="send">
+        <p>Your sent messages.</p>
+    </ArcadiaTab>
+    <ArcadiaTab Id="drafts" Title="Drafts" Icon="edit" Disabled="true">
+        <p>No drafts.</p>
+    </ArcadiaTab>
+</ArcadiaTabs>
+```
+
+Disabled tabs are visible but not focusable or clickable, with `aria-disabled="true"`.
+
+## Vertical Tabs
+
+```razor
+<ArcadiaTabs Orientation="Orientation.Vertical" @bind-ActiveTab="activeTab">
+    <ArcadiaTab Id="general" Title="General">
+        <p>General settings content.</p>
+    </ArcadiaTab>
+    <ArcadiaTab Id="security" Title="Security">
+        <p>Security settings content.</p>
+    </ArcadiaTab>
+    <ArcadiaTab Id="notifications" Title="Notifications">
+        <p>Notification preferences.</p>
+    </ArcadiaTab>
+</ArcadiaTabs>
+```
+
+Arrow keys switch to Up/Down for vertical orientation automatically.
+
+## Accordion — Basic Usage
+
+```razor
+<ArcadiaAccordion>
+    <ArcadiaAccordionItem Title="What is Arcadia Controls?" IsExpanded="true">
+        <p>Arcadia Controls is a free, MIT-licensed Blazor component library
+           for enterprise .NET developers. It includes a DataGrid, Form Builder,
+           Charts, and 40+ UI components.</p>
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Is it really free?">
+        <p>Yes. The Community Edition is MIT-licensed with no watermarks,
+           no feature gating, and no row/record limits.</p>
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Which .NET versions are supported?">
+        <p>.NET 5 through .NET 10. The library multi-targets all frameworks
+           and supports Server, WebAssembly, and Auto render modes.</p>
+    </ArcadiaAccordionItem>
+</ArcadiaAccordion>
+```
+
+## Accordion — Single Expand Mode
+
+Only one panel open at a time (classic accordion behavior):
+
+```razor
+<ArcadiaAccordion Multiple="false">
+    <ArcadiaAccordionItem Title="Step 1: Install">
+        <code>dotnet add package Arcadia.Core</code>
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Step 2: Add CSS">
+        <code>&lt;link href="_content/Arcadia.Theme/css/arcadia.css" /&gt;</code>
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Step 3: Use Components">
+        <code>&lt;ArcadiaTabs&gt;...&lt;/ArcadiaTabs&gt;</code>
+    </ArcadiaAccordionItem>
+</ArcadiaAccordion>
+```
+
+## Keyboard Navigation
+
+### Tabs
+| Key | Action |
+|---|---|
+| **Left/Right Arrow** | Move to previous/next tab (horizontal) |
+| **Up/Down Arrow** | Move to previous/next tab (vertical) |
+| **Home** | Move to first tab |
+| **End** | Move to last tab |
+| **Enter/Space** | Activate focused tab |
+| **Tab** | Move focus into the tab panel |
+
+### Accordion
+| Key | Action |
+|---|---|
+| **Enter/Space** | Toggle the focused panel |
+| **Up/Down Arrow** | Move to previous/next header |
+| **Home** | Move to first header |
+| **End** | Move to last header |
+
+## How It Compares
+
+| | Arcadia | MudBlazor | Radzen | Syncfusion | Telerik |
+|---|---|---|---|---|---|
+| **Price** | Free (MIT) | Free (MIT) | Free tier | $995+/year | $999+/year |
+| **Tabs ARIA roles** | Full | Partial | Partial | Full | Full |
+| **Arrow key nav** | Yes | No | No | Yes | Yes |
+| **Home/End keys** | Yes | No | No | Yes | Partial |
+| **Disabled tabs** | aria-disabled | Hidden | Hidden | aria-disabled | aria-disabled |
+| **Vertical tabs** | Yes | No | Yes | Yes | Yes |
+| **Tab badges** | Yes | Yes | No | No | Yes |
+| **Accordion ARIA** | Full | Partial | No | Full | Full |
+| **Single expand** | Yes | Yes | Yes | Yes | Yes |
+| **CSS animations** | Yes | Yes | Basic | Yes | Yes |
+| **JavaScript** | 0 KB | Required | Required | Required | Required |
+
+## ARIA Output
+
+Here's what Arcadia Tabs renders — every attribute is automatic:
+
+```html
+<div role="tablist" aria-orientation="horizontal">
+  <button role="tab" id="tab-overview" aria-selected="true"
+          aria-controls="panel-overview" tabindex="0">Overview</button>
+  <button role="tab" id="tab-features" aria-selected="false"
+          aria-controls="panel-features" tabindex="-1">Features</button>
+</div>
+<div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview"
+     tabindex="0">
+  <!-- content -->
+</div>
+```
+
+## Try It
+
+- **[Live Demo](https://arcadiaui.com/playground/)** — interactive playground
+- **[Documentation](https://arcadiaui.com/docs/components/tabs)** — full parameter reference
+- **[GitHub](https://github.com/ArcadiaUIDev/arcadia)** — source code (MIT)
+
+```bash
+dotnet add package Arcadia.Core
+```
+
+Tabs and Accordion are free in the Community Edition. No Pro license needed, no watermark, no feature gating.

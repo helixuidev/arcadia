@@ -1,0 +1,190 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Free Blazor Dialog / Modal Component — Accessible, Animated, No JavaScript"
+description: "Build accessible Blazor modals with Arcadia's free dialog component. Focus trap, Escape close, overlay dismiss, ARIA roles, CSS animations, zero JavaScript."
+date: "2026-03-29"
+author: "Arcadia Controls"
+tags: ["blazor", "dialog", "modal", "accessible", "free", "c#", "component"]
+---
+
+# Free Blazor Dialog / Modal Component — Accessible, Animated, No JS
+
+Building a **Blazor modal dialog** that handles focus trapping, keyboard navigation, screen readers, and animations is surprisingly hard to get right. Arcadia Controls includes a free, fully accessible dialog component that covers all of these — with zero JavaScript.
+
+## The Accessibility Problem
+
+Most Blazor modal implementations miss critical accessibility requirements:
+
+- **No focus trap** — Tab key escapes the modal into the background
+- **No Escape key** handling — users can't dismiss with keyboard
+- **Missing ARIA attributes** — screen readers don't announce the dialog
+- **No focus restoration** — after closing, focus doesn't return to the trigger element
+- **Body scroll not locked** — background scrolls behind the modal
+
+Arcadia Dialog handles all of these out of the box, meeting **WCAG 2.1 AA** requirements.
+
+## Quick Start
+
+```bash
+dotnet add package Arcadia.Core
+dotnet add package Arcadia.Theme
+```
+
+Add CSS to your `App.razor`:
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.Core/css/arcadia-core.css" rel="stylesheet" />
+```
+
+## Basic Dialog
+
+```razor
+@using Arcadia.Core.Components
+
+<button class="arcadia-btn arcadia-btn-primary" @onclick="() => showDialog = true">
+    Open Dialog
+</button>
+
+<ArcadiaDialog @bind-Visible="showDialog" Title="Confirm Action">
+    <Body>
+        <p>Are you sure you want to delete this record? This action cannot be undone.</p>
+    </Body>
+    <Footer>
+        <button class="arcadia-btn" @onclick="() => showDialog = false">Cancel</button>
+        <button class="arcadia-btn arcadia-btn-danger" @onclick="HandleDelete">Delete</button>
+    </Footer>
+</ArcadiaDialog>
+
+@code {
+    private bool showDialog;
+
+    private async Task HandleDelete()
+    {
+        await RecordService.DeleteAsync(selectedId);
+        showDialog = false;
+    }
+}
+```
+
+## Dialog Sizes
+
+```razor
+<ArcadiaDialog @bind-Visible="showSmall" Title="Quick Confirm" Size="DialogSize.Small">
+    <Body><p>Proceed?</p></Body>
+</ArcadiaDialog>
+
+<ArcadiaDialog @bind-Visible="showLarge" Title="User Details" Size="DialogSize.Large">
+    <Body>
+        <!-- Form content -->
+    </Body>
+</ArcadiaDialog>
+
+<ArcadiaDialog @bind-Visible="showFull" Title="Document Preview" Size="DialogSize.Fullscreen">
+    <Body>
+        <!-- Full-screen content -->
+    </Body>
+</ArcadiaDialog>
+```
+
+## Form Inside a Dialog
+
+Dialogs work naturally with Blazor's `EditForm`:
+
+```razor
+<ArcadiaDialog @bind-Visible="showForm" Title="Add Employee">
+    <Body>
+        <EditForm Model="@newEmployee" OnValidSubmit="HandleSubmit">
+            <DataAnnotationsValidator />
+            <div class="arcadia-form-group">
+                <label for="name">Name</label>
+                <InputText id="name" @bind-Value="newEmployee.Name"
+                           class="arcadia-input" />
+                <ValidationMessage For="() => newEmployee.Name" />
+            </div>
+            <div class="arcadia-form-group">
+                <label for="email">Email</label>
+                <InputText id="email" @bind-Value="newEmployee.Email"
+                           class="arcadia-input" />
+                <ValidationMessage For="() => newEmployee.Email" />
+            </div>
+            <Footer>
+                <button type="button" class="arcadia-btn"
+                        @onclick="() => showForm = false">Cancel</button>
+                <button type="submit" class="arcadia-btn arcadia-btn-primary">Save</button>
+            </Footer>
+        </EditForm>
+    </Body>
+</ArcadiaDialog>
+
+@code {
+    private bool showForm;
+    private Employee newEmployee = new();
+
+    private async Task HandleSubmit()
+    {
+        await EmployeeService.CreateAsync(newEmployee);
+        showForm = false;
+        newEmployee = new();
+    }
+}
+```
+
+## Overlay Click and Escape Key
+
+Both are enabled by default. Disable them for mandatory dialogs:
+
+```razor
+<ArcadiaDialog @bind-Visible="showMandatory"
+               Title="Terms of Service"
+               CloseOnOverlayClick="false"
+               CloseOnEscape="false"
+               ShowCloseButton="false">
+    <Body>
+        <p>You must accept the terms to continue.</p>
+    </Body>
+    <Footer>
+        <button class="arcadia-btn arcadia-btn-primary" @onclick="AcceptTerms">
+            I Accept
+        </button>
+    </Footer>
+</ArcadiaDialog>
+```
+
+## How It Compares
+
+| | Arcadia | MudBlazor | Radzen | Syncfusion | Telerik |
+|---|---|---|---|---|---|
+| **Price** | Free (MIT) | Free (MIT) | Free tier | $995+/year | $999+/year |
+| **Focus trap** | Yes | Partial | No | Yes | Yes |
+| **Escape close** | Yes | Yes | Yes | Yes | Yes |
+| **Overlay dismiss** | Yes | Yes | Yes | Yes | Yes |
+| **ARIA dialog role** | Yes | Partial | No | Yes | Yes |
+| **Focus restoration** | Yes | No | No | Yes | Yes |
+| **Body scroll lock** | Yes | Yes | No | Yes | Yes |
+| **CSS animations** | Yes | Yes | Basic | Yes | Yes |
+| **JavaScript** | 0 KB | Required | Required | Required | Required |
+| **Nested dialogs** | Yes | Yes | No | Yes | Yes |
+
+## Built-in Accessibility
+
+Every Arcadia Dialog automatically includes:
+
+- `role="dialog"` and `aria-modal="true"`
+- `aria-labelledby` linked to the title
+- **Focus trap** — Tab and Shift+Tab cycle within the dialog
+- **Focus restoration** — focus returns to the trigger element on close
+- **Escape key** closes the dialog (configurable)
+- **Body scroll lock** prevents background scrolling
+- **Reduced motion** — animations respect `prefers-reduced-motion`
+
+## Try It
+
+- **[Live Demo](https://arcadiaui.com/playground/)** — interactive playground
+- **[Documentation](https://arcadiaui.com/docs/components/dialog)** — full parameter reference
+- **[GitHub](https://github.com/ArcadiaUIDev/arcadia)** — source code (MIT)
+
+```bash
+dotnet add package Arcadia.Core
+```
+
+The Dialog component is free in the Community Edition. No Pro license needed, no watermark, no feature gating.

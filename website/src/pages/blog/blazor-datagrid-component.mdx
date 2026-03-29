@@ -1,0 +1,157 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Free Blazor DataGrid with Sorting, Filtering, Excel Export — 2026 Guide"
+description: "Build enterprise data grids in Blazor with Arcadia's free DataGrid. Multi-sort, quick filter, batch editing, virtual scrolling, Excel export, and 6 themes."
+date: "2026-03-29"
+author: "Arcadia Controls"
+tags: ["blazor", "datagrid", "data grid", "sorting", "filtering", "excel export", "free", "c#"]
+---
+
+# Free Blazor DataGrid Component — Sorting, Filtering, Excel Export
+
+Need a **production-grade Blazor DataGrid** that handles sorting, filtering, editing, and Excel export without expensive commercial licenses? Arcadia Controls ships a free, MIT-licensed DataGrid built on AG Grid — the most battle-tested grid engine on the web.
+
+## Why Arcadia DataGrid?
+
+Most Blazor data grid options force a tradeoff:
+
+1. **Free but limited** (MudBlazor, Radzen Community) — no virtual scrolling at scale, no built-in Excel export, basic column features
+2. **Full-featured but expensive** (Syncfusion, Telerik) — $995+/year per developer, JS-heavy, complex licensing
+
+Arcadia DataGrid gives you AG Grid's full power through a **native Blazor API** — multi-sort, quick filter, batch editing, virtual scrolling for 100K+ rows, one-click Excel export — all in the **free Community Edition**.
+
+## Quick Start (2 Minutes)
+
+```bash
+dotnet add package Arcadia.DataGrid
+dotnet add package Arcadia.Theme
+```
+
+Add CSS to your `App.razor`:
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" />
+```
+
+Drop in a grid:
+```razor
+@using Arcadia.DataGrid.Components
+
+<ArcadiaDataGrid TItem="Employee"
+                 Items="@employees"
+                 Sortable="true"
+                 Filterable="true"
+                 Pagination="true"
+                 PageSize="25">
+    <ArcadiaGridColumn Field="@nameof(Employee.Name)" Header="Name" Sortable="true" />
+    <ArcadiaGridColumn Field="@nameof(Employee.Department)" Header="Department" Filterable="true" />
+    <ArcadiaGridColumn Field="@nameof(Employee.Salary)" Header="Salary" Format="C0" />
+    <ArcadiaGridColumn Field="@nameof(Employee.StartDate)" Header="Start Date" Format="d" />
+</ArcadiaDataGrid>
+
+@code {
+    private List<Employee> employees = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await EmployeeService.GetAllAsync();
+    }
+}
+```
+
+That's it. No JavaScript imports, no npm, no webpack.
+
+## Multi-Sort and Quick Filter
+
+Enable multi-column sorting with shift-click and a global quick filter that searches all columns:
+
+```razor
+<ArcadiaDataGrid TItem="Product"
+                 Items="@products"
+                 MultiSort="true"
+                 QuickFilter="true"
+                 QuickFilterPlaceholder="Search products...">
+    <ArcadiaGridColumn Field="@nameof(Product.Sku)" Header="SKU" />
+    <ArcadiaGridColumn Field="@nameof(Product.Name)" Header="Product" />
+    <ArcadiaGridColumn Field="@nameof(Product.Category)" Header="Category"
+                       FilterType="FilterType.Set" />
+    <ArcadiaGridColumn Field="@nameof(Product.Price)" Header="Price" Format="C2" />
+</ArcadiaDataGrid>
+```
+
+## Batch Editing with Undo
+
+Enable inline editing with batch save and undo support:
+
+```razor
+<ArcadiaDataGrid TItem="Order"
+                 Items="@orders"
+                 Editable="true"
+                 EditMode="EditMode.Batch"
+                 OnBatchSave="HandleBatchSave">
+    <ArcadiaGridColumn Field="@nameof(Order.Status)" Header="Status"
+                       EditType="EditType.Select"
+                       EditOptions="@statusOptions" />
+    <ArcadiaGridColumn Field="@nameof(Order.Quantity)" Header="Qty"
+                       EditType="EditType.Number" />
+</ArcadiaDataGrid>
+
+@code {
+    private async Task HandleBatchSave(BatchSaveEventArgs<Order> args)
+    {
+        await OrderService.UpdateBatchAsync(args.ChangedItems);
+    }
+}
+```
+
+## Excel Export (One Line)
+
+```razor
+<ArcadiaDataGrid @ref="grid" TItem="Employee" Items="@employees">
+    <!-- columns -->
+</ArcadiaDataGrid>
+<button @onclick="() => grid.ExportToExcelAsync()">Export to Excel</button>
+```
+
+## How It Compares
+
+| | Arcadia | MudBlazor | Radzen | Syncfusion | Telerik |
+|---|---|---|---|---|---|
+| **Price** | Free (MIT) | Free (MIT) | Free tier | $995+/year | $999+/year |
+| **Virtual scroll** | 100K+ rows | Limited | Yes | Yes | Yes |
+| **Multi-sort** | Yes | No | Yes | Yes | Yes |
+| **Quick filter** | Yes | No | No | Yes | Yes |
+| **Batch editing** | Yes | No | No | Yes | Yes |
+| **Excel export** | Built-in | No | Pro only | Yes | Yes |
+| **Column pinning** | Yes | No | Yes | Yes | Yes |
+| **Row grouping** | Yes | No | Yes | Yes | Yes |
+| **6 Themes** | Yes | 1 | 2 | Yes | Yes |
+| **Bundle size** | ~180 KB | ~2 MB | ~1.5 MB | ~3 MB | ~4 MB |
+| **SSR friendly** | Yes | Partial | Partial | JS hydration | JS hydration |
+
+## Features at a Glance
+
+- **Multi-column sorting** with shift-click
+- **Quick filter** across all columns
+- **Column filters** — text, number, date, set
+- **Batch and inline editing** with undo/redo
+- **Virtual scrolling** for 100K+ rows at 60fps
+- **Excel and CSV export** — zero extra dependencies
+- **Column pinning, resizing, reordering**
+- **Row grouping and aggregation**
+- **6 built-in themes** — light, dark, compact, and more
+- **WCAG 2.1 AA** — keyboard navigation, ARIA grid roles, screen reader support
+- **Blazor Server + WASM + Auto** — all render modes
+- **.NET 5 through .NET 10** — multi-target support
+
+## Try It
+
+- **[Live Demo](https://arcadiaui.com/playground/)** — interactive playground
+- **[Documentation](https://arcadiaui.com/docs/datagrid/)** — full parameter reference
+- **[GitHub](https://github.com/ArcadiaUIDev/arcadia)** — source code (MIT)
+
+```bash
+dotnet add package Arcadia.DataGrid
+```
+
+The DataGrid is free in the Community Edition. No Pro license needed, no watermark, no feature gating.

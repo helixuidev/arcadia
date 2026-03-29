@@ -1,0 +1,234 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Blazor Form Builder — Dynamic Forms from Schema with 20+ Field Types"
+description: "Build dynamic Blazor forms from JSON or C# schema. 20+ field types, validation, wizard mode, conditional fields. Free MIT-licensed form builder component."
+date: "2026-03-29"
+author: "Arcadia Controls"
+tags: ["blazor", "form builder", "dynamic forms", "schema", "validation", "c#"]
+---
+
+# Blazor Form Builder — Dynamic Forms from Schema with 20+ Field Types
+
+Hard-coding Blazor forms with `EditForm` and `InputText` works for simple CRUD — but what happens when your forms are **driven by configuration**, change per tenant, or need to be built by non-developers? Arcadia Form Builder lets you define forms from a **JSON or C# schema** and renders them with full validation, conditional visibility, and wizard mode.
+
+## The Problem with Static Forms
+
+Enterprise apps often need:
+
+- **Admin-configurable forms** — business users modify forms without deployments
+- **Multi-tenant forms** — different fields per customer
+- **Wizard workflows** — multi-step forms with conditional pages
+- **Dynamic validation** — rules that change based on other field values
+
+Building all of this with hand-coded Razor components is painful and brittle. Form Builder solves this declaratively.
+
+## Quick Start
+
+```bash
+dotnet add package Arcadia.FormBuilder
+dotnet add package Arcadia.Theme
+```
+
+Add CSS to your `App.razor`:
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.FormBuilder/css/arcadia-formbuilder.css" rel="stylesheet" />
+```
+
+## Schema-Driven Form
+
+Define your form as a C# schema and let the builder render it:
+
+```razor
+@using Arcadia.FormBuilder.Components
+@using Arcadia.FormBuilder.Models
+
+<ArcadiaFormBuilder Schema="@schema"
+                    Values="@formValues"
+                    OnSubmit="HandleSubmit" />
+
+@code {
+    private FormSchema schema = new()
+    {
+        Title = "Employee Onboarding",
+        Fields = new List<FieldDefinition>
+        {
+            new() { Name = "FullName", Label = "Full Name", Type = FieldType.Text,
+                    Required = true, Placeholder = "Jane Smith" },
+            new() { Name = "Email", Label = "Email", Type = FieldType.Email,
+                    Required = true },
+            new() { Name = "Department", Label = "Department", Type = FieldType.Select,
+                    Options = new[] { "Engineering", "Sales", "Marketing", "HR" } },
+            new() { Name = "StartDate", Label = "Start Date", Type = FieldType.Date,
+                    Required = true },
+            new() { Name = "Salary", Label = "Salary", Type = FieldType.Currency,
+                    Min = 30000, Max = 500000 },
+            new() { Name = "Bio", Label = "Bio", Type = FieldType.RichText,
+                    MaxLength = 500 },
+        }
+    };
+
+    private Dictionary<string, object?> formValues = new();
+
+    private async Task HandleSubmit(FormSubmitEventArgs args)
+    {
+        if (args.IsValid)
+        {
+            await EmployeeService.CreateAsync(args.Values);
+        }
+    }
+}
+```
+
+## JSON Schema (Load from API)
+
+Store schemas in a database or API and load them at runtime:
+
+```razor
+<ArcadiaFormBuilder SchemaJson="@jsonSchema"
+                    Values="@formValues"
+                    OnSubmit="HandleSubmit" />
+
+@code {
+    private string? jsonSchema;
+
+    protected override async Task OnInitializedAsync()
+    {
+        jsonSchema = await Http.GetStringAsync("/api/forms/onboarding-schema");
+    }
+}
+```
+
+```json
+{
+  "title": "Contact Form",
+  "fields": [
+    { "name": "Name", "label": "Your Name", "type": "text", "required": true },
+    { "name": "Email", "label": "Email", "type": "email", "required": true },
+    { "name": "Subject", "label": "Subject", "type": "select",
+      "options": ["General", "Support", "Sales"] },
+    { "name": "Message", "label": "Message", "type": "textarea", "required": true }
+  ]
+}
+```
+
+## Conditional Fields
+
+Show or hide fields based on other values:
+
+```razor
+@code {
+    private FormSchema schema = new()
+    {
+        Fields = new List<FieldDefinition>
+        {
+            new() { Name = "EmploymentType", Label = "Employment Type",
+                    Type = FieldType.Radio,
+                    Options = new[] { "Full-Time", "Contractor" } },
+            new() { Name = "CompanyName", Label = "Company Name",
+                    Type = FieldType.Text,
+                    VisibleWhen = new Condition("EmploymentType", "==", "Contractor") },
+            new() { Name = "ContractEnd", Label = "Contract End Date",
+                    Type = FieldType.Date,
+                    VisibleWhen = new Condition("EmploymentType", "==", "Contractor") },
+        }
+    };
+}
+```
+
+## Wizard Mode (Multi-Step)
+
+Split long forms into pages with progress tracking:
+
+```razor
+<ArcadiaFormBuilder Schema="@wizardSchema"
+                    Values="@formValues"
+                    Mode="FormMode.Wizard"
+                    OnSubmit="HandleSubmit"
+                    OnStepChange="HandleStepChange" />
+
+@code {
+    private FormSchema wizardSchema = new()
+    {
+        Pages = new List<FormPage>
+        {
+            new() { Title = "Personal Info", Fields = new List<FieldDefinition>
+            {
+                new() { Name = "FirstName", Label = "First Name", Type = FieldType.Text, Required = true },
+                new() { Name = "LastName", Label = "Last Name", Type = FieldType.Text, Required = true },
+                new() { Name = "Email", Label = "Email", Type = FieldType.Email, Required = true },
+            }},
+            new() { Title = "Address", Fields = new List<FieldDefinition>
+            {
+                new() { Name = "Street", Label = "Street", Type = FieldType.Text },
+                new() { Name = "City", Label = "City", Type = FieldType.Text },
+                new() { Name = "State", Label = "State", Type = FieldType.Select,
+                        Options = new[] { "CA", "NY", "TX", "FL", "WA" } },
+                new() { Name = "Zip", Label = "ZIP Code", Type = FieldType.Text,
+                        Pattern = @"^\d{5}$", PatternMessage = "Enter a 5-digit ZIP" },
+            }},
+            new() { Title = "Review", Fields = new List<FieldDefinition>
+            {
+                new() { Name = "_summary", Type = FieldType.Summary },
+            }},
+        }
+    };
+
+    private async Task HandleStepChange(StepChangeEventArgs args)
+    {
+        // Auto-save draft on step change
+        await DraftService.SaveAsync(formValues);
+    }
+}
+```
+
+## 20+ Field Types
+
+| Field Type | Renders As |
+|---|---|
+| `Text` | Single-line input |
+| `Email` | Email input with validation |
+| `Password` | Password input |
+| `Number` | Numeric input with min/max |
+| `Currency` | Formatted currency input |
+| `Textarea` | Multi-line text |
+| `RichText` | Rich text editor |
+| `Date` | Date picker |
+| `DateTime` | Date + time picker |
+| `Time` | Time picker |
+| `Select` | Dropdown select |
+| `MultiSelect` | Multi-select with chips |
+| `Radio` | Radio button group |
+| `Checkbox` | Single checkbox |
+| `CheckboxGroup` | Multiple checkboxes |
+| `Toggle` | Toggle switch |
+| `Slider` | Range slider |
+| `FileUpload` | File upload with drag-drop |
+| `ColorPicker` | Color picker |
+| `Rating` | Star rating |
+| `Summary` | Read-only summary of values |
+
+## How It Compares
+
+| | Arcadia | Blazor EditForm | MudBlazor | Syncfusion | Telerik |
+|---|---|---|---|---|---|
+| **Price** | Free (MIT) | Built-in | Free (MIT) | $995+/year | $999+/year |
+| **Schema-driven** | Yes | No | No | No | No |
+| **JSON schema** | Yes | No | No | No | No |
+| **Conditional fields** | Yes | Manual | Manual | Manual | Manual |
+| **Wizard mode** | Yes | Manual | Manual | No | No |
+| **Field types** | 20+ | 8 | 15+ | 20+ | 20+ |
+| **Custom fields** | Yes | Yes | Yes | Yes | Yes |
+| **Validation** | DataAnnotations + custom | DataAnnotations | DataAnnotations | Built-in | DataAnnotations |
+
+## Try It
+
+- **[Live Demo](https://arcadiaui.com/playground/)** — build forms interactively
+- **[Documentation](https://arcadiaui.com/docs/form-builder/)** — full schema reference
+- **[GitHub](https://github.com/ArcadiaUIDev/arcadia)** — source code (MIT)
+
+```bash
+dotnet add package Arcadia.FormBuilder
+```
+
+Form Builder is free in the Community Edition. No Pro license, no watermark, no field limits.

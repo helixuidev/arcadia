@@ -1,0 +1,173 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "How to Export a Blazor DataGrid to Excel (XLSX) — No Dependencies"
+description: "Step-by-step guide to exporting Blazor DataGrid data to Excel XLSX files. Zero external dependencies, one-line API, supports styled headers and filters."
+date: "2026-03-29"
+author: "Arcadia Controls"
+tags: ["blazor", "excel", "export", "xlsx", "datagrid", "csv", "c#"]
+---
+
+# How to Export a Blazor DataGrid to Excel (XLSX)
+
+Exporting grid data to Excel is one of the most requested features in enterprise Blazor apps. Most solutions require third-party NuGet packages like EPPlus or ClosedXML, adding licensing complexity and bundle size. Arcadia DataGrid includes **built-in Excel export** with zero extra dependencies.
+
+## The Problem with DIY Excel Export
+
+The typical approach for Blazor Excel export involves:
+
+1. Adding a package like EPPlus ($299/year commercial license) or ClosedXML
+2. Writing manual serialization code for each data type
+3. Handling column formatting, headers, and filters separately
+4. Managing memory for large datasets
+5. Triggering a file download via JS interop
+
+That's a lot of plumbing for something that should be one line of code.
+
+## Quick Start
+
+```bash
+dotnet add package Arcadia.DataGrid
+dotnet add package Arcadia.Theme
+```
+
+Add CSS to your `App.razor`:
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" />
+```
+
+## One-Line Excel Export
+
+```razor
+@using Arcadia.DataGrid.Components
+
+<ArcadiaDataGrid @ref="grid" TItem="Invoice" Items="@invoices"
+                 Sortable="true" Filterable="true">
+    <ArcadiaGridColumn Field="@nameof(Invoice.Number)" Header="Invoice #" />
+    <ArcadiaGridColumn Field="@nameof(Invoice.Customer)" Header="Customer" />
+    <ArcadiaGridColumn Field="@nameof(Invoice.Amount)" Header="Amount" Format="C2" />
+    <ArcadiaGridColumn Field="@nameof(Invoice.DueDate)" Header="Due Date" Format="d" />
+    <ArcadiaGridColumn Field="@nameof(Invoice.Status)" Header="Status" />
+</ArcadiaDataGrid>
+
+<button class="arcadia-btn arcadia-btn-primary" @onclick="ExportExcel">
+    Export to Excel
+</button>
+
+@code {
+    private ArcadiaDataGrid<Invoice> grid = default!;
+    private List<Invoice> invoices = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        invoices = await InvoiceService.GetAllAsync();
+    }
+
+    private async Task ExportExcel()
+    {
+        await grid.ExportToExcelAsync();
+    }
+}
+```
+
+That's it. The grid exports all visible columns with their current sort/filter state, formatted headers, and proper Excel data types.
+
+## Customizing the Export
+
+Control which columns export, the file name, and whether to include only filtered rows:
+
+```razor
+@code {
+    private async Task ExportFiltered()
+    {
+        await grid.ExportToExcelAsync(new ExcelExportOptions
+        {
+            FileName = "invoices-march-2026",
+            IncludeHeaders = true,
+            ExportFilteredOnly = true,
+            SheetName = "Invoices",
+            Columns = new[] { "Number", "Customer", "Amount", "Status" }
+        });
+    }
+}
+```
+
+## CSV Export
+
+Prefer CSV? Same one-line API:
+
+```razor
+<button @onclick="() => grid.ExportToCsvAsync()">Export CSV</button>
+```
+
+Or with options:
+
+```razor
+@code {
+    private async Task ExportCsv()
+    {
+        await grid.ExportToCsvAsync(new CsvExportOptions
+        {
+            FileName = "invoices-export",
+            Delimiter = ",",
+            IncludeHeaders = true,
+            ExportFilteredOnly = true
+        });
+    }
+}
+```
+
+## Excel vs CSV — When to Use Which
+
+| | Excel (XLSX) | CSV |
+|---|---|---|
+| **Formatting** | Styled headers, column widths, data types | Plain text |
+| **File size** | Compressed (smaller for large data) | Larger for big datasets |
+| **Compatibility** | Excel, Google Sheets, LibreOffice | Universal |
+| **Multiple sheets** | Yes | No |
+| **Best for** | End users, reports, sharing | Data pipelines, imports |
+
+## How It Compares
+
+| | Arcadia | EPPlus | ClosedXML | MudBlazor | Syncfusion |
+|---|---|---|---|---|---|
+| **Built-in to grid** | Yes | No (separate) | No (separate) | No | Yes |
+| **Extra NuGet** | None | Required | Required | Required | None |
+| **License cost** | Free (MIT) | $299+/year | MIT | MIT + manual | $995+/year |
+| **Styled headers** | Yes | Manual | Manual | N/A | Yes |
+| **Filtered export** | Yes | Manual | Manual | N/A | Yes |
+| **Large datasets** | Streaming | Streaming | In-memory | N/A | Streaming |
+| **Lines of code** | 1 | 30+ | 30+ | N/A | 1 |
+
+## Handling Large Datasets
+
+For grids with 50K+ rows, the export streams data to avoid memory pressure:
+
+```razor
+@code {
+    private async Task ExportLargeDataset()
+    {
+        await grid.ExportToExcelAsync(new ExcelExportOptions
+        {
+            FileName = "full-export",
+            StreamingThreshold = 10_000 // stream when rows > 10K
+        });
+    }
+}
+```
+
+## Server-Side Export
+
+On Blazor Server, the file is generated on the server and streamed to the browser via SignalR. No temporary files, no disk I/O — the XLSX is built in memory and pushed to the client's download.
+
+## Try It
+
+- **[Live Demo](https://arcadiaui.com/playground/)** — try Excel export in the interactive playground
+- **[Documentation](https://arcadiaui.com/docs/datagrid/excel-export)** — full export API reference
+- **[GitHub](https://github.com/ArcadiaUIDev/arcadia)** — source code (MIT)
+
+```bash
+dotnet add package Arcadia.DataGrid
+```
+
+Excel export is included free in the Community Edition. No Pro license, no watermark, no row limits.
