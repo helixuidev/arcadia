@@ -1,0 +1,11 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits ArcadiaScatterChart<T>
+
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    // Bubble chart — a scatter chart where point size represents a third dimension.
+    // Equivalent to ArcadiaScatterChart with SizeField set.
+    // Set SizeField to a lambda that returns the bubble size value.
+}

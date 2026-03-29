@@ -1,0 +1,28 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits ArcadiaPieChart<T>
+
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>
+    /// Donut chart — a pie chart with a hollow center.
+    /// Equivalent to ArcadiaPieChart with InnerRadius set.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaDonutChart TItem="Category" Data="@data"
+    ///     NameField="@(c => c.Name)"
+    ///     ValueField="@(c => c.Amount)" /&gt;
+    /// </code>
+    /// </example>
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        // Set default InnerRadius if not explicitly provided
+        if (!parameters.TryGetValue<double>(nameof(InnerRadius), out _))
+        {
+            InnerRadius = 0.55;
+        }
+        return base.SetParametersAsync(parameters);
+    }
+}

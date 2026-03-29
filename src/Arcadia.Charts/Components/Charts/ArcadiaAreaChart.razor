@@ -1,0 +1,32 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits ArcadiaLineChart<T>
+
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>
+    /// Area chart — a line chart with filled area below the line.
+    /// Equivalent to ArcadiaLineChart with ShowArea enabled on all series.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaAreaChart TItem="Sale" Data="@sales"
+    ///     XField="@(s => (object)s.Month)"
+    ///     Series="@series" /&gt;
+    /// </code>
+    /// </example>
+    protected override void OnParametersSet()
+    {
+        // Default all series to show area if not explicitly set
+        if (Series is not null)
+        {
+            foreach (var s in Series)
+            {
+                if (!s.ShowArea) s.ShowArea = true;
+                if (s.AreaOpacity <= 0) s.AreaOpacity = 0.2;
+            }
+        }
+        base.OnParametersSet();
+    }
+}

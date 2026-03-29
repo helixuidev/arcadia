@@ -1,0 +1,27 @@
+@namespace Arcadia.Charts.Components.Charts
+@typeparam T
+@inherits ArcadiaBarChart<T>
+
+@{ base.BuildRenderTree(__builder); }
+
+@code {
+    /// <summary>
+    /// Stacked bar chart — bars stack on top of each other within each category.
+    /// Equivalent to ArcadiaBarChart with Stacked=true.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaStackedBarChart TItem="Sale" Data="@sales"
+    ///     XField="@(s => (object)s.Quarter)"
+    ///     Series="@series" /&gt;
+    /// </code>
+    /// </example>
+    public override Task SetParametersAsync(ParameterView parameters)
+    {
+        if (!parameters.TryGetValue<bool>(nameof(Stacked), out _))
+        {
+            Stacked = true;
+        }
+        return base.SetParametersAsync(parameters);
+    }
+}
