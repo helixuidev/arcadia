@@ -229,4 +229,132 @@ public class ChartInteractionTests : PageTest
         Assert.That(widthResponsive, Does.Not.EqualTo("0"),
             "Width=0 should be responsive (100% or measured width), not 0");
     }
+
+    private async Task NavigateToPlaygroundBuilder()
+    {
+        await Page.GotoAsync($"{TestConstants.BaseUrl}/playground-builder",
+            new() { WaitUntil = WaitUntilState.NetworkIdle });
+        await Page.WaitForTimeoutAsync(2000);
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_HeightSlider_ChangesSvgHeight()
+    {
+        await NavigateToPlaygroundBuilder();
+        var heightSlider = Page.Locator("input[type='range']").Nth(0);
+        var svg = Page.Locator("svg[data-chart]").First;
+
+        await heightSlider.FillAsync("500");
+        await Page.WaitForTimeoutAsync(500);
+        var h = await svg.GetAttributeAsync("height");
+        Assert.That(h, Is.EqualTo("500"), "Height slider should change SVG height");
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_PaletteDropdown_ChangesColors()
+    {
+        await NavigateToPlaygroundBuilder();
+        var svg = Page.Locator("svg[data-chart]").First;
+
+        // Get initial colors
+        var colorsBefore = await Page.EvaluateAsync<string[]>(
+            "() => [...document.querySelectorAll('.arcadia-chart__line')].map(p => p.getAttribute('stroke'))");
+
+        // Change palette — use the Palette select specifically (second select on page)
+        var paletteSelect = Page.Locator("select").Nth(1);
+        await paletteSelect.SelectOptionAsync("Warm");
+        await Page.WaitForTimeoutAsync(500);
+
+        var colorsAfter = await Page.EvaluateAsync<string[]>(
+            "() => [...document.querySelectorAll('.arcadia-chart__line')].map(p => p.getAttribute('stroke'))");
+
+        Assert.That(colorsAfter, Is.Not.EqualTo(colorsBefore),
+            "Changing palette should change line stroke colors");
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_TitleInput_UpdatesChartTitle()
+    {
+        await NavigateToPlaygroundBuilder();
+
+        var titleInput = Page.Locator("input[type='text']").First;
+        await titleInput.FillAsync("My Custom Chart");
+        await Page.WaitForTimeoutAsync(500);
+
+        var titleText = Page.Locator(".arcadia-chart__title");
+        await Expect(titleText.First).ToBeVisibleAsync();
+        var text = await titleText.First.TextContentAsync();
+        Assert.That(text, Is.EqualTo("My Custom Chart"));
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_ToggleGrid_ShowsHidesGridLines()
+    {
+        await NavigateToPlaygroundBuilder();
+        var svg = Page.Locator("svg[data-chart]").First;
+
+        // Grid lines are dashed lines
+        var gridLinesBefore = await Page.EvaluateAsync<int>(
+            "() => document.querySelectorAll('svg[data-chart] line[stroke-dasharray]').length");
+        Assert.That(gridLinesBefore, Is.GreaterThan(0), "Grid lines should be visible by default");
+
+        // Uncheck Show Grid
+        var gridCheckbox = Page.Locator("label:has-text('Show Grid') input[type='checkbox']");
+        await gridCheckbox.ClickAsync();
+        await Page.WaitForTimeoutAsync(500);
+
+        var gridLinesAfter = await Page.EvaluateAsync<int>(
+            "() => document.querySelectorAll('svg[data-chart] line[stroke-dasharray]').length");
+        Assert.That(gridLinesAfter, Is.EqualTo(0), "Grid lines should disappear when unchecked");
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_ToggleLegend_ShowsHidesLegend()
+    {
+        await NavigateToPlaygroundBuilder();
+
+        var legendBefore = await Page.Locator(".arcadia-chart__legend").CountAsync();
+        Assert.That(legendBefore, Is.GreaterThan(0), "Legend should be visible by default");
+
+        var legendCheckbox = Page.Locator("label:has-text('Show Legend') input[type='checkbox']");
+        await legendCheckbox.ClickAsync();
+        await Page.WaitForTimeoutAsync(500);
+
+        var legendAfter = await Page.Locator(".arcadia-chart__legend").CountAsync();
+        Assert.That(legendAfter, Is.EqualTo(0), "Legend should disappear when unchecked");
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_ToggleDataLabels_ShowsLabels()
+    {
+        await NavigateToPlaygroundBuilder();
+
+        var labelsBefore = await Page.Locator(".arcadia-chart__data-label").CountAsync();
+        Assert.That(labelsBefore, Is.EqualTo(0), "Data labels should be off by default");
+
+        var labelCheckbox = Page.Locator("label:has-text('Show Data Labels') input[type='checkbox']");
+        await labelCheckbox.ClickAsync();
+        await Page.WaitForTimeoutAsync(500);
+
+        var labelsAfter = await Page.Locator(".arcadia-chart__data-label").CountAsync();
+        Assert.That(labelsAfter, Is.GreaterThan(0), "Data labels should appear when checked");
+    }
+
+    [Test]
+    public async Task PlaygroundBuilder_ChartTypeSwitch_ChangesChart()
+    {
+        await NavigateToPlaygroundBuilder();
+
+        // Default is Line — should have .arcadia-chart__line paths
+        var linePaths = await Page.Locator(".arcadia-chart__line").CountAsync();
+        Assert.That(linePaths, Is.GreaterThan(0), "Default should be Line chart");
+
+        // Switch to Bar
+        var chartTypeSelect = Page.Locator("select").First;
+        await chartTypeSelect.SelectOptionAsync("Bar");
+        await Page.WaitForTimeoutAsync(500);
+
+        var bars = await Page.Locator(".arcadia-chart__bar").CountAsync();
+        Assert.That(bars, Is.GreaterThan(0), "Switching to Bar should show bars");
+    }
 }

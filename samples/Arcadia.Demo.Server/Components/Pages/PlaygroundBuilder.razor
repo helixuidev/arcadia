@@ -232,8 +232,8 @@
 
     List<SeriesConfig<MonthlySales>> _lineSeries = new()
     {
-        new() { Name = "Revenue", Field = d => d.Revenue, Color = "#22c55e", ShowArea = true, AreaOpacity = 0.08, CurveType = "smooth", StrokeWidth = 2.5 },
-        new() { Name = "Target", Field = d => d.Target, Color = "#f59e0b", Dashed = true, StrokeWidth = 2.5, CurveType = "smooth" },
+        new() { Name = "Revenue", Field = d => d.Revenue, ShowArea = true, AreaOpacity = 0.08, CurveType = "smooth", StrokeWidth = 2.5 },
+        new() { Name = "Target", Field = d => d.Target, Dashed = true, StrokeWidth = 2.5, CurveType = "smooth" },
     };
 
     List<QuarterlySales> _quarterlySales = new()
@@ -244,9 +244,9 @@
 
     List<SeriesConfig<QuarterlySales>> _barSeries = new()
     {
-        new() { Name = "North America", Field = d => d.NorthAmerica, Color = "primary" },
-        new() { Name = "Europe", Field = d => d.Europe, Color = "success" },
-        new() { Name = "Asia", Field = d => d.Asia, Color = "warning" },
+        new() { Name = "North America", Field = d => d.NorthAmerica },
+        new() { Name = "Europe", Field = d => d.Europe },
+        new() { Name = "Asia", Field = d => d.Asia },
     };
 
     List<BudgetItem> _budget = new()
