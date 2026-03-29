@@ -1,0 +1,48 @@
+@page "/test/gauge-demo"
+@using Arcadia.Gauge.Components
+
+<div style="background:#0f0d1a;padding:40px;display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+
+    <ArcadiaRadialGauge Value="73" Label="CPU Usage"
+        Thresholds="@_thresholds" Width="200" Height="160" />
+
+    <ArcadiaRadialGauge Value="850" Min="300" Max="900" Label="Credit Score"
+        FullCircle="true" Width="200" Height="200"
+        ShowNeedle="true" ShowTicks="true" ShowTickLabels="true"
+        Color="#22c55e" />
+
+    <ArcadiaRadialGauge Value="68" Label="Progress" FullCircle="true"
+        Width="180" Height="180"
+        GradientColors="@(new List<string> { "#8b5cf6", "#ec4899" })" />
+
+    <ArcadiaRadialGauge Value="3.8" Min="0" Max="5" Label="Rating"
+        FullCircle="true" Width="180" Height="180"
+        ValueFormatString="0.0" Color="#eab308"
+        ShowTicks="true" MajorTickCount="5" MinorTickCount="0" />
+
+    <ArcadiaRadialGauge Value="42" Label="Battery" FullCircle="true"
+        Width="160" Height="160"
+        Ranges="@_ranges" ArcWidth="14" />
+
+    <ArcadiaRadialGauge Value="92" Label="Memory"
+        Width="200" Height="160" ShowNeedle="true"
+        Thresholds="@_thresholds" NeedleColor="#f1f0f9" />
+
+</div>
+
+@code {
+    List<Arcadia.Gauge.Components.GaugeThreshold> _thresholds = new()
+    {
+        new() { Value = 0, Color = "#22c55e" },
+        new() { Value = 60, Color = "#eab308" },
+        new() { Value = 85, Color = "#ef4444" },
+    };
+
+    List<Arcadia.Gauge.Components.GaugeRange> _ranges = new()
+    {
+        new() { Start = 0, End = 25, Color = "#ef4444", Opacity = 0.3 },
+        new() { Start = 25, End = 50, Color = "#eab308", Opacity = 0.3 },
+        new() { Start = 50, End = 75, Color = "#22c55e", Opacity = 0.3 },
+        new() { Start = 75, End = 100, Color = "#3b82f6", Opacity = 0.3 },
+    };
+}

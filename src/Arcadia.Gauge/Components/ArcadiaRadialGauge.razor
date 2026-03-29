@@ -60,7 +60,7 @@
     {
         @foreach (var label in _tickLabels)
         {
-            <SvgText X="@F(label.X)" Y="@F(label.Y)" Fill="@TickLabelColor" FontSize="@F(TickLabelFontSize)">@label.Text</SvgText>
+            <SvgText x="@F(label.X)" y="@F(label.Y)" fill="@TickLabelColor" font-size="@F(TickLabelFontSize)" text-anchor="middle" dominant-baseline="middle" font-family="system-ui, sans-serif">@label.Text</SvgText>
         }
     }
 
@@ -86,10 +86,10 @@
         }
         else
         {
-            <SvgText X="@F(_cx)" Y="@F(_cy + (FullCircle ? 0 : -5))" Fill="@ValueColor" FontSize="@F(ValueFontSize)" FontWeight="700">@FormatValue()</SvgText>
+            <SvgText x="@F(_cx)" y="@F(_cy + (FullCircle ? 0 : -5))" fill="@ValueColor" font-size="@F(ValueFontSize)" font-weight="700" text-anchor="middle" dominant-baseline="middle" font-family="system-ui, sans-serif">@FormatValue()</SvgText>
             @if (!string.IsNullOrEmpty(Label))
             {
-                <SvgText X="@F(_cx)" Y="@F(_cy + (FullCircle ? ValueFontSize * 0.8 : ValueFontSize * 0.6))" Fill="@LabelColor" FontSize="@F(LabelFontSize)">@Label</SvgText>
+                <SvgText x="@F(_cx)" y="@F(_cy + (FullCircle ? ValueFontSize * 0.8 : ValueFontSize * 0.6))" fill="@LabelColor" font-size="@F(LabelFontSize)" text-anchor="middle" dominant-baseline="middle" font-family="system-ui, sans-serif">@Label</SvgText>
             }
         }
     }
