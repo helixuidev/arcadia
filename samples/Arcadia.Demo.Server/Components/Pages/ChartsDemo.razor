@@ -914,6 +914,76 @@ dotnet add package Arcadia.Theme</code></pre>
                     <ArcadiaBreadcrumbItem>Line Chart</ArcadiaBreadcrumbItem>
                 </ArcadiaBreadcrumb>
             </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">TreeView</div>
+                <ArcadiaTreeView Items="@_treeItems" OnItemClick="item => ToastService.ShowInfo(item.Text)" />
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Dropdown Menu</div>
+                <ArcadiaMenu>
+                    <Trigger>
+                        <button style="padding:8px 16px;border-radius:8px;border:1px solid rgba(139,92,246,0.2);background:rgba(139,92,246,0.06);color:#e2e0f0;cursor:pointer;">Actions ▾</button>
+                    </Trigger>
+                    <ChildContent>
+                        <ArcadiaMenuItem Text="Edit" OnClick='() => ToastService.ShowInfo("Edit clicked")' />
+                        <ArcadiaMenuItem Text="Duplicate" />
+                        <ArcadiaMenuItem Divider="true" />
+                        <ArcadiaMenuItem Text="Delete" OnClick='() => ToastService.ShowWarning("Delete clicked")' />
+                    </ChildContent>
+                </ArcadiaMenu>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Drawer / Sheet</div>
+                <button class="gallery__toast-btn" @onclick="() => _showDrawer = true">Open Drawer</button>
+                <ArcadiaDrawer @bind-Visible="_showDrawer" Title="Settings" Width="360px">
+                    <p style="color:#9490b3;">Drawer content goes here. Slides in from the right.</p>
+                </ArcadiaDrawer>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Skeleton Loading</div>
+                <div style="display:flex;gap:16px;align-items:center;">
+                    <ArcadiaSkeleton Variant="circular" Width="48px" Height="48px" />
+                    <div>
+                        <ArcadiaSkeleton Variant="text" Width="200px" Height="16px" />
+                        <ArcadiaSkeleton Variant="text" Width="140px" Height="12px" />
+                    </div>
+                </div>
+                <div style="margin-top:16px;">
+                    <ArcadiaSkeleton Variant="rectangular" Width="100%" Height="120px" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Date Picker</div>
+                <div style="display:flex;gap:24px;">
+                    <ArcadiaDatePicker Label="Start Date" @bind-Value="_startDate" />
+                    <ArcadiaDatePicker Label="End Date" @bind-Value="_endDate" Min="@_startDate" />
+                </div>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Stepper</div>
+                <ArcadiaStepper ActiveIndex="1">
+                    <ArcadiaStep Title="Account" Description="Create your account" />
+                    <ArcadiaStep Title="Profile" Description="Set up your profile" />
+                    <ArcadiaStep Title="Review" Description="Confirm details" />
+                </ArcadiaStepper>
+            </div>
+
+            <div class="gallery__showcase">
+                <div class="gallery__showcase-title">Timeline</div>
+                <ArcadiaTimeline>
+                    <ArcadiaTimelineItem Title="Order placed" Subtitle="March 28, 2026" Color="success">
+                        <p style="color:#9490b3;margin:0;">Order #1234 confirmed.</p>
+                    </ArcadiaTimelineItem>
+                    <ArcadiaTimelineItem Title="Processing" Subtitle="March 29, 2026" Color="primary" />
+                    <ArcadiaTimelineItem Title="Shipped" Subtitle="Pending" Color="warning" />
+                </ArcadiaTimeline>
+            </div>
         }
 
         @* ─── NOTIFICATIONS ─── *@
@@ -944,11 +1014,24 @@ dotnet add package Arcadia.Theme</code></pre>
 @code {
     string _tab = "home";
     bool _showDialog;
+    bool _showDrawer;
     bool _chartsOpen = true;
     bool _datagridOpen = true;
     bool _formsOpen = true;
     bool _uiOpen = true;
     bool _toolsOpen = true;
+    DateTime? _startDate;
+    DateTime? _endDate;
+
+    List<TreeViewItem> _treeItems = new()
+    {
+        new() { Text = "Documents", Children = new() {
+            new() { Text = "Reports", Children = new() { new() { Text = "Q1 Report" }, new() { Text = "Q2 Report" } } },
+            new() { Text = "Presentations" }
+        }},
+        new() { Text = "Images", Children = new() { new() { Text = "Screenshots" }, new() { Text = "Photos" } } },
+        new() { Text = "Downloads" }
+    };
 
     void HandleDialogConfirm() { _showDialog = false; ToastService.ShowSuccess("Action confirmed!"); }
     void HandleCardClick() { ToastService.ShowInfo("Card clicked!"); }
