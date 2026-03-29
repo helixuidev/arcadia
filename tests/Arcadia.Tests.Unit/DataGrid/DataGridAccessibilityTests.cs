@@ -339,4 +339,38 @@ public class DataGridAccessibilityTests : DataGridTestBase
         cut.Find(".arcadia-grid__pagination").GetAttribute("aria-label")
             .Should().Be("Grid pagination");
     }
+
+    // ── Focus Cell Tests ──
+
+    [Fact]
+    public void SetFocusCell_UpdatesFocusPosition()
+    {
+        var cut = RenderGrid(SampleData);
+        var grid = cut.Instance;
+
+        // Initially focus is at 0,0 but grid has no focus
+        grid.IsFocusedCell(0, 0).Should().BeFalse("grid has no focus initially");
+
+        // Set focus to row 2, col 1
+        grid.SetFocusCell(2, 1);
+        grid.IsFocusedCell(2, 1).Should().BeTrue("SetFocusCell should move focus");
+        grid.IsFocusedCell(0, 0).Should().BeFalse("old cell should not be focused");
+    }
+
+    [Fact]
+    public void ClickCell_MovesFocusToClickedCell()
+    {
+        var cut = RenderGrid(SampleData);
+
+        var cells = cut.FindAll("td[role='gridcell']");
+        cells.Count.Should().BeGreaterThan(3);
+
+        // Click cell at index 3 (second row, second column in a 3-column grid)
+        cells[3].Click();
+
+        var grid = cut.Instance;
+        // Row 1, Col 0 in a 3-col grid (index 3 = row 1 * 3 cols + col 0)
+        grid.IsFocusedCell(1, 0).Should().BeTrue("clicking a cell should focus it");
+        grid.IsFocusedCell(0, 0).Should().BeFalse("first cell should not be focused after clicking another");
+    }
 }

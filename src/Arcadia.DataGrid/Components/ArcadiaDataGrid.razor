@@ -389,11 +389,14 @@
                                 var editCol = col;
                                 var cellClass = editCol.CellClass?.Invoke(item);
                                 var isEditCell = editCol.Editable && IsEditingCell(localItem, editCol.ResolvedKey);
+                                var localBodyRow = bodyRowIdx;
+                                var localBodyCol = bodyColIdx;
                                 var isFocused = IsFocusedCell(bodyRowIdx, bodyColIdx);
                                 <td role="gridcell"
                                     id="@GetCellId(bodyRowIdx, bodyColIdx)"
                                     style="text-align:@editCol.Align;"
                                     class="arcadia-grid__td @cellClass @(isEditCell ? "arcadia-grid__td--editing" : "") @(isFocused ? "arcadia-grid__td--focused" : "")"
+                                    @onclick="@(() => SetFocusCell(localBodyRow, localBodyCol))"
                                     @ondblclick="@(editCol.Editable ? () => StartEdit(localItem, editCol.ResolvedKey) : (Action)(() => {}))">
                                     @if (isEditCell)
                                     {

@@ -960,6 +960,13 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             SetCurrentRow(pageRows[_focusRow]);
     }
 
+    internal void SetFocusCell(int rowIdx, int colIdx)
+    {
+        _focusRow = rowIdx;
+        _focusCol = colIdx;
+        _gridHasFocus = true;
+    }
+
     internal bool IsFocusedCell(int rowIdx, int colIdx) => _gridHasFocus && rowIdx == _focusRow && colIdx == _focusCol;
 
     internal string GetCellId(int rowIdx, int colIdx) => $"cell-{rowIdx}-{colIdx}";
