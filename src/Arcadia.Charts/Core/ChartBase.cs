@@ -503,6 +503,14 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     protected static string FormatSrValue(double value) =>
         double.IsNaN(value) || double.IsInfinity(value) ? "—" : value.ToString("G4");
 
+    /// <summary>Builds a user-friendly message listing which required fields are missing.</summary>
+    protected static string GetMissingFieldsMessage(string chartName, string requiredList, (string Name, bool IsMissing)[] fields)
+    {
+        var missing = fields.Where(f => f.IsMissing).Select(f => f.Name).ToList();
+        var verb = missing.Count == 1 ? "is" : "are";
+        return $"{chartName} requires {requiredList}. {string.Join(", ", missing)} {verb} not set.";
+    }
+
     protected string FormatValue(double value, string? formatString)
     {
         if (formatString is not null)

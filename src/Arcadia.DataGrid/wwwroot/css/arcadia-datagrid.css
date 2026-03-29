@@ -137,6 +137,45 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 }
 @keyframes arcadia-grid-shimmer { to { background-position: -200% 0; } }
 
+/* ── SSR skeleton (data not yet loaded) ── */
+.arcadia-grid__loading--ssr {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.arcadia-grid__skeleton-header {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  border-bottom: 2px solid var(--_border, rgba(139,92,246,0.12));
+}
+.arcadia-grid__skeleton-hcell {
+  flex: 1;
+  height: 18px;
+  border-radius: var(--arcadia-radius-sm, 0.25rem);
+  background: linear-gradient(90deg, transparent 25%, rgba(139,92,246,0.10) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: arcadia-grid-shimmer 1.5s infinite;
+}
+.arcadia-grid__loading--ssr .arcadia-grid__skeleton-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px 16px;
+  height: auto;
+  margin-bottom: 0;
+  background: none;
+  animation: none;
+  border-bottom: 1px solid var(--_border, rgba(139,92,246,0.06));
+}
+.arcadia-grid__skeleton-cell {
+  flex: 1;
+  height: 14px;
+  border-radius: var(--arcadia-radius-sm, 0.25rem);
+  background: linear-gradient(90deg, transparent 25%, rgba(139,92,246,0.06) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: arcadia-grid-shimmer 1.5s infinite;
+}
+
 /* ── Toolbar ── */
 .arcadia-grid__toolbar {
   display: flex;

@@ -90,6 +90,10 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
             </tbody>
         </table>
 }
+else if (Data is not null && Data.Count > 0 && (XField is null || YField is null || ValueField is null))
+{
+    <NoDataState Message="@(NoDataMessage ?? GetMissingFieldsMessage("Heatmap", "XField, YField, and ValueField", new (string, bool)[] { ("XField", XField is null), ("YField", YField is null), ("ValueField", ValueField is null) }))" Height="@Height" />
+}
 else
 {
     <NoDataState Message="@(NoDataMessage ?? "No data available")" Height="@Height" />

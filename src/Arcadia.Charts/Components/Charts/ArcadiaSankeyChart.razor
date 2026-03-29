@@ -66,6 +66,14 @@ else if (HasData) {
     <CommunityWatermark />
     @if (RenderTooltipTemplate is not null) { @RenderTooltipTemplate }
 }
+else if (Links is not null && Links.Count > 0 && (Data is null || Data.Count == 0))
+{
+    <NoDataState Message="@(NoDataMessage ?? "Sankey chart requires both Data (nodes) and Links. Data is missing.")" Height="@Height" />
+}
+else if (Data is not null && Data.Count > 0 && (Links is null || Links.Count == 0))
+{
+    <NoDataState Message="@(NoDataMessage ?? "Sankey chart requires both Data (nodes) and Links. Links is missing.")" Height="@Height" />
+}
 else
 {
     <NoDataState Message="@(NoDataMessage ?? "No data available")" Height="@Height" />

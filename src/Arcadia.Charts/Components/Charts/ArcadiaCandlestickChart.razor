@@ -121,6 +121,10 @@ else if (Data is not null && Data.Count > 0 && OpenField is not null && HighFiel
             </tbody>
         </table>
 }
+else if (Data is not null && Data.Count > 0 && (OpenField is null || HighField is null || LowField is null || CloseField is null))
+{
+    <NoDataState Message="@(NoDataMessage ?? GetMissingFieldsMessage("Candlestick chart", "OpenField, HighField, LowField, and CloseField", new (string, bool)[] { ("OpenField", OpenField is null), ("HighField", HighField is null), ("LowField", LowField is null), ("CloseField", CloseField is null) }))" Height="@Height" />
+}
 else
 {
     <NoDataState Message="@(NoDataMessage ?? "No data available")" Height="@Height" />

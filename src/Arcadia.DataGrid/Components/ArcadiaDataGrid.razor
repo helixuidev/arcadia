@@ -30,6 +30,33 @@
             }
         </div>
     }
+    else if (Data is null && !Loading)
+    {
+        @* Skeleton loading state for SSR — data hasn't arrived yet *@
+        <div class="arcadia-grid__loading arcadia-grid__loading--ssr" aria-busy="true" aria-label="Loading data">
+            @if (Columns.Count > 0)
+            {
+                <div class="arcadia-grid__skeleton-header">
+                    @foreach (var col in Columns.Where(c => c.IsVisible))
+                    {
+                        <div class="arcadia-grid__skeleton-hcell"></div>
+                    }
+                </div>
+            }
+            @for (var r = 0; r < 5; r++)
+            {
+                <div class="arcadia-grid__skeleton-row">
+                    @if (Columns.Count > 0)
+                    {
+                        @foreach (var col in Columns.Where(c => c.IsVisible))
+                        {
+                            <div class="arcadia-grid__skeleton-cell"></div>
+                        }
+                    }
+                </div>
+            }
+        </div>
+    }
     else if (VirtualizeRows && Columns.Count > 0)
     {
         @* ── Virtual scroll mode: CSS Grid layout ── *@
