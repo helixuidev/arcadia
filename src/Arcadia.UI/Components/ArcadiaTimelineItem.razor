@@ -1,0 +1,70 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="listitem"
+     @attributes="AdditionalAttributes">
+
+    <div class="arcadia-timeline-item__marker" aria-hidden="true">
+        <div class="arcadia-timeline-item__dot arcadia-timeline-item__dot--@Color">
+            @if (!string.IsNullOrEmpty(Icon))
+            {
+                <span class="arcadia-timeline-item__icon">@Icon</span>
+            }
+        </div>
+        <div class="arcadia-timeline-item__line"></div>
+    </div>
+
+    <div class="arcadia-timeline-item__body">
+        <div class="arcadia-timeline-item__header">
+            <span class="arcadia-timeline-item__title">@Title</span>
+            @if (!string.IsNullOrEmpty(Subtitle))
+            {
+                <span class="arcadia-timeline-item__subtitle">@Subtitle</span>
+            }
+        </div>
+        @if (ChildContent is not null)
+        {
+            <div class="arcadia-timeline-item__content">
+                @ChildContent
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the title text for this timeline item.
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the subtitle text (e.g. timestamp or secondary info).
+    /// </summary>
+    [Parameter]
+    public string? Subtitle { get; set; }
+
+    /// <summary>
+    /// Gets or sets the dot color variant. Accepts "primary", "success", "danger", or "warning". Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Gets or sets the optional icon displayed inside the dot.
+    /// </summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>
+    /// Gets or sets the detail content displayed below the title and subtitle.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-timeline-item")
+        .AddClass(Class)
+        .Build();
+}

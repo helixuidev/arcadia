@@ -1,0 +1,47 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+@for (int i = 0; i < Count; i++)
+{
+    <div class="@CssClass"
+         style="@ComputedStyle"
+         aria-hidden="true"
+         @attributes="AdditionalAttributes">
+    </div>
+}
+
+@code {
+    /// <summary>
+    /// Gets or sets the skeleton variant. Valid values: "text", "circular", "rectangular". Defaults to "text".
+    /// </summary>
+    [Parameter]
+    public string Variant { get; set; } = "text";
+
+    /// <summary>
+    /// Gets or sets the CSS width of the skeleton element.
+    /// </summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>
+    /// Gets or sets the CSS height of the skeleton element.
+    /// </summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>
+    /// Gets or sets how many skeleton elements to render. Defaults to 1.
+    /// </summary>
+    [Parameter]
+    public int Count { get; set; } = 1;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-skeleton")
+        .AddClass($"arcadia-skeleton--{Variant.ToLowerInvariant()}")
+        .AddClass(Class)
+        .Build();
+
+    private string? ComputedStyle => Arcadia.Core.Utilities.StyleBuilder.Default(Style)
+        .AddStyle("--arcadia-skeleton-width", Width)
+        .AddStyle("--arcadia-skeleton-height", Height)
+        .Build();
+}

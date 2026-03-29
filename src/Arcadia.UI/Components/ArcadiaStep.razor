@@ -1,0 +1,107 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
+
+@{
+    var index = Stepper?.GetStepIndex(this) ?? 0;
+    var isActive = Stepper is not null && Stepper.ActiveIndex == index;
+    var isCompleted = Stepper is not null && index < Stepper.ActiveIndex;
+    var isLast = Stepper?.IsLastStep(this) ?? true;
+}
+
+<div class="@GetCssClass(isActive, isCompleted)"
+     style="@Style"
+     role="listitem"
+     aria-current="@(isActive ? "step" : null)"
+     @attributes="AdditionalAttributes">
+
+    <button type="button"
+            class="arcadia-step__indicator"
+            disabled="@Disabled"
+            aria-label="@($"Step {index + 1}: {Title}")"
+            @onclick="() => OnClickAsync(index)">
+        @if (isCompleted)
+        {
+            <svg class="arcadia-step__check" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+        }
+        else if (!string.IsNullOrEmpty(Icon))
+        {
+            <span class="arcadia-step__icon" aria-hidden="true">@Icon</span>
+        }
+        else
+        {
+            <span class="arcadia-step__number">@(index + 1)</span>
+        }
+    </button>
+
+    @if (!isLast)
+    {
+        <div class="arcadia-step__connector @(isCompleted ? "arcadia-step__connector--completed" : "")" aria-hidden="true"></div>
+    }
+
+    <div class="arcadia-step__content">
+        <span class="arcadia-step__title">@Title</span>
+        @if (!string.IsNullOrEmpty(Description))
+        {
+            <span class="arcadia-step__description">@Description</span>
+        }
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// The parent stepper component, received via CascadingParameter.
+    /// </summary>
+    [CascadingParameter]
+    private ArcadiaStepper? Stepper { get; set; }
+
+    /// <summary>
+    /// Gets or sets the step title text.
+    /// </summary>
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the optional step description displayed below the title.
+    /// </summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional icon displayed in the step indicator instead of the step number.
+    /// </summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether this step is disabled. Disabled steps cannot be clicked.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    private string? GetCssClass(bool isActive, bool isCompleted) =>
+        Arcadia.Core.Utilities.CssBuilder.Default("arcadia-step")
+            .AddClass("arcadia-step--active", isActive)
+            .AddClass("arcadia-step--completed", isCompleted)
+            .AddClass("arcadia-step--disabled", Disabled)
+            .AddClass(Class)
+            .Build();
+
+    protected override void OnInitialized()
+    {
+        Stepper?.RegisterStep(this);
+    }
+
+    private async Task OnClickAsync(int index)
+    {
+        if (Disabled || Stepper is null) return;
+        await Stepper.SetActiveIndexAsync(index);
+    }
+
+    public void Dispose()
+    {
+        Stepper?.UnregisterStep(this);
+    }
+}

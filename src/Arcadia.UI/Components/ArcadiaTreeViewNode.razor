@@ -1,0 +1,102 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<li class="@CssClass"
+    role="treeitem"
+    aria-expanded="@(HasChildren ? IsExpanded.ToString().ToLowerInvariant() : null)"
+    aria-selected="@Item.Selected.ToString().ToLowerInvariant()">
+    <div class="arcadia-treeview__item-content"
+         style="@ContentStyle"
+         @onclick="OnClickAsync"
+         @onkeydown="OnKeyDownAsync"
+         tabindex="0">
+        @if (HasChildren)
+        {
+            <span class="@ChevronClass" aria-hidden="true">
+                <svg class="arcadia-treeview__chevron-icon" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </span>
+        }
+        else
+        {
+            <span class="arcadia-treeview__spacer" aria-hidden="true"></span>
+        }
+        @if (!string.IsNullOrEmpty(Item.Icon))
+        {
+            <span class="arcadia-treeview__icon">@Item.Icon</span>
+        }
+        <span class="arcadia-treeview__text">@Item.Text</span>
+    </div>
+    @if (HasChildren && IsExpanded)
+    {
+        <ul class="arcadia-treeview__children" role="group">
+            @foreach (var child in Item.Children)
+            {
+                <ArcadiaTreeViewNode Item="child"
+                                     OnItemClick="OnItemClick"
+                                     ExpandAll="ExpandAll"
+                                     Level="@(Level + 1)" />
+            }
+        </ul>
+    }
+</li>
+
+@code {
+    /// <summary>
+    /// Gets or sets the tree item data for this node.
+    /// </summary>
+    [Parameter]
+    public TreeViewItem Item { get; set; } = default!;
+
+    /// <summary>
+    /// Gets or sets the callback invoked when this item is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TreeViewItem> OnItemClick { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether all nodes should be expanded by default.
+    /// </summary>
+    [Parameter]
+    public bool ExpandAll { get; set; }
+
+    /// <summary>
+    /// Gets or sets the nesting level of this node (0-based).
+    /// </summary>
+    [Parameter]
+    public int Level { get; set; }
+
+    private bool IsExpanded => ExpandAll || Item.Expanded;
+    private bool HasChildren => Item.Children is { Count: > 0 };
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-treeview__item")
+        .AddClass("arcadia-treeview__item--selected", Item.Selected)
+        .AddClass("arcadia-treeview__item--expanded", IsExpanded && HasChildren)
+        .Build();
+
+    private string? ContentStyle => Arcadia.Core.Utilities.StyleBuilder.Default()
+        .AddStyle("padding-left", $"{Level * 20 + 8}px")
+        .Build();
+
+    private string? ChevronClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-treeview__chevron")
+        .AddClass("arcadia-treeview__chevron--expanded", IsExpanded)
+        .Build();
+
+    private async Task OnClickAsync()
+    {
+        Item.Expanded = !Item.Expanded;
+        Item.Selected = true;
+        await OnItemClick.InvokeAsync(Item);
+    }
+
+    private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (args.Key is "Enter" or " ")
+        {
+            await OnClickAsync();
+        }
+    }
+}

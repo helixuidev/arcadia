@@ -1,0 +1,49 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<ul class="@CssClass"
+    style="@Style"
+    role="tree"
+    @attributes="AdditionalAttributes">
+    @if (Items is not null)
+    {
+        foreach (var item in Items)
+        {
+            <ArcadiaTreeViewNode Item="item"
+                                 OnItemClick="OnItemClick"
+                                 ExpandAll="ExpandAll"
+                                 Level="0" />
+        }
+    }
+    @ChildContent
+</ul>
+
+@code {
+    /// <summary>
+    /// Gets or sets the hierarchical tree data.
+    /// </summary>
+    [Parameter]
+    public IReadOnlyList<TreeViewItem>? Items { get; set; }
+
+    /// <summary>
+    /// Gets or sets manual tree item content.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether all nodes are expanded by default. Defaults to false.
+    /// </summary>
+    [Parameter]
+    public bool ExpandAll { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when a tree item is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TreeViewItem> OnItemClick { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-treeview")
+        .AddClass(Class)
+        .Build();
+}

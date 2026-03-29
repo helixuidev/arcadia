@@ -1,0 +1,105 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="arcadia-datepicker__label" for="@InputId">@Label</label>
+    }
+
+    <input type="date"
+           id="@InputId"
+           class="arcadia-datepicker__input"
+           value="@FormattedValue"
+           min="@FormattedMin"
+           max="@FormattedMax"
+           placeholder="@Placeholder"
+           disabled="@Disabled"
+           aria-label="@(Label ?? Placeholder)"
+           @onchange="OnInputChangedAsync" />
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the selected date value. Supports two-way binding via <see cref="ValueChanged"/>.
+    /// </summary>
+    [Parameter]
+    public DateTime? Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Value"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<DateTime?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the minimum selectable date.
+    /// </summary>
+    [Parameter]
+    public DateTime? Min { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum selectable date.
+    /// </summary>
+    [Parameter]
+    public DateTime? Max { get; set; }
+
+    /// <summary>
+    /// Gets or sets the placeholder text displayed when no date is selected. Default is "Select date...".
+    /// </summary>
+    [Parameter]
+    public string Placeholder { get; set; } = "Select date...";
+
+    /// <summary>
+    /// Gets or sets the display format for the date. Default is "yyyy-MM-dd".
+    /// </summary>
+    /// <remarks>
+    /// This controls the internal value format sent to the native date input.
+    /// The browser's locale determines the visual display format.
+    /// </remarks>
+    [Parameter]
+    public string Format { get; set; } = "yyyy-MM-dd";
+
+    /// <summary>
+    /// Gets or sets whether the date picker is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the label text displayed above the input.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string InputId => $"{ElementId}-input";
+
+    private string? FormattedValue => Value?.ToString("yyyy-MM-dd");
+    private string? FormattedMin => Min?.ToString("yyyy-MM-dd");
+    private string? FormattedMax => Max?.ToString("yyyy-MM-dd");
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-datepicker")
+        .AddClass("arcadia-datepicker--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnInputChangedAsync(ChangeEventArgs args)
+    {
+        if (Disabled) return;
+
+        var raw = args.Value?.ToString();
+        if (DateTime.TryParse(raw, out var parsed))
+        {
+            Value = parsed;
+            await ValueChanged.InvokeAsync(parsed);
+        }
+        else
+        {
+            Value = null;
+            await ValueChanged.InvokeAsync(null);
+        }
+    }
+}

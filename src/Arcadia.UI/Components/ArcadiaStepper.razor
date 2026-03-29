@@ -1,0 +1,93 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="list"
+     aria-label="Progress steps"
+     @attributes="AdditionalAttributes">
+    <CascadingValue Value="this" IsFixed="false">
+        @ChildContent
+    </CascadingValue>
+</div>
+
+@code {
+    private readonly List<ArcadiaStep> _steps = new();
+
+    /// <summary>
+    /// Gets or sets the zero-based index of the active step. Supports two-way binding via <see cref="ActiveIndexChanged"/>.
+    /// </summary>
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="ActiveIndex"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the orientation of the stepper. Accepts "horizontal" or "vertical". Default is "horizontal".
+    /// </summary>
+    [Parameter]
+    public string Orientation { get; set; } = "horizontal";
+
+    /// <summary>
+    /// Gets or sets the child content (ArcadiaStep elements).
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-stepper")
+        .AddClass("arcadia-stepper--vertical", Orientation == "vertical")
+        .AddClass("arcadia-stepper--horizontal", Orientation != "vertical")
+        .AddClass(Class)
+        .Build();
+
+    /// <summary>
+    /// Gets the total number of registered steps.
+    /// </summary>
+    internal int StepCount => _steps.Count;
+
+    /// <summary>
+    /// Registers a step with this stepper. Called internally by ArcadiaStep.
+    /// </summary>
+    internal void RegisterStep(ArcadiaStep step)
+    {
+        if (!_steps.Contains(step))
+        {
+            _steps.Add(step);
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Unregisters a step from this stepper. Called internally by ArcadiaStep.
+    /// </summary>
+    internal void UnregisterStep(ArcadiaStep step)
+    {
+        _steps.Remove(step);
+    }
+
+    /// <summary>
+    /// Gets the zero-based index of a given step.
+    /// </summary>
+    internal int GetStepIndex(ArcadiaStep step) => _steps.IndexOf(step);
+
+    /// <summary>
+    /// Navigates to the specified step index.
+    /// </summary>
+    internal async Task SetActiveIndexAsync(int index)
+    {
+        if (index < 0 || index >= _steps.Count) return;
+        if (_steps[index].Disabled) return;
+
+        ActiveIndex = index;
+        await ActiveIndexChanged.InvokeAsync(index);
+    }
+
+    /// <summary>
+    /// Returns whether a given step is the last step in the stepper.
+    /// </summary>
+    internal bool IsLastStep(ArcadiaStep step) => _steps.Count > 0 && _steps[^1] == step;
+}
