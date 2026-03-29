@@ -488,7 +488,12 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     {
         if (formatString is not null)
             return value.ToString(formatString, FormatProvider);
-        return value.ToString("G4");
+
+        // Avoid scientific notation (G4 produces "3.5E+2" for 350)
+        // Use compact formatting: no decimals for whole numbers, up to 2 for fractional
+        if (value == Math.Floor(value) && Math.Abs(value) < 1_000_000_000)
+            return value.ToString("N0", FormatProvider);
+        return value.ToString("N2", FormatProvider);
     }
 
     public async ValueTask DisposeAsync()
