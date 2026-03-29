@@ -16,7 +16,6 @@
      aria-activedescendant="@GetActiveDescendant()"
      @onkeydown="HandleGridKeyDown"
      @onkeydown:preventDefault="@(_gridHasFocus)"
-     @onfocus="@(() => _gridHasFocus = true)"
      @onblur="@(() => _gridHasFocus = false)">
 
     @* ARIA live region for screen reader announcements *@
