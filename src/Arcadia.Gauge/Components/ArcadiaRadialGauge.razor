@@ -66,17 +66,20 @@
         }
     }
 
-    @* Needle pointer *@
+    @* Needle pointer — rendered BEFORE text so text appears on top *@
     @if (ShowNeedle)
     {
-        var needleLength = _radius - ArcWidth / 2 - 4;
-        var tipX = _cx + needleLength * Math.Cos(_valueAngle);
-        var tipY = _cy + needleLength * Math.Sin(_valueAngle);
+        var needleTipR = _radius - ArcWidth / 2 - 2;
+        var needleBaseR = NeedleCapRadius + 2; // start just outside the cap circle
+        var tipX = _cx + needleTipR * Math.Cos(_valueAngle);
+        var tipY = _cy + needleTipR * Math.Sin(_valueAngle);
+        var baseX = _cx + needleBaseR * Math.Cos(_valueAngle);
+        var baseY = _cy + needleBaseR * Math.Sin(_valueAngle);
         var perpAngle = _valueAngle + Math.PI / 2;
-        var baseX1 = _cx + (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
-        var baseY1 = _cy + (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
-        var baseX2 = _cx - (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
-        var baseY2 = _cy - (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
+        var baseX1 = baseX + (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
+        var baseY1 = baseY + (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
+        var baseX2 = baseX - (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
+        var baseY2 = baseY - (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
         <polygon points="@F(tipX),@F(tipY) @F(baseX1),@F(baseY1) @F(baseX2),@F(baseY2)"
                  fill="@NeedleColor" class="@(AnimateOnLoad ? "arcadia-gauge__needle--animated" : "")" />
         <circle cx="@F(_cx)" cy="@F(_cy)" r="@F(NeedleCapRadius)" fill="@NeedleColor" />
@@ -296,8 +299,22 @@
         var padding = ArcWidth / 2 + (ShowTicks ? 20 : 5) + (ShowTickLabels ? 15 : 0);
         var labelSpace = !FullCircle && !string.IsNullOrEmpty(Label) ? LabelFontSize + 8 : 0;
         _cx = Width / 2;
-        _cy = FullCircle ? Height / 2 : Height - padding - labelSpace;
-        _radius = Math.Min(Width, FullCircle ? Height : (Height - labelSpace)) / 2 - padding;
+
+        if (FullCircle)
+        {
+            _cy = Height / 2;
+            _radius = Math.Min(Width, Height) / 2 - padding;
+        }
+        else
+        {
+            // Semi-circle: center at bottom, arc extends upward.
+            // The arc top is at _cy - _radius - ArcWidth/2, must be >= 0.
+            // The arc bottom is at _cy + small overshoot for the rounded cap.
+            var availableUp = Height - labelSpace - padding - (ArcWidth / 2 + 2);
+            var availableHoriz = (Width / 2) - padding;
+            _radius = Math.Min(availableUp, availableHoriz);
+            _cy = _radius + padding + (ArcWidth / 2 + 2);
+        }
         if (_radius < 10) _radius = 10;
 
         var defaultStart = FullCircle ? -270.0 : -225.0;

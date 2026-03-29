@@ -1,33 +1,68 @@
 @page "/test/gauge-demo"
 @using Arcadia.Gauge.Components
 
-<div style="background:#0f0d1a;padding:40px;display:flex;flex-wrap:wrap;gap:32px;justify-content:center;">
+<PageTitle>Arcadia Gauge — Free Blazor Gauge Components</PageTitle>
 
-    <ArcadiaRadialGauge Value="73" Label="CPU Usage"
-        Thresholds="@_thresholds" Width="200" Height="160" />
+<div style="background:#0f0d1a;min-height:100vh;padding:48px 32px;">
+    <div style="max-width:1000px;margin:0 auto;">
+        <h1 style="text-align:center;font-size:2rem;font-weight:800;margin-bottom:8px;">
+            <span style="background:linear-gradient(135deg,#8b5cf6,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Arcadia Gauge</span>
+        </h1>
+        <p style="text-align:center;color:#8a86a8;margin-bottom:48px;">Free, standalone Blazor gauge components. Pure SVG, zero JavaScript, MIT licensed.</p>
 
-    <ArcadiaRadialGauge Value="850" Min="300" Max="900" Label="Credit Score"
-        FullCircle="true" Width="200" Height="200"
-        ShowNeedle="true" ShowTicks="true" ShowTickLabels="true"
-        Color="#22c55e" />
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;">
 
-    <ArcadiaRadialGauge Value="68" Label="Progress" FullCircle="true"
-        Width="180" Height="180"
-        GradientColors="@(new List<string> { "#8b5cf6", "#ec4899" })" />
+            <div style="background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
+                <ArcadiaRadialGauge Value="73" Label="CPU Usage"
+                    Thresholds="@_thresholds" Width="180" Height="150" />
+                <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Semi-circle + thresholds</div>
+            </div>
 
-    <ArcadiaRadialGauge Value="3.8" Min="0" Max="5" Label="Rating"
-        FullCircle="true" Width="180" Height="180"
-        ValueFormatString="0.0" Color="#eab308"
-        ShowTicks="true" MajorTickCount="5" MinorTickCount="0" />
+            <div style="background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
+                <ArcadiaRadialGauge Value="850" Min="300" Max="900" Label="Credit Score"
+                    FullCircle="true" Width="180" Height="180"
+                    ShowNeedle="true" ShowTicks="true" ShowTickLabels="true"
+                    Color="#22c55e" NeedleColor="#e2e0f0" />
+                <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Needle + ticks + labels</div>
+            </div>
 
-    <ArcadiaRadialGauge Value="42" Label="Battery" FullCircle="true"
-        Width="160" Height="160"
-        Ranges="@_ranges" ArcWidth="14" />
+            <div style="background:rgba(236,72,153,0.04);border:1px solid rgba(236,72,153,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
+                <ArcadiaRadialGauge Value="68" Label="Progress" FullCircle="true"
+                    Width="180" Height="180"
+                    GradientColors="@(new List<string> { "#8b5cf6", "#ec4899" })" />
+                <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Gradient arc</div>
+            </div>
 
-    <ArcadiaRadialGauge Value="92" Label="Memory"
-        Width="200" Height="160" ShowNeedle="true"
-        Thresholds="@_thresholds" NeedleColor="#f1f0f9" />
+            <div style="background:rgba(250,204,21,0.04);border:1px solid rgba(250,204,21,0.10);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
+                <ArcadiaRadialGauge Value="3.8" Min="0" Max="5" Label="Rating"
+                    FullCircle="true" Width="180" Height="180"
+                    ValueFormatString="0.0" Color="#eab308"
+                    ShowTicks="true" MajorTickCount="5" MinorTickCount="0" />
+                <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Custom range + ticks</div>
+            </div>
 
+            <div style="background:rgba(59,130,246,0.04);border:1px solid rgba(59,130,246,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
+                <ArcadiaRadialGauge Value="42" Label="Battery" FullCircle="true"
+                    Width="180" Height="180"
+                    Ranges="@_ranges" ArcWidth="14" Color="#3b82f6" />
+                <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Colored range bands</div>
+            </div>
+
+            <div style="background:rgba(239,68,68,0.04);border:1px solid rgba(239,68,68,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
+                <ArcadiaRadialGauge Value="92" Label="Memory"
+                    Width="180" Height="150" ShowNeedle="true"
+                    Thresholds="@_thresholds" NeedleColor="#f1f0f9" />
+                <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Needle + thresholds</div>
+            </div>
+
+        </div>
+
+        <div style="text-align:center;margin-top:48px;color:#6b6890;font-size:0.8125rem;">
+            <code style="background:rgba(139,92,246,0.08);padding:6px 14px;border-radius:8px;color:#c084fc;">dotnet add package Arcadia.Gauge</code>
+            <span style="margin:0 12px;">|</span>
+            <span>Free forever. MIT licensed. Part of <a href="https://arcadiaui.com" style="color:#8b5cf6;">Arcadia Controls</a>.</span>
+        </div>
+    </div>
 </div>
 
 @code {
