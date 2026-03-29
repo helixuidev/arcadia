@@ -2,6 +2,30 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.16] — 2026-03-29
+
+### Added
+- **7 new UI components**: TreeView, Menu, Drawer, Skeleton, DatePicker, Stepper, Timeline (23 UI components total)
+- **4 chart aliases**: Area, Donut, StackedBar, Bubble (20 chart types total)
+- **Row reorder** drag-and-drop with `AllowRowReorder` parameter
+- **Column resize UX** — wider handle (9px), visible indicator line on hover
+- **11 DataGrid battle tests** — resize, reorder, rapid clicks, virtual scroll, edge cases
+- **64 new unit tests** for all 7 UI components (1,161 total)
+- **6 SEO blog posts** targeting DataGrid, Excel export, Dialog, virtual scroll, forms, tabs
+- **Linear gauge doc page** + improved circular gauge SEO
+- **XML doc examples** on top 20 parameters with `<example>` and `<remarks>`
+- **What's New + Troubleshooting** documentation pages
+- **15 blog posts** total (was 9)
+
+### Fixed
+- Homepage "zero JavaScript" → "<12 KB JavaScript" (accurate)
+- Chart count updated from 16 to 20 everywhere
+
+### Changed
+- 86 components total (was 57)
+- 20 chart types (was 16)
+- 1,161 unit + 251 E2E + 11 perf = **1,423 total tests**
+
 ## [1.0.0-beta.15] — 2026-03-29
 
 ### Added
