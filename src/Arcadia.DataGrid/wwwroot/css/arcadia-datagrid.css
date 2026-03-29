@@ -709,20 +709,45 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 /* Column resize handle */
 .arcadia-grid__resize-handle {
   position: absolute;
-  right: 0;
+  right: -4px;
   top: 0;
   bottom: 0;
-  width: 6px;
+  width: 9px;
   cursor: col-resize;
   user-select: none;
   z-index: 3;
+  transition: background 0.15s;
+}
+.arcadia-grid__resize-handle::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background: var(--_border, rgba(139,92,246,0.12));
+  transition: background 0.15s, width 0.15s;
+}
+.arcadia-grid__resize-handle:hover::after,
+.arcadia-grid__resize-handle--active::after {
+  background: var(--_accent, #8b5cf6);
+  width: 2px;
+  top: 10%;
+  bottom: 10%;
 }
 .arcadia-grid__resize-handle:hover,
 .arcadia-grid__resize-handle--active {
-  background: var(--_accent);
-  opacity: 0.5;
+  background: rgba(139,92,246,0.08);
 }
 .arcadia-grid__th { position: relative; } /* enable resize handle positioning */
+
+/* Column drag visual feedback */
+.arcadia-grid__th--dragging {
+  opacity: 0.5;
+}
+.arcadia-grid__th--drop-target {
+  border-left: 2px solid var(--_accent, #8b5cf6) !important;
+}
 
 /* ── Keyboard focus cell ── */
 .arcadia-grid__td--focused {
