@@ -141,8 +141,8 @@ public class FormFieldTests : PageTest
         var label = Page.Locator("label:has-text('Satisfaction')");
         await Expect(label.First).ToBeVisibleAsync();
 
-        // Rating stars are typically rendered as clickable elements (buttons or spans with star icons)
-        var stars = Page.Locator(".arcadia-rating__star, .arcadia-rating span, .arcadia-rating button");
+        // Rating stars use arcadia-field__rating-star class
+        var stars = Page.Locator(".arcadia-field__rating-star");
         var count = await stars.CountAsync();
         Assert.That(count, Is.GreaterThanOrEqualTo(5),
             "Rating field should render at least 5 star elements");

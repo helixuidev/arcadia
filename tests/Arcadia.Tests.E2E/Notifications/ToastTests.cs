@@ -105,8 +105,8 @@ public class ToastTests : PageTest
         Assert.That(count, Is.GreaterThanOrEqualTo(1),
             "Toast should appear initially");
 
-        // Wait for auto-dismiss (typically 3-5 seconds)
-        await Page.WaitForTimeoutAsync(6000);
+        // Wait for auto-dismiss (5s duration + Blazor Server round-trip + animation + CI variance)
+        await Page.WaitForTimeoutAsync(10000);
 
         // Toast should have disappeared
         var afterCount = await toastText.CountAsync();

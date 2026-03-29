@@ -151,7 +151,7 @@ public class DataGridTests : ChartTestBase
     public async Task Grid_ExportCsvButton_Exists()
     {
         await NavigateToGrid();
-        var exportBtn = _mainGrid.Locator("button:has-text('Export CSV')");
+        var exportBtn = _mainGrid.Locator("button:has-text('CSV')");
         await Expect(exportBtn).ToBeVisibleAsync();
     }
 
