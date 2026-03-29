@@ -144,6 +144,10 @@
         <table class="arcadia-grid__table" @ref="TableRef">
             <thead class="@(FixedHeader ? "arcadia-grid__thead--sticky" : "")">
                 <tr role="row">
+                    @if (AllowRowReorder)
+                    {
+                        <th class="arcadia-grid__th" style="width:32px;" aria-label="Drag to reorder"><span class="arcadia-sr-only">Reorder</span></th>
+                    }
                     @if (ShowRowSelector)
                     {
                         <th class="arcadia-grid__th arcadia-grid__th--row-selector">#</th>
@@ -350,9 +354,19 @@
                     {
                         var localItem = item;
                         var localRowIdx = ++rowIdx;
-                        <tr role="row" class="@(IsSelected(localItem) ? "arcadia-grid__row--selected" : "") @(IsCurrent(localItem) ? "arcadia-grid__row--current" : "")"
+                        <tr role="row" class="@(IsSelected(localItem) ? "arcadia-grid__row--selected" : "") @(IsCurrent(localItem) ? "arcadia-grid__row--current" : "") @(AllowRowReorder && _dropTargetRow == localRowIdx ? "arcadia-grid__row--drop-target" : "")"
                             @onclick="@(async () => { SetCurrentRow(localItem); if (Selectable) await ToggleSelection(localItem); else StateHasChanged(); })"
+                            draggable="@(AllowRowReorder ? "true" : "false")"
+                            @ondragstart="@(() => { if (AllowRowReorder) StartRowDrag(localRowIdx - 1); })"
+                            @ondragover="@(() => { if (AllowRowReorder) SetRowDropTarget(localRowIdx - 1); })"
+                            @ondragover:preventDefault="@AllowRowReorder"
+                            @ondrop="@(async () => { if (AllowRowReorder) await DropRow(localRowIdx - 1); })"
+                            @ondragend="@(() => { if (AllowRowReorder) EndRowDrag(); })"
                             style="cursor:pointer;">
+                            @if (AllowRowReorder)
+                            {
+                                <td class="arcadia-grid__td arcadia-grid__td--drag-handle" style="cursor:grab;text-align:center;width:32px;color:var(--_muted);">⋮⋮</td>
+                            }
                             @if (ShowRowSelector)
                             {
                                 var selectorGlyph = GetRowSelectorGlyph(localItem);

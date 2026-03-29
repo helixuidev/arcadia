@@ -99,6 +99,13 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Pending changes format. Use {0} for count. Default: "{0} pending"</summary>
     [Parameter] public string TextPending { get; set; } = "{0} pending";
 
+    /// <summary>Enable drag-and-drop row reordering. Shows a drag handle column on the left. Requires Data to be a mutable IList.</summary>
+    /// <remarks>Fires OnRowReordered with old and new index after a row is dropped. Data must be an IList (not IReadOnlyList) for in-place reorder.</remarks>
+    [Parameter] public bool AllowRowReorder { get; set; }
+
+    /// <summary>Callback fired after a row is dragged to a new position. Receives the old and new index.</summary>
+    [Parameter] public EventCallback<(int OldIndex, int NewIndex)> OnRowReordered { get; set; }
+
     /// <summary>Pin column menu item. Default: "Pin to Left"</summary>
     [Parameter] public string TextPinColumn { get; set; } = "Pin to Left";
 
@@ -1239,6 +1246,30 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             Announce($"Column moved to position {targetIndex + 1}");
         }
         EndColumnDrag();
+    }
+
+    // ── Row Reorder (Drag & Drop) ──
+
+    private int _dragSourceRow = -1;
+    private int _dropTargetRow = -1;
+
+    internal void StartRowDrag(int rowIndex) { _dragSourceRow = rowIndex; }
+    internal void SetRowDropTarget(int rowIndex) { _dropTargetRow = rowIndex; }
+    internal void EndRowDrag() { _dragSourceRow = -1; _dropTargetRow = -1; }
+
+    internal async Task DropRow(int targetIndex)
+    {
+        if (_dragSourceRow >= 0 && _dragSourceRow != targetIndex && Data is System.Collections.IList mutableList)
+        {
+            var item = mutableList[_dragSourceRow];
+            mutableList.RemoveAt(_dragSourceRow);
+            mutableList.Insert(targetIndex, item!);
+            InvalidateCache();
+            Announce($"Row moved from {_dragSourceRow + 1} to {targetIndex + 1}");
+            if (OnRowReordered.HasDelegate)
+                await OnRowReordered.InvokeAsync((_dragSourceRow, targetIndex));
+        }
+        EndRowDrag();
     }
 
     // ── Disposal ──

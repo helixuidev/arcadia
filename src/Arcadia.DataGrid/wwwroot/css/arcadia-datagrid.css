@@ -891,6 +891,10 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 .arcadia-grid__batch-btn--discard:hover { background: rgba(220,38,38,0.15); color: var(--arcadia-color-danger, #dc2626); }
 .arcadia-grid__td--batch-modified { background: rgba(139,92,246,0.08) !important; border-left: 2px solid var(--_accent, #8b5cf6); }
 
+/* Row reorder drop target */
+.arcadia-grid__row--drop-target { border-top: 2px solid var(--_accent, #8b5cf6) !important; }
+.arcadia-grid__td--drag-handle { user-select: none; }
+
 /* Sort priority badge (multi-column sort) */
 .arcadia-grid__sort-priority {
   display: inline-flex; align-items: center; justify-content: center;
