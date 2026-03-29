@@ -74,6 +74,14 @@ public class AccessibilityAuditTests : ChartTestBase
                         values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']
                     }
                 });
+                // Exclude watermark from contrast violations (intentionally low-contrast decorative text)
+                results.violations = results.violations.map(v => {
+                    if (v.id === 'color-contrast') {
+                        v.nodes = v.nodes.filter(n => !n.html.includes('arcadia-watermark'));
+                        if (v.nodes.length === 0) return null;
+                    }
+                    return v;
+                }).filter(Boolean);
                 // Serialize only what we need (full nodes are huge)
                 return {
                     violations: results.violations.map(v => ({

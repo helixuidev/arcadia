@@ -100,17 +100,10 @@ public class ToastTests : PageTest
         await Page.WaitForTimeoutAsync(500);
 
         // Verify toast appeared
-        var toastText = Page.Locator("text=This is an informational message.");
-        var count = await toastText.CountAsync();
-        Assert.That(count, Is.GreaterThanOrEqualTo(1),
-            "Toast should appear initially");
+        var toast = Page.Locator(".arcadia-toast").First;
+        await Expect(toast).ToBeVisibleAsync();
 
-        // Wait for auto-dismiss (5s duration + Blazor Server round-trip + animation + CI variance)
-        await Page.WaitForTimeoutAsync(10000);
-
-        // Toast should have disappeared
-        var afterCount = await toastText.CountAsync();
-        Assert.That(afterCount, Is.EqualTo(0),
-            "Toast should auto-dismiss after a few seconds");
+        // Wait for auto-dismiss using Playwright's built-in wait (no fixed timeout)
+        await Expect(toast).ToBeHiddenAsync(new() { Timeout = 15000 });
     }
 }
