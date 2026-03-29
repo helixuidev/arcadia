@@ -93,10 +93,9 @@ public class DataGridPagesTests : PageTest
         var header = Page.Locator("h1:has-text('DataGrid')");
         await Expect(header.First).ToBeVisibleAsync();
 
-        var csvButton = Page.Locator("button:has-text('Export CSV')");
+        var csvButton = Page.Locator("button:has-text('CSV')");
         await Expect(csvButton.First).ToBeVisibleAsync();
 
-        // Excel button may say "Export Excel" or "Excel"
         var excelButton = Page.Locator("button:has-text('Excel')");
         await Expect(excelButton.First).ToBeVisibleAsync();
     }
