@@ -2,6 +2,25 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.17] — 2026-03-29
+
+### Added
+- **Arcadia.Gauge** free standalone package (MIT) with radial gauge, needle, ticks, gradient arcs, ranges, editable mode
+- **14 gauge E2E tests** covering rendering, clipping, needle, ticks, gradients, ranges, visual regression
+- **Helpful error messages** for Sankey ("Data/Links missing"), Heatmap ("XField not set"), Candlestick ("OpenField missing")
+- **DataGrid SSR skeleton** auto-shows shimmer rows when Data is null (async loading)
+- **Replay Animation** button on gauge demo
+- **Medium article** "Your Blazor Components Aren't Actually Blazor" published on website + standalone HTML for Medium import
+
+### Fixed
+- DataGrid Community watermark removed (Pro component, not community)
+- Gauge arc clipping at top of semi-circle
+- Gauge needle overlapping center value text
+- Playground-builder 404 on deployed WASM (relative href fix)
+- Homepage "zero JavaScript" corrected to "<12 KB JavaScript"
+- False "free" claims removed from 6 blog posts for Pro components
+- Homepage package count: 7 -> 8 (Arcadia.Gauge added)
+
 ## [1.0.0-beta.16] — 2026-03-29
 
 ### Added
