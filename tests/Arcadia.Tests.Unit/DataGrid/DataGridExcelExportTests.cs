@@ -134,7 +134,7 @@ public class DataGridExcelExportTests : DataGridTestBase
         var content = ExtractSheetXml(bytes);
         content.Should().Contain("Name");
         // Only one <row> element (the header)
-        var rowCount = System.Text.RegularExpressions.Regex.Matches(content, "<row ").Count;
+        var rowCount = System.Text.RegularExpressions.Regex.Count(content, "<row ");
         rowCount.Should().Be(1);
     }
 
