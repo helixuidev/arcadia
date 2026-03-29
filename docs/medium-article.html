@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Medium Article</title>
+<style>
+body { font-family: Georgia, serif; max-width: 680px; margin: 40px auto; padding: 0 20px; line-height: 1.8; color: #292929; font-size: 18px; }
+h1 { font-size: 32px; font-weight: 700; margin-top: 40px; letter-spacing: -0.5px; }
+h2 { font-size: 24px; font-weight: 700; margin-top: 36px; }
+h3 { font-size: 20px; font-weight: 700; margin-top: 28px; }
+pre { background: #f2f2f2; padding: 20px; border-radius: 4px; overflow-x: auto; font-family: Menlo, Monaco, monospace; font-size: 14px; line-height: 1.6; white-space: pre-wrap; word-wrap: break-word; }
+code { font-family: Menlo, Monaco, monospace; background: #f2f2f2; padding: 2px 4px; font-size: 16px; }
+pre code { background: none; padding: 0; font-size: 14px; }
+hr { border: none; border-top: 1px solid #ddd; margin: 32px 0; }
+a { color: #1a8917; text-decoration: underline; }
+p { margin: 16px 0; }
+</style>
+</head>
+<body>
+<h1>Your Blazor Components Aren't Actually Blazor. And It's Costing You.</h1>
+
+<p><em>Why the next generation of Blazor UI libraries renders in C#, not JavaScript</em></p>
+
+<hr>
+
+<p>I stumbled onto this almost by accident. I was debugging a Blazor Server app. Some Syncfusion chart wasn't rendering right after a parameter change, and I opened the browser DevTools expecting to see SVG elements I could trace back to my Razor code.</p>
+
+<p>Instead I found a <code><canvas></code>. A JavaScript canvas. My "Blazor chart" was being drawn by EJ2, Syncfusion's JavaScript engine. My C# code was essentially a messenger, passing parameters across the interop bridge to a JS runtime I couldn't step through in Visual Studio.</p>
+
+<p>I started digging. Telerik? Kendo UI underneath. DevExpress? DevExtreme JS. Even parts of Radzen wrap Chart.js for rendering. These are all solid products. I'm not bashing them. But it did make me wonder: if we chose Blazor to get away from JavaScript, why are we shipping megabytes of it anyway?</p>
+
+<h2>The Costs Nobody Talks About</h2>
+
+<h3>The SSR flash that ruins first impressions</h3>
+
+<p>If you've worked with .NET 8's static server rendering, you know the pitch: server renders HTML instantly, ships it to the browser, then hydrates to interactive. Beautiful in theory.</p>
+
+<p>Except JS-wrapper components can't participate in the server render. They emit an empty <code><div></code> placeholder during SSR, then the JavaScript loads, initializes the chart engine, and replaces the placeholder. Your users see a blank space, sometimes for a full second or two, before the chart pops in.</p>
+
+<p>I honestly thought this was a Blazor problem for the longest time. It's not. It's a wrapper problem. Components that render SVG or HTML directly in <code>BuildRenderTree</code> ship the complete visual in the initial response. No flash. The chart is there on first paint.</p>
+
+<p>Steve Sanderson (the creator of Blazor, for those who don't know) has talked about this. The framework is designed for server rendering, but components that punt to JS can't take advantage of it. It's a fundamental architectural mismatch that I don't think gets enough attention.</p>
+
+<h3>Bundle size (and I mean, really)</h3>
+
+<p>I measured this because honestly I didn't believe it at first:</p>
+
+<p>Library | JS shipped to client</p>
+<p>Syncfusion Blazor | ~3 MB</p>
+<p>Telerik Blazor | ~2.5 MB</p>
+<p>DevExpress Blazor | ~2 MB</p>
+<p>Native C# approach | <12 KB</p>
+
+<p>Three. Megabytes. Of JavaScript. In a framework whose entire marketing pitch is "C# everywhere."</p>
+
+<p>Now look, for an internal admin panel on a corporate network, nobody's going to notice. But I've been on projects where we're shipping to mobile users in Southeast Asia with spotty 3G, and 3 MB of JS before the page becomes interactive is... it's a problem. Daniel Roth from the Blazor team has specifically mentioned bundle size as a concern for WASM adoption, and here we are piling on megabytes of JS on top of the .NET runtime. I might be wrong about the exact numbers for your specific Syncfusion package configuration. Tree-shaking helps, but the order of magnitude difference is real.</p>
+
+<h3>The memory thing (this one bit me personally)</h3>
+
+<p>I don't want to overstate this because it doesn't affect every project. But I need to mention it because it cost me a weekend.</p>
+
+<p>Every JS interop call creates references on both sides. C# objects and JS objects, linked by an ID. The garbage collectors on each side don't coordinate. If a component with tooltips and hover effects makes 30-50 interop calls per second during user interaction, and the disposal lifecycle doesn't clean up perfectly every time...</p>
+
+<p>I had a Blazor Server dashboard app climb to 400+ MB under sustained use. Six charts with real-time updates, some hover effects, nothing crazy. The "fix" was recycling the app pool every few hours. I don't love that we called that a fix.</p>
+
+<p>Jon Hilton and Chris Sainty, both well-known in the Blazor community, have written about being careful with JS interop lifetime management. It's a known footgun. I think the less controversial version of my take here is: the fewer interop calls you make, the fewer ways things can go sideways.</p>
+
+<h3>Debugging across two worlds</h3>
+
+<p>This one drives me genuinely nuts. A chart doesn't render right. Is the bug in my C# parameter mapping? In the JS wrapper's translation layer? In the underlying JS chart engine? I'm bouncing between Visual Studio, browser DevTools, and minified third-party JS I didn't write and can't read.</p>
+
+<p>When a native SVG chart has a rendering bug, you put a breakpoint in <code>OnParametersSet</code>, step through the coordinate math, and see exactly where it goes wrong. One language. One debugger. One call stack. I know this sounds like a small thing but when you're two hours into a debugging session at 11pm, the simplicity matters.</p>
+
+<h3>The Blazor Auto problem</h3>
+
+<p>This one I'm less sure about. I'd love to hear if others have had different experiences. .NET 8 introduced Auto render mode: start on the server, switch to WebAssembly when the runtime downloads. Brilliant for UX in theory.</p>
+
+<p>But for JS-wrapper components, the switch can be rough. The component initializes on the server (no JS available), renders a placeholder, then when it moves to WASM, the JS engine needs to reinitialize everything from scratch. Some libraries handle this well. I've seen others where you get double-renders, flickering, or state that doesn't survive the transition.</p>
+
+<p>Native components don't really have this problem. <code>BuildRenderTree</code> produces the same output regardless of where it runs. But I'll admit I haven't tested every library extensively in Auto mode, so take this one with some salt.</p>
+
+<h2>What Does Native Rendering Actually Look Like?</h2>
+
+<p>Pipeline for a JS-wrapper gauge:</p>
+
+<pre>
+C# Parameter → JSON Serialize → SignalR/WASM bridge → JS Deserialize →
+Canvas 2D API → Pixels
+</pre>
+
+<p>The native version:</p>
+
+<pre>
+C# Parameter → BuildRenderTree → SVG &lt;path&gt; → Browser GPU → Pixels
+</pre>
+
+<p>In practice, the C# code is just math. The kind of stuff we all learned in school and then forgot:</p>
+
+<pre>
+var fraction = (Value - Min) / (Max - Min);
+var angle = StartAngle + fraction * (EndAngle - StartAngle);
+var x = cx + radius * Math.Cos(angle);
+var y = cy + radius * Math.Sin(angle);
+arcPath = $"M {start.X} {start.Y} A {radius} {radius} 0 {largeArc} 1 {x} {y}";
+</pre>
+
+<p>The output is an SVG <code><path></code> element. Real DOM. Participates in CSS transitions, responds to Blazor event handlers, works with <code>@ref</code>. The browser's GPU handles the painting, and it's been doing well for, what, 15 years now?</p>
+
+<h2>The Part Where I'm Honest About the Downsides</h2>
+
+<p>I'd be a bad engineer if I didn't say this clearly: <strong>JS wrapper libraries have more features and much larger communities.</strong></p>
+
+<p>Syncfusion has 35+ chart types. Telerik's grid has been battle-tested in production by thousands of companies for 7+ years. They have actual support teams that answer the phone. There are hundreds of Stack Overflow answers. When you hit a weird edge case at 2am before a release, someone has probably hit it before you and posted the workaround.</p>
+
+<p>Native rendering is newer. Way newer. The ecosystem is small. If you need a 3D surface plot or a Gantt chart with resource leveling, the JS-wrapper libraries are probably still your best (or only) bet. I'm not going to pretend otherwise.</p>
+
+<p>I'm also not telling you to rip out Syncfusion from a working production app. That would be insane. I'm suggesting you think about the architecture for your <em>next</em> project, especially if SSR, bundle size, or Blazor Auto mode are important to you.</p>
+
+<h2>If You're Curious</h2>
+
+<p>The easiest way to feel the difference is just to render something natively and compare. I work on <a href="https://arcadiaui.com">Arcadia Controls</a> (full disclosure, yes I'm biased), and we recently extracted our gauge into a free standalone package. No dependencies on Arcadia.Core or anything else:</p>
+
+<pre>
+dotnet add package Arcadia.Gauge
+</pre>
+
+<pre>
+@using Arcadia.Gauge.Components
+
+&lt;ArcadiaRadialGauge Value="73" Label="CPU Usage"
+    ShowNeedle="true" ShowTicks="true" ShowTickLabels="true"
+    GradientColors="@(new List&lt;string&gt; { "#22c55e", "#eab308", "#ef4444" })" /&gt;
+</pre>
+
+<p>MIT licensed. Under 15KB total. Works in Server, WASM, Auto. No config. The arc animation is pure CSS, so it actually plays during SSR prerender. Open DevTools and you'll see <code><svg></code> and <code><path></code> elements, not a canvas.</p>
+
+<p>The full Arcadia suite has 20 chart types, a DataGrid, forms, and UI components if you want to go deeper. But honestly, just trying the gauge and inspecting what it renders in the DOM is enough to understand the architectural difference. It either clicks for you or it doesn't.</p>
+
+<h2>Where I Think This Is Heading (Though I Could Be Wrong)</h2>
+
+<p>I think the trajectory is pretty clear, but I've been wrong before about where tech is going, so caveat emptor.</p>
+
+<p>Blazor keeps getting better at server rendering, streaming, and render mode switching. Components that work <em>with</em> those features, not around them, will have an easier time. The JS-wrapper libraries know this too. Syncfusion has been investing in more Blazor-native rendering for newer components. Telerik's improving. The market pressure is real.</p>
+
+<p>Maybe in two years every component library renders natively and this article looks quaint. That'd be great, honestly. The whole ecosystem benefits.</p>
+
+<p>But right now? If your Blazor app ships megabytes of JavaScript to render components in a framework built to move past JavaScript... I don't know. It's at least worth asking the question.</p>
+
+<hr>
+
+<p><strong>About me:</strong> I've been building .NET apps for longer than I'd like to admit, and Blazor apps since the preview days when we were all trying to figure out if this thing was serious. (It was.) I work on <a href="https://arcadiaui.com">Arcadia Controls</a>, where we're betting on native C# rendering. It might be a bet that's too early. The ecosystem is young and we're competing against companies with hundred-person teams. But the technical argument feels right, even if the market hasn't caught up yet. The <a href="https://www.nuget.org/packages/Arcadia.Gauge">Arcadia.Gauge</a> package is free forever if you want to kick the tires.</p>
+
+<p>Find us on <a href="https://github.com/ArcadiaUIDev/arcadia">GitHub</a>. Or don't. I get that people are busy.</p>
+
+</body>
+</html>
