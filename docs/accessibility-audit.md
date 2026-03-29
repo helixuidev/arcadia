@@ -1,6 +1,6 @@
 # Arcadia Charts Accessibility Audit Report
 
-**Date:** 2026-03-25 10:08:28
+**Date:** 2026-03-29 14:12:20
 **Tool:** axe-core 4.10.2
 **Standards:** WCAG 2.0 A/AA, WCAG 2.1 A/AA, Best Practices
 **Target:** http://localhost:5050/charts (demo gallery)
@@ -10,66 +10,34 @@
 | Metric | Count |
 |--------|-------|
 | Tabs audited | 14 |
-| Total rules passed | 258 |
-| Total violations | 3 |
+| Total rules passed | 267 |
+| Total violations | 0 |
 | Critical | 0 |
-| Serious | 2 |
+| Serious | 0 |
 | Moderate | 0 |
-| Minor | 1 |
+| Minor | 0 |
 | Incomplete (needs review) | 14 |
 
-> **FAIL** -- 2 critical/serious violation(s) require remediation.
+> **PASS** -- No critical or serious accessibility violations detected.
 
 ## Per-Tab Results
 
 | Tab | Passes | Violations | Critical | Serious | Moderate | Minor | Incomplete |
 |-----|--------|------------|----------|---------|----------|-------|------------|
-| dashboard | 17 | 2 | 0 | 2 | 0 | 0 | 1 |
-| line | 19 | 1 | 0 | 0 | 0 | 1 | 1 |
+| dashboard | 17 | 0 | 0 | 0 | 0 | 0 | 1 |
+| line | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
 | bar | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
 | pie | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
 | scatter | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| candle | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| gauge | 13 | 0 | 0 | 0 | 0 | 0 | 1 |
-| radar | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| heatmap | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| rose | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| boxplot | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| rangearea | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| sankey | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-| chord | 19 | 0 | 0 | 0 | 0 | 0 | 1 |
-
-## Violation Details
-
-### `color-contrast` (serious)
-
-**Description:** Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds
-
-**Affected tabs:** dashboard
-
-**Total affected nodes:** 2
-
-**Reference:** https://dequeuniversity.com/rules/axe/4.10/color-contrast?application=axeAPI
-
-### `svg-img-alt` (serious)
-
-**Description:** Ensure <svg> elements with an img, graphics-document or graphics-symbol role have an accessible text
-
-**Affected tabs:** dashboard
-
-**Total affected nodes:** 6
-
-**Reference:** https://dequeuniversity.com/rules/axe/4.10/svg-img-alt?application=axeAPI
-
-### `empty-table-header` (minor)
-
-**Description:** Ensure table headers have discernible text
-
-**Affected tabs:** line
-
-**Total affected nodes:** 4
-
-**Reference:** https://dequeuniversity.com/rules/axe/4.10/empty-table-header?application=axeAPI
+| candle | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| gauge | 14 | 0 | 0 | 0 | 0 | 0 | 1 |
+| radar | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| heatmap | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| rose | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| boxplot | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| rangearea | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| sankey | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
+| chord | 20 | 0 | 0 | 0 | 0 | 0 | 1 |
 
 ## Incomplete Checks (Manual Review Needed)
 
@@ -79,26 +47,26 @@
 
 Rules that passed across all audited tabs (showing first 20):
 
-- `aria-allowed-attr`: Ensure an element's role supports its ARIA attributes (64 nodes across 14 tabs)
-- `aria-allowed-role`: Ensure role attribute has an appropriate value for the element (37 nodes across 14 tabs)
-- `aria-conditional-attr`: Ensure ARIA attributes are used as described in the specification of the element's role (64 nodes across 14 tabs)
-- `aria-deprecated-role`: Ensure elements do not use deprecated roles (37 nodes across 14 tabs)
-- `aria-prohibited-attr`: Ensure ARIA attributes are not prohibited for an element's role (64 nodes across 14 tabs)
-- `aria-required-attr`: Ensure elements with ARIA roles have all required ARIA attributes (37 nodes across 14 tabs)
-- `aria-roles`: Ensure all elements with a role attribute use a valid value (37 nodes across 14 tabs)
-- `aria-valid-attr-value`: Ensure all ARIA attributes have valid values (64 nodes across 14 tabs)
-- `aria-valid-attr`: Ensure attributes that begin with aria- are valid ARIA attributes (64 nodes across 14 tabs)
-- `avoid-inline-spacing`: Ensure that text spacing set through style attributes can be adjusted with custom stylesheets (515 nodes across 14 tabs)
-- `color-contrast`: Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds (135 nodes across 14 tabs)
+- `aria-allowed-attr`: Ensure an element's role supports its ARIA attributes (73 nodes across 14 tabs)
+- `aria-allowed-role`: Ensure role attribute has an appropriate value for the element (40 nodes across 14 tabs)
+- `aria-conditional-attr`: Ensure ARIA attributes are used as described in the specification of the element's role (73 nodes across 14 tabs)
+- `aria-deprecated-role`: Ensure elements do not use deprecated roles (40 nodes across 14 tabs)
+- `aria-prohibited-attr`: Ensure ARIA attributes are not prohibited for an element's role (73 nodes across 14 tabs)
+- `aria-required-attr`: Ensure elements with ARIA roles have all required ARIA attributes (40 nodes across 14 tabs)
+- `aria-roles`: Ensure all elements with a role attribute use a valid value (40 nodes across 14 tabs)
+- `aria-valid-attr-value`: Ensure all ARIA attributes have valid values (73 nodes across 14 tabs)
+- `aria-valid-attr`: Ensure attributes that begin with aria- are valid ARIA attributes (73 nodes across 14 tabs)
+- `avoid-inline-spacing`: Ensure that text spacing set through style attributes can be adjusted with custom stylesheets (519 nodes across 14 tabs)
+- `color-contrast`: Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds (119 nodes across 14 tabs)
 - `empty-heading`: Ensure headings have discernible text (14 nodes across 14 tabs)
 - `heading-order`: Ensure the order of headings is semantically correct (14 nodes across 14 tabs)
 - `nested-interactive`: Ensure interactive controls are not nested as they are not always announced by screen readers or can cause focus problems for assistive technologies (62 nodes across 13 tabs)
 - `button-name`: Ensure buttons have discernible text (53 nodes across 12 tabs)
-- `empty-table-header`: Ensure table headers have discernible text (61 nodes across 12 tabs)
+- `empty-table-header`: Ensure table headers have discernible text (65 nodes across 12 tabs)
 - `table-duplicate-name`: Ensure the <caption> element does not contain the same text as the summary attribute (20 nodes across 12 tabs)
 - `td-headers-attr`: Ensure that each cell in a table that uses the headers attribute refers only to other cells in that table (20 nodes across 12 tabs)
 - `th-has-data-cells`: Ensure that <th> elements and elements with role=columnheader/rowheader have data cells they describe (20 nodes across 12 tabs)
-- `aria-hidden-focus`: Ensure aria-hidden elements are not focusable nor contain focusable elements (3 nodes across 1 tabs)
+- `aria-hidden-focus`: Ensure aria-hidden elements are not focusable nor contain focusable elements (21 nodes across 10 tabs)
 
 ---
 
