@@ -260,4 +260,30 @@ public class DataGridInteractionTests : PageTest
             Assert.Warn("Pin column option not found in context menu. Feature may not be implemented yet.");
         }
     }
+
+    [Test]
+    public async Task ClickCell_NoFocusFlashOnPreviousCell()
+    {
+        await NavigateToBasics();
+
+        var cells = Page.Locator("td[role='gridcell']");
+        var count = await cells.CountAsync();
+        Assert.That(count, Is.GreaterThan(12), "Need enough cells for this test");
+
+        // Click first cell to set initial focus
+        await cells.Nth(0).ClickAsync();
+        await Page.WaitForTimeoutAsync(100);
+
+        // Now click a cell in row 3 — the FIRST cell should NOT have focused class
+        await cells.Nth(12).ClickAsync();
+        await Page.WaitForTimeoutAsync(50);
+
+        var firstCellClass = await cells.Nth(0).GetAttributeAsync("class") ?? "";
+        var clickedCellClass = await cells.Nth(12).GetAttributeAsync("class") ?? "";
+
+        Assert.That(firstCellClass, Does.Not.Contain("focused"),
+            "Previous cell should not retain focus class after clicking another cell");
+        Assert.That(clickedCellClass, Does.Contain("focused"),
+            "Clicked cell should have focus class");
+    }
 }
