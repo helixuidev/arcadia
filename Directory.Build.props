@@ -23,7 +23,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>blazor;components;ui;charts;forms;datagrid;dashboard;dotnet;aspnetcore;data-visualization;svg;line-chart;bar-chart;pie-chart</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
-    <Version>1.0.0-beta.14</Version>
+    <Version>1.0.0-beta.15</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

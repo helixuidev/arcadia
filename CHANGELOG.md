@@ -2,6 +2,25 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.15] — 2026-03-29
+
+### Added
+- **240 E2E Playwright tests** covering all controls: Charts, DataGrid, Forms, Notifications, UI Components, playground navigation, visual regression
+- **8 playground-builder property tests** — width, height, palette, title, grid, legend, data labels, chart type switching
+- **Cell focus regression test** — verifies no flash on previous cell when clicking another
+
+### Fixed
+- **Chart data labels showed scientific notation** (3.5E+2 instead of 350) — replaced G4 format with N0/N2
+- **Width parameter ignored after responsive mode** — `Width > 0` now takes priority over `_measuredWidth`
+- **Palette dropdown had no effect** — playground demo series used hardcoded colors overriding the Palette
+- **Cell focus flashed previous cell** — removed `@onfocus` race condition, focus set only on cell click
+- **Color contrast violations** (WCAG AA) — tick labels, subtitles, KPI footer, gallery text all fixed
+- **Watermark marked `aria-hidden`** for accessibility compliance
+
+### Changed
+- Test count: 1,097 unit + 240 E2E + 11 performance = **1,348 total tests**
+- Homepage stat updated to "1,350+ Tests"
+
 ## [1.0.0-beta.14] — 2026-03-28
 
 ### Added
