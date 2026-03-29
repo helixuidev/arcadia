@@ -449,6 +449,7 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
     }
 
     /// <summary>Maximum number of points to keep in sliding window mode. 0 = no limit.</summary>
+    /// <remarks>When exceeded, oldest point is removed and chart slides left. Use AppendAndSlide() for smooth animation.</remarks>
     [Parameter] public int SlidingWindow { get; set; }
 
     private double _crosshairX;

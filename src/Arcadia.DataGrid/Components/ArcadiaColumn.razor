@@ -6,6 +6,7 @@
     [Parameter] public Func<TItem, object>? Field { get; set; }
 
     /// <summary>Property name on TItem to display (e.g., "Salary"). Simpler alternative to Field — no boxing required for value types. Ignored when Field is set.</summary>
+    /// <remarks>Simpler alternative to Field with no boxing for value types. Auto-generates Title from PascalCase name (e.g., "FirstName" becomes "First Name").</remarks>
     [Parameter] public string? Property { get; set; }
 
     /// <summary>Column header text.</summary>

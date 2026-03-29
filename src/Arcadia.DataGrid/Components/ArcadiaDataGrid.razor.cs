@@ -13,6 +13,14 @@ namespace Arcadia.DataGrid.Components;
 public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDisposable
 {
     /// <summary>In-memory collection of row items. When set alongside LoadData, client-side sorting/filtering is bypassed. When null, the grid shows EmptyMessage.</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaDataGrid Data="@employees"&gt;
+    ///     &lt;ArcadiaColumn Property="Name" /&gt;
+    ///     &lt;ArcadiaColumn Property="Department" /&gt;
+    /// &lt;/ArcadiaDataGrid&gt;
+    /// </code>
+    /// </example>
     [Parameter] public IReadOnlyList<TItem>? Data { get; set; }
 
     /// <summary>Rows per page. 0 = show all (no paging).</summary>
@@ -22,6 +30,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     [Parameter] public int[] PageSizeOptions { get; set; } = new[] { 10, 25, 50, 100 };
 
     /// <summary>Enable click-to-sort on column headers. Individual columns can override via their Sortable parameter. Default is true.</summary>
+    /// <remarks>Shift+Click column headers for multi-column sort with priority badges.</remarks>
     [Parameter] public bool Sortable { get; set; } = true;
 
     /// <summary>Apply alternating background shading to even/odd rows for easier horizontal scanning. Default is true.</summary>
@@ -49,6 +58,13 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     [Parameter] public RenderFragment? EmptyTemplate { get; set; }
 
     /// <summary>Selection behavior: None (default), Single (click to select one row), Multiple (checkbox column with select-all). Overrides Selectable/MultiSelect when set explicitly.</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaDataGrid Data="@items"
+    ///     SelectionMode="DataGridSelectionMode.Multiple"
+    ///     @bind-SelectedItems="selected" /&gt;
+    /// </code>
+    /// </example>
     [Parameter] public DataGridSelectionMode SelectionMode { get; set; } = DataGridSelectionMode.None;
 
     // ── Localization strings (override for i18n) ──
@@ -135,6 +151,14 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     [Parameter] public EventCallback<TItem> OnRowEdit { get; set; }
 
     /// <summary>Enable batch editing mode. Modified cells are tracked and can be committed or discarded as a group. Default is false.</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaDataGrid Data="@items" BatchEdit="true"
+    ///     OnBatchCommit="@HandleBatchSave"&gt;
+    ///     &lt;ArcadiaColumn Property="Name" Editable="true" /&gt;
+    /// &lt;/ArcadiaDataGrid&gt;
+    /// </code>
+    /// </example>
     [Parameter] public bool BatchEdit { get; set; }
 
     /// <summary>Callback invoked when batch changes are committed. Receives the list of changes.</summary>
@@ -153,6 +177,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     [Parameter] public Func<TItem, object>? GroupByField { get; set; }
 
     /// <summary>Enable virtual scrolling for large datasets. Requires Height to be set. Disables pagination.</summary>
+    /// <remarks>Requires Height to be set. Renders only visible rows plus OverscanCount buffer rows. Disables pagination when enabled.</remarks>
     [Parameter] public bool VirtualizeRows { get; set; }
 
     /// <summary>Estimated row height in pixels for the virtualizer to calculate scroll position. Match your actual row height. Default is 40.</summary>
@@ -162,6 +187,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     [Parameter] public int OverscanCount { get; set; } = 5;
 
     /// <summary>localStorage key for persisting grid state (sort, filter, column order, visibility, page size). Null = no persistence.</summary>
+    /// <remarks>Saves sort, filter, page size, and column visibility to localStorage. Use OnStateChanged for server-side persistence.</remarks>
     [Parameter] public string? StateKey { get; set; }
 
     /// <summary>Callback invoked when grid state changes. Use for server-side persistence.</summary>
@@ -172,6 +198,14 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     private bool _disposed;
 
     /// <summary>Display toolbar with search, filter toggle, and export. Default is false.</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaDataGrid Data="@data" ShowToolbar="true"&gt;
+    ///     &lt;ArcadiaColumn Property="Name" /&gt;
+    ///     &lt;ArcadiaColumn Property="Email" /&gt;
+    /// &lt;/ArcadiaDataGrid&gt;
+    /// </code>
+    /// </example>
     [Parameter] public bool ShowToolbar { get; set; }
 
     /// <summary>Quick filter text that searches across all visible columns. Two-way bindable.</summary>

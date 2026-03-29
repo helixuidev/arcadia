@@ -13,6 +13,13 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
 {
     // ── Data ──────────────────────────────────────────────
     /// <summary>Collection of data items to plot. Each item maps to one or more chart points via SeriesConfig field accessors. When null or empty, the chart renders the NoDataMessage placeholder.</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaLineChart Data="@sales"
+    ///     XField="@(s =&gt; s.Month)"
+    ///     YField="@(s =&gt; s.Revenue)" /&gt;
+    /// </code>
+    /// </example>
     [Parameter] public IReadOnlyList<T>? Data { get; set; }
 
     // ── Dimensions ───────────────────────────────────────
@@ -20,6 +27,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     [Parameter] public double Height { get; set; } = 300;
 
     /// <summary>Chart width in pixels. 0 = responsive (fills container via width="100%" and ResizeObserver). Default is 0 (responsive).</summary>
+    /// <remarks>0 = responsive (fills container). Non-zero = fixed pixel width. Responsive mode uses ResizeObserver via JS interop.</remarks>
     [Parameter] public double Width { get; set; } = 0;
 
     // ── Titles ───────────────────────────────────────────
@@ -107,6 +115,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
 
     // ── Appearance ───────────────────────────────────────
     /// <summary>Color palette for auto-assigning series colors. When null, ChartPalette.Default is used. Provide a custom palette to match your brand (e.g., ChartPalette.Accessible for color-blind safety).</summary>
+    /// <remarks>Only applies when series don't have explicit Color values. 7 built-in palettes: Default, Cool, Warm, Pastel, Vibrant, Monochrome, Accessible.</remarks>
     [Parameter] public ChartPalette? Palette { get; set; }
 
     /// <summary>Show the PNG/SVG export toolbar on hover. Allows users to download the chart as an image. Default is true.</summary>
@@ -137,6 +146,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
 
     // ── Data labels ──────────────────────────────────────
     /// <summary>Render numeric value labels on each data point or bar segment. Formatted using DataLabelFormatString when set. Can cause clutter on dense charts. Default is false.</summary>
+    /// <remarks>Uses DataLabelFormatString when set, otherwise N0 for whole numbers and N2 for decimals.</remarks>
     [Parameter] public bool ShowDataLabels { get; set; }
 
     /// <summary>Format string for data label values (e.g., "C0" for currency, "P1" for percentage). When null, values render with G4 general format.</summary>
@@ -144,6 +154,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
 
     // ── Pan/Zoom ─────────────────────────────────────
     /// <summary>Enable mouse-wheel zooming on the chart canvas. Zoom direction is controlled by ZoomMode. Requires JS interop. Default is false.</summary>
+    /// <remarks>ZoomMode controls direction: "x", "y", "xy", or "selection" for rubber band zoom.</remarks>
     [Parameter] public bool EnableZoom { get; set; }
 
     /// <summary>Enable click-and-drag panning on the chart canvas. Works alongside zoom. Requires JS interop. Default is false.</summary>
@@ -156,6 +167,14 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     [Parameter] public EventCallback OnPrint { get; set; }
 
     /// <summary>Synchronization group name. Charts in the same group share crosshair position and zoom level. Null = no sync.</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaLineChart Data="@data" SyncGroup="dashboard"
+    ///     XField="@(d =&gt; d.Date)" YField="@(d =&gt; d.Revenue)" /&gt;
+    /// &lt;ArcadiaBarChart Data="@data" SyncGroup="dashboard"
+    ///     XField="@(d =&gt; d.Date)" YField="@(d =&gt; d.Orders)" /&gt;
+    /// </code>
+    /// </example>
     [Parameter] public string? SyncGroup { get; set; }
 
     // ── Crosshair ──────────────────────────────────

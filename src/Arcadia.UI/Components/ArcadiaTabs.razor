@@ -39,6 +39,14 @@
     /// <summary>
     /// Gets or sets the index of the currently active tab. Defaults to 0.
     /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaTabs @bind-ActiveIndex="tabIndex"&gt;
+    ///     &lt;ArcadiaTabPanel Title="Overview"&gt;...&lt;/ArcadiaTabPanel&gt;
+    ///     &lt;ArcadiaTabPanel Title="Details"&gt;...&lt;/ArcadiaTabPanel&gt;
+    /// &lt;/ArcadiaTabs&gt;
+    /// </code>
+    /// </example>
     [Parameter]
     public int ActiveIndex { get; set; }
 
