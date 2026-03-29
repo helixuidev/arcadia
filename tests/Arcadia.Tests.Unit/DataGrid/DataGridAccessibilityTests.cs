@@ -20,8 +20,9 @@ public class DataGridAccessibilityTests : DataGridTestBase
     private IRenderedComponent<ArcadiaDataGrid<TestEmployee>> RenderAndFocusGrid()
     {
         var cut = RenderGrid(SampleData);
-        // Trigger the @onfocus handler on the grid root element
-        cut.Find("[role='grid']").Focus();
+        // Set focus on the first cell (simulates clicking the grid)
+        cut.Instance.SetFocusCell(0, 0);
+        cut.Render();
         return cut;
     }
 

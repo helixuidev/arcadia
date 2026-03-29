@@ -192,4 +192,41 @@ public class ChartInteractionTests : PageTest
         Assert.That(linkCount, Is.GreaterThanOrEqualTo(3),
             "Sankey chart should render link paths");
     }
+
+    [Test]
+    public async Task PlaygroundBuilder_WidthSlider_ChangesSvgWidth()
+    {
+        await Page.GotoAsync($"{TestConstants.BaseUrl}/playground-builder",
+            new() { WaitUntil = WaitUntilState.NetworkIdle });
+        await Page.WaitForTimeoutAsync(2000);
+
+        // Width slider is the second range input (index 1)
+        var widthSlider = Page.Locator("input[type='range']").Nth(1);
+        await Expect(widthSlider).ToBeVisibleAsync();
+
+        // Set width to 400
+        await widthSlider.FillAsync("400");
+        await Page.WaitForTimeoutAsync(500);
+
+        var svg = Page.Locator("svg[data-chart]").First;
+        var width400 = await svg.GetAttributeAsync("width");
+        Assert.That(width400, Is.EqualTo("400"),
+            "Setting width slider to 400 should make SVG width=400");
+
+        // Set width to 800
+        await widthSlider.FillAsync("800");
+        await Page.WaitForTimeoutAsync(500);
+
+        var width800 = await svg.GetAttributeAsync("width");
+        Assert.That(width800, Is.EqualTo("800"),
+            "Setting width slider to 800 should make SVG width=800");
+
+        // Set back to 0 (responsive)
+        await widthSlider.FillAsync("0");
+        await Page.WaitForTimeoutAsync(500);
+
+        var widthResponsive = await svg.GetAttributeAsync("width");
+        Assert.That(widthResponsive, Does.Not.EqualTo("0"),
+            "Width=0 should be responsive (100% or measured width), not 0");
+    }
 }

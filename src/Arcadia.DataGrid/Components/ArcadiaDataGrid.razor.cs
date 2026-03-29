@@ -874,6 +874,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         if (_editingRow is not null && e.Key != "Escape" && e.Key != "Enter" && e.Key != "Tab")
             return; // let edit input handle its own keys
 
+        // Keyboard interaction means grid has focus
+        _gridHasFocus = true;
+
         var visibleCols = Columns.Where(c => c.IsVisible).ToList();
         var maxCol = visibleCols.Count - 1;
         var pageRows = GetPagedData().ToList();
