@@ -1,0 +1,92 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Troubleshooting
+description: Common issues and solutions when using Arcadia Controls — null data, NaN values, SSR, render modes, and performance.
+---
+
+# Troubleshooting
+
+## Charts
+
+### Chart renders but shows no data
+- **Check `Data` is not null** — pass an empty list, not null, to avoid the "no data" state
+- **Check `XField` and `Series` are set** — the line chart requires all three: `Data`, `XField`, and `Series`
+- **Minimum 2 data points** — charts need at least 2 items to draw lines/paths
+
+### Data labels show scientific notation (e.g., 3.5E+2)
+Set `DataLabelFormatString` to control the format:
+```razor
+<ArcadiaLineChart DataLabelFormatString="N0" ... />  @* 350 instead of 3.5E+2 *@
+<ArcadiaLineChart DataLabelFormatString="C0" ... />  @* $350 *@
+```
+
+### Chart doesn't resize when container changes
+Set `Width="0"` (the default) for responsive mode. The chart uses a ResizeObserver to track container width. If you set a fixed `Width` and then want responsive back, set it back to `0`.
+
+### NaN values in data
+Use the `NullHandling` parameter on line charts:
+- `NullHandling.Gap` (default) — breaks the line at NaN values
+- `NullHandling.Connect` — skips NaN and connects adjacent points
+- `NullHandling.Zero` — treats NaN as 0
+
+### Palette has no effect
+Series with explicit `Color` values (like `Color="#22c55e"` or `Color="primary"`) override the Palette. Remove the `Color` parameter from your SeriesConfig to let the Palette control colors.
+
+### Animation opacity stuck at 1.0
+Don't use `animation-fill-mode: forwards` with opacity animations. Use `backwards` fill mode with a from-only keyframe instead.
+
+## DataGrid
+
+### Grid shows no data / blank
+- **Interactive render mode required** — the DataGrid needs Blazor interactivity. In .NET 8+ with SSR, add `@rendermode InteractiveServer` or `InteractiveWebAssembly`
+- **Check `Data` is not null** — pass an `IReadOnlyList<T>`, not null
+- **Columns must be defined** — add at least one `<ArcadiaColumn>` child
+
+### GroupBy shows empty grid
+`GroupBy` resolves by: 1) matching a displayed column key, 2) falling back to reflection on TItem property. If your property name doesn't match any column or TItem property, the grid is empty. Use `GroupByField` lambda for custom grouping:
+```razor
+<ArcadiaDataGrid GroupByField="@(e => e.Salary > 100000 ? "Senior" : "Junior")" ... />
+```
+
+### Focus rectangle on wrong cell
+This was fixed in beta.15. If you see focus on the first cell when clicking another cell, update to the latest version.
+
+### Typed filters not working (all text inputs)
+Typed filter detection only works with the `Property` parameter (uses reflection). If you use `Field` lambdas, all filters render as text inputs. Switch to `Property="Salary"` to get number inputs, `Property="IsActive"` for boolean dropdowns, etc.
+
+### Excel export downloads empty file
+Ensure at least one column has `ResolvedField` — either `Property` or `Field` must be set on visible columns. Hidden columns (`IsVisible=false`) are excluded from export.
+
+## UI Components
+
+### Dialog doesn't close on Escape
+Ensure `CloseOnEscape="true"` (the default). The dialog must have focus — click inside it first. The dialog traps focus automatically when opened.
+
+### Tabs content doesn't change
+Check `ActiveIndex` binding: use `@bind-ActiveIndex` for two-way binding, or handle `ActiveIndexChanged` manually.
+
+### Tooltip not visible
+- Tooltip shows on hover AND focus-within — it works with both mouse and keyboard
+- Check `Position` — if the tooltip is clipped by a parent with `overflow: hidden`, try a different position
+- The tooltip z-index is 1100 — ensure no parent has a higher z-index
+
+## General
+
+### CSS not loading / components unstyled
+Add ALL required CSS links to your `App.razor` or `index.html`:
+```html
+<link href="_content/Arcadia.Core/css/arcadia-core.css" rel="stylesheet" />
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" />
+<link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" />
+<link href="_content/Arcadia.UI/css/arcadia-ui.css" rel="stylesheet" />
+```
+
+### Components don't work in SSR / static rendering
+Charts render full SVG during SSR. The DataGrid and UI components require interactive mode. Add `@rendermode InteractiveServer` or `InteractiveWebAssembly` to your page or component.
+
+### Performance is slow with large datasets
+- Use `VirtualizeRows="true"` with `Height` set for 1000+ rows
+- Use `LoadData` callback for server-side mode with remote data
+- Set `AnimateOnLoad="false"` on charts when rendering many charts on one page
+- Check [Performance Benchmarks](/docs/benchmarks) for expected render times

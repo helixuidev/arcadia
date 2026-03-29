@@ -161,10 +161,23 @@ See [tools/snippets/README.md](tools/snippets/README.md) for installation.
 - **Performance budgeted** — render time, memory, and interop calls tracked
 - **Tree-shakeable** — each package is independent, Core is the only shared dependency
 
+## What's New (beta.15)
+
+- **Excel export** — zero-dependency XLSX writer, no DocumentFormat.OpenXml needed
+- **Typed filters** — boolean tri-state, date picker, number input auto-detected
+- **Column pinning UI** — right-click header to Pin/Unpin/Hide/Sort
+- **14 localization parameters** — all UI strings overridable for i18n
+- **1,348 tests** — 1,097 unit + 240 E2E (Playwright) + 11 performance
+- **6 bug fixes** — scientific notation labels, width slider, palette, cell focus, contrast
+
+See [CHANGELOG.md](CHANGELOG.md) for all releases.
+
 ## Links
 
 - [Website & Documentation](https://arcadiaui.com)
 - [Live Playground](https://arcadiaui.com/playground/)
+- [Changelog](CHANGELOG.md)
+- [Performance Benchmarks](https://arcadiaui.com/docs/benchmarks)
 - [NuGet Packages](https://www.nuget.org/packages?q=Arcadia)
 - [Comparison: Arcadia vs Telerik vs Syncfusion](https://arcadiaui.com/blog/blazor-chart-library-comparison-2026/)
 

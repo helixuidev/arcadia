@@ -65,4 +65,4 @@ Drop in a grid:
 
 Multi-targets .NET 5 through .NET 9.
 
-**[Live Demo](https://arcadiaui.com/playground/)** · **[Documentation](https://arcadiaui.com/docs/datagrid)** · **[GitHub](https://github.com/ArcadiaUIDev/arcadia)**
+**[Live Demo](https://arcadiaui.com/playground/)** · **[Documentation](https://arcadiaui.com/docs/datagrid)** · **[Changelog](https://github.com/ArcadiaUIDev/arcadia/blob/main/CHANGELOG.md)** · **[Benchmarks](https://arcadiaui.com/docs/benchmarks)** · **[GitHub](https://github.com/ArcadiaUIDev/arcadia)**

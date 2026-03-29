@@ -1,0 +1,89 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: What's New
+description: Recent changes and release notes for Arcadia Controls. New features, bug fixes, and improvements across all packages.
+---
+
+# What's New
+
+## beta.15 — March 29, 2026
+
+### Excel Export (Zero Dependencies)
+The DataGrid now exports to `.xlsx` format using a built-in SpreadsheetML writer. No DocumentFormat.OpenXml dependency. Numbers are auto-detected, headers are bold, and it respects current sort/filter/visibility.
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees" ShowToolbar="true">
+    ...
+</ArcadiaDataGrid>
+```
+The toolbar shows both **CSV** and **Excel** buttons. Or call `ExportToExcelAsync()` programmatically.
+
+### Typed Filter Inputs
+Columns now auto-detect their data type when using `Property`:
+- **Boolean** columns render a tri-state dropdown (All / True / False)
+- **DateTime** columns render a native date picker
+- **Numeric** columns render a number input with comparison operators
+
+### Column Pinning UI
+Right-click any column header to see **Pin to Left**, **Hide Column**, and **Sort Ascending** options. Pinned columns stay fixed during horizontal scroll.
+
+### Localization
+14 `Text*` parameters let you override every UI string without `IStringLocalizer`:
+
+```razor
+<ArcadiaDataGrid TItem="Employee" Data="@employees"
+                 TextSearch="Rechercher..." TextFilter="Filtrer"
+                 TextPageInfo="Page {0} sur {1}" TextExcel="Exporter" />
+```
+
+### 1,348 Tests
+- 1,097 unit tests (bUnit)
+- 240 E2E tests (Playwright) covering all controls
+- 11 performance benchmarks
+
+### Bug Fixes
+- Data labels showed scientific notation (3.5E+2) instead of readable numbers
+- Width parameter ignored when set after responsive mode
+- Palette dropdown had no effect (demo used hardcoded colors)
+- Cell focus flashed previous cell before moving to clicked cell
+- Color contrast violations fixed for WCAG AA compliance
+
+---
+
+## beta.13 — March 27, 2026
+
+### Arcadia.UI Package (9 Components)
+New package with essential UI infrastructure:
+**Dialog**, **Tabs**, **Tooltip**, **Sidebar**, **Accordion**, **Breadcrumb**, **Card**, **Badge**, **Avatar**
+
+All accessible, themeable, zero JavaScript.
+
+### DataGrid Features
+- **Multi-column sort** — Shift+Click headers for secondary/tertiary sort with priority badges
+- **Quick filter** — toolbar search across all visible columns
+- **Batch editing** — save/discard multiple changes with `OnBatchCommit`
+- **Context menu** — `ContextMenuTemplate` for right-click row actions
+- **State persistence** — `StateKey` saves to localStorage, `OnStateChanged` for server-side
+- **Clipboard copy** — Ctrl+C copies selected rows as TSV
+- **`Property` parameter** — `Property="Salary"` instead of `Field="@(e => (object)e.Salary)"`
+- **`SelectionMode` enum** — `None` / `SingleRow` / `Multiple`
+- **`EmptyTemplate`** — custom empty state content
+
+### Charts Features
+- **4 financial indicators** — SMA, EMA, Bollinger Bands, RSI
+- **SyncGroup** — linked crosshair and zoom across charts
+- **Rubber band zoom** — `ZoomMode="selection"`
+
+---
+
+## beta.10 — March 26, 2026
+
+### Arcadia.DataGrid on NuGet
+First public release of the DataGrid package with sorting, filtering, paging, grouping, selection, inline editing, virtual scrolling, column templates, CSV export, and keyboard navigation.
+
+### 6 Named Themes
+Obsidian, Vapor, Carbon, Aurora, Slate, Midnight — each with distinct visual identity, applicable to both Charts and DataGrid.
+
+---
+
+For the complete changelog, see [CHANGELOG.md on GitHub](https://github.com/ArcadiaUIDev/arcadia/blob/main/CHANGELOG.md).
