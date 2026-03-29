@@ -1,0 +1,62 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Blazor Linear Gauge — Progress Bars with Thresholds
+description: Free linear gauge and progress bar component for Blazor with color thresholds, labels, and responsive sizing. Enterprise-grade quality, WCAG accessible, zero JavaScript.
+---
+
+# Blazor Linear Gauge (Progress Bar)
+
+The `ArcadiaProgressBar` is a linear gauge for Blazor — a horizontal bar that fills proportionally to a value within a range. Use it for progress tracking, capacity meters, quota displays, and any linear measurement.
+
+**Free in Community Edition** (MIT licensed).
+
+## Basic Usage
+
+```razor
+<ArcadiaProgressBar Value="73" Max="100" Label="Storage Used" />
+<ArcadiaProgressBar Value="45" Max="100" Label="CPU Usage" Color="info" />
+<ArcadiaProgressBar Value="92" Max="100" Label="Memory" Color="danger" />
+```
+
+## With Color Thresholds
+
+Automatic color changes based on value:
+
+```razor
+@code {
+    List<GaugeThreshold> thresholds = new()
+    {
+        new() { Value = 60, Color = "warning" },
+        new() { Value = 90, Color = "danger" },
+    };
+}
+
+<ArcadiaProgressBar Value="55" Max="100" Label="Disk" Thresholds="@thresholds" />  @* Green *@
+<ArcadiaProgressBar Value="75" Max="100" Label="RAM" Thresholds="@thresholds" />   @* Yellow *@
+<ArcadiaProgressBar Value="95" Max="100" Label="Swap" Thresholds="@thresholds" />  @* Red *@
+```
+
+## In DataGrid Cells
+
+Linear gauges work inside DataGrid cell templates:
+
+```razor
+<ArcadiaColumn TItem="Product" Title="Quota">
+    <Template Context="item">
+        <ArcadiaProgressBar Value="@item.QuotaPct" Max="100"
+            Color="@(item.QuotaPct >= 80 ? "success" : "warning")" />
+    </Template>
+</ArcadiaColumn>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double` | 0 | Current value |
+| `Max` | `double` | 100 | Maximum value |
+| `Label` | `string?` | null | Label text |
+| `Color` | `string` | "primary" | Bar color (primary/success/danger/warning/info) |
+| `Thresholds` | `List<GaugeThreshold>?` | null | Auto-color based on value |
+
+> **See also:** [Circular Gauge](/docs/charts/gauge-chart) for radial KPI displays.

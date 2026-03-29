@@ -1,0 +1,124 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Free Blazor Circular Gauge Component — Responsive, Accessible, Zero JavaScript"
+description: "Build enterprise-grade dashboard gauges in Blazor with Arcadia's free circular gauge component. Pure SVG, color thresholds, full-circle mode, and WCAG 2.1 AA accessibility. Works in Server, WebAssembly, and Auto render modes."
+date: "2026-03-29"
+author: "Arcadia Controls"
+tags: ["blazor", "gauge", "circular gauge", "dashboard", "free", "c#"]
+---
+
+# Free Blazor Circular Gauge Component
+
+Looking for a **responsive circular gauge in Blazor**? Arcadia Controls includes a free, enterprise-grade circular gauge component that renders pure SVG — no JavaScript, no canvas, no external dependencies.
+
+## Why Another Gauge Component?
+
+Most Blazor gauge components fall into two categories:
+
+1. **JavaScript wrappers** (Syncfusion, Telerik) — heavy bundle size, JS hydration flash on Server, $$$ licensing
+2. **Basic SVG** (MudBlazor) — limited customization, no thresholds, no animation
+
+Arcadia's gauge is different: **pure C# rendering** to SVG, color thresholds, full-circle and semi-circular modes, smooth animation, and WCAG 2.1 AA accessibility — all in the **free MIT-licensed Community Edition**.
+
+## Quick Start (2 Minutes)
+
+```bash
+dotnet add package Arcadia.Charts
+dotnet add package Arcadia.Theme
+```
+
+Add CSS to your `App.razor`:
+```html
+<link href="_content/Arcadia.Theme/css/arcadia.css" rel="stylesheet" />
+<link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" />
+```
+
+Drop in a gauge:
+```razor
+@using Arcadia.Charts.Components.Charts
+
+<ArcadiaGaugeChart Value="73" Min="0" Max="100"
+                 Label="CPU Usage" Width="200" Height="160" />
+```
+
+That's it. No JavaScript imports, no npm, no webpack.
+
+## Circular Gauge (Full 360°)
+
+For scores, ratings, and completion rings:
+
+```razor
+<ArcadiaGaugeChart Value="850" Min="300" Max="900"
+                 Label="Credit Score" FullCircle="true"
+                 Width="180" Height="180" />
+```
+
+## Color Thresholds
+
+The gauge automatically changes color based on value ranges — green for good, yellow for warning, red for critical:
+
+```razor
+@code {
+    var thresholds = new List<GaugeThreshold>
+    {
+        new() { Value = 0, Color = "var(--arcadia-color-success)" },
+        new() { Value = 60, Color = "var(--arcadia-color-warning)" },
+        new() { Value = 85, Color = "var(--arcadia-color-danger)" },
+    };
+}
+
+<ArcadiaGaugeChart Value="73" Thresholds="@thresholds"
+                 Label="Memory" Width="200" Height="160" />
+```
+
+## How It Compares
+
+| | Arcadia | Syncfusion | Telerik | MudBlazor |
+|---|---|---|---|---|
+| **Price** | Free (MIT) | $995+/year | $999+/year | Free (MIT) |
+| **Bundle** | ~120 KB total | ~3 MB | ~4 MB | ~2 MB |
+| **JavaScript** | 0 KB | Required | Required | Moderate |
+| **Circular mode** | Yes | Yes | Yes | No |
+| **Color thresholds** | Yes | Yes | Yes | No |
+| **Animation** | Yes | Yes | Yes | No |
+| **SSR** | Full SVG | JS hydration | JS hydration | Basic SVG |
+| **WCAG AA** | Yes | Partial | Partial | No |
+
+## Features
+
+- **Pure SVG rendering** — no JavaScript for gauge rendering
+- **Circular and semi-circular** modes
+- **Color thresholds** with automatic value-based coloring
+- **Smooth arc animation** on load (respects `prefers-reduced-motion`)
+- **Value formatting** — use .NET format strings (C0, P1, N2)
+- **Responsive** — fills container when `Width="0"`
+- **Dark/light theme** support via CSS custom properties
+- **WCAG 2.1 AA** — aria-label, role="figure", screen reader table
+- **Blazor Server + WASM + Auto** — all render modes supported
+- **.NET 5 through .NET 9** — multi-target framework support
+
+## Dashboard Example
+
+Combine gauges with KPI cards and sparklines for a complete dashboard:
+
+```razor
+<div style="display: flex; gap: 24px;">
+    <ArcadiaGaugeChart Value="68" Label="Progress" FullCircle="true"
+                     Width="160" Height="160" Thresholds="@thresholds" />
+    <ArcadiaKpiCard Title="Revenue" Value="$142K" Delta="+12.3%"
+                   DeltaType="DeltaType.Increase" />
+    <ArcadiaSparkline Data="@sparkData" Color="success" ShowArea="true" />
+</div>
+```
+
+## Try It
+
+- **[Live Demo](https://arcadiaui.com/playground/)** — interactive playground
+- **[Documentation](https://arcadiaui.com/docs/charts/gauge-chart)** — full parameter reference
+- **[GitHub](https://github.com/ArcadiaUIDev/arcadia)** — source code (MIT)
+
+```bash
+dotnet add package Arcadia.Charts
+```
+
+The gauge is free in the Community Edition. No Pro license needed, no watermark, no feature gating.
