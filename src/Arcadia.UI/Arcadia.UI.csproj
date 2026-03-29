@@ -4,6 +4,7 @@
     <PackageId>Arcadia.UI</PackageId>
     <Description>Blazor UI infrastructure components: Dialog, Tabs, Tooltip, Sidebar, Breadcrumb, Accordion, Card, Badge, Avatar. WCAG 2.1 AA accessible. Part of Arcadia Controls. arcadiaui.com</Description>
     <PackageTags>blazor;dialog;modal;tabs;tooltip;sidebar;breadcrumb;accordion;card;badge;avatar;ui;components;dotnet;aspnetcore;wcag;accessible</PackageTags>
+    <PackageReleaseNotes>https://arcadiaui.com/docs — 9 essential UI components for Blazor. All accessible, themeable, zero JavaScript. Focus traps, ARIA roles, keyboard navigation.</PackageReleaseNotes>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 

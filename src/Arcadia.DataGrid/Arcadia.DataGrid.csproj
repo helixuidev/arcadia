@@ -2,8 +2,13 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.DataGrid</PackageId>
-    <Description>Blazor DataGrid with sorting, filtering, paging, grouping, selection, inline editing, virtual scrolling, column templates, CSV export, keyboard navigation, and 6 built-in themes. WCAG 2.1 AA accessible. Supports Blazor Server, WebAssembly, and Auto render modes. Part of Arcadia Controls. arcadiaui.com</Description>
-    <PackageTags>blazor;datagrid;data-grid;table;sorting;filtering;paging;virtual-scrolling;grouping;editing;csv-export;dotnet;aspnetcore;blazor-components;wcag;accessible</PackageTags>
+    <Description>Blazor DataGrid with multi-column sort, quick filter, batch editing, Excel/CSV export, virtual scrolling (100K+ rows), state persistence, context menu, column pinning, typed filters (boolean/date/number), 14 localizable UI strings, and 6 built-in themes. WCAG 2.1 AA accessible. Supports Blazor Server, WebAssembly, and Auto render modes. Part of Arcadia Controls. arcadiaui.com</Description>
+    <PackageTags>blazor;datagrid;data-grid;table;sorting;filtering;paging;virtual-scrolling;grouping;editing;csv-export;excel-export;batch-editing;context-menu;column-pinning;localization;dotnet;aspnetcore;blazor-components;wcag;accessible</PackageTags>
+    <PackageReleaseNotes>https://arcadiaui.com/docs/datagrid — Full documentation with 13 feature pages.
+
+beta.15: Excel export (zero dependencies), typed filters (bool/date/number auto-detected), column pinning UI (right-click header), 14 localization parameters, 1,348 total tests.
+
+beta.13: Multi-column sort (Shift+Click), quick filter, batch editing, context menu, state persistence (localStorage), clipboard copy (Ctrl+C), SelectionMode enum, Property parameter (no boxing), EmptyTemplate.</PackageReleaseNotes>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
