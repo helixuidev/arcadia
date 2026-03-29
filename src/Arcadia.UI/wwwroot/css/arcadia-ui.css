@@ -420,6 +420,162 @@
   outline: 2px solid var(--arcadia-color-primary, #8b5cf6); outline-offset: 2px;
 }
 
+/* ── Date Picker ── */
+.arcadia-datepicker { display: flex; flex-direction: column; gap: 6px; }
+.arcadia-datepicker__label {
+  font-size: 0.8125rem; font-weight: 500;
+  color: var(--arcadia-color-text, #e2e0f0);
+}
+.arcadia-datepicker__input {
+  padding: 10px 14px; font-size: 0.9375rem; font-family: inherit;
+  color: var(--arcadia-color-text, #e2e0f0);
+  background: var(--arcadia-color-surface, #1a1430);
+  border: 1px solid var(--arcadia-color-border, rgba(139,92,246,0.2));
+  border-radius: 10px; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  color-scheme: dark;
+}
+.arcadia-datepicker__input::placeholder { color: var(--arcadia-color-muted, #6b6890); }
+.arcadia-datepicker__input:hover:not(:disabled) {
+  border-color: rgba(139,92,246,0.4);
+}
+.arcadia-datepicker__input:focus {
+  border-color: var(--arcadia-color-primary, #8b5cf6);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.2);
+}
+.arcadia-datepicker__input:disabled {
+  opacity: 0.4; cursor: not-allowed;
+}
+.arcadia-datepicker--disabled .arcadia-datepicker__label { opacity: 0.4; }
+
+/* ── Stepper ── */
+.arcadia-stepper { display: flex; gap: 0; }
+.arcadia-stepper--horizontal { flex-direction: row; align-items: flex-start; }
+.arcadia-stepper--vertical { flex-direction: column; }
+
+.arcadia-step {
+  display: flex; align-items: flex-start; flex: 1; position: relative;
+}
+.arcadia-stepper--vertical .arcadia-step { flex-direction: row; flex: none; }
+.arcadia-stepper--horizontal .arcadia-step { flex-direction: row; align-items: flex-start; }
+
+.arcadia-step__indicator {
+  width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.875rem; font-weight: 600; font-family: inherit;
+  background: var(--arcadia-color-surface, #1a1430);
+  border: 2px solid var(--arcadia-color-border, rgba(139,92,246,0.2));
+  color: var(--arcadia-color-muted, #6b6890);
+  cursor: pointer; padding: 0;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  position: relative; z-index: 1;
+}
+.arcadia-step__indicator:focus-visible {
+  outline: 2px solid var(--arcadia-color-primary, #8b5cf6); outline-offset: 2px;
+}
+.arcadia-step__indicator:disabled { cursor: not-allowed; opacity: 0.4; }
+
+.arcadia-step--active .arcadia-step__indicator {
+  background: var(--arcadia-color-primary, #8b5cf6);
+  border-color: var(--arcadia-color-primary, #8b5cf6);
+  color: #fff;
+}
+.arcadia-step--completed .arcadia-step__indicator {
+  background: var(--arcadia-color-primary, #8b5cf6);
+  border-color: var(--arcadia-color-primary, #8b5cf6);
+  color: #fff;
+}
+
+.arcadia-step__check { width: 16px; height: 16px; }
+.arcadia-step__icon { font-size: 1rem; line-height: 1; }
+.arcadia-step__number { line-height: 1; }
+
+/* Connector lines — horizontal */
+.arcadia-stepper--horizontal .arcadia-step__connector {
+  height: 2px; flex: 1; min-width: 24px;
+  background: var(--arcadia-color-border, rgba(139,92,246,0.15));
+  margin-top: 17px; /* center with indicator */
+  transition: background 0.15s;
+}
+.arcadia-stepper--horizontal .arcadia-step__connector--completed {
+  background: var(--arcadia-color-primary, #8b5cf6);
+}
+.arcadia-stepper--horizontal .arcadia-step__content {
+  position: absolute; top: 44px; left: 0; right: 0; text-align: center;
+}
+
+/* Connector lines — vertical */
+.arcadia-stepper--vertical .arcadia-step__connector {
+  width: 2px; min-height: 24px;
+  background: var(--arcadia-color-border, rgba(139,92,246,0.15));
+  margin-left: 17px; /* center with indicator */
+  transition: background 0.15s;
+}
+.arcadia-stepper--vertical .arcadia-step__connector--completed {
+  background: var(--arcadia-color-primary, #8b5cf6);
+}
+.arcadia-stepper--vertical .arcadia-step { flex-direction: column; }
+.arcadia-stepper--vertical .arcadia-step__content {
+  position: absolute; left: 48px; top: 6px;
+}
+
+.arcadia-step__content { display: flex; flex-direction: column; gap: 2px; }
+.arcadia-step__title {
+  font-size: 0.875rem; font-weight: 500;
+  color: var(--arcadia-color-text, #e2e0f0);
+}
+.arcadia-step--disabled .arcadia-step__title { opacity: 0.4; }
+.arcadia-step__description {
+  font-size: 0.75rem; color: var(--arcadia-color-muted, #6b6890);
+}
+
+/* ── Timeline ── */
+.arcadia-timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+
+.arcadia-timeline-item { display: flex; gap: 16px; position: relative; }
+
+.arcadia-timeline-item__marker {
+  display: flex; flex-direction: column; align-items: center; flex-shrink: 0;
+}
+.arcadia-timeline-item__dot {
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 1;
+  margin-top: 4px;
+}
+.arcadia-timeline-item__dot--primary { background: var(--arcadia-color-primary, #8b5cf6); }
+.arcadia-timeline-item__dot--success { background: var(--arcadia-color-success, #16a34a); }
+.arcadia-timeline-item__dot--danger { background: var(--arcadia-color-danger, #dc2626); }
+.arcadia-timeline-item__dot--warning { background: var(--arcadia-color-warning, #d97706); }
+
+.arcadia-timeline-item__icon {
+  font-size: 0.5rem; color: #fff; line-height: 1;
+}
+
+.arcadia-timeline-item__line {
+  width: 2px; flex: 1; min-height: 24px;
+  background: var(--arcadia-color-border, rgba(139,92,246,0.15));
+}
+.arcadia-timeline-item:last-child .arcadia-timeline-item__line { display: none; }
+
+.arcadia-timeline-item__body {
+  padding-bottom: 24px; flex: 1; min-width: 0;
+}
+.arcadia-timeline-item:last-child .arcadia-timeline-item__body { padding-bottom: 0; }
+
+.arcadia-timeline-item__header { display: flex; flex-direction: column; gap: 2px; }
+.arcadia-timeline-item__title {
+  font-size: 0.9375rem; font-weight: 500;
+  color: var(--arcadia-color-text, #e2e0f0);
+}
+.arcadia-timeline-item__subtitle {
+  font-size: 0.8125rem; color: var(--arcadia-color-muted, #6b6890);
+}
+.arcadia-timeline-item__content {
+  margin-top: 8px; font-size: 0.875rem; line-height: 1.6;
+  color: var(--arcadia-color-muted, #9490b3);
+}
+
 /* ── Reduced Motion ── */
 @media (prefers-reduced-motion: reduce) {
   .arcadia-dialog-overlay,
@@ -434,7 +590,10 @@
   .arcadia-menu__dropdown,
   .arcadia-drawer,
   .arcadia-drawer-overlay,
-  .arcadia-skeleton { animation: none !important; transition: none !important; }
+  .arcadia-skeleton,
+  .arcadia-datepicker__input,
+  .arcadia-step__indicator,
+  .arcadia-step__connector { animation: none !important; transition: none !important; }
 }
 
 /* ── High Contrast Mode ── */
@@ -445,4 +604,8 @@
   .arcadia-drawer { border: 1px solid CanvasText; }
   .arcadia-menu__dropdown { border: 1px solid CanvasText; }
   .arcadia-skeleton { background: Canvas; border: 1px solid CanvasText; }
+  .arcadia-datepicker__input { border: 1px solid CanvasText; }
+  .arcadia-step__indicator { border: 2px solid CanvasText; }
+  .arcadia-step--active .arcadia-step__indicator { background: Highlight; border-color: Highlight; }
+  .arcadia-timeline-item__dot { border: 1px solid CanvasText; }
 }

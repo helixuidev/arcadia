@@ -10,7 +10,7 @@
         </h1>
         <p style="text-align:center;color:#8a86a8;margin-bottom:48px;">Free, standalone Blazor gauge components. Pure SVG, zero JavaScript, MIT licensed.</p>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;">
+        <div @key="_animKey" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;">
 
             <div style="background:rgba(139,92,246,0.04);border:1px solid rgba(139,92,246,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
                 <ArcadiaRadialGauge Value="73" Label="CPU Usage"
@@ -20,9 +20,9 @@
 
             <div style="background:rgba(34,211,238,0.04);border:1px solid rgba(34,211,238,0.12);border-radius:16px;padding:24px;display:flex;flex-direction:column;align-items:center;">
                 <ArcadiaRadialGauge Value="850" Min="300" Max="900" Label="Credit Score"
-                    FullCircle="true" Width="180" Height="180"
+                    FullCircle="true" Width="240" Height="240"
                     ShowNeedle="true" ShowTicks="true" ShowTickLabels="true"
-                    Color="#22c55e" NeedleColor="#e2e0f0" />
+                    Color="#22c55e" NeedleColor="#e2e0f0" ArcWidth="16" ValueFontSize="32" />
                 <div style="color:#6b6890;font-size:0.75rem;margin-top:8px;">Needle + ticks + labels</div>
             </div>
 
@@ -57,7 +57,16 @@
 
         </div>
 
-        <div style="text-align:center;margin-top:48px;color:#6b6890;font-size:0.8125rem;">
+        <div style="text-align:center;margin-top:40px;">
+            <button @onclick="ReplayAnimation"
+                    style="padding:10px 28px;border-radius:10px;border:none;background:linear-gradient(135deg,#8b5cf6,#ec4899);color:white;font-weight:600;font-size:0.9rem;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s;font-family:inherit;"
+                    onmouseover="this.style.transform='scale(1.05)';this.style.boxShadow='0 4px 20px rgba(139,92,246,0.3)'"
+                    onmouseout="this.style.transform='scale(1)';this.style.boxShadow='none'">
+                Replay Animation
+            </button>
+        </div>
+
+        <div style="text-align:center;margin-top:24px;color:#6b6890;font-size:0.8125rem;">
             <code style="background:rgba(139,92,246,0.08);padding:6px 14px;border-radius:8px;color:#c084fc;">dotnet add package Arcadia.Gauge</code>
             <span style="margin:0 12px;">|</span>
             <span>Free forever. MIT licensed. Part of <a href="https://arcadiaui.com" style="color:#8b5cf6;">Arcadia Controls</a>.</span>
@@ -66,6 +75,9 @@
 </div>
 
 @code {
+    int _animKey = 0;
+    void ReplayAnimation() { _animKey++; StateHasChanged(); }
+
     List<Arcadia.Gauge.Components.GaugeThreshold> _thresholds = new()
     {
         new() { Value = 0, Color = "#22c55e" },
