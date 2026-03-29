@@ -5,6 +5,10 @@
 
 .arcadia-gauge { display: inline-block; }
 
+/* Editable gauge */
+.arcadia-gauge--editable svg { cursor: pointer; }
+.arcadia-gauge--editable svg:active { cursor: grabbing; }
+
 /* Value arc animation — draws the arc from 0 to final value */
 .arcadia-gauge__arc--animated {
   stroke-dasharray: 1000;

@@ -1,8 +1,10 @@
 @namespace Arcadia.Gauge.Components
 
-<div class="arcadia-gauge @Class" style="@Style" @attributes="AdditionalAttributes">
+<div class="arcadia-gauge @(Editable ? "arcadia-gauge--editable" : "") @Class" style="@Style" @attributes="AdditionalAttributes">
 <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
-     role="figure" aria-label="@(AriaLabel ?? $"{Label}: {Value}")">
+     role="figure" aria-label="@(AriaLabel ?? $"{Label}: {Value}")"
+     @onclick="HandleClick"
+     style="@(Editable ? "cursor:pointer;" : "")">
 
     @* Background track arc *@
     <path d="@_trackPath" fill="none" stroke="@TrackColor" stroke-width="@F(ArcWidth)"
@@ -67,10 +69,15 @@
     @* Needle pointer *@
     @if (ShowNeedle)
     {
-        var needleTip = PointOnArc(_valueAngle, _radius - ArcWidth / 2 - 4);
-        var needleBase1 = PointOnArc(_valueAngle + Math.PI / 2, NeedleBaseWidth / 2);
-        var needleBase2 = PointOnArc(_valueAngle - Math.PI / 2, NeedleBaseWidth / 2);
-        <polygon points="@F(needleTip.X),@F(needleTip.Y) @F(needleBase1.X),@F(needleBase1.Y) @F(needleBase2.X),@F(needleBase2.Y)"
+        var needleLength = _radius - ArcWidth / 2 - 4;
+        var tipX = _cx + needleLength * Math.Cos(_valueAngle);
+        var tipY = _cy + needleLength * Math.Sin(_valueAngle);
+        var perpAngle = _valueAngle + Math.PI / 2;
+        var baseX1 = _cx + (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
+        var baseY1 = _cy + (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
+        var baseX2 = _cx - (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
+        var baseY2 = _cy - (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
+        <polygon points="@F(tipX),@F(tipY) @F(baseX1),@F(baseY1) @F(baseX2),@F(baseY2)"
                  fill="@NeedleColor" class="@(AnimateOnLoad ? "arcadia-gauge__needle--animated" : "")" />
         <circle cx="@F(_cx)" cy="@F(_cy)" r="@F(NeedleCapRadius)" fill="@NeedleColor" />
     }
@@ -233,6 +240,15 @@
     /// <summary>Animate the arc/needle on first render. Default: true.</summary>
     [Parameter] public bool AnimateOnLoad { get; set; } = true;
 
+    // ── Interactivity ──
+
+    /// <summary>Allow the user to click or drag on the gauge to change the value. Default: false.</summary>
+    /// <remarks>When enabled, clicking on the arc sets the value to the clicked position. Use @bind-Value or ValueChanged for two-way binding.</remarks>
+    [Parameter] public bool Editable { get; set; }
+
+    /// <summary>Callback fired when the value changes (via click/drag in editable mode).</summary>
+    [Parameter] public EventCallback<double> ValueChanged { get; set; }
+
     // ── Accessibility ──
 
     /// <summary>Custom aria-label for the gauge SVG.</summary>
@@ -278,9 +294,10 @@
     protected override void OnParametersSet()
     {
         var padding = ArcWidth / 2 + (ShowTicks ? 20 : 5) + (ShowTickLabels ? 15 : 0);
+        var labelSpace = !FullCircle && !string.IsNullOrEmpty(Label) ? LabelFontSize + 8 : 0;
         _cx = Width / 2;
-        _cy = FullCircle ? Height / 2 : Height - padding;
-        _radius = Math.Min(Width, Height) / 2 - padding;
+        _cy = FullCircle ? Height / 2 : Height - padding - labelSpace;
+        _radius = Math.Min(Width, FullCircle ? Height : (Height - labelSpace)) / 2 - padding;
         if (_radius < 10) _radius = 10;
 
         var defaultStart = FullCircle ? -270.0 : -225.0;
@@ -368,6 +385,36 @@
         if (ValueFormatString is not null) return val.ToString(ValueFormatString);
         if (val == Math.Floor(val)) return val.ToString("N0");
         return val.ToString("N1");
+    }
+
+    private async Task HandleClick(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+    {
+        if (!Editable) return;
+
+        // Calculate angle from center to click position
+        var dx = e.OffsetX - _cx;
+        var dy = e.OffsetY - _cy;
+        var angle = Math.Atan2(dy, dx);
+
+        // Clamp angle to gauge range
+        var totalSweep = _endAngleRad - _startAngleRad;
+
+        // Normalize angle relative to start
+        var relAngle = angle - _startAngleRad;
+        // Handle wrap-around for angles that cross the -PI/PI boundary
+        while (relAngle < -Math.PI) relAngle += 2 * Math.PI;
+        while (relAngle > Math.PI) relAngle -= 2 * Math.PI;
+        if (relAngle < 0 && totalSweep > 0) relAngle += 2 * Math.PI;
+
+        var fraction = Math.Clamp(relAngle / totalSweep, 0, 1);
+        var newValue = Min + fraction * (Max - Min);
+
+        // Round to reasonable precision
+        newValue = Math.Round(newValue, 1);
+
+        Value = newValue;
+        if (ValueChanged.HasDelegate)
+            await ValueChanged.InvokeAsync(newValue);
     }
 
     private static string F(double v) => v.ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
