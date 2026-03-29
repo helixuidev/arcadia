@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <PackageId>Arcadia.Gauge</PackageId>
+    <Description>Free, standalone Blazor gauge components — radial, semi-circular, and linear gauges with needle pointer, tick marks, gradient arcs, animated transitions, and multiple ranges. Pure SVG, zero JavaScript, WCAG accessible. MIT licensed.</Description>
+    <PackageTags>blazor;gauge;circular-gauge;radial-gauge;linear-gauge;needle;speedometer;kpi;dashboard;svg;dotnet;aspnetcore;free;mit;accessible</PackageTags>
+    <PackageReleaseNotes>Free standalone gauge package — no Arcadia.Core or Arcadia.Charts dependency needed. MIT licensed forever.
+
+Features: needle pointer, tick marks with labels, gradient arcs, multiple colored ranges, animated transitions, start/end angle control, center template, responsive sizing.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components" VersionOverride="5.0.17" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" VersionOverride="5.0.17" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components" VersionOverride="6.0.36" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" VersionOverride="6.0.36" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components" VersionOverride="7.0.20" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" VersionOverride="7.0.20" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components" VersionOverride="8.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" VersionOverride="8.0.12" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Components" VersionOverride="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" VersionOverride="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../icon.png" Pack="true" PackagePath="/" />
+    <None Include="README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+</Project>

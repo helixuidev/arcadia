@@ -1,0 +1,377 @@
+@namespace Arcadia.Gauge.Components
+
+<div class="arcadia-gauge @Class" style="@Style" @attributes="AdditionalAttributes">
+<svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
+     role="figure" aria-label="@(AriaLabel ?? $"{Label}: {Value}")">
+
+    @* Background track arc *@
+    <path d="@_trackPath" fill="none" stroke="@TrackColor" stroke-width="@F(ArcWidth)"
+          stroke-linecap="@(RoundedCaps ? "round" : "butt")" opacity="@F(TrackOpacity)" />
+
+    @* Colored ranges (bands on the arc) *@
+    @if (Ranges is not null)
+    {
+        @foreach (var range in Ranges)
+        {
+            var rangePath = BuildValueRangeArc(range.Start, range.End);
+            <path d="@rangePath" fill="none" stroke="@range.Color" stroke-width="@F(range.Width > 0 ? range.Width : ArcWidth)"
+                  stroke-linecap="@(RoundedCaps ? "round" : "butt")" opacity="@F(range.Opacity)" />
+        }
+    }
+
+    @* Value arc *@
+    @if (_valueAngle > _startAngleRad + 0.01)
+    {
+        @if (GradientColors is not null && GradientColors.Count >= 2)
+        {
+            <defs>
+                <linearGradient id="@_gradientId" x1="0%" y1="0%" x2="100%" y2="0%">
+                    @for (var i = 0; i < GradientColors.Count; i++)
+                    {
+                        var pct = i * 100.0 / (GradientColors.Count - 1);
+                        <stop offset="@F(pct)%" stop-color="@GradientColors[i]" />
+                    }
+                </linearGradient>
+            </defs>
+            <path d="@_valuePath" fill="none" stroke="url(#@_gradientId)" stroke-width="@F(ArcWidth)"
+                  stroke-linecap="@(RoundedCaps ? "round" : "butt")"
+                  class="@(AnimateOnLoad ? "arcadia-gauge__arc--animated" : "")" />
+        }
+        else
+        {
+            <path d="@_valuePath" fill="none" stroke="@ResolvedColor" stroke-width="@F(ArcWidth)"
+                  stroke-linecap="@(RoundedCaps ? "round" : "butt")"
+                  class="@(AnimateOnLoad ? "arcadia-gauge__arc--animated" : "")" />
+        }
+    }
+
+    @* Tick marks *@
+    @if (ShowTicks)
+    {
+        @foreach (var tick in _ticks)
+        {
+            <line x1="@F(tick.X1)" y1="@F(tick.Y1)" x2="@F(tick.X2)" y2="@F(tick.Y2)"
+                  stroke="@TickColor" stroke-width="@(tick.IsMajor ? "2" : "1")" />
+        }
+    }
+
+    @* Tick labels *@
+    @if (ShowTickLabels)
+    {
+        @foreach (var label in _tickLabels)
+        {
+            <SvgText X="@F(label.X)" Y="@F(label.Y)" Fill="@TickLabelColor" FontSize="@F(TickLabelFontSize)">@label.Text</SvgText>
+        }
+    }
+
+    @* Needle pointer *@
+    @if (ShowNeedle)
+    {
+        var needleTip = PointOnArc(_valueAngle, _radius - ArcWidth / 2 - 4);
+        var needleBase1 = PointOnArc(_valueAngle + Math.PI / 2, NeedleBaseWidth / 2);
+        var needleBase2 = PointOnArc(_valueAngle - Math.PI / 2, NeedleBaseWidth / 2);
+        <polygon points="@F(needleTip.X),@F(needleTip.Y) @F(needleBase1.X),@F(needleBase1.Y) @F(needleBase2.X),@F(needleBase2.Y)"
+                 fill="@NeedleColor" class="@(AnimateOnLoad ? "arcadia-gauge__needle--animated" : "")" />
+        <circle cx="@F(_cx)" cy="@F(_cy)" r="@F(NeedleCapRadius)" fill="@NeedleColor" />
+    }
+
+    @* Center value display *@
+    @if (ShowValue)
+    {
+        @if (CenterTemplate is not null)
+        {
+            <foreignObject x="@F(_cx - _radius * 0.4)" y="@F(_cy - 20)" width="@F(_radius * 0.8)" height="40">
+                @CenterTemplate
+            </foreignObject>
+        }
+        else
+        {
+            <SvgText X="@F(_cx)" Y="@F(_cy + (FullCircle ? 0 : -5))" Fill="@ValueColor" FontSize="@F(ValueFontSize)" FontWeight="700">@FormatValue()</SvgText>
+            @if (!string.IsNullOrEmpty(Label))
+            {
+                <SvgText X="@F(_cx)" Y="@F(_cy + (FullCircle ? ValueFontSize * 0.8 : ValueFontSize * 0.6))" Fill="@LabelColor" FontSize="@F(LabelFontSize)">@Label</SvgText>
+            }
+        }
+    }
+
+    @* Screen reader table *@
+    <foreignObject x="0" y="0" width="1" height="1" style="overflow:hidden;">
+        <table class="arcadia-sr-only" aria-label="Gauge data">
+            <thead><tr><th>Label</th><th>Value</th><th>Min</th><th>Max</th></tr></thead>
+            <tbody><tr><td>@Label</td><td>@Value</td><td>@Min</td><td>@Max</td></tr></tbody>
+        </table>
+    </foreignObject>
+</svg>
+</div>
+
+@code {
+    // ── Core Parameters ──
+
+    /// <summary>Current gauge value.</summary>
+    /// <example><code>&lt;ArcadiaRadialGauge Value="73" Min="0" Max="100" /&gt;</code></example>
+    [Parameter] public double Value { get; set; }
+
+    /// <summary>Minimum scale value. Default: 0.</summary>
+    [Parameter] public double Min { get; set; } = 0;
+
+    /// <summary>Maximum scale value. Default: 100.</summary>
+    [Parameter] public double Max { get; set; } = 100;
+
+    /// <summary>Label displayed below the value. E.g., "CPU Usage", "Revenue".</summary>
+    [Parameter] public string? Label { get; set; }
+
+    // ── Dimensions ──
+
+    /// <summary>SVG width in pixels. Default: 220.</summary>
+    [Parameter] public double Width { get; set; } = 220;
+
+    /// <summary>SVG height in pixels. Default: 220.</summary>
+    [Parameter] public double Height { get; set; } = 220;
+
+    // ── Arc Configuration ──
+
+    /// <summary>Full 360° circle or semi-circle. Default: false (semi-circle 180°).</summary>
+    [Parameter] public bool FullCircle { get; set; }
+
+    /// <summary>Start angle in degrees. 0° = top, 90° = right. Default: -225° (semi) or -270° (full).</summary>
+    [Parameter] public double? StartAngle { get; set; }
+
+    /// <summary>End angle in degrees. Default: 45° (semi) or 90° (full).</summary>
+    [Parameter] public double? EndAngle { get; set; }
+
+    /// <summary>Arc stroke width in pixels. Default: 20.</summary>
+    [Parameter] public double ArcWidth { get; set; } = 20;
+
+    /// <summary>Use rounded stroke-linecap on arc ends. Default: true.</summary>
+    [Parameter] public bool RoundedCaps { get; set; } = true;
+
+    // ── Colors ──
+
+    /// <summary>Value arc color. Supports CSS colors or theme tokens. Default: #8b5cf6.</summary>
+    [Parameter] public string Color { get; set; } = "#8b5cf6";
+
+    /// <summary>Gradient colors for the value arc. When set, overrides Color with a linear gradient.</summary>
+    /// <example><code>GradientColors="@(new List&lt;string&gt; { "#22c55e", "#eab308", "#ef4444" })"</code></example>
+    [Parameter] public List<string>? GradientColors { get; set; }
+
+    /// <summary>Background track arc color. Default: rgba(255,255,255,0.1).</summary>
+    [Parameter] public string TrackColor { get; set; } = "rgba(255,255,255,0.1)";
+
+    /// <summary>Track arc opacity. Default: 1.</summary>
+    [Parameter] public double TrackOpacity { get; set; } = 1;
+
+    /// <summary>Color thresholds — auto-changes arc color based on value.</summary>
+    [Parameter] public List<GaugeThreshold>? Thresholds { get; set; }
+
+    // ── Needle ──
+
+    /// <summary>Show a needle pointer. Default: false.</summary>
+    [Parameter] public bool ShowNeedle { get; set; }
+
+    /// <summary>Needle color. Default: #e2e0f0.</summary>
+    [Parameter] public string NeedleColor { get; set; } = "#e2e0f0";
+
+    /// <summary>Needle base width in pixels. Default: 8.</summary>
+    [Parameter] public double NeedleBaseWidth { get; set; } = 8;
+
+    /// <summary>Needle cap circle radius. Default: 6.</summary>
+    [Parameter] public double NeedleCapRadius { get; set; } = 6;
+
+    // ── Tick Marks ──
+
+    /// <summary>Show tick marks on the scale. Default: false.</summary>
+    [Parameter] public bool ShowTicks { get; set; }
+
+    /// <summary>Number of major tick intervals. Default: 5 (0, 20, 40, 60, 80, 100 for 0-100 range).</summary>
+    [Parameter] public int MajorTickCount { get; set; } = 5;
+
+    /// <summary>Number of minor ticks between each major tick. Default: 4.</summary>
+    [Parameter] public int MinorTickCount { get; set; } = 4;
+
+    /// <summary>Tick mark color. Default: rgba(255,255,255,0.4).</summary>
+    [Parameter] public string TickColor { get; set; } = "rgba(255,255,255,0.4)";
+
+    /// <summary>Show numeric labels at major ticks. Default: false.</summary>
+    [Parameter] public bool ShowTickLabels { get; set; }
+
+    /// <summary>Tick label color. Default: rgba(255,255,255,0.6).</summary>
+    [Parameter] public string TickLabelColor { get; set; } = "rgba(255,255,255,0.6)";
+
+    /// <summary>Tick label font size. Default: 10.</summary>
+    [Parameter] public double TickLabelFontSize { get; set; } = 10;
+
+    // ── Ranges (colored bands) ──
+
+    /// <summary>Colored range bands on the arc. Each range has Start, End, Color, Width, Opacity.</summary>
+    [Parameter] public List<GaugeRange>? Ranges { get; set; }
+
+    // ── Value Display ──
+
+    /// <summary>Show the value number in the center. Default: true.</summary>
+    [Parameter] public bool ShowValue { get; set; } = true;
+
+    /// <summary>.NET format string for the value (e.g., "N0", "C0", "P1"). Default: null (auto).</summary>
+    [Parameter] public string? ValueFormatString { get; set; }
+
+    /// <summary>Value text color. Default: #f1f0f9.</summary>
+    [Parameter] public string ValueColor { get; set; } = "#f1f0f9";
+
+    /// <summary>Value font size. Default: 28.</summary>
+    [Parameter] public double ValueFontSize { get; set; } = 28;
+
+    /// <summary>Label text color. Default: rgba(255,255,255,0.5).</summary>
+    [Parameter] public string LabelColor { get; set; } = "rgba(255,255,255,0.5)";
+
+    /// <summary>Label font size. Default: 12.</summary>
+    [Parameter] public double LabelFontSize { get; set; } = 12;
+
+    /// <summary>Custom center content template. Overrides default value/label display.</summary>
+    [Parameter] public RenderFragment? CenterTemplate { get; set; }
+
+    // ── Animation ──
+
+    /// <summary>Animate the arc/needle on first render. Default: true.</summary>
+    [Parameter] public bool AnimateOnLoad { get; set; } = true;
+
+    // ── Accessibility ──
+
+    /// <summary>Custom aria-label for the gauge SVG.</summary>
+    [Parameter] public string? AriaLabel { get; set; }
+
+    // ── Pass-through ──
+
+    /// <summary>Additional CSS class.</summary>
+    [Parameter] public string? Class { get; set; }
+
+    /// <summary>Inline style.</summary>
+    [Parameter] public string? Style { get; set; }
+
+    /// <summary>Additional HTML attributes.</summary>
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    // ── Internal State ──
+
+    private double _cx, _cy, _radius;
+    private double _startAngleRad, _endAngleRad, _valueAngle;
+    private string _trackPath = "";
+    private string _valuePath = "";
+    private string _gradientId = $"gauge-grad-{Guid.NewGuid():N}";
+    private List<TickInfo> _ticks = new();
+    private List<LabelInfo> _tickLabels = new();
+
+    private string ResolvedColor
+    {
+        get
+        {
+            if (Thresholds is { Count: > 0 })
+            {
+                var sorted = Thresholds.OrderByDescending(t => t.Value);
+                foreach (var t in sorted)
+                {
+                    if (Value >= t.Value) return t.Color;
+                }
+            }
+            return Color;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        var padding = ArcWidth / 2 + (ShowTicks ? 20 : 5) + (ShowTickLabels ? 15 : 0);
+        _cx = Width / 2;
+        _cy = FullCircle ? Height / 2 : Height - padding;
+        _radius = Math.Min(Width, Height) / 2 - padding;
+        if (_radius < 10) _radius = 10;
+
+        var defaultStart = FullCircle ? -270.0 : -225.0;
+        var defaultEnd = FullCircle ? 90.0 : 45.0;
+        var startDeg = StartAngle ?? defaultStart;
+        var endDeg = EndAngle ?? defaultEnd;
+
+        _startAngleRad = startDeg * Math.PI / 180;
+        _endAngleRad = endDeg * Math.PI / 180;
+
+        var fraction = Math.Clamp((Value - Min) / (Max - Min), 0, 1);
+        _valueAngle = _startAngleRad + fraction * (_endAngleRad - _startAngleRad);
+
+        _trackPath = BuildArcPath(_startAngleRad, _endAngleRad);
+        _valuePath = BuildArcPath(_startAngleRad, _valueAngle);
+
+        BuildTicks();
+    }
+
+    private string BuildArcPath(double fromAngle, double toAngle)
+    {
+        var start = PointOnArc(fromAngle, _radius);
+        var end = PointOnArc(toAngle, _radius);
+        var sweep = toAngle - fromAngle;
+        var largeArc = Math.Abs(sweep) > Math.PI ? 1 : 0;
+        var sweepDir = sweep > 0 ? 1 : 0;
+        return $"M {F(start.X)} {F(start.Y)} A {F(_radius)} {F(_radius)} 0 {largeArc} {sweepDir} {F(end.X)} {F(end.Y)}";
+    }
+
+    private string BuildValueRangeArc(double fromValue, double toValue)
+    {
+        var frac1 = Math.Clamp((fromValue - Min) / (Max - Min), 0, 1);
+        var frac2 = Math.Clamp((toValue - Min) / (Max - Min), 0, 1);
+        var a1 = _startAngleRad + frac1 * (_endAngleRad - _startAngleRad);
+        var a2 = _startAngleRad + frac2 * (_endAngleRad - _startAngleRad);
+        return BuildArcPath(a1, a2);
+    }
+
+    private (double X, double Y) PointOnArc(double angle, double radius)
+    {
+        return (_cx + radius * Math.Cos(angle), _cy + radius * Math.Sin(angle));
+    }
+
+    private void BuildTicks()
+    {
+        _ticks.Clear();
+        _tickLabels.Clear();
+        if (!ShowTicks && !ShowTickLabels) return;
+
+        var totalTicks = MajorTickCount * (MinorTickCount + 1) + 1;
+        for (var i = 0; i <= MajorTickCount * (MinorTickCount + 1); i++)
+        {
+            var frac = (double)i / (MajorTickCount * (MinorTickCount + 1));
+            var angle = _startAngleRad + frac * (_endAngleRad - _startAngleRad);
+            var isMajor = i % (MinorTickCount + 1) == 0;
+            var outerR = _radius + ArcWidth / 2 + 2;
+            var innerR = outerR + (isMajor ? 8 : 4);
+
+            if (ShowTicks)
+            {
+                var outer = PointOnArc(angle, outerR);
+                var inner = PointOnArc(angle, innerR);
+                _ticks.Add(new TickInfo { X1 = outer.X, Y1 = outer.Y, X2 = inner.X, Y2 = inner.Y, IsMajor = isMajor });
+            }
+
+            if (ShowTickLabels && isMajor)
+            {
+                var labelR = innerR + 10;
+                var pos = PointOnArc(angle, labelR);
+                var val = Min + frac * (Max - Min);
+                _tickLabels.Add(new LabelInfo { X = pos.X, Y = pos.Y, Text = FormatTickValue(val) });
+            }
+        }
+    }
+
+    private string FormatValue()
+    {
+        if (ValueFormatString is not null) return Value.ToString(ValueFormatString);
+        if (Value == Math.Floor(Value)) return Value.ToString("N0");
+        return Value.ToString("N1");
+    }
+
+    private string FormatTickValue(double val)
+    {
+        if (ValueFormatString is not null) return val.ToString(ValueFormatString);
+        if (val == Math.Floor(val)) return val.ToString("N0");
+        return val.ToString("N1");
+    }
+
+    private static string F(double v) => v.ToString("F1", System.Globalization.CultureInfo.InvariantCulture);
+
+    private record struct TickInfo(double X1, double Y1, double X2, double Y2, bool IsMajor);
+    private record struct LabelInfo(double X, double Y, string Text);
+}

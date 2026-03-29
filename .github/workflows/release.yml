@@ -58,7 +58,8 @@ jobs:
                       src/Arcadia.FormBuilder/Arcadia.FormBuilder.csproj \
                       src/Arcadia.Charts/Arcadia.Charts.csproj \
                       src/Arcadia.DataGrid/Arcadia.DataGrid.csproj \
-                      src/Arcadia.UI/Arcadia.UI.csproj; do
+                      src/Arcadia.UI/Arcadia.UI.csproj \
+                      src/Arcadia.Gauge/Arcadia.Gauge.csproj; do
             dotnet pack "$proj" \
               --configuration Release \
               --no-build \
