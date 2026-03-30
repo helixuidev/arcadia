@@ -118,8 +118,8 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     /// <remarks>Only applies when series don't have explicit Color values. 7 built-in palettes: Default, Cool, Warm, Pastel, Vibrant, Monochrome, Accessible.</remarks>
     [Parameter] public ChartPalette? Palette { get; set; }
 
-    /// <summary>Show the PNG/SVG export toolbar on hover. Allows users to download the chart as an image. Default is true.</summary>
-    [Parameter] public bool ShowToolbar { get; set; } = true;
+    /// <summary>Show the PNG/SVG export toolbar on hover. Default is false to avoid toolbar spam on dashboards with many charts.</summary>
+    [Parameter] public bool ShowToolbar { get; set; } = false;
 
     /// <summary>Play an entrance animation when the chart first renders. Set to false for instant rendering on prerendered pages or dashboards with many charts. Default is true.</summary>
     [Parameter] public bool AnimateOnLoad { get; set; } = true;

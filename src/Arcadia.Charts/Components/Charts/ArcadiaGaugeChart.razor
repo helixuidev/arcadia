@@ -1,43 +1,149 @@
 @namespace Arcadia.Charts.Components.Charts
 @inherits Arcadia.Core.Base.ArcadiaComponentBase
 
-<div class="arcadia-chart arcadia-gauge" style="@Style" @attributes="AdditionalAttributes">
+<div class="arcadia-chart arcadia-gauge @(Editable ? "arcadia-gauge--editable" : "")" style="@Style" @attributes="AdditionalAttributes">
     <svg width="@Width" height="@Height" viewBox="0 0 @Width @Height"
          role="figure" data-chart="true" aria-label="@(AriaLabel ?? Title ?? $"Gauge: {_displayValue}")"
-         class="@CssClass">
+         class="@CssClass"
+         @onclick="HandleClick"
+         style="@(Editable ? "cursor:pointer;" : "")">
 
         @if (!string.IsNullOrEmpty(Title))
         {
             <SvgText x="@(Width / 2)" y="20" text-anchor="middle" class="arcadia-chart__title">@Title</SvgText>
         }
 
-        @* Background track — thinner than value arc so it hides cleanly behind it *@
+        @* Background track *@
         <path d="@_trackPath" fill="none" stroke="@TrackColor"
-              stroke-width="@F(StrokeWidth - 2)" stroke-linecap="round"
+              stroke-width="@F(StrokeWidth - 2)" stroke-linecap="@(RoundedCaps ? "round" : "butt")"
               opacity="@F(TrackOpacity)" class="arcadia-gauge__track" />
+
+        @* Colored range bands *@
+        @if (Ranges is not null)
+        {
+            @foreach (var range in Ranges)
+            {
+                var rangePath = BuildRangeArc(range.Start, range.End);
+                <path d="@rangePath" fill="none" stroke="@range.Color"
+                      stroke-width="@F(range.Width > 0 ? range.Width : StrokeWidth)"
+                      stroke-linecap="@(RoundedCaps ? "round" : "butt")"
+                      opacity="@F(range.Opacity)" />
+            }
+        }
 
         @* Value arc *@
         @if (!string.IsNullOrEmpty(_valuePath))
         {
-            <path d="@_valuePath" fill="none" stroke="@_valueColor"
-                  stroke-width="@F(StrokeWidth)" stroke-linecap="round"
-                  style="@(AnimateOnLoad ? $"stroke-dasharray:{F(_pathLength)};stroke-dashoffset:{F(_pathLength)};" : "")"
-                  class="arcadia-gauge__value @(AnimateOnLoad ? "arcadia-animate-gauge" : "")" />
+            @if (GradientColors is not null && GradientColors.Count >= 2)
+            {
+                <defs>
+                    <linearGradient id="@_gradientId" x1="0%" y1="0%" x2="100%" y2="0%">
+                        @for (var i = 0; i < GradientColors.Count; i++)
+                        {
+                            var pct = i * 100.0 / (GradientColors.Count - 1);
+                            <stop offset="@F(pct)%" stop-color="@GradientColors[i]" />
+                        }
+                    </linearGradient>
+                </defs>
+                <path d="@_valuePath" fill="none" stroke="url(#@_gradientId)"
+                      stroke-width="@F(StrokeWidth)" stroke-linecap="@(RoundedCaps ? "round" : "butt")"
+                      style="@(AnimateOnLoad ? $"stroke-dasharray:{F(_pathLength)};stroke-dashoffset:{F(_pathLength)};" : "")"
+                      class="arcadia-gauge__value @(AnimateOnLoad ? "arcadia-animate-gauge" : "")" />
+            }
+            else
+            {
+                <path d="@_valuePath" fill="none" stroke="@_valueColor"
+                      stroke-width="@F(StrokeWidth)" stroke-linecap="@(RoundedCaps ? "round" : "butt")"
+                      style="@(AnimateOnLoad ? $"stroke-dasharray:{F(_pathLength)};stroke-dashoffset:{F(_pathLength)};" : "")"
+                      class="arcadia-gauge__value @(AnimateOnLoad ? "arcadia-animate-gauge" : "")" />
+            }
         }
 
-        @* Center value text *@
-        <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy : _cy - 8)" text-anchor="middle"
-              dominant-baseline="central" class="arcadia-gauge__display-value">@_displayValue</SvgText>
-
-        @* Label below value *@
-        @if (!string.IsNullOrEmpty(Label))
+        @* Tick marks *@
+        @if (ShowTicks)
         {
-            <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy + 24 : _cy + 12)" text-anchor="middle"
-                  class="arcadia-gauge__label">@Label</SvgText>
+            @foreach (var tick in _ticks)
+            {
+                <line x1="@F(tick.X1)" y1="@F(tick.Y1)" x2="@F(tick.X2)" y2="@F(tick.Y2)"
+                      stroke="@TickColor" stroke-width="@(tick.IsMajor ? "2" : "1")" />
+            }
         }
 
-        @* Min/Max labels *@
-        @if (!FullCircle)
+        @* Tick labels *@
+        @if (ShowTickLabels)
+        {
+            @foreach (var label in _tickLabels)
+            {
+                <SvgText x="@F(label.X)" y="@F(label.Y)" fill="@TickLabelColor"
+                         font-size="@F(TickLabelFontSize)" text-anchor="middle"
+                         dominant-baseline="middle" class="arcadia-chart__tick-label">@label.Text</SvgText>
+            }
+        }
+
+        @* Needle pointer — rendered before text so text appears on top *@
+        @if (ShowNeedle)
+        {
+            var needleTipR = _radius - StrokeWidth / 2 - 2;
+            var needleBaseR = NeedleCapRadius + 2;
+            var tipX = _cx + needleTipR * Math.Cos(_valueAngleRad);
+            var tipY = _cy + needleTipR * Math.Sin(_valueAngleRad);
+            var baseX = _cx + needleBaseR * Math.Cos(_valueAngleRad);
+            var baseY = _cy + needleBaseR * Math.Sin(_valueAngleRad);
+            var perpAngle = _valueAngleRad + Math.PI / 2;
+            var baseX1 = baseX + (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
+            var baseY1 = baseY + (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
+            var baseX2 = baseX - (NeedleBaseWidth / 2) * Math.Cos(perpAngle);
+            var baseY2 = baseY - (NeedleBaseWidth / 2) * Math.Sin(perpAngle);
+            <polygon points="@F(tipX),@F(tipY) @F(baseX1),@F(baseY1) @F(baseX2),@F(baseY2)"
+                     fill="@NeedleColor" class="arcadia-gauge__needle @(AnimateOnLoad ? "arcadia-gauge__needle--animated" : "")" />
+            <circle cx="@F(_cx)" cy="@F(_cy)" r="@F(NeedleCapRadius)" fill="@NeedleColor" />
+        }
+
+        @* Center value / label display *@
+        @if (ShowValue)
+        {
+            @if (CenterTemplate is not null)
+            {
+                <foreignObject x="@F(_cx - _radius * 0.4)" y="@F(_cy - 20)" width="@F(_radius * 0.8)" height="40">
+                    @CenterTemplate
+                </foreignObject>
+            }
+            else
+            {
+                @if (ValueFontSize > 0 || ValueColor is not null)
+                {
+                    <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy : _cy - 8)" text-anchor="middle"
+                          dominant-baseline="central"
+                          fill="@(ValueColor ?? "")"
+                          font-size="@(ValueFontSize > 0 ? F(ValueFontSize) : "")"
+                          class="arcadia-gauge__display-value">@_displayValue</SvgText>
+                }
+                else
+                {
+                    <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy : _cy - 8)" text-anchor="middle"
+                          dominant-baseline="central" class="arcadia-gauge__display-value">@_displayValue</SvgText>
+                }
+
+                @if (!string.IsNullOrEmpty(Label))
+                {
+                    @if (LabelFontSize > 0 || LabelColor is not null)
+                    {
+                        <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy + 24 : _cy + 12)" text-anchor="middle"
+                              fill="@(LabelColor ?? "")"
+                              font-size="@(LabelFontSize > 0 ? F(LabelFontSize) : "")"
+                              class="arcadia-gauge__label">@Label</SvgText>
+                    }
+                    else
+                    {
+                        <SvgText x="@F(_cx)" y="@F(FullCircle ? _cy + 24 : _cy + 12)" text-anchor="middle"
+                              class="arcadia-gauge__label">@Label</SvgText>
+                    }
+                }
+            }
+        }
+
+        @* Min/Max labels (only when no custom tick labels and semi-circle) *@
+        @if (!FullCircle && !ShowTickLabels)
         {
             <SvgText x="@F(_cx - _radius)" y="@F(_cy + 20)" text-anchor="middle"
                   class="arcadia-chart__tick-label">@Min</SvgText>
@@ -45,7 +151,6 @@
                   class="arcadia-chart__tick-label">@Max</SvgText>
         }
     </svg>
-        <CommunityWatermark />
 
     @* Accessibility *@
     <div class="arcadia-sr-only" role="status" aria-live="polite">
