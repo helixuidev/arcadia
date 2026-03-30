@@ -1,0 +1,59 @@
+@namespace Arcadia.DashboardKit.Components
+@inherits ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@ItemStyle"
+     data-draggrid-id="@Id"
+     data-draggrid-locked="@(Locked ? "true" : "false")"
+     tabindex="0"
+     role="gridcell"
+     aria-grabbed="@(Parent?.IsKeyboardDragging(Id) == true ? "true" : "false")"
+     aria-label="@($"Panel {Id}")"
+     @onkeydown="OnKeyDown"
+     @onkeydown:preventDefault="ShouldPreventDefault"
+     @attributes="AdditionalAttributes">
+
+    <div class="arcadia-draggrid__handle">
+        @if (HeaderContent is not null)
+        {
+            @HeaderContent
+        }
+        else
+        {
+            <svg class="arcadia-draggrid__grip-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                <circle cx="5" cy="3" r="1.5" /><circle cx="11" cy="3" r="1.5" />
+                <circle cx="5" cy="8" r="1.5" /><circle cx="11" cy="8" r="1.5" />
+                <circle cx="5" cy="13" r="1.5" /><circle cx="11" cy="13" r="1.5" />
+            </svg>
+        }
+
+        @if (Parent?.AllowRemove == true && Parent?.EditMode == true && !Locked)
+        {
+            <button type="button"
+                    class="arcadia-draggrid__remove-btn"
+                    aria-label="@($"Remove panel {Id}")"
+                    @onclick="HandleRemove"
+                    @onclick:stopPropagation="true">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708Z"/>
+                </svg>
+            </button>
+        }
+    </div>
+
+    <div class="arcadia-draggrid__item-content">
+        @if (ItemTemplate is not null)
+        {
+            @ItemTemplate(ItemContext)
+        }
+        else
+        {
+            @ChildContent
+        }
+    </div>
+
+    @if (Parent?.AllowResize == true && Parent?.EditMode == true && !Locked && !Floating)
+    {
+        <div class="arcadia-draggrid__resize-handle" data-draggrid-resize="@Id"></div>
+    }
+</div>

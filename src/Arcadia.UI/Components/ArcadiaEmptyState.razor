@@ -1,0 +1,69 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    @if (Icon is not null)
+    {
+        <div class="arcadia-empty-state__icon">@Icon</div>
+    }
+    else
+    {
+        <div class="arcadia-empty-state__icon">
+            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="6" y="10" width="36" height="28" rx="4" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+                <path d="M6 18h36" stroke="currentColor" stroke-width="2" opacity="0.4"/>
+                <circle cx="24" cy="30" r="4" stroke="currentColor" stroke-width="2" opacity="0.3"/>
+                <path d="M22 30h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+            </svg>
+        </div>
+    }
+    <div class="arcadia-empty-state__title">@(Title ?? "No data")</div>
+    @if (!string.IsNullOrEmpty(Description))
+    {
+        <div class="arcadia-empty-state__description">@Description</div>
+    }
+    @if (ActionTemplate is not null)
+    {
+        <div class="arcadia-empty-state__actions">@ActionTemplate</div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the title text. Default is "No data".
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets optional description text displayed below the title.
+    /// </summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets a custom icon rendered above the title. A default icon is used if not provided.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Icon { get; set; }
+
+    /// <summary>
+    /// Gets or sets an optional action template (e.g., a button to create the first item).
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ActionTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the size of the empty state component.
+    /// Accepted values: "sm", "md", "lg". Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-empty-state")
+        .AddClass($"arcadia-empty-state--{Size}")
+        .AddClass(Class)
+        .Build();
+}

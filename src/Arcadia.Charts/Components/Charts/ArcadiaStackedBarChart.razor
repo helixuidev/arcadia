@@ -2,12 +2,14 @@
 @typeparam T
 @inherits ArcadiaBarChart<T>
 
+@* Stacked bar chart renders via ArcadiaBarChart which provides role="figure" and arcadia-sr-only table *@
 @{ base.BuildRenderTree(__builder); }
 
 @code {
     /// <summary>
     /// Stacked bar chart — bars stack on top of each other within each category.
     /// Equivalent to ArcadiaBarChart with Stacked=true.
+    /// Inherits full accessibility from ArcadiaBarChart: role="figure", aria-label, and sr-only data table.
     /// </summary>
     /// <example>
     /// <code>

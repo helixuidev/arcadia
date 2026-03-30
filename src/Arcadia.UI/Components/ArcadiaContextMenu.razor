@@ -1,0 +1,86 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @oncontextmenu="OnContextMenuAsync"
+     @oncontextmenu:preventDefault="!Disabled"
+     @attributes="AdditionalAttributes">
+    @ChildContent
+
+    @if (_open && !Disabled)
+    {
+        <div class="arcadia-context-menu__backdrop" @onclick="CloseAsync"></div>
+        <div class="arcadia-context-menu__menu"
+             role="menu"
+             aria-label="Context menu"
+             style="left: @(_posX)px; top: @(_posY)px;"
+             @onkeydown="OnKeyDownAsync">
+            @MenuContent
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the content area that triggers the context menu on right-click.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaContextMenu&gt;
+    ///     &lt;ChildContent&gt;&lt;div&gt;Right-click me&lt;/div&gt;&lt;/ChildContent&gt;
+    ///     &lt;MenuContent&gt;
+    ///         &lt;ArcadiaMenuItem Text="Cut" Icon="scissors" /&gt;
+    ///         &lt;ArcadiaMenuItem Text="Copy" /&gt;
+    ///     &lt;/MenuContent&gt;
+    /// &lt;/ArcadiaContextMenu&gt;
+    /// </code>
+    /// </example>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the menu items content displayed in the context menu.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? MenuContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the context menu is disabled. When true, the browser default context menu is shown. Defaults to false.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    private bool _open;
+    private double _posX;
+    private double _posY;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-context-menu")
+        .AddClass("arcadia-context-menu--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnContextMenuAsync(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+    {
+        if (Disabled) return;
+
+        _posX = args.ClientX;
+        _posY = args.ClientY;
+        _open = true;
+        await Task.CompletedTask;
+    }
+
+    private async Task CloseAsync()
+    {
+        _open = false;
+        await Task.CompletedTask;
+    }
+
+    private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            await CloseAsync();
+        }
+    }
+}

@@ -1,0 +1,53 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="status"
+     aria-label="@(Label ?? "Loading")"
+     @attributes="AdditionalAttributes">
+    <svg class="arcadia-spinner__svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle class="arcadia-spinner__track"
+                cx="12" cy="12" r="10"
+                stroke="currentColor"
+                stroke-width="3"
+                opacity="0.2" />
+        <path class="arcadia-spinner__arc"
+              d="M12 2a10 10 0 0 1 10 10"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="round" />
+    </svg>
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="arcadia-spinner__label">@Label</span>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the size of the spinner.
+    /// Accepted values: "sm" (16px), "md" (24px), "lg" (40px), "xl" (64px). Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    /// <summary>
+    /// Gets or sets the color of the spinner.
+    /// Accepted values: "primary", "success", "warning", "danger". Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Gets or sets the accessible label for the spinner. Default is "Loading".
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-spinner")
+        .AddClass($"arcadia-spinner--{Size}")
+        .AddClass($"arcadia-spinner--{Color}")
+        .AddClass(Class)
+        .Build();
+}

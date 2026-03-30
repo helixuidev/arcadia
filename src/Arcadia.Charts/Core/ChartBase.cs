@@ -499,6 +499,28 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
         public override double Invert(double pixel) => _logScale.Invert(pixel);
     }
 
+    /// <summary>Maximum total stagger duration in milliseconds. Per-element delay is reduced when element count is high so total animation never exceeds this cap. Default: 2000ms.</summary>
+    private const int MaxStaggerMs = 2000;
+
+    /// <summary>Above this element count, per-element stagger animations are skipped entirely (only the line-draw / area-fade plays).</summary>
+    private const int StaggerDisableThreshold = 200;
+
+    /// <summary>Calculates a capped animation delay for a specific element index. Returns 0 if element count exceeds the stagger threshold.</summary>
+    /// <param name="index">Zero-based index of the element.</param>
+    /// <param name="totalCount">Total number of elements to animate.</param>
+    /// <param name="baseDelayMs">Desired per-element delay in ms for small datasets.</param>
+    protected static int GetAnimationDelay(int index, int totalCount, int baseDelayMs)
+    {
+        if (totalCount >= StaggerDisableThreshold)
+            return 0;
+        // Cap so total stagger never exceeds MaxStaggerMs
+        var effectiveDelay = Math.Min(baseDelayMs, MaxStaggerMs / Math.Max(totalCount, 1));
+        return index * effectiveDelay;
+    }
+
+    /// <summary>Returns true if per-element stagger animations should be applied. False when data count is too large.</summary>
+    protected static bool ShouldStagger(int totalCount) => totalCount < StaggerDisableThreshold;
+
     /// <summary>Formats a value for screen reader tables, replacing NaN with "—".</summary>
     protected static string FormatSrValue(double value) =>
         double.IsNaN(value) || double.IsInfinity(value) ? "—" : value.ToString("G4");

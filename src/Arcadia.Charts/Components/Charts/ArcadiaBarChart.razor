@@ -38,8 +38,8 @@ else if (Data is not null && Data.Count > 0 && XField is not null && Series is n
             {
                 <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.Width)" height="@F(bar.Height)"
                       rx="@(Rounded ? $"{CornerRadius}" : "0")" fill="@bar.Color"
-                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {bar.DataIndex * 80 + bar.SeriesIndex * 40}ms;" : "")cursor: @(OnPointClick.HasDelegate ? "pointer" : "default");"
+                      class="arcadia-chart__bar @(AnimateOnLoad && ShouldStagger(_bars.Count) ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad && ShouldStagger(_bars.Count) ? $"animation-delay: {GetAnimationDelay(bar.DataIndex, _bars.Count, 80)}ms;" : "")cursor: @(OnPointClick.HasDelegate ? "pointer" : "default");"
                       @onmouseover="@(e => ShowTooltipForPoint(bar.SeriesName, bar.Value, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction"
                       @onclick="@(() => HandleBarClick(bar))" />

@@ -49,8 +49,37 @@ export function loadState(key) {
     try { return localStorage.getItem('arcadia-grid-' + key); } catch { return null; }
 }
 
+// Print grid in a new window
+export function printGrid(html) {
+    const win = window.open('', '_blank', 'width=900,height=600');
+    if (!win) return;
+    win.document.write(`<!DOCTYPE html>
+<html><head><title>Print Grid</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 20px; }
+  table { page-break-inside: auto; }
+  tr { page-break-inside: avoid; }
+  @media print { body { margin: 0; } }
+</style>
+</head><body>${html}</body></html>`);
+    win.document.close();
+    win.focus();
+    win.print();
+}
+
+// Infinite scroll — IntersectionObserver on sentinel element
+export function observeInfiniteScroll(sentinelEl, dotNetRef) {
+    const observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+            dotNetRef.invokeMethodAsync('OnInfiniteScrollTrigger');
+        }
+    }, { threshold: 0.1 });
+    observer.observe(sentinelEl);
+    return observer;
+}
+
 // Column resize via pointer events
-export function initResizeHandles(tableElement, minWidth) {
+export function initResizeHandles(tableElement, minWidth, dotNetRef) {
     if (!tableElement) return;
     const min = minWidth || 50;
     const headers = tableElement.querySelectorAll('th .arcadia-grid__resize-handle');
@@ -86,11 +115,21 @@ export function initResizeHandles(tableElement, minWidth) {
             };
 
             const onUp = () => {
+                const finalWidth = th.offsetWidth;
                 handle.classList.remove('arcadia-grid__resize-handle--active');
                 document.body.style.cursor = '';
                 document.body.style.userSelect = '';
                 document.removeEventListener('pointermove', onMove);
                 document.removeEventListener('pointerup', onUp);
+
+                // Report the new width back to .NET for state persistence
+                if (dotNetRef) {
+                    try {
+                        dotNetRef.invokeMethodAsync('OnColumnResized', idx, finalWidth + 'px');
+                    } catch (err) {
+                        // Circuit may be disconnected
+                    }
+                }
             };
 
             document.addEventListener('pointermove', onMove);

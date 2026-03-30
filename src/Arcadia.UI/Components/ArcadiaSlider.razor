@@ -1,0 +1,109 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="arcadia-slider__label" for="@InputId">@Label</label>
+    }
+
+    <div class="arcadia-slider__track-wrapper">
+        <input type="range"
+               id="@InputId"
+               class="arcadia-slider__input"
+               value="@Value"
+               min="@Min"
+               max="@Max"
+               step="@Step"
+               disabled="@Disabled"
+               aria-label="@(Label ?? "Slider")"
+               aria-valuemin="@Min"
+               aria-valuemax="@Max"
+               aria-valuenow="@Value"
+               @oninput="OnInputAsync" />
+    </div>
+
+    @if (ShowValue)
+    {
+        <span class="arcadia-slider__value">@Value.ToString("G")</span>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the current slider value. Supports two-way binding via <see cref="ValueChanged"/>.
+    /// </summary>
+    [Parameter]
+    public double Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Value"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<double> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the minimum value. Default is 0.
+    /// </summary>
+    [Parameter]
+    public double Min { get; set; } = 0;
+
+    /// <summary>
+    /// Gets or sets the maximum value. Default is 100.
+    /// </summary>
+    [Parameter]
+    public double Max { get; set; } = 100;
+
+    /// <summary>
+    /// Gets or sets the step increment. Default is 1.
+    /// </summary>
+    [Parameter]
+    public double Step { get; set; } = 1;
+
+    /// <summary>
+    /// Gets or sets whether the current value is displayed next to the slider. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool ShowValue { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether the slider is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the color theme of the slider. Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Gets or sets the label text displayed above the slider.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string InputId => $"{ElementId}-input";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-slider")
+        .AddClass($"arcadia-slider--{Color}", !string.IsNullOrEmpty(Color))
+        .AddClass("arcadia-slider--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnInputAsync(ChangeEventArgs args)
+    {
+        if (Disabled) return;
+
+        if (double.TryParse(args.Value?.ToString(), System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture, out var parsed))
+        {
+            Value = parsed;
+            await ValueChanged.InvokeAsync(parsed);
+        }
+    }
+}

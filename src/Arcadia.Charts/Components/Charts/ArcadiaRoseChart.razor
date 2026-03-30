@@ -21,8 +21,8 @@ else if (Data is not null && Data.Count > 0 && NameField is not null && ValueFie
             {
                 var sector = _sectors[i];
                 <path d="@sector.Path" fill="@sector.Color" stroke="@SliceStrokeColor" stroke-width="@F(SliceStrokeWidth)"
-                      class="arcadia-chart__pie-slice @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
+                      class="arcadia-chart__pie-slice @(AnimateOnLoad && ShouldStagger(_sectors.Count) ? "arcadia-animate-point" : "")"
+                      style="@(AnimateOnLoad && ShouldStagger(_sectors.Count) ? $"animation-delay: {GetAnimationDelay(i, _sectors.Count, 100)}ms;" : "")"
                       @onmouseover="@(e => ShowRoseTooltip(sector.Name, sector.Value, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction" />
 

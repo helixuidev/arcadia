@@ -53,7 +53,7 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
                 var color = ResolveColor(Color, 0);
 
                 <circle cx="@F(px)" cy="@F(py)" r="@F(size)" fill="@color" opacity="@PointOpacity.ToString("F2")"
-                        class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
+                        class="arcadia-chart__point @(AnimateOnLoad && ShouldStagger(Data!.Count) ? "arcadia-animate-point" : "")"
                         style="@GetPointStyle(i)"
                         @onmouseover="@(e => ShowScatterTooltip(XField(item), YField(item), e.ClientX, e.ClientY))"
                         @onmouseout="HideTooltipAction"

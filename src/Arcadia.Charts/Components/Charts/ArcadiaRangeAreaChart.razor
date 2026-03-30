@@ -82,8 +82,8 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @foreach (var pt in _upperPoints)
             {
                 <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@StrokeColor"
-                        class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                        style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                        class="arcadia-chart__point @(AnimateOnLoad && ShouldStagger(_upperPoints.Count) ? "arcadia-animate-point" : "")"
+                        style="@(AnimateOnLoad && ShouldStagger(_upperPoints.Count) ? $"animation-delay: {GetAnimationDelay(pt.Index, _upperPoints.Count, 40)}ms;" : "")"
                         @onmouseover="@(e => ShowTooltipForPoint("Upper", pt.Value, e.ClientX, e.ClientY))"
                         @onmouseout="HideTooltipAction" />
             }
@@ -92,8 +92,8 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
             @foreach (var pt in _lowerPoints)
             {
                 <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@StrokeColor"
-                        class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                        style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                        class="arcadia-chart__point @(AnimateOnLoad && ShouldStagger(_lowerPoints.Count) ? "arcadia-animate-point" : "")"
+                        style="@(AnimateOnLoad && ShouldStagger(_lowerPoints.Count) ? $"animation-delay: {GetAnimationDelay(pt.Index, _lowerPoints.Count, 40)}ms;" : "")"
                         @onmouseover="@(e => ShowTooltipForPoint("Lower", pt.Value, e.ClientX, e.ClientY))"
                         @onmouseout="HideTooltipAction" />
             }
@@ -104,8 +104,8 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
                 @foreach (var pt in _middlePoints)
                 {
                     <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@EffectiveMiddleColor"
-                            class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
-                            style="@(AnimateOnLoad ? $"animation-delay: {pt.Index * 40}ms;" : "")"
+                            class="arcadia-chart__point @(AnimateOnLoad && ShouldStagger(_middlePoints.Count) ? "arcadia-animate-point" : "")"
+                            style="@(AnimateOnLoad && ShouldStagger(_middlePoints.Count) ? $"animation-delay: {GetAnimationDelay(pt.Index, _middlePoints.Count, 40)}ms;" : "")"
                             @onmouseover="@(e => ShowTooltipForPoint("Middle", pt.Value, e.ClientX, e.ClientY))"
                             @onmouseout="HideTooltipAction" />
                 }

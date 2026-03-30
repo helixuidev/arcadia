@@ -4,7 +4,9 @@
 
 @* Collect column definitions from child components *@
 <CascadingValue Value="Collector" IsFixed="true">
-    @ChildContent
+    <CascadingValue Value="CommandCollector" IsFixed="true">
+        @ChildContent
+    </CascadingValue>
 </CascadingValue>
 
 <div class="arcadia-grid @(Dense ? "arcadia-grid--dense" : "") @(Striped ? "arcadia-grid--striped" : "") @(Hoverable ? "arcadia-grid--hoverable" : "") @Class"
@@ -61,13 +63,20 @@
     {
         @* ── Virtual scroll mode: CSS Grid layout ── *@
         <div class="arcadia-grid__toolbar">
+            @if (ShowAddRow)
+            {
+                <button class="arcadia-grid__filter-toggle arcadia-grid__add-row-btn"
+                        @onclick="AddRowAsync"
+                        aria-label="@TextAddRow">@TextAddRow</button>
+            }
             @if (Filterable)
             {
                 <button class="arcadia-grid__filter-toggle @(_showFilters ? "arcadia-grid__filter-toggle--active" : "")"
                         @onclick="ToggleFilters">@TextFilter</button>
             }
-            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">@TextCsv</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">@TextExcel</button>
+            <button class="arcadia-grid__export-btn" @onclick="ExportCsvDownload">@TextCsv</button>
+            <button class="arcadia-grid__export-btn" @onclick="() => ExportToExcelAsync()">@TextExcel</button>
+            <button class="arcadia-grid__export-btn" @onclick="() => ExportToPdfAsync()">@TextPdf</button>
             <span class="arcadia-grid__page-info" style="margin-left:auto;">@TotalCount rows</span>
         </div>
         <div class="arcadia-grid__scroll-container" style="height: @(Height ?? "400px");">
@@ -85,6 +94,10 @@
                         else if (sortDir == SortDirection.Descending) { <span class="arcadia-grid__sort-icon" style="opacity:1;color:var(--_accent);">&#9660;</span> }
                         @if (sortPri > 1) { <span class="arcadia-grid__sort-priority">@sortPri</span> }
                     </div>
+                }
+                @if (HasCommandColumn)
+                {
+                    <div class="arcadia-grid__virtual-hcell" style="width:@ResolvedCommandColumnWidth;">@ResolvedCommandColumnTitle</div>
                 }
             </div>
             @* Virtualized rows *@
@@ -107,8 +120,29 @@
                         @foreach (var col in Columns.Where(c => c.IsVisible))
                         {
                             <div class="arcadia-grid__virtual-cell">
-                                @if (col.Template is not null) { @col.Template(vItem) }
+                                @if (col.TooltipTemplate is not null)
+                                {
+                                    <div class="arcadia-grid__tooltip-wrapper">
+                                        @if (col.Template is not null) { @col.Template(vItem) }
+                                        else if (col.ResolvedField is not null) { @col.FormatValue(col.ResolvedField(vItem)) }
+                                        <div class="arcadia-grid__tooltip">@col.TooltipTemplate(vItem)</div>
+                                    </div>
+                                }
+                                else if (col.Tooltip is not null)
+                                {
+                                    <div title="@col.Tooltip">
+                                        @if (col.Template is not null) { @col.Template(vItem) }
+                                        else if (col.ResolvedField is not null) { @col.FormatValue(col.ResolvedField(vItem)) }
+                                    </div>
+                                }
+                                else if (col.Template is not null) { @col.Template(vItem) }
                                 else if (col.ResolvedField is not null) { @col.FormatValue(col.ResolvedField(vItem)) }
+                            </div>
+                        }
+                        @if (HasCommandColumn)
+                        {
+                            <div class="arcadia-grid__virtual-cell arcadia-grid__virtual-cell--command" @onclick:stopPropagation="true">
+                                @RenderCommandCell(vItem)
                             </div>
                         }
                     </div>
@@ -118,9 +152,15 @@
     }
     else if (Columns.Count > 0)
     {
-        @if (ShowToolbar || Filterable)
+        @if (ShowToolbar || Filterable || ShowAddRow)
         {
         <div class="arcadia-grid__toolbar">
+            @if (ShowAddRow)
+            {
+                <button class="arcadia-grid__filter-toggle arcadia-grid__add-row-btn"
+                        @onclick="AddRowAsync"
+                        aria-label="@TextAddRow">@TextAddRow</button>
+            }
             <input type="text" class="arcadia-grid__search-input" placeholder="@TextSearch"
                    aria-label="Quick filter — search across all columns"
                    autocomplete="off"
@@ -133,8 +173,9 @@
             }
             <button class="arcadia-grid__filter-toggle @(_showColumnPicker ? "arcadia-grid__filter-toggle--active" : "")"
                     @onclick="ToggleColumnPicker">@TextColumns</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="ExportCsvDownload">@TextCsv</button>
-            <button class="arcadia-grid__filter-toggle" @onclick="() => ExportToExcelAsync()">@TextExcel</button>
+            <button class="arcadia-grid__export-btn" @onclick="ExportCsvDownload">@TextCsv</button>
+            <button class="arcadia-grid__export-btn" @onclick="() => ExportToExcelAsync()">@TextExcel</button>
+            <button class="arcadia-grid__export-btn" @onclick="() => ExportToPdfAsync()">@TextPdf</button>
             @if (_selectedItems.Count > 0)
             {
                 <span class="arcadia-grid__selection-count">@_selectedItems.Count selected</span>
@@ -169,6 +210,22 @@
         }
         <table class="arcadia-grid__table" @ref="TableRef">
             <thead class="@(FixedHeader ? "arcadia-grid__thead--sticky" : "")">
+                @if (HasColumnGroups())
+                {
+                    <tr class="arcadia-grid__header-group" role="row">
+                        @if (AllowRowReorder) { <th class="arcadia-grid__th"></th> }
+                        @if (ShowRowSelector) { <th class="arcadia-grid__th"></th> }
+                        @if (DetailTemplate is not null) { <th class="arcadia-grid__th"></th> }
+                        @if (Selectable && MultiSelect) { <th class="arcadia-grid__th"></th> }
+                        @{ var groupCols = GetColumnGroupHeaders(); }
+                        @foreach (var gh in groupCols)
+                        {
+                            <th class="arcadia-grid__th arcadia-grid__th--group" colspan="@gh.Span"
+                                style="text-align:center;">@gh.Title</th>
+                        }
+                        @if (HasCommandColumn) { <th class="arcadia-grid__th"></th> }
+                    </tr>
+                }
                 <tr role="row">
                     @if (AllowRowReorder)
                     {
@@ -204,13 +261,13 @@
                         <th role="columnheader"
                             aria-sort="@ariaSort"
                             aria-label="@GetSortAriaLabel(localCol)"
-                            style="@(localCol.Width is not null ? $"width:{localCol.Width};" : "") text-align:@localCol.Align; @(localCol.IsFrozen ? $"position:sticky;left:0;z-index:3;background:var(--_header);" : "")"
-                            class="arcadia-grid__th @(isSortable ? "arcadia-grid__th--sortable" : "") @(localHeaderIdx == _dragSourceCol ? "arcadia-grid__th--dragging" : "") @(localHeaderIdx == _dropTargetCol ? "arcadia-grid__th--drop-target" : "")"
-                            draggable="true"
+                            style="@(localCol.EffectiveWidth is not null ? $"width:{localCol.EffectiveWidth};" : "") text-align:@localCol.Align; @(localCol.IsFrozen ? $"position:sticky;{(localCol.FrozenPosition == "right" ? "right" : "left")}:0;z-index:3;background:var(--_header);" : "")"
+                            class="arcadia-grid__th @(isSortable ? "arcadia-grid__th--sortable" : "") @(AllowColumnReorder && localHeaderIdx == _dragSourceCol ? "arcadia-grid__th--dragging" : "") @(AllowColumnReorder && localHeaderIdx == _dropTargetCol ? "arcadia-grid__th--drop-target" : "") @(AllowColumnReorder ? "arcadia-grid__th--reorderable" : "")"
+                            draggable="@(AllowColumnReorder ? "true" : "false")"
                             @ondragstart="@(() => StartColumnDrag(localHeaderIdx))"
                             @ondragover="@(() => SetDropTarget(localHeaderIdx))"
-                            @ondragover:preventDefault
-                            @ondrop="@(() => DropColumn(localHeaderIdx))"
+                            @ondragover:preventDefault="@AllowColumnReorder"
+                            @ondrop="@(async () => await DropColumn(localHeaderIdx))"
                             @ondragend="EndColumnDrag"
                             @onclick="@((MouseEventArgs e) => HandleHeaderClick(localCol, e.ShiftKey))"
                             @oncontextmenu="@((MouseEventArgs e) => ShowColumnMenu(localCol, e))"
@@ -235,6 +292,10 @@
                             }
                             <div class="arcadia-grid__resize-handle"></div>
                         </th>
+                    }
+                    @if (HasCommandColumn)
+                    {
+                        <th class="arcadia-grid__th" style="width:@ResolvedCommandColumnWidth;">@ResolvedCommandColumnTitle</th>
                     }
                 </tr>
                 @if (_showFilters && Filterable)
@@ -298,6 +359,10 @@
                                 }
                             </th>
                         }
+                        @if (HasCommandColumn)
+                        {
+                            <th class="arcadia-grid__th"></th>
+                        }
                     </tr>
                 }
             </thead>
@@ -329,7 +394,7 @@
             <tbody>
                 @{ var rows = !string.IsNullOrEmpty(GroupBy) ? new List<TItem>() : GetPagedData().ToList();
                    var rowIdx = _pageIndex * PageSize;
-                   var colSpan = Columns.Count(c => c.IsVisible) + (Selectable && MultiSelect ? 1 : 0) + (DetailTemplate is not null ? 1 : 0) + (ShowRowSelector ? 1 : 0); }
+                   var colSpan = Columns.Count(c => c.IsVisible) + (Selectable && MultiSelect ? 1 : 0) + (DetailTemplate is not null ? 1 : 0) + (ShowRowSelector ? 1 : 0) + (HasCommandColumn ? 1 : 0); }
 
                 @* Grouped rendering *@
                 @if (!string.IsNullOrEmpty(GroupBy))
@@ -343,6 +408,17 @@
                                 <span class="arcadia-grid__expand-icon @(IsGroupExpanded(gKey) ? "arcadia-grid__expand-icon--open" : "")">&#9656;</span>
                                 @group.Label
                                 <span class="arcadia-grid__group-count">(@group.Items.Count)</span>
+                                @if (ShowGroupAggregates)
+                                {
+                                    @foreach (var aggCol in Columns.Where(c => c.IsVisible && c.Aggregate != Arcadia.DataGrid.Core.AggregateType.None && c.ResolvedField is not null))
+                                    {
+                                        var aggVal = ComputeAggregateForItems(aggCol, aggCol.Aggregate, group.Items);
+                                        <span class="arcadia-grid__group-agg">
+                                            <span class="arcadia-grid__group-agg-label">@($"{AggregateLabel(aggCol.Aggregate)}({aggCol.Title}):")</span>
+                                            @aggCol.FormatValue(aggVal)
+                                        </span>
+                                    }
+                                }
                             </td>
                         </tr>
                         @if (IsGroupExpanded(gKey))
@@ -357,8 +433,29 @@
                                     @foreach (var col in Columns.Where(c => c.IsVisible))
                                     {
                                         <td role="gridcell" style="text-align:@col.Align;" class="arcadia-grid__td">
-                                            @if (col.Template is not null) { @col.Template(item) }
+                                            @if (col.TooltipTemplate is not null)
+                                            {
+                                                <div class="arcadia-grid__tooltip-wrapper">
+                                                    @if (col.Template is not null) { @col.Template(item) }
+                                                    else if (col.ResolvedField is not null) { @col.FormatValue(col.ResolvedField(item)) }
+                                                    <div class="arcadia-grid__tooltip">@col.TooltipTemplate(localItem)</div>
+                                                </div>
+                                            }
+                                            else if (col.Tooltip is not null)
+                                            {
+                                                <div title="@col.Tooltip">
+                                                    @if (col.Template is not null) { @col.Template(item) }
+                                                    else if (col.ResolvedField is not null) { @col.FormatValue(col.ResolvedField(item)) }
+                                                </div>
+                                            }
+                                            else if (col.Template is not null) { @col.Template(item) }
                                             else if (col.ResolvedField is not null) { @col.FormatValue(col.ResolvedField(item)) }
+                                        </td>
+                                    }
+                                    @if (HasCommandColumn)
+                                    {
+                                        <td class="arcadia-grid__td arcadia-grid__td--command" @onclick:stopPropagation="true">
+                                            @RenderCommandCell(item)
                                         </td>
                                     }
                                 </tr>
@@ -422,19 +519,29 @@
                                            @onclick="@(() => ToggleSelection(localItem))" />
                                 </td>
                             }
-                            @{ var bodyRowIdx = localRowIdx - 1; var bodyColIdx = 0; }
+                            @{ var bodyRowIdx = localRowIdx - 1; var bodyColIdx = 0; var skipCols = 0; }
                             @foreach (var col in Columns.Where(c => c.IsVisible))
                             {
+                                @* ColSpan: skip columns consumed by a previous cell's colspan *@
+                                if (skipCols > 0) { skipCols--; bodyColIdx++; continue; }
+
                                 var editCol = col;
                                 var cellClass = editCol.CellClass?.Invoke(item);
                                 var isEditCell = editCol.Editable && IsEditingCell(localItem, editCol.ResolvedKey);
                                 var localBodyRow = bodyRowIdx;
                                 var localBodyCol = bodyColIdx;
                                 var isFocused = IsFocusedCell(bodyRowIdx, bodyColIdx);
+                                var cfClass = editCol.GetConditionalFormatClass();
+                                var rawVal = editCol.ResolvedField?.Invoke(localItem);
+                                var cfStyle = editCol.GetConditionalFormatStyle(rawVal);
+                                var frozenStyle = editCol.IsFrozen ? $"position:sticky;{(editCol.FrozenPosition == "right" ? "right" : "left")}:0;z-index:1;background:var(--_bg);" : "";
+                                var colSpanVal = editCol.ColSpan?.Invoke(localItem) ?? 1;
+                                if (colSpanVal > 1) { skipCols = colSpanVal - 1; }
                                 <td role="gridcell"
                                     id="@GetCellId(bodyRowIdx, bodyColIdx)"
-                                    style="text-align:@editCol.Align;"
-                                    class="arcadia-grid__td @cellClass @(isEditCell ? "arcadia-grid__td--editing" : "") @(isFocused ? "arcadia-grid__td--focused" : "")"
+                                    style="text-align:@editCol.Align; @cfStyle @frozenStyle"
+                                    class="arcadia-grid__td @cellClass @cfClass @(isEditCell ? "arcadia-grid__td--editing" : "") @(isFocused ? "arcadia-grid__td--focused" : "")"
+                                    colspan="@(colSpanVal > 1 ? colSpanVal : (int?)null)"
                                     @onclick="@(() => SetFocusCell(localBodyRow, localBodyCol))"
                                     @ondblclick="@(editCol.Editable ? () => StartEdit(localItem, editCol.ResolvedKey) : (Action)(() => {}))">
                                     @if (isEditCell)
@@ -445,11 +552,36 @@
                                         }
                                         else
                                         {
-                                            <input class="arcadia-grid__edit-input"
-                                                   value="@editCol.FormatValue(editCol.ResolvedField?.Invoke(localItem))"
-                                                   @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == "Enter") await CommitEdit(); else if (e.Key == "Escape") CancelEdit(); })"
-                                                   @onblur="@(async () => await CommitEdit())" />
+                                            var hasError = !string.IsNullOrEmpty(editCol.ValidationError);
+                                            <div class="arcadia-grid__edit-wrapper">
+                                                <input class="arcadia-grid__edit-input @(hasError ? "arcadia-grid__edit-input--invalid" : "")"
+                                                       value="@editCol.FormatValue(editCol.ResolvedField?.Invoke(localItem))"
+                                                       aria-invalid="@(hasError ? "true" : "false")"
+                                                       aria-describedby="@(hasError ? $"edit-error-{editCol.ResolvedKey}" : null)"
+                                                       @oninput="@((ChangeEventArgs e) => UpdateEditValue(e.Value?.ToString()))"
+                                                       @onkeydown="@(async (KeyboardEventArgs e) => { if (e.Key == "Enter") await CommitEdit(); else if (e.Key == "Escape") CancelEdit(); })"
+                                                       @onblur="@(async () => await CommitEdit())" />
+                                                @if (hasError)
+                                                {
+                                                    <div id="edit-error-@editCol.ResolvedKey" class="arcadia-grid__edit-error" role="alert">@editCol.ValidationError</div>
+                                                }
+                                            </div>
                                         }
+                                    }
+                                    else if (editCol.TooltipTemplate is not null)
+                                    {
+                                        <div class="arcadia-grid__tooltip-wrapper">
+                                            @if (editCol.Template is not null) { @editCol.Template(item) }
+                                            else if (editCol.ResolvedField is not null) { @editCol.FormatValue(rawVal) }
+                                            <div class="arcadia-grid__tooltip">@editCol.TooltipTemplate(localItem)</div>
+                                        </div>
+                                    }
+                                    else if (editCol.Tooltip is not null)
+                                    {
+                                        <div title="@editCol.Tooltip">
+                                            @if (editCol.Template is not null) { @editCol.Template(item) }
+                                            else if (editCol.ResolvedField is not null) { @editCol.FormatValue(rawVal) }
+                                        </div>
                                     }
                                     else if (editCol.Template is not null)
                                     {
@@ -457,10 +589,24 @@
                                     }
                                     else if (editCol.ResolvedField is not null)
                                     {
-                                        @editCol.FormatValue(editCol.ResolvedField(item))
+                                        @if (editCol.ConditionalFormat == "DataBar")
+                                        {
+                                            <div class="arcadia-grid__cf-bar" style="width:var(--cf-pct, 0%);"></div>
+                                        }
+                                        @if (editCol.ConditionalFormat == "IconSet")
+                                        {
+                                            <span class="arcadia-grid__cf-icon">@editCol.GetConditionalFormatIcon(rawVal)</span>
+                                        }
+                                        @editCol.FormatValue(rawVal)
                                     }
                                 </td>
                                 bodyColIdx++;
+                            }
+                            @if (HasCommandColumn)
+                            {
+                                <td class="arcadia-grid__td arcadia-grid__td--command" @onclick:stopPropagation="true">
+                                    @RenderCommandCell(localItem)
+                                </td>
                             }
                         </tr>
                         @if (DetailTemplate is not null && IsExpanded(localItem))
@@ -477,7 +623,7 @@
             @* Footer aggregates *@
             @if (Columns.Any(c => c.IsVisible && (c.Aggregate != Arcadia.DataGrid.Core.AggregateType.None || c.FooterTemplate is not null)))
             {
-                <tfoot>
+                <tfoot class="@(StickyFooter ? "arcadia-grid__tfoot--sticky" : "")">
                     <tr class="arcadia-grid__footer-row">
                         @if (DetailTemplate is not null) { <td class="arcadia-grid__td"></td> }
                         @if (Selectable && MultiSelect) { <td class="arcadia-grid__td"></td> }
@@ -495,13 +641,30 @@
                                 }
                             </td>
                         }
+                        @if (HasCommandColumn)
+                        {
+                            <td class="arcadia-grid__td"></td>
+                        }
                     </tr>
                 </tfoot>
             }
         </table>
 
-        @* Pagination — hidden in virtual scroll mode *@
-        @if (!VirtualizeRows && PageSize > 0 && TotalCount > PageSize)
+        @* Infinite scroll sentinel *@
+        @if (InfiniteScroll)
+        {
+            <div @ref="_infiniteScrollSentinel" class="arcadia-grid__infinite-sentinel" style="height:1px;"></div>
+            @if (_loadingMore)
+            {
+                <div class="arcadia-grid__infinite-loading">
+                    <span class="arcadia-grid__infinite-spinner"></span>
+                    Loading more...
+                </div>
+            }
+        }
+
+        @* Pagination — hidden in virtual scroll and infinite scroll modes *@
+        @if (!VirtualizeRows && !InfiniteScroll && PageSize > 0 && TotalCount > PageSize)
         {
             <div class="arcadia-grid__pagination" aria-label="Grid pagination">
                 <span class="arcadia-grid__page-info">
@@ -522,7 +685,7 @@
                         @onchange="HandlePageSizeChange">
                     @foreach (var opt in PageSizeOptions)
                     {
-                        <option value="@opt" selected="@(opt == PageSize)">@opt rows</option>
+                        <option value="@opt">@opt rows</option>
                     }
                 </select>
             </div>

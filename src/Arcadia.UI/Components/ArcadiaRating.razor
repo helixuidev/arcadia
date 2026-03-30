@@ -1,0 +1,176 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="slider"
+     aria-valuemin="0"
+     aria-valuemax="@Max"
+     aria-valuenow="@Value"
+     aria-label="Rating"
+     tabindex="@(ReadOnly ? -1 : 0)"
+     @onkeydown="OnKeyDownAsync"
+     @attributes="AdditionalAttributes">
+
+    @for (int i = 1; i <= Max; i++)
+    {
+        var starIndex = i;
+        <span class="@StarClass(starIndex)"
+              @onclick="() => OnStarClickAsync(starIndex)"
+              @onmouseover="() => OnStarHover(starIndex)"
+              @onmouseout="OnStarLeave"
+              role="presentation">
+            <svg class="arcadia-rating__star-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                @if (AllowHalf && IsHalfStar(starIndex))
+                {
+                    <defs>
+                        <linearGradient id="@($"half-{ElementId}-{starIndex}")">
+                            <stop offset="50%" stop-color="currentColor" />
+                            <stop offset="50%" stop-color="transparent" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                          fill="@($"url(#half-{ElementId}-{starIndex})")"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linejoin="round" />
+                }
+                else
+                {
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
+                          fill="@(IsFilledStar(starIndex) ? "currentColor" : "none")"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          stroke-linejoin="round" />
+                }
+            </svg>
+        </span>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the current rating value. Supports two-way binding via <see cref="ValueChanged"/>.
+    /// </summary>
+    [Parameter]
+    public int Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Value"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum number of stars. Default is 5.
+    /// </summary>
+    [Parameter]
+    public int Max { get; set; } = 5;
+
+    /// <summary>
+    /// Gets or sets whether the rating is read-only. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether half-star ratings are allowed. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool AllowHalf { get; set; }
+
+    /// <summary>
+    /// Gets or sets the size of the stars. Valid values: "sm", "md", "lg". Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    /// <summary>
+    /// Gets or sets the color of filled stars. Default is "warning".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "warning";
+
+    private int _hoverValue;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-rating")
+        .AddClass($"arcadia-rating--{Size}", !string.IsNullOrEmpty(Size))
+        .AddClass($"arcadia-rating--{Color}", !string.IsNullOrEmpty(Color))
+        .AddClass("arcadia-rating--readonly", ReadOnly)
+        .AddClass(Class)
+        .Build();
+
+    private string StarClass(int index)
+    {
+        var active = _hoverValue > 0 ? _hoverValue : Value;
+        var filled = index <= active;
+        return Arcadia.Core.Utilities.CssBuilder.Default("arcadia-rating__star")
+            .AddClass("arcadia-rating__star--filled", filled)
+            .AddClass("arcadia-rating__star--half", AllowHalf && IsHalfStar(index))
+            .Build() ?? "arcadia-rating__star";
+    }
+
+    private bool IsFilledStar(int index)
+    {
+        var active = _hoverValue > 0 ? _hoverValue : Value;
+        return index <= active;
+    }
+
+    private bool IsHalfStar(int index)
+    {
+        // Half-star visual is a placeholder; with int Value, half is not stored
+        return false;
+    }
+
+    private async Task OnStarClickAsync(int index)
+    {
+        if (ReadOnly) return;
+
+        Value = index;
+        await ValueChanged.InvokeAsync(Value);
+    }
+
+    private void OnStarHover(int index)
+    {
+        if (ReadOnly) return;
+        _hoverValue = index;
+    }
+
+    private void OnStarLeave()
+    {
+        _hoverValue = 0;
+    }
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs args)
+    {
+        if (ReadOnly) return;
+
+        switch (args.Key)
+        {
+            case "ArrowRight":
+            case "ArrowUp":
+                if (Value < Max)
+                {
+                    Value++;
+                    await ValueChanged.InvokeAsync(Value);
+                }
+                break;
+            case "ArrowLeft":
+            case "ArrowDown":
+                if (Value > 0)
+                {
+                    Value--;
+                    await ValueChanged.InvokeAsync(Value);
+                }
+                break;
+            case "Home":
+                Value = 0;
+                await ValueChanged.InvokeAsync(Value);
+                break;
+            case "End":
+                Value = Max;
+                await ValueChanged.InvokeAsync(Value);
+                break;
+        }
+    }
+}

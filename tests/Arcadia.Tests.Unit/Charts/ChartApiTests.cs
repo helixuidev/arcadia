@@ -494,8 +494,8 @@ public class ScatterChartApiTests : Arcadia.Tests.Unit.ChartTestBase
 
         var points = cut.FindAll(".arcadia-animate-point");
         points.Count.Should().Be(20);
-        // First point should have delay 0ms, later ones should have increasing delays
-        points[0].GetAttribute("style").Should().Contain("animation-delay: 0ms");
+        // First point has no explicit delay (0ms is omitted), later ones have increasing delays
+        points[0].GetAttribute("style").Should().NotContain("animation-delay");
         points[5].GetAttribute("style").Should().Contain("animation-delay: 100ms");
     }
 }

@@ -1,0 +1,123 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+@if (Visible)
+{
+    <div class="@CssClass"
+         style="@Style"
+         role="alert"
+         @attributes="AdditionalAttributes">
+        <svg class="arcadia-alert__icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            @switch (Severity)
+            {
+                case "success":
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M8 12l2.5 2.5L16 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    break;
+                case "warning":
+                    <path d="M12 2L1 21h22L12 2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
+                    <line x1="12" y1="9" x2="12" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="17.5" r="1" fill="currentColor"/>
+                    break;
+                case "error":
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    break;
+                default:
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="12" y1="11" x2="12" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="8" r="1" fill="currentColor"/>
+                    break;
+            }
+        </svg>
+        <div class="arcadia-alert__content">
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <div class="arcadia-alert__title">@Title</div>
+            }
+            @if (ChildContent is not null)
+            {
+                <div class="arcadia-alert__message">@ChildContent</div>
+            }
+        </div>
+        @if (ActionTemplate is not null)
+        {
+            <div class="arcadia-alert__actions">@ActionTemplate</div>
+        }
+        @if (Dismissible)
+        {
+            <button class="arcadia-alert__dismiss"
+                    type="button"
+                    aria-label="Dismiss alert"
+                    @onclick="DismissAsync">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="16" height="16">
+                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        }
+    </div>
+}
+
+@code {
+    /// <summary>
+    /// Gets or sets the alert severity level.
+    /// Accepted values: "info", "success", "warning", "error". Default is "info".
+    /// </summary>
+    [Parameter]
+    public string Severity { get; set; } = "info";
+
+    /// <summary>
+    /// Gets or sets the optional title text displayed above the message body.
+    /// </summary>
+    [Parameter]
+    public string? Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the alert message body content.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the alert can be dismissed. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Dismissible { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the dismiss button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnDismiss { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the alert is visible. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the visual variant of the alert.
+    /// Accepted values: "filled", "outlined", "soft". Default is "filled".
+    /// </summary>
+    [Parameter]
+    public string Variant { get; set; } = "filled";
+
+    /// <summary>
+    /// Gets or sets an optional action template rendered in the alert actions area.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ActionTemplate { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-alert")
+        .AddClass($"arcadia-alert--{Severity}")
+        .AddClass($"arcadia-alert--{Variant}")
+        .AddClass(Class)
+        .Build();
+
+    private async Task DismissAsync()
+    {
+        Visible = false;
+        await OnDismiss.InvokeAsync();
+    }
+}

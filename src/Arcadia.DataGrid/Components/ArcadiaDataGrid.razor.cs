@@ -45,6 +45,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Keep column headers fixed at the top during vertical scroll. Requires Height to be set. Default is true.</summary>
     [Parameter] public bool FixedHeader { get; set; } = true;
 
+    /// <summary>Keep the footer aggregate row fixed at the bottom during vertical scroll. Requires Height to be set. Default is false.</summary>
+    [Parameter] public bool StickyFooter { get; set; }
+
     /// <summary>Fixed height with scroll. Null = auto height.</summary>
     [Parameter] public string? Height { get; set; }
 
@@ -84,6 +87,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Excel export button text. Default: "Excel"</summary>
     [Parameter] public string TextExcel { get; set; } = "Excel";
 
+    /// <summary>PDF export button text. Default: "PDF"</summary>
+    [Parameter] public string TextPdf { get; set; } = "PDF";
+
     /// <summary>Page info format. Use {0} for current page and {1} for total pages. Default: "Page {0} of {1}"</summary>
     [Parameter] public string TextPageInfo { get; set; } = "Page {0} of {1}";
 
@@ -98,6 +104,12 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     /// <summary>Pending changes format. Use {0} for count. Default: "{0} pending"</summary>
     [Parameter] public string TextPending { get; set; } = "{0} pending";
+
+    /// <summary>Enable drag-and-drop column reordering by dragging column headers. Default is false.</summary>
+    [Parameter] public bool AllowColumnReorder { get; set; }
+
+    /// <summary>Callback fired after columns are reordered via drag-and-drop.</summary>
+    [Parameter] public EventCallback OnColumnsReordered { get; set; }
 
     /// <summary>Enable drag-and-drop row reordering. Shows a drag handle column on the left. Requires Data to be a mutable IList.</summary>
     /// <remarks>Fires OnRowReordered with old and new index after a row is dropped. Data must be an IList (not IReadOnlyList) for in-place reorder.</remarks>
@@ -117,6 +129,48 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     /// <summary>Sort ascending menu item. Default: "Sort Ascending"</summary>
     [Parameter] public string TextSortAscending { get; set; } = "Sort Ascending";
+
+    // ── Command Column ──
+
+    /// <summary>Command template rendered as an extra column at the end of each row. Use for action buttons (Edit, Delete, etc.).</summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaDataGrid Data="@items" CommandTemplate="@(item => @&lt;div&gt;&lt;button @onclick="() => Edit(item)"&gt;Edit&lt;/button&gt;&lt;/div&gt;)"&gt;
+    /// </code>
+    /// </example>
+    [Parameter] public RenderFragment<TItem>? CommandTemplate { get; set; }
+
+    /// <summary>Header text for the command column. Default is "Actions".</summary>
+    [Parameter] public string CommandColumnTitle { get; set; } = "Actions";
+
+    /// <summary>CSS width for the command column. Default is "120px".</summary>
+    [Parameter] public string CommandColumnWidth { get; set; } = "120px";
+
+    // ── Inline Row Add ──
+
+    /// <summary>Enable infinite scroll (load-more-on-scroll) as an alternative to pagination. When true, pagination is hidden and OnLoadMore fires as the user scrolls to the bottom.</summary>
+    [Parameter] public bool InfiniteScroll { get; set; }
+
+    /// <summary>Number of rows to load per batch when infinite scrolling. Default is 50.</summary>
+    [Parameter] public int InfiniteScrollPageSize { get; set; } = 50;
+
+    /// <summary>Callback fired when the infinite scroll sentinel becomes visible. Receives the next page number (1-based).</summary>
+    [Parameter] public EventCallback<int> OnLoadMore { get; set; }
+
+    /// <summary>Localization text for the copy-with-headers keyboard shortcut. Default: "Copy with Headers"</summary>
+    [Parameter] public string TextCopyWithHeaders { get; set; } = "Copy with Headers";
+
+    /// <summary>Show an "Add Row" button in the toolbar. Requires Data to be an IList for in-place insertion. Default is false.</summary>
+    [Parameter] public bool ShowAddRow { get; set; }
+
+    /// <summary>Callback invoked when the Add Row button is clicked. Use to initialize the new row or handle server-side creation.</summary>
+    [Parameter] public EventCallback OnRowAdd { get; set; }
+
+    /// <summary>Position where the new row is inserted: "top" or "bottom". Default is "top".</summary>
+    [Parameter] public string NewRowPosition { get; set; } = "top";
+
+    /// <summary>Add Row button text. Default: "Add Row"</summary>
+    [Parameter] public string TextAddRow { get; set; } = "Add Row";
 
     /// <summary>Show row selector column with row numbers and state indicators.</summary>
     [Parameter] public bool ShowRowSelector { get; set; }
@@ -183,6 +237,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     /// <summary>Lambda accessor for the group value. Takes precedence over GroupBy string when set. Use for computed grouping (e.g., GroupByField="@(e => e.Salary > 100000 ? "Senior" : "Junior")").</summary>
     [Parameter] public Func<TItem, object>? GroupByField { get; set; }
 
+    /// <summary>Show aggregate summaries (Sum, Avg, etc.) in group header rows for columns that have Aggregate set. Default is false.</summary>
+    [Parameter] public bool ShowGroupAggregates { get; set; }
+
     /// <summary>Enable virtual scrolling for large datasets. Requires Height to be set. Disables pagination.</summary>
     /// <remarks>Requires Height to be set. Renders only visible rows plus OverscanCount buffer rows. Disables pagination when enabled.</remarks>
     [Parameter] public bool VirtualizeRows { get; set; }
@@ -223,6 +280,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     // ── Internal state ──
     internal ArcadiaDataGridColumnCollector<TItem> Collector { get; } = new();
+    internal ArcadiaDataGridCommandCollector<TItem> CommandCollector { get; } = new();
     private List<SortDescriptor> _sortStack = new();
     private int _pageIndex;
     private Dictionary<string, FilterDescriptor> _filters = new();
@@ -240,6 +298,12 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     private double _contextMenuX, _contextMenuY;
     private bool _showContextMenu;
     private bool _isServerMode => LoadData.HasDelegate;
+
+    // ── Infinite scroll state ──
+    private int _infiniteScrollPage;
+    private bool _loadingMore;
+    private IJSObjectReference? _infiniteScrollObserver;
+    private ElementReference _infiniteScrollSentinel;
 
     // ── Keyboard navigation ──
     private int _focusRow;
@@ -272,7 +336,10 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     protected override void OnInitialized()
     {
         Collector.OnColumnsChanged = () => InvokeAsync(StateHasChanged);
+        CommandCollector.OnCommandColumnChanged = () => InvokeAsync(StateHasChanged);
     }
+
+    private DotNetObjectReference<ArcadiaDataGrid<TItem>>? _dotNetRef;
 
     protected override void OnParametersSet()
     {
@@ -281,6 +348,45 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         {
             Selectable = true;
             MultiSelect = SelectionMode == DataGridSelectionMode.Multiple;
+        }
+
+        // Calculate min/max for columns with ConditionalFormat
+        CalculateConditionalFormatRanges();
+    }
+
+    /// <summary>Calculate min/max values for columns that have ConditionalFormat set.</summary>
+    private void CalculateConditionalFormatRanges()
+    {
+        if (Data is null || Data.Count == 0) return;
+
+        foreach (var col in Columns.Where(c => !string.IsNullOrEmpty(c.ConditionalFormat) && c.ResolvedField is not null))
+        {
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            foreach (var item in Data)
+            {
+                var raw = col.ResolvedField!(item);
+                double val;
+                switch (raw)
+                {
+                    case double d: val = d; break;
+                    case int i: val = i; break;
+                    case long l: val = l; break;
+                    case decimal m: val = (double)m; break;
+                    case float f: val = f; break;
+                    default:
+                        if (raw is not null && double.TryParse(raw.ToString(), out var p)) val = p;
+                        else continue;
+                        break;
+                }
+                if (val < min) min = val;
+                if (val > max) max = val;
+            }
+            if (min != double.MaxValue)
+            {
+                col.ColumnMin = min;
+                col.ColumnMax = max;
+            }
         }
     }
 
@@ -296,15 +402,34 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             _resizeInitialized = true;
             try
             {
+                _dotNetRef ??= DotNetObjectReference.Create(this);
                 _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
                     "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
-                await _jsModule.InvokeVoidAsync("initResizeHandles", TableRef, 50);
+                await _jsModule.InvokeVoidAsync("initResizeHandles", TableRef, 50, _dotNetRef);
             }
             catch (JSException) { } // JS module load failed
 #if NET6_0_OR_GREATER
             catch (JSDisconnectedException) { } // Circuit disconnected
 #endif
             catch (InvalidOperationException) { } // JS interop unavailable during static prerendering
+        }
+
+        // Initialize infinite scroll observer
+        if (InfiniteScroll && _infiniteScrollObserver is null && _infiniteScrollSentinel.Id is not null)
+        {
+            try
+            {
+                _dotNetRef ??= DotNetObjectReference.Create(this);
+                _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                    "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
+                _infiniteScrollObserver = await _jsModule.InvokeAsync<IJSObjectReference>(
+                    "observeInfiniteScroll", _infiniteScrollSentinel, _dotNetRef);
+            }
+            catch (JSException) { }
+#if NET6_0_OR_GREATER
+            catch (JSDisconnectedException) { }
+#endif
+            catch (InvalidOperationException) { }
         }
     }
 
@@ -679,15 +804,46 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             _expandedRows.Add(item);
     }
 
-    // ── Inline editing (with double-commit guard) ──
+    // ── Inline editing (with double-commit guard + validation) ──
 
     internal bool IsEditing(TItem item) => _editingRow is not null && EqualityComparer<TItem>.Default.Equals(_editingRow, item);
     internal bool IsEditingCell(TItem item, string colKey) => IsEditing(item) && _editingColumn == colKey;
 
+    /// <summary>Pending edit input value, captured from the edit cell for validation.</summary>
+    private string? _editValue;
+
     internal void StartEdit(TItem item, string colKey)
     {
+        // Clear any previous validation errors
+        ClearAllValidationErrors();
         _editingRow = item;
         _editingColumn = colKey;
+        // Initialize edit value from current cell value
+        var col = Columns.FirstOrDefault(c => c.ResolvedKey == colKey);
+        _editValue = col?.ResolvedField is not null ? col.FormatValue(col.ResolvedField(item)) : "";
+    }
+
+    /// <summary>Update the pending edit value (called from input oninput).</summary>
+    internal void UpdateEditValue(string? value)
+    {
+        _editValue = value;
+        // Live validation: validate as user types
+        if (_editingColumn is not null)
+        {
+            var col = Columns.FirstOrDefault(c => c.ResolvedKey == _editingColumn);
+            if (col?.Validator is not null)
+            {
+                col.ValidationError = col.Validator(value ?? "");
+            }
+        }
+    }
+
+    /// <summary>Get the current validation error for the editing column.</summary>
+    internal string? GetEditValidationError()
+    {
+        if (_editingColumn is null) return null;
+        var col = Columns.FirstOrDefault(c => c.ResolvedKey == _editingColumn);
+        return col?.ValidationError;
     }
 
     internal async Task CommitEdit()
@@ -696,21 +852,51 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         _editCommitting = true;
         try
         {
+            // Validate before committing
+            if (_editingColumn is not null)
+            {
+                var col = Columns.FirstOrDefault(c => c.ResolvedKey == _editingColumn);
+                if (col?.Validator is not null)
+                {
+                    var error = col.Validator(_editValue ?? "");
+                    col.ValidationError = error;
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Announce($"Validation error: {error}");
+                        _editCommitting = false;
+                        return; // Don't commit — stay in edit mode
+                    }
+                }
+            }
+
             if (_editingRow is not null && OnRowEdit.HasDelegate)
                 await OnRowEdit.InvokeAsync(_editingRow);
         }
         finally
         {
-            _editingRow = default;
-            _editingColumn = null;
-            _editCommitting = false;
+            if (_editCommitting) // only clear if we actually committed
+            {
+                ClearAllValidationErrors();
+                _editingRow = default;
+                _editingColumn = null;
+                _editValue = null;
+                _editCommitting = false;
+            }
         }
     }
 
     internal void CancelEdit()
     {
+        ClearAllValidationErrors();
         _editingRow = default;
         _editingColumn = null;
+        _editValue = null;
+    }
+
+    private void ClearAllValidationErrors()
+    {
+        foreach (var col in Columns)
+            col.ValidationError = null;
     }
 
     // ── Grouping ──
@@ -775,6 +961,28 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                 "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
             await _jsModule.InvokeVoidAsync("downloadBlob", bytes, filename,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        }
+        catch (JSException) { }
+#if NET6_0_OR_GREATER
+        catch (JSDisconnectedException) { }
+#endif
+    }
+
+    /// <summary>Export grid data as a PDF file download. Respects current sort, filter, and column visibility.</summary>
+    /// <param name="filename">Download filename. Default is "export.pdf".</param>
+    /// <param name="title">Optional title displayed above the table in the PDF.</param>
+    /// <param name="orientation">Page orientation: "portrait" or "landscape". Default is "landscape".</param>
+    public async Task ExportToPdfAsync(string filename = "export.pdf", string? title = null, string orientation = "landscape")
+    {
+        try
+        {
+            var visibleCols = Columns.Where(c => c.IsVisible && c.ResolvedField is not null).ToList();
+            IEnumerable<TItem> allData = ApplySort(GetCachedFilteredData());
+            var bytes = Services.PdfExportService.ToPdf(visibleCols, allData, title, orientation);
+
+            _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
+            await _jsModule.InvokeVoidAsync("downloadBlob", bytes, filename, "application/pdf");
         }
         catch (JSException) { }
 #if NET6_0_OR_GREATER
@@ -868,13 +1076,55 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         };
     }
 
+    /// <summary>Compute an aggregate value for a column over a specific subset of items (e.g., a group).</summary>
+    internal double ComputeAggregateForItems(ArcadiaColumn<TItem> col, AggregateType type, IReadOnlyList<TItem> items)
+    {
+        if (col.ResolvedField is null || items.Count == 0) return 0;
+
+        var values = items.Select(item =>
+        {
+            var raw = col.ResolvedField(item);
+            return raw switch
+            {
+                double d => d,
+                int i => (double)i,
+                long l => (double)l,
+                decimal m => (double)m,
+                float f => (double)f,
+                _ => double.TryParse(raw?.ToString(), out var p) ? p : double.NaN
+            };
+        }).Where(v => !double.IsNaN(v)).ToList();
+
+        if (values.Count == 0) return 0;
+        return type switch
+        {
+            AggregateType.Sum => values.Sum(),
+            AggregateType.Average => values.Average(),
+            AggregateType.Count => values.Count,
+            AggregateType.Min => values.Min(),
+            AggregateType.Max => values.Max(),
+            _ => 0
+        };
+    }
+
+    /// <summary>Format an aggregate type label.</summary>
+    internal static string AggregateLabel(AggregateType type) => type switch
+    {
+        AggregateType.Sum => "Sum",
+        AggregateType.Average => "Avg",
+        AggregateType.Count => "Count",
+        AggregateType.Min => "Min",
+        AggregateType.Max => "Max",
+        _ => ""
+    };
+
     // ── Virtual scroll helpers ──
 
     /// <summary>Generate CSS grid-template-columns from visible column widths.</summary>
     internal string GetGridTemplateColumns()
     {
         var cols = Columns.Where(c => c.IsVisible).ToList();
-        var template = string.Join(" ", cols.Select(c => c.Width ?? "1fr"));
+        var template = string.Join(" ", cols.Select(c => c.EffectiveWidth ?? "1fr"));
         return $"grid-template-columns: {template};";
     }
 
@@ -990,7 +1240,10 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                     Announce(selected ? "Row selected" : "Row deselected");
                 }
                 break;
-            case "c" when e.CtrlKey || e.MetaKey:
+            case "c" when (e.CtrlKey || e.MetaKey) && e.ShiftKey:
+                _ = CopyToClipboardWithHeaders(visibleCols);
+                break;
+            case "c" when (e.CtrlKey || e.MetaKey) && !e.ShiftKey:
                 _ = CopyToClipboard(visibleCols);
                 break;
             default:
@@ -1023,13 +1276,17 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
     // ── Clipboard ──
 
-    private async Task CopyToClipboard(List<ArcadiaColumn<TItem>> visibleCols)
+    private async Task CopyToClipboard(List<ArcadiaColumn<TItem>> visibleCols, bool includeHeaders = false)
     {
         try
         {
             var cols = visibleCols.Where(c => c.ResolvedField is not null).ToList();
             var sb = new System.Text.StringBuilder();
-            sb.AppendLine(string.Join("\t", cols.Select(c => c.Title)));
+
+            if (includeHeaders)
+            {
+                sb.AppendLine(string.Join("\t", cols.Select(c => c.Title)));
+            }
 
             IEnumerable<TItem> rows = _selectedItems.Count > 0
                 ? _selectedItems
@@ -1043,10 +1300,14 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
                 "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
             await _jsModule.InvokeVoidAsync("copyToClipboard", sb.ToString());
-            Announce($"Copied {(_selectedItems.Count > 0 ? _selectedItems.Count : "all")} rows to clipboard");
+            var suffix = includeHeaders ? " with headers" : "";
+            Announce($"Copied {(_selectedItems.Count > 0 ? _selectedItems.Count : "all")} rows{suffix} to clipboard");
         }
         catch { } // Clipboard API may not be available
     }
+
+    private Task CopyToClipboardWithHeaders(List<ArcadiaColumn<TItem>> visibleCols)
+        => CopyToClipboard(visibleCols, includeHeaders: true);
 
     // ── Column Header Menu (Pin/Hide) ──
 
@@ -1141,6 +1402,66 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         StateHasChanged();
     }
 
+    // ── Print ──
+
+    /// <summary>Open a print-friendly version of the grid in a new window and trigger the browser print dialog.</summary>
+    public async Task PrintAsync()
+    {
+        try
+        {
+            var visibleCols = Columns.Where(c => c.IsVisible).ToList();
+            IEnumerable<TItem> allData = ApplySort(GetCachedFilteredData());
+
+            var sb = new System.Text.StringBuilder();
+            sb.Append("<table style=\"border-collapse:collapse;width:100%;font-family:system-ui,sans-serif;font-size:12px;\">");
+            sb.Append("<thead><tr>");
+            foreach (var col in visibleCols)
+            {
+                sb.Append($"<th style=\"border:1px solid #ddd;padding:8px 12px;background:#f5f5f5;text-align:{col.Align};font-weight:600;\">");
+                sb.Append(System.Net.WebUtility.HtmlEncode(col.Title));
+                sb.Append("</th>");
+            }
+            sb.Append("</tr></thead><tbody>");
+
+            foreach (var item in allData)
+            {
+                sb.Append("<tr>");
+                foreach (var col in visibleCols)
+                {
+                    var val = col.ResolvedField is not null ? col.FormatValue(col.ResolvedField(item)) : "";
+                    sb.Append($"<td style=\"border:1px solid #ddd;padding:6px 12px;text-align:{col.Align};\">");
+                    sb.Append(System.Net.WebUtility.HtmlEncode(val));
+                    sb.Append("</td>");
+                }
+                sb.Append("</tr>");
+            }
+
+            sb.Append("</tbody></table>");
+
+            _jsModule ??= await JSRuntime.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
+            await _jsModule.InvokeVoidAsync("printGrid", sb.ToString());
+        }
+        catch (JSException) { }
+#if NET6_0_OR_GREATER
+        catch (JSDisconnectedException) { }
+#endif
+    }
+
+    // ── Column Resize Persist (JS → .NET callback) ──
+
+    /// <summary>Called from JS when a column resize completes. Updates the column width and persists state.</summary>
+    [JSInvokable]
+    public async Task OnColumnResized(int columnIndex, string newWidth)
+    {
+        var visibleCols = Columns.Where(c => c.IsVisible).ToList();
+        if (columnIndex >= 0 && columnIndex < visibleCols.Count)
+        {
+            visibleCols[columnIndex].RuntimeWidth = newWidth;
+            await SaveStateAsync();
+        }
+    }
+
     // ── State Persistence ──
 
     /// <summary>Get the current grid state for persistence.</summary>
@@ -1151,6 +1472,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         PageSize = PageSize,
         ColumnVisibility = Columns.Any(c => !c.IsVisible)
             ? Columns.ToDictionary(c => c.ResolvedKey, c => c.IsVisible)
+            : null,
+        ColumnWidths = Columns.Any(c => c.EffectiveWidth is not null)
+            ? Columns.Where(c => c.EffectiveWidth is not null).ToDictionary(c => c.ResolvedKey, c => c.EffectiveWidth!)
             : null,
     };
 
@@ -1170,6 +1494,14 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             {
                 if (state.ColumnVisibility.TryGetValue(col.ResolvedKey, out var vis))
                     col.IsVisible = vis;
+            }
+        }
+        if (state.ColumnWidths is not null)
+        {
+            foreach (var col in Columns)
+            {
+                if (state.ColumnWidths.TryGetValue(col.ResolvedKey, out var width))
+                    col.RuntimeWidth = width;
             }
         }
         InvalidateCache();
@@ -1213,6 +1545,21 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         catch { } // localStorage may not be available
     }
 
+    // ── Infinite Scroll ──
+
+    /// <summary>Called from JS IntersectionObserver when the infinite scroll sentinel becomes visible.</summary>
+    [JSInvokable]
+    public async Task OnInfiniteScrollTrigger()
+    {
+        if (_loadingMore || !InfiniteScroll || !OnLoadMore.HasDelegate) return;
+        _loadingMore = true;
+        StateHasChanged();
+        _infiniteScrollPage++;
+        await OnLoadMore.InvokeAsync(_infiniteScrollPage);
+        _loadingMore = false;
+        StateHasChanged();
+    }
+
     // ── ARIA Live Announcements ──
 
     private void Announce(string message)
@@ -1229,21 +1576,60 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         await InvokeAsync(StateHasChanged);
     }
 
+    // ── Stacked / Grouped Column Headers ──
+
+    /// <summary>Whether any visible column has a non-null Group parameter.</summary>
+    internal bool HasColumnGroups() => Columns.Any(c => c.IsVisible && !string.IsNullOrEmpty(c.Group));
+
+    /// <summary>Build the list of group header cells with their colspan values. Adjacent columns with the same Group are merged; ungrouped columns get an empty header.</summary>
+    internal List<(string Title, int Span)> GetColumnGroupHeaders()
+    {
+        var result = new List<(string Title, int Span)>();
+        var visibleCols = Columns.Where(c => c.IsVisible).ToList();
+
+        string? currentGroup = null;
+        int currentSpan = 0;
+
+        foreach (var col in visibleCols)
+        {
+            var group = col.Group;
+            if (group == currentGroup)
+            {
+                currentSpan++;
+            }
+            else
+            {
+                if (currentSpan > 0)
+                    result.Add((currentGroup ?? "", currentSpan));
+                currentGroup = group;
+                currentSpan = 1;
+            }
+        }
+
+        if (currentSpan > 0)
+            result.Add((currentGroup ?? "", currentSpan));
+
+        return result;
+    }
+
     // ── Column Reorder (Drag & Drop) ──
 
     private int _dragSourceCol = -1;
     private int _dropTargetCol = -1;
 
-    internal void StartColumnDrag(int colIndex) { _dragSourceCol = colIndex; }
-    internal void SetDropTarget(int colIndex) { _dropTargetCol = colIndex; }
+    internal void StartColumnDrag(int colIndex) { if (AllowColumnReorder) _dragSourceCol = colIndex; }
+    internal void SetDropTarget(int colIndex) { if (AllowColumnReorder) _dropTargetCol = colIndex; }
     internal void EndColumnDrag() { _dragSourceCol = -1; _dropTargetCol = -1; }
 
-    internal void DropColumn(int targetIndex)
+    internal async Task DropColumn(int targetIndex)
     {
+        if (!AllowColumnReorder) { EndColumnDrag(); return; }
         if (_dragSourceCol >= 0 && _dragSourceCol != targetIndex)
         {
             Collector.MoveColumn(_dragSourceCol, targetIndex);
             Announce($"Column moved to position {targetIndex + 1}");
+            if (OnColumnsReordered.HasDelegate)
+                await OnColumnsReordered.InvokeAsync();
         }
         EndColumnDrag();
     }
@@ -1272,11 +1658,90 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         EndRowDrag();
     }
 
+    // ── Command Column ──
+
+    /// <summary>Whether a command column should be rendered (either via CommandTemplate parameter or registered ArcadiaCommandColumn child).</summary>
+    internal bool HasCommandColumn => CommandTemplate is not null || CommandCollector.HasCommandColumn;
+
+    /// <summary>Render the command cell for a given item.</summary>
+    internal RenderFragment RenderCommandCell(TItem item)
+    {
+        if (CommandTemplate is not null)
+            return CommandTemplate(item);
+        if (CommandCollector.CommandColumn is not null)
+            return CommandCollector.CommandColumn.RenderCell(item);
+        return builder => { };
+    }
+
+    /// <summary>Get the command column title.</summary>
+    internal string ResolvedCommandColumnTitle =>
+        CommandCollector.CommandColumn?.Title ?? CommandColumnTitle;
+
+    /// <summary>Get the command column width.</summary>
+    internal string ResolvedCommandColumnWidth =>
+        CommandCollector.CommandColumn?.Width ?? CommandColumnWidth;
+
+    // ── Inline Row Add ──
+
+    /// <summary>Insert a new default row and optionally start editing it.</summary>
+    internal async Task AddRowAsync()
+    {
+        if (OnRowAdd.HasDelegate)
+            await OnRowAdd.InvokeAsync();
+
+        if (Data is System.Collections.IList mutableList)
+        {
+            try
+            {
+                var newItem = Activator.CreateInstance<TItem>();
+                if (string.Equals(NewRowPosition, "bottom", StringComparison.OrdinalIgnoreCase))
+                    mutableList.Add(newItem!);
+                else
+                    mutableList.Insert(0, newItem!);
+
+                InvalidateCache();
+
+                // Navigate to the new row's page and set it as current
+                if (string.Equals(NewRowPosition, "bottom", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Go to last page
+                    if (PageSize > 0 && PageCount > 0)
+                        _pageIndex = PageCount - 1;
+                }
+                else
+                {
+                    _pageIndex = 0;
+                }
+
+                _currentRow = newItem;
+
+                // Start editing the first editable column if available
+                var firstEditable = Columns.FirstOrDefault(c => c.IsVisible && c.Editable);
+                if (firstEditable is not null && newItem is not null)
+                    StartEdit(newItem, firstEditable.ResolvedKey);
+
+                Announce("New row added");
+            }
+            catch (MissingMethodException)
+            {
+                // TItem has no parameterless constructor — caller should handle via OnRowAdd
+            }
+        }
+
+        StateHasChanged();
+    }
+
     // ── Disposal ──
 
     public async ValueTask DisposeAsync()
     {
         _disposed = true;
+        try
+        {
+            if (_infiniteScrollObserver is not null)
+                await _infiniteScrollObserver.InvokeVoidAsync("disconnect");
+        }
+        catch { }
         try
         {
             if (_jsModule is not null)
@@ -1286,6 +1751,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         catch (JSDisconnectedException) { }
 #endif
         catch (ObjectDisposedException) { }
+        _dotNetRef?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

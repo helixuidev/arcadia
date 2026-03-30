@@ -25,8 +25,8 @@ else if (HasData) {
             var chord = _chords[i];
             var idx = i;
             <path d="@chord.Path" fill="@chord.Color" opacity="@F(ChordOpacity)"
-                  class="arcadia-chart__chord-ribbon @(AnimateOnLoad ? "arcadia-animate-chord" : "")"
-                  style="@(AnimateOnLoad ? $"animation-delay: {idx * 40}ms;" : "")"
+                  class="arcadia-chart__chord-ribbon @(AnimateOnLoad && ShouldStagger(_chords.Count) ? "arcadia-animate-chord" : "")"
+                  style="@(AnimateOnLoad && ShouldStagger(_chords.Count) ? $"animation-delay: {GetAnimationDelay(idx, _chords.Count, 40)}ms;" : "")"
                   @onmouseover="@(e => ShowChordTooltip(chord, e.ClientX, e.ClientY))"
                   @onmouseout="HideTooltipAction"
                   @onclick="@(() => HandleChordClick(chord))" />

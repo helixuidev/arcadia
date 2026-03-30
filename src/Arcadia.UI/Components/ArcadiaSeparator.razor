@@ -1,0 +1,50 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="separator"
+     aria-orientation="@Orientation"
+     @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <span class="arcadia-separator__label">@Label</span>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the orientation of the separator.
+    /// Accepted values: "horizontal", "vertical". Default is "horizontal".
+    /// </summary>
+    [Parameter]
+    public string Orientation { get; set; } = "horizontal";
+
+    /// <summary>
+    /// Gets or sets optional text displayed in the center of the separator.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>
+    /// Gets or sets the line style variant.
+    /// Accepted values: "solid", "dashed", "dotted". Default is "solid".
+    /// </summary>
+    [Parameter]
+    public string Variant { get; set; } = "solid";
+
+    /// <summary>
+    /// Gets or sets the color of the separator.
+    /// Accepted values: "default", "primary", "muted". Default is "default".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "default";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-separator")
+        .AddClass($"arcadia-separator--{Orientation}")
+        .AddClass($"arcadia-separator--{Variant}")
+        .AddClass($"arcadia-separator--{Color}", Color != "default")
+        .AddClass("arcadia-separator--has-label", !string.IsNullOrEmpty(Label))
+        .AddClass(Class)
+        .Build();
+}

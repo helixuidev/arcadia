@@ -1,0 +1,202 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes"
+     role="region"
+     aria-roledescription="carousel"
+     aria-label="Carousel">
+    <div class="arcadia-carousel__viewport">
+        <div class="arcadia-carousel__track"
+             style="transform: translateX(-@(ActiveIndex * 100)%);">
+            <CascadingValue Value="this" IsFixed="true">
+                @ChildContent
+            </CascadingValue>
+        </div>
+    </div>
+
+    @if (ShowArrows && _slides.Count > 1)
+    {
+        <button type="button"
+                class="arcadia-carousel__arrow arcadia-carousel__arrow--prev"
+                aria-label="Previous slide"
+                disabled="@(!Loop && ActiveIndex == 0)"
+                @onclick="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </button>
+        <button type="button"
+                class="arcadia-carousel__arrow arcadia-carousel__arrow--next"
+                aria-label="Next slide"
+                disabled="@(!Loop && ActiveIndex >= _slides.Count - 1)"
+                @onclick="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6" />
+            </svg>
+        </button>
+    }
+
+    @if (ShowDots && _slides.Count > 1)
+    {
+        <div class="arcadia-carousel__dots" role="tablist" aria-label="Slide navigation">
+            @for (var i = 0; i < _slides.Count; i++)
+            {
+                var index = i;
+                <button type="button"
+                        class="arcadia-carousel__dot @(index == ActiveIndex ? "arcadia-carousel__dot--active" : "")"
+                        role="tab"
+                        aria-selected="@(index == ActiveIndex)"
+                        aria-label="@($"Go to slide {index + 1}")"
+                        @onclick="() => GoTo(index)">
+                </button>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private readonly List<ArcadiaCarouselSlide> _slides = new();
+    private System.Threading.Timer? _autoPlayTimer;
+
+    /// <summary>
+    /// Gets or sets the child content containing <see cref="ArcadiaCarouselSlide"/> elements.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the zero-based index of the currently active slide.
+    /// </summary>
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the active slide index changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<int> ActiveIndexChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether slides auto-advance. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool AutoPlay { get; set; }
+
+    /// <summary>
+    /// Gets or sets the auto-play interval in milliseconds. Default is 5000.
+    /// </summary>
+    [Parameter]
+    public int AutoPlayInterval { get; set; } = 5000;
+
+    /// <summary>
+    /// Gets or sets whether navigation arrows are displayed. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool ShowArrows { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether dot indicators are displayed. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool ShowDots { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether the carousel wraps around from last to first slide. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool Loop { get; set; } = true;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-carousel")
+        .AddClass(Class)
+        .Build();
+
+    protected override void OnParametersSet()
+    {
+        SetupAutoPlay();
+    }
+
+    /// <summary>
+    /// Registers a slide with this carousel. Called internally by <see cref="ArcadiaCarouselSlide"/>.
+    /// </summary>
+    internal void RegisterSlide(ArcadiaCarouselSlide slide)
+    {
+        if (!_slides.Contains(slide))
+        {
+            _slides.Add(slide);
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Unregisters a slide from this carousel. Called internally by <see cref="ArcadiaCarouselSlide"/>.
+    /// </summary>
+    internal void UnregisterSlide(ArcadiaCarouselSlide slide)
+    {
+        if (_slides.Remove(slide))
+        {
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Returns the index of a slide within the carousel.
+    /// </summary>
+    internal int GetSlideIndex(ArcadiaCarouselSlide slide) => _slides.IndexOf(slide);
+
+    private async Task GoTo(int index)
+    {
+        if (index < 0 || index >= _slides.Count || index == ActiveIndex) return;
+        ActiveIndex = index;
+        await ActiveIndexChanged.InvokeAsync(ActiveIndex);
+    }
+
+    private async Task Next()
+    {
+        if (_slides.Count == 0) return;
+        var next = ActiveIndex + 1;
+        if (next >= _slides.Count)
+        {
+            next = Loop ? 0 : _slides.Count - 1;
+        }
+        await GoTo(next);
+    }
+
+    private async Task Previous()
+    {
+        if (_slides.Count == 0) return;
+        var prev = ActiveIndex - 1;
+        if (prev < 0)
+        {
+            prev = Loop ? _slides.Count - 1 : 0;
+        }
+        await GoTo(prev);
+    }
+
+    private void SetupAutoPlay()
+    {
+        _autoPlayTimer?.Dispose();
+        _autoPlayTimer = null;
+
+        if (AutoPlay && AutoPlayInterval > 0)
+        {
+            _autoPlayTimer = new System.Threading.Timer(async _ =>
+            {
+                await InvokeAsync(async () =>
+                {
+                    await Next();
+                    StateHasChanged();
+                });
+            }, null, AutoPlayInterval, AutoPlayInterval);
+        }
+    }
+
+    public void Dispose()
+    {
+        _autoPlayTimer?.Dispose();
+    }
+}

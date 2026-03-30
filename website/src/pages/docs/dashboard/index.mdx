@@ -1,0 +1,72 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: DashboardKit Overview
+description: Blazor drag-and-drop dashboard layout with resizable panels, keyboard accessibility, and state persistence. Arcadia Controls DashboardKit.
+---
+
+# DashboardKit
+
+A CSS Grid-based drag-and-drop dashboard layout system for Blazor. Build responsive dashboards with draggable, resizable panels that persist their layout across sessions.
+
+## Key Features
+
+- **Drag-and-drop reordering** with spring-physics animations
+- **Resize panels** by dragging corner handles
+- **Keyboard accessible** — pick up, move, and drop panels with Enter and arrow keys
+- **iOS-style "wiggle" mode** — long-press to enter edit mode on touch devices
+- **State persistence** — save and load layouts from localStorage
+- **Add / remove panels** at runtime
+- **Locked panels** — prevent individual panels from being moved
+
+## Quick Start
+
+```razor
+<ArcadiaDragGrid Columns="4" RowHeight="120" Gap="16" EditMode="true">
+    <ArcadiaDragGridItem Id="revenue" ColSpan="2" RowSpan="2">
+        <HeaderContent>Revenue</HeaderContent>
+        <ChildContent>
+            <ArcadiaLineChart TItem="Sale" Data="@sales" ... />
+        </ChildContent>
+    </ArcadiaDragGridItem>
+
+    <ArcadiaDragGridItem Id="users" ColSpan="1" RowSpan="1">
+        <HeaderContent>Active Users</HeaderContent>
+        <ChildContent>
+            <ArcadiaKpiCard Value="12,847" Delta="+5.2%" />
+        </ChildContent>
+    </ArcadiaDragGridItem>
+
+    <ArcadiaDragGridItem Id="orders" ColSpan="1" RowSpan="1">
+        <HeaderContent>Orders</HeaderContent>
+        <ChildContent>
+            <ArcadiaKpiCard Value="3,291" Delta="+12.1%" />
+        </ChildContent>
+    </ArcadiaDragGridItem>
+</ArcadiaDragGrid>
+```
+
+## Components
+
+| Component | Description |
+|---|---|
+| [ArcadiaDragGrid](/docs/dashboard/drag-grid) | The grid container that manages layout, drag, and resize |
+| `ArcadiaDragGridItem` | Individual panel within the grid |
+
+## Layout Persistence
+
+Save and restore dashboard layouts with built-in localStorage support:
+
+```csharp
+// Auto-save on every drop/resize
+<ArcadiaDragGrid AutoSave="true" ... />
+
+// Manual save/load
+await dragGrid.SaveLayoutAsync("my-dashboard");
+await dragGrid.LoadLayoutAsync("my-dashboard");
+```
+
+## Accessibility
+
+- Full keyboard navigation: Enter to pick up, arrow keys to move, Enter to drop, Escape to cancel
+- Live ARIA announcements for drag state changes
+- Screen reader support for panel positions and reorder operations

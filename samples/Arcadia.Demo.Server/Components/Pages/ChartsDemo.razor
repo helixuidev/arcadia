@@ -862,11 +862,17 @@ dotnet add package Arcadia.Theme</code></pre>
             <div class="gallery__showcase">
                 <div class="gallery__showcase-title">Card</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <ArcadiaCard Title="Revenue Report" Subtitle="Q4 2026">
+                    <ArcadiaCard Title="Revenue Report" Subtitle="Q4 2026" Elevation="2">
                         <p style="color: #9490b3; margin: 0;">Total revenue increased by 23% compared to the previous quarter, driven by enterprise subscriptions.</p>
                     </ArcadiaCard>
-                    <ArcadiaCard Title="Clickable Card" Clickable="true" OnClick="HandleCardClick">
-                        <p style="color: #9490b3; margin: 0;">This card has a hover effect and fires an OnClick event. Try clicking it.</p>
+                    <ArcadiaCard Title="Glass Card" Subtitle="Frosted effect" Variant="glass" BlurAmount="20" GlassOpacity="0.10" Elevation="0">
+                        <p style="margin: 0;">Semi-transparent with backdrop blur for a modern frosted look.</p>
+                    </ArcadiaCard>
+                    <ArcadiaCard Title="Gradient Border" Badge="New" GradientBorder="true" Elevation="2">
+                        <p style="color: #9490b3; margin: 0;">A multi-color gradient border that catches the eye.</p>
+                    </ArcadiaCard>
+                    <ArcadiaCard Title="Clickable Card" Subtitle="Hover to lift" Clickable="true" OnClick="HandleCardClick" AccentColor="#8b5cf6" Elevation="1">
+                        <p style="color: #9490b3; margin: 0;">Accent border, hover lift, and click event. Try it.</p>
                     </ArcadiaCard>
                 </div>
             </div>

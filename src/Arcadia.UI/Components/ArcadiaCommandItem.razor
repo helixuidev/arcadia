@@ -1,0 +1,91 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<button class="@CssClass"
+        style="@Style"
+        role="option"
+        disabled="@Disabled"
+        aria-disabled="@(Disabled ? "true" : null)"
+        @onclick="OnClickHandler"
+        @onkeydown="OnKeyDownAsync"
+        @attributes="AdditionalAttributes">
+    @if (!string.IsNullOrEmpty(Icon))
+    {
+        <span class="arcadia-command-item__icon" aria-hidden="true">@Icon</span>
+    }
+    <div class="arcadia-command-item__content">
+        <span class="arcadia-command-item__label">@Label</span>
+        @if (!string.IsNullOrEmpty(Description))
+        {
+            <span class="arcadia-command-item__description">@Description</span>
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(Shortcut))
+    {
+        <kbd class="arcadia-command-item__shortcut">@Shortcut</kbd>
+    }
+</button>
+
+@code {
+    /// <summary>
+    /// Gets or sets the display label for the command item.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaCommandItem Label="New File" Description="Create a new file" Shortcut="Ctrl+N" OnSelect="HandleNewFile" /&gt;
+    /// </code>
+    /// </example>
+    [Parameter]
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets an optional description shown below the label.
+    /// </summary>
+    [Parameter]
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the keyboard shortcut hint displayed as a badge (e.g. "Ctrl+N").
+    /// </summary>
+    [Parameter]
+    public string? Shortcut { get; set; }
+
+    /// <summary>
+    /// Gets or sets an optional icon (emoji or text) displayed before the label.
+    /// </summary>
+    [Parameter]
+    public string? Icon { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when the command item is selected.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnSelect { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the command item is disabled. Defaults to false.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-command-item")
+        .AddClass("arcadia-command-item--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnClickHandler()
+    {
+        if (!Disabled)
+        {
+            await OnSelect.InvokeAsync();
+        }
+    }
+
+    private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter" && !Disabled)
+        {
+            await OnSelect.InvokeAsync();
+        }
+    }
+}

@@ -1,0 +1,95 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="progressbar"
+     aria-valuenow="@(Indeterminate ? null : (int)Value)"
+     aria-valuemin="0"
+     aria-valuemax="100"
+     aria-label="@($"{(int)Value}% progress")"
+     @attributes="AdditionalAttributes">
+    <svg class="arcadia-circular-progress__svg" viewBox="0 0 48 48">
+        <circle class="arcadia-circular-progress__track"
+                cx="24" cy="24" r="@Radius"
+                fill="none"
+                stroke-width="@StrokeWidth" />
+        <circle class="@ArcClass"
+                cx="24" cy="24" r="@Radius"
+                fill="none"
+                stroke-width="@StrokeWidth"
+                stroke-dasharray="@Circumference"
+                stroke-dashoffset="@DashOffset"
+                stroke-linecap="round"
+                transform="rotate(-90 24 24)" />
+    </svg>
+    @if (ShowLabel && !Indeterminate && ChildContent is null)
+    {
+        <span class="arcadia-circular-progress__label">@($"{(int)Value}%")</span>
+    }
+    @if (ChildContent is not null)
+    {
+        <div class="arcadia-circular-progress__content">@ChildContent</div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the progress value from 0 to 100.
+    /// </summary>
+    [Parameter]
+    public double Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the color of the progress arc.
+    /// Accepted values: "primary", "success", "warning", "danger". Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Gets or sets the size of the circular progress indicator.
+    /// Accepted values: "sm" (32px), "md" (48px), "lg" (64px). Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    /// <summary>
+    /// Gets or sets whether the progress shows an indeterminate (animated) state. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Indeterminate { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the percentage label is displayed inside the ring. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool ShowLabel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the stroke width of the progress arc in pixels. Default is 4.
+    /// </summary>
+    [Parameter]
+    public int StrokeWidth { get; set; } = 4;
+
+    /// <summary>
+    /// Gets or sets optional content rendered inside the circular progress ring.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private double Radius => (48 - StrokeWidth) / 2.0;
+    private double Circumference => 2 * Math.PI * Radius;
+    private double DashOffset => Indeterminate ? 0 : Circumference * (1 - Math.Clamp(Value, 0, 100) / 100.0);
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-circular-progress")
+        .AddClass($"arcadia-circular-progress--{Size}")
+        .AddClass($"arcadia-circular-progress--{Color}")
+        .AddClass("arcadia-circular-progress--indeterminate", Indeterminate)
+        .AddClass(Class)
+        .Build();
+
+    private string? ArcClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-circular-progress__arc")
+        .AddClass("arcadia-circular-progress__arc--indeterminate", Indeterminate)
+        .Build();
+}

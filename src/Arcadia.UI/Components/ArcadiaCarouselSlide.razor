@@ -1,0 +1,44 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
+
+<div class="@CssClass"
+     style="@Style"
+     role="tabpanel"
+     aria-roledescription="slide"
+     aria-label="@($"Slide {SlideIndex + 1}")"
+     aria-hidden="@(SlideIndex != Carousel?.ActiveIndex)"
+     @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>
+    /// The parent carousel component, received via CascadingParameter.
+    /// </summary>
+    [CascadingParameter]
+    private ArcadiaCarousel? Carousel { get; set; }
+
+    /// <summary>
+    /// Gets or sets the child content for this slide.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private int SlideIndex => Carousel?.GetSlideIndex(this) ?? 0;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-carousel__slide")
+        .AddClass("arcadia-carousel__slide--active", Carousel is not null && SlideIndex == Carousel.ActiveIndex)
+        .AddClass(Class)
+        .Build();
+
+    protected override void OnInitialized()
+    {
+        Carousel?.RegisterSlide(this);
+    }
+
+    public void Dispose()
+    {
+        Carousel?.UnregisterSlide(this);
+    }
+}

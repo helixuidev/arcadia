@@ -50,8 +50,8 @@ else if (HasData && CategoryField is not null && MinField is not null && Q1Field
                 @* Box: Q1 to Q3 *@
                 <rect x="@F(box.BoxX)" y="@F(box.Q3Y)" width="@F(box.BoxWidth)" height="@F(Math.Max(1, box.Q1Y - box.Q3Y))"
                       rx="2" fill="@BoxColor" fill-opacity="@BoxFillOpacity.ToString("F2")" stroke="@BoxColor" stroke-width="1.5"
-                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {idx * 80}ms;" : "")"
+                      class="arcadia-chart__bar @(AnimateOnLoad && ShouldStagger(_boxes.Count) ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad && ShouldStagger(_boxes.Count) ? $"animation-delay: {GetAnimationDelay(idx, _boxes.Count, 80)}ms;" : "")"
                       @onmouseover="@(e => ShowBoxTooltip(idx, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction" />
 

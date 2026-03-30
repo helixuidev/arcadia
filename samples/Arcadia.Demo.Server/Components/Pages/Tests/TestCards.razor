@@ -1,0 +1,121 @@
+@page "/test/cards"
+@using Arcadia.UI.Components
+
+<div style="padding: 40px; background: linear-gradient(135deg, #0f0a1e 0%, #1a1040 50%, #0d1b2a 100%); min-height: 100vh;">
+
+    <h2 style="color: #fff; margin-bottom: 32px;">Card Variants</h2>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px;">
+
+        @* Solid (default) *@
+        <ArcadiaCard Title="Solid Card" Subtitle="Default variant" Elevation="1">
+            <p style="margin: 0;">The default card with subtle shadow and clean borders.</p>
+        </ArcadiaCard>
+
+        @* Glass *@
+        <ArcadiaCard Title="Glass Card" Subtitle="Frosted glassmorphism" Variant="glass" Elevation="2" BlurAmount="20" GlassOpacity="0.10">
+            <p style="margin: 0;">Semi-transparent with backdrop blur for a modern frosted look.</p>
+        </ArcadiaCard>
+
+        @* Outlined *@
+        <ArcadiaCard Title="Outlined Card" Subtitle="Border only" Variant="outlined">
+            <p style="margin: 0;">Transparent background with a visible border. Clean and minimal.</p>
+        </ArcadiaCard>
+
+        @* Ghost *@
+        <ArcadiaCard Title="Ghost Card" Subtitle="No border, no background" Variant="ghost">
+            <p style="margin: 0;">Completely transparent. Content floats freely.</p>
+        </ArcadiaCard>
+
+        @* Gradient border *@
+        <ArcadiaCard Title="Gradient Border" Subtitle="Rainbow edge" GradientBorder="true" Elevation="2">
+            <p style="margin: 0;">A multi-color gradient border that catches the eye.</p>
+        </ArcadiaCard>
+
+        @* Accent *@
+        <ArcadiaCard Title="Accent Card" Subtitle="Colored left border" AccentColor="#8b5cf6" Elevation="1">
+            <p style="margin: 0;">A colored left border accent for categorization.</p>
+        </ArcadiaCard>
+
+    </div>
+
+    <h2 style="color: #fff; margin: 48px 0 32px;">Elevation Levels</h2>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; max-width: 1200px;">
+        @for (int i = 0; i <= 5; i++)
+        {
+            var elev = i;
+            <ArcadiaCard Title="@($"Elevation {elev}")" Elevation="elev">
+                <p style="margin: 0; font-size: 0.875rem;">Shadow depth @elev</p>
+            </ArcadiaCard>
+        }
+    </div>
+
+    <h2 style="color: #fff; margin: 48px 0 32px;">Image Cards</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px;">
+
+        <ArcadiaCard Title="Mountain Retreat" Subtitle="Nature Collection"
+                     ImageUrl="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop"
+                     ImageHeight="200px" Elevation="3">
+            <p style="margin: 0;">A stunning mountain landscape with snow-capped peaks.</p>
+        </ArcadiaCard>
+
+        <ArcadiaCard Title="City Lights" Subtitle="Urban Series"
+                     ImageUrl="https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600&h=400&fit=crop"
+                     ImageHeight="200px" ImageOverlay="true" Elevation="3">
+            <p style="margin: 0;">Image with dark gradient overlay for text readability.</p>
+        </ArcadiaCard>
+
+        <ArcadiaCard ImageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&h=400&fit=crop"
+                     ImageHeight="200px" Elevation="3">
+            <HeaderTemplate>
+                <span class="arcadia-card__badge">New</span>
+                <h3 class="arcadia-card__title">Custom Header</h3>
+                <p class="arcadia-card__subtitle">With badge</p>
+            </HeaderTemplate>
+            <ChildContent>
+                <p style="margin: 0;">Cards support custom header templates with badges.</p>
+            </ChildContent>
+        </ArcadiaCard>
+
+    </div>
+
+    <h2 style="color: #fff; margin: 48px 0 32px;">Glass Cards on Gradient</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px; padding: 32px; border-radius: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+
+        <ArcadiaCard Title="Analytics" Badge="Pro" Variant="glass" BlurAmount="24" GlassOpacity="0.15" Elevation="0">
+            <p style="margin: 0;">Glass cards shine on colorful backgrounds.</p>
+        </ArcadiaCard>
+
+        <ArcadiaCard Title="Dashboard" Badge="New" Variant="glass" BlurAmount="24" GlassOpacity="0.15" GradientBorder="true" Elevation="0">
+            <p style="margin: 0;">Combine glass with gradient border for maximum effect.</p>
+        </ArcadiaCard>
+
+        <ArcadiaCard Title="Reports" Variant="glass" BlurAmount="24" GlassOpacity="0.15" Clickable="true" Elevation="0">
+            <p style="margin: 0;">Glass + clickable with hover lift.</p>
+        </ArcadiaCard>
+
+    </div>
+
+    <h2 style="color: #fff; margin: 48px 0 32px;">Clickable & Interactive</h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1200px;">
+
+        <ArcadiaCard Title="Hover Me" Subtitle="Clickable card" Clickable="true" Elevation="2">
+            <p style="margin: 0;">Lifts up on hover with a smooth animation.</p>
+        </ArcadiaCard>
+
+        <ArcadiaCard Title="With Footer" Subtitle="Action buttons below" Elevation="1">
+            <ChildContent>
+                <p style="margin: 0;">Cards can have footer sections for actions.</p>
+            </ChildContent>
+            <FooterTemplate>
+                <button style="padding: 6px 16px; border-radius: 8px; border: none; background: var(--arcadia-color-primary, #8b5cf6); color: #fff; cursor: pointer; font-size: 0.8125rem;">Accept</button>
+                <button style="padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.3); background: transparent; color: var(--arcadia-color-text, #e2e0f0); cursor: pointer; font-size: 0.8125rem;">Decline</button>
+            </FooterTemplate>
+        </ArcadiaCard>
+
+        <ArcadiaCard Title="Accent Colors" AccentColor="#06b6d4" Elevation="1">
+            <p style="margin: 0;">Use accent colors to categorize or highlight cards.</p>
+        </ArcadiaCard>
+
+    </div>
+</div>

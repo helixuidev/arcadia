@@ -19,8 +19,8 @@ else if (HasData && NameField is not null && ValueField is not null) {
             {
                 var s = _stages[i];
                 <path d="@s.Path" fill="@s.Color" opacity="@F(StageOpacity)"
-                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 100}ms;" : "")"
+                      class="arcadia-chart__bar @(AnimateOnLoad && ShouldStagger(_stages.Count) ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad && ShouldStagger(_stages.Count) ? $"animation-delay: {GetAnimationDelay(i, _stages.Count, 100)}ms;" : "")"
                       @onmouseover="@(e => ShowTooltipForPoint(s.Name, s.Value, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction" />
 

@@ -1,0 +1,69 @@
+@namespace Arcadia.DataGrid.Components
+@typeparam TItem
+
+@code {
+    /// <summary>Custom action button template per row. Overrides default Edit/Delete buttons when set.</summary>
+    [Parameter] public RenderFragment<TItem>? ChildContent { get; set; }
+
+    /// <summary>Show a default Edit button in the command column. Default is false.</summary>
+    [Parameter] public bool ShowEdit { get; set; }
+
+    /// <summary>Show a default Delete button in the command column. Default is false.</summary>
+    [Parameter] public bool ShowDelete { get; set; }
+
+    /// <summary>Callback invoked when the Edit button is clicked. Receives the row item.</summary>
+    [Parameter] public EventCallback<TItem> OnEdit { get; set; }
+
+    /// <summary>Callback invoked when the Delete button is clicked. Receives the row item.</summary>
+    [Parameter] public EventCallback<TItem> OnDelete { get; set; }
+
+    /// <summary>Column header text. Default is "Actions".</summary>
+    [Parameter] public string Title { get; set; } = "Actions";
+
+    /// <summary>CSS width for the command column. Default is "120px".</summary>
+    [Parameter] public string Width { get; set; } = "120px";
+
+    /// <summary>Text for the Edit button. Default is "Edit".</summary>
+    [Parameter] public string TextEdit { get; set; } = "Edit";
+
+    /// <summary>Text for the Delete button. Default is "Delete".</summary>
+    [Parameter] public string TextDelete { get; set; } = "Delete";
+
+    /// <summary>Parent grid column collector for registration.</summary>
+    [CascadingParameter] internal ArcadiaDataGridCommandCollector<TItem>? CommandCollector { get; set; }
+
+    protected override void OnInitialized()
+    {
+        CommandCollector?.Register(this);
+    }
+
+    /// <summary>Render the command cell content for a given row item.</summary>
+    internal RenderFragment RenderCell(TItem item) => builder =>
+    {
+        if (ChildContent is not null)
+        {
+            builder.AddContent(0, ChildContent(item));
+        }
+        else
+        {
+            if (ShowEdit)
+            {
+                builder.OpenElement(1, "button");
+                builder.AddAttribute(2, "class", "arcadia-grid__cmd-btn arcadia-grid__cmd-btn--edit");
+                builder.AddAttribute(3, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, () => OnEdit.InvokeAsync(item)));
+                builder.AddAttribute(4, "aria-label", $"{TextEdit} row");
+                builder.AddContent(5, TextEdit);
+                builder.CloseElement();
+            }
+            if (ShowDelete)
+            {
+                builder.OpenElement(6, "button");
+                builder.AddAttribute(7, "class", "arcadia-grid__cmd-btn arcadia-grid__cmd-btn--delete");
+                builder.AddAttribute(8, "onclick", Microsoft.AspNetCore.Components.EventCallback.Factory.Create(this, () => OnDelete.InvokeAsync(item)));
+                builder.AddAttribute(9, "aria-label", $"{TextDelete} row");
+                builder.AddContent(10, TextDelete);
+                builder.CloseElement();
+            }
+        }
+    };
+}

@@ -1,0 +1,102 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: UI Components
+description: Overview of all 46 Blazor UI components in the Arcadia Controls library — buttons, inputs, navigation, layout, feedback, and data display.
+---
+
+# UI Components
+
+Arcadia Controls includes 46 production-ready UI components built with pure Blazor and CSS. Every component supports Server, WebAssembly, and Auto render modes, with WCAG 2.1 AA accessibility.
+
+## Layout & Containers
+
+| Component | Description |
+|---|---|
+| `ArcadiaAccordion` | Expandable/collapsible content sections |
+| `ArcadiaAccordionItem` | Individual section within an accordion |
+| `ArcadiaAspectRatio` | Constrain child content to a fixed aspect ratio |
+| `ArcadiaCard` | Surface container with header, body, and footer slots |
+| `ArcadiaDialog` | Modal dialog with backdrop, focus trap, and close actions |
+| `ArcadiaDrawer` | Slide-out side panel (left, right, top, bottom) |
+| `ArcadiaSeparator` | Horizontal or vertical divider line |
+| `ArcadiaSidebar` | Collapsible navigation sidebar |
+| `ArcadiaScrollArea` | Custom scrollbar container with overflow control |
+
+## Navigation
+
+| Component | Description |
+|---|---|
+| `ArcadiaBreadcrumb` | Breadcrumb navigation trail |
+| `ArcadiaBreadcrumbItem` | Individual breadcrumb link |
+| `ArcadiaMenu` | Dropdown or context menu container |
+| `ArcadiaMenuItem` | Individual menu item with icon, label, and shortcut |
+| `ArcadiaContextMenu` | Right-click context menu |
+| `ArcadiaPagination` | Page navigation with page numbers and prev/next |
+| `ArcadiaStepper` | Multi-step workflow indicator |
+| `ArcadiaStep` | Individual step in a stepper |
+| `ArcadiaTabs` | Tab container for switching between views |
+| `ArcadiaTabPanel` | Individual tab content panel |
+
+## Data Display
+
+| Component | Description |
+|---|---|
+| `ArcadiaAvatar` | User avatar with image, initials, or icon fallback |
+| `ArcadiaBadge` | Small count or status indicator |
+| `ArcadiaChip` | Compact label with optional remove action |
+| `ArcadiaTimeline` | Vertical timeline of events |
+| `ArcadiaTimelineItem` | Individual event in a timeline |
+| `ArcadiaTreeView` | Hierarchical tree with expand/collapse |
+| `ArcadiaTreeViewNode` | Individual node in a tree view |
+| `ArcadiaCarousel` | Image/content carousel with slide transitions |
+| `ArcadiaCarouselSlide` | Individual slide in a carousel |
+| `ArcadiaEmptyState` | Placeholder for empty or zero-result views |
+
+## Forms & Input
+
+| Component | Description |
+|---|---|
+| `ArcadiaColorPicker` | Color selection with palette and custom input |
+| `ArcadiaDatePicker` | Calendar date picker with range support |
+| `ArcadiaRating` | Star or icon-based rating input |
+| `ArcadiaSlider` | Range slider with single or dual thumbs |
+| `ArcadiaSwitch` | Toggle switch for boolean values |
+| `ArcadiaTagInput` | Multi-value tag/chip input with autocomplete |
+| `ArcadiaTextArea` | Multi-line text input |
+
+## Feedback & Status
+
+| Component | Description |
+|---|---|
+| `ArcadiaAlert` | Inline alert/banner with severity levels |
+| `ArcadiaCircularProgress` | Circular progress/loading indicator |
+| `ArcadiaProgress` | Linear progress bar |
+| `ArcadiaSkeleton` | Content loading placeholder |
+| `ArcadiaSpinner` | Indeterminate loading spinner |
+| `ArcadiaTooltip` | Hover/focus tooltip with positioning |
+| `ArcadiaHoverCard` | Rich content card shown on hover |
+| `ArcadiaPopover` | Anchored floating content panel |
+
+## Command & Action
+
+| Component | Description |
+|---|---|
+| `ArcadiaCommandPalette` | Keyboard-driven command search (Ctrl+K style) |
+| `ArcadiaCommandItem` | Individual command entry in the palette |
+
+## Installation
+
+All UI components are included in the `Arcadia.UI` NuGet package:
+
+```bash
+dotnet add package Arcadia.UI
+```
+
+## Accessibility
+
+Every component follows WCAG 2.1 AA guidelines:
+- Proper ARIA roles and labels
+- Keyboard navigation support
+- Focus management and visible focus indicators
+- Respects `prefers-reduced-motion`
+- High contrast mode support

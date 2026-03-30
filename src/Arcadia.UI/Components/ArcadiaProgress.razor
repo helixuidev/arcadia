@@ -1,0 +1,85 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     role="progressbar"
+     aria-valuenow="@(Indeterminate ? null : (int)Value)"
+     aria-valuemin="0"
+     aria-valuemax="100"
+     aria-label="@(Label ?? "Progress")"
+     @attributes="AdditionalAttributes">
+    <div class="arcadia-progress__track">
+        <div class="@BarClass"
+             style="@BarStyle">
+        </div>
+    </div>
+    @if (ShowLabel && !Indeterminate)
+    {
+        <span class="arcadia-progress__label">@($"{(int)Value}%")</span>
+    }
+    @if (ShowLabel && !string.IsNullOrEmpty(Label))
+    {
+        <span class="arcadia-progress__text">@Label</span>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the progress value from 0 to 100.
+    /// </summary>
+    [Parameter]
+    public double Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the color of the progress bar.
+    /// Accepted values: "primary", "success", "warning", "danger". Default is "primary".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "primary";
+
+    /// <summary>
+    /// Gets or sets the size of the progress bar.
+    /// Accepted values: "sm" (4px), "md" (8px), "lg" (12px). Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    /// <summary>
+    /// Gets or sets whether the progress bar shows an indeterminate (animated) state. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Indeterminate { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the percentage label is displayed. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool ShowLabel { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the progress bar has a striped pattern. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Striped { get; set; }
+
+    /// <summary>
+    /// Gets or sets an optional descriptive label for the progress bar.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-progress")
+        .AddClass($"arcadia-progress--{Size}")
+        .AddClass($"arcadia-progress--{Color}")
+        .AddClass("arcadia-progress--indeterminate", Indeterminate)
+        .AddClass(Class)
+        .Build();
+
+    private string? BarClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-progress__bar")
+        .AddClass("arcadia-progress__bar--striped", Striped)
+        .AddClass("arcadia-progress__bar--indeterminate", Indeterminate)
+        .Build();
+
+    private string? BarStyle => Indeterminate ? null : $"width: {Math.Clamp(Value, 0, 100)}%";
+}

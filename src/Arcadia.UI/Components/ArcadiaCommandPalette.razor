@@ -1,0 +1,135 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+@if (Open)
+{
+    <div class="arcadia-command-palette-overlay"
+         @onclick="CloseAsync"
+         @onkeydown="HandleKeyDownAsync">
+        <div class="@CssClass"
+             style="@Style"
+             role="dialog"
+             aria-label="Command palette"
+             aria-modal="true"
+             @onclick:stopPropagation="true"
+             @attributes="AdditionalAttributes">
+            <div class="arcadia-command-palette__search">
+                <svg class="arcadia-command-palette__search-icon" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input class="arcadia-command-palette__input"
+                       type="text"
+                       placeholder="@Placeholder"
+                       value="@SearchText"
+                       @oninput="OnInputChangedAsync"
+                       @ref="_inputRef"
+                       role="combobox"
+                       aria-expanded="true"
+                       aria-controls="@ListId"
+                       aria-autocomplete="list"
+                       autocomplete="off" />
+            </div>
+            <div class="arcadia-command-palette__list" id="@ListId" role="listbox">
+                @ChildContent
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    /// <summary>
+    /// Gets or sets whether the command palette is open.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaCommandPalette @bind-Open="showPalette" OnSearch="HandleSearch"&gt;
+    ///     &lt;ArcadiaCommandItem Label="New File" Shortcut="Ctrl+N" /&gt;
+    /// &lt;/ArcadiaCommandPalette&gt;
+    /// </code>
+    /// </example>
+    [Parameter]
+    public bool Open { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Open"/> changes. Supports two-way binding.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the placeholder text for the search input. Defaults to "Search commands...".
+    /// </summary>
+    [Parameter]
+    public string Placeholder { get; set; } = "Search commands...";
+
+    /// <summary>
+    /// Gets or sets the command items content rendered inside the palette list.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when the search input value changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> OnSearch { get; set; }
+
+    /// <summary>
+    /// Gets or sets the current search text value.
+    /// </summary>
+    [Parameter]
+    public string SearchText { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="SearchText"/> changes. Supports two-way binding.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> SearchTextChanged { get; set; }
+
+    private ElementReference _inputRef;
+    private string ListId => $"{ElementId}-list";
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-command-palette")
+        .AddClass(Class)
+        .Build();
+
+    /// <inheritdoc />
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Open)
+        {
+            try
+            {
+                await _inputRef.FocusAsync();
+            }
+            catch
+            {
+                // Element may not be rendered yet
+            }
+        }
+    }
+
+    private async Task CloseAsync()
+    {
+        Open = false;
+        await OpenChanged.InvokeAsync(false);
+    }
+
+    private async Task HandleKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            await CloseAsync();
+        }
+    }
+
+    private async Task OnInputChangedAsync(ChangeEventArgs args)
+    {
+        SearchText = args.Value?.ToString() ?? string.Empty;
+        await SearchTextChanged.InvokeAsync(SearchText);
+        await OnSearch.InvokeAsync(SearchText);
+    }
+}

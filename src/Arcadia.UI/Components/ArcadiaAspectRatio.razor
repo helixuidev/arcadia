@@ -1,0 +1,36 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@ComputedStyle"
+     @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the aspect ratio of the container.
+    /// Use slash notation such as "16/9", "4/3", "1/1", or "21/9". Default is "16/9".
+    /// </summary>
+    [Parameter]
+    public string Ratio { get; set; } = "16/9";
+
+    /// <summary>
+    /// Gets or sets the child content rendered inside the aspect ratio container.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-aspect-ratio")
+        .AddClass(Class)
+        .Build();
+
+    private string? ComputedStyle
+    {
+        get
+        {
+            var ratioStyle = $"aspect-ratio: {Ratio};";
+            return string.IsNullOrEmpty(Style) ? ratioStyle : $"{ratioStyle} {Style}";
+        }
+    }
+}

@@ -2,12 +2,14 @@
 @typeparam T
 @inherits ArcadiaPieChart<T>
 
+@* Donut chart renders via ArcadiaPieChart which provides role="figure" and arcadia-sr-only table *@
 @{ base.BuildRenderTree(__builder); }
 
 @code {
     /// <summary>
     /// Donut chart — a pie chart with a hollow center.
     /// Equivalent to ArcadiaPieChart with InnerRadius set.
+    /// Inherits full accessibility from ArcadiaPieChart: role="figure", aria-label, and sr-only data table.
     /// </summary>
     /// <example>
     /// <code>

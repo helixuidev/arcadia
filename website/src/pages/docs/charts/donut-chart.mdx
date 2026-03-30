@@ -1,0 +1,74 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Donut Chart
+description: Blazor donut chart component with customizable inner radius, labels, and legend. Pure SVG rendering by Arcadia Controls.
+---
+
+# Donut Chart
+
+A donut chart is a pie chart with a hollow center. The center space can be used for summary text or KPI values. Use it when you want a cleaner look than a standard pie chart.
+
+## Basic Usage
+
+```razor
+<ArcadiaDonutChart TItem="Category" Data="@data"
+                 NameField="@(c => c.Name)"
+                 ValueField="@(c => c.Amount)"
+                 Height="350" Title="Revenue by Category" />
+
+@code {
+    record Category(string Name, double Amount);
+
+    var data = new List<Category>
+    {
+        new("Electronics", 45000),
+        new("Clothing", 28000),
+        new("Food", 18000),
+        new("Books", 9000),
+    };
+}
+```
+
+## Custom Inner Radius
+
+By default the inner radius is `0.55` (55% of the outer radius). Override it for a thinner or thicker ring:
+
+```razor
+<ArcadiaDonutChart InnerRadius="0.7" ... />
+```
+
+## Parameters
+
+`ArcadiaDonutChart` inherits from `ArcadiaPieChart` and shares all its parameters. The default `InnerRadius` is set to `0.55`.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `NameField` | `Func<T, string>` | required | Category name selector |
+| `ValueField` | `Func<T, double>` | required | Value selector |
+| `InnerRadius` | `double` | `0.55` | Inner radius as fraction of outer (0 = pie, 1 = invisible) |
+| `ShowLabels` | `bool` | `true` | Show percentage/value labels on slices |
+| `LabelFormat` | `PieLabelFormat` | `Percent` | Label display format |
+| `MinLabelPercent` | `double` | `5` | Minimum percentage to show a label |
+| `ShowLegend` | `bool` | `true` | Show color legend below chart |
+| `SliceStrokeColor` | `string` | `"white"` | Stroke color between slices |
+| `SliceStrokeWidth` | `double` | `2` | Stroke width between slices |
+
+Plus all [shared ChartBase parameters](/docs/charts).
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `OnPointClick` | `EventCallback<PointClickEventArgs<T>>` | Fired when a slice is clicked |
+
+## Accessibility
+
+- SVG has `role="figure"` and `aria-label`
+- Hidden `<table>` with Category, Value, and Percentage columns for screen readers
+- Animations respect `prefers-reduced-motion`
+
+## Use Cases
+
+- **Budget breakdown** — show spending distribution with a clean central space
+- **Market share** — compare competitor percentages
+- **KPI dashboards** — pair with a center label showing the total or primary metric

@@ -46,15 +46,15 @@ else if (Data is not null && Data.Count > 0 && OpenField is not null && HighFiel
                 @* Wick (high-low line) *@
                 <line x1="@F(c.X)" y1="@F(c.HighY)" x2="@F(c.X)" y2="@F(c.LowY)"
                       stroke="@c.Color" stroke-width="@F(WickWidth)"
-                      class="arcadia-candle__wick @(_animate ? "arcadia-animate-candle" : "")"
-                      style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")" />
+                      class="arcadia-candle__wick @(_animate && ShouldStagger(_candles.Count) ? "arcadia-animate-candle" : "")"
+                      style="@(_animate && ShouldStagger(_candles.Count) ? $"animation-delay: {GetAnimationDelay(i, _candles.Count, 30)}ms;" : "")" />
 
                 @* Body (open-close rect) *@
                 <rect x="@F(c.X - c.HalfWidth)" y="@F(c.BodyTop)"
                       width="@F(c.HalfWidth * 2)" height="@F(Math.Max(1, c.BodyHeight))"
                       rx="1" fill="@c.Color" stroke="@c.Color" stroke-width="1"
-                      class="arcadia-candle__body @(_animate ? "arcadia-animate-candle" : "")"
-                      style="@(_animate ? $"animation-delay: {i * 30}ms;" : "")"
+                      class="arcadia-candle__body @(_animate && ShouldStagger(_candles.Count) ? "arcadia-animate-candle" : "")"
+                      style="@(_animate && ShouldStagger(_candles.Count) ? $"animation-delay: {GetAnimationDelay(i, _candles.Count, 30)}ms;" : "")"
                       @onmouseover="@(e => ShowCandleTooltip(i, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction" />
             }

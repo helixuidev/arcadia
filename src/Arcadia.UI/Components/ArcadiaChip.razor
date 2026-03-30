@@ -1,0 +1,130 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+@if (Clickable)
+{
+    <button class="@CssClass"
+            style="@Style"
+            type="button"
+            @onclick="OnClick"
+            @attributes="AdditionalAttributes">
+        @RenderChipContent
+    </button>
+}
+else
+{
+    <span class="@CssClass"
+          style="@Style"
+          @attributes="AdditionalAttributes">
+        @RenderChipContent
+    </span>
+}
+
+@code {
+    /// <summary>
+    /// Gets or sets the chip label text. If ChildContent is also provided, ChildContent takes precedence.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>
+    /// Gets or sets custom content for the chip body.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the chip color variant.
+    /// Accepted values: "default", "primary", "success", "warning", "danger". Default is "default".
+    /// </summary>
+    [Parameter]
+    public string Color { get; set; } = "default";
+
+    /// <summary>
+    /// Gets or sets the visual variant of the chip.
+    /// Accepted values: "filled", "outlined", "soft". Default is "filled".
+    /// </summary>
+    [Parameter]
+    public string Variant { get; set; } = "filled";
+
+    /// <summary>
+    /// Gets or sets the size of the chip.
+    /// Accepted values: "sm", "md", "lg". Default is "md".
+    /// </summary>
+    [Parameter]
+    public string Size { get; set; } = "md";
+
+    /// <summary>
+    /// Gets or sets whether the chip is clickable. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Clickable { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the chip is clicked. Requires Clickable to be true.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the chip shows a delete button. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool Deletable { get; set; }
+
+    /// <summary>
+    /// Callback invoked when the delete button is clicked.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnDelete { get; set; }
+
+    /// <summary>
+    /// Gets or sets the URL for a small avatar image displayed on the left side of the chip.
+    /// </summary>
+    [Parameter]
+    public string? Avatar { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-chip")
+        .AddClass($"arcadia-chip--{Color}")
+        .AddClass($"arcadia-chip--{Variant}")
+        .AddClass($"arcadia-chip--{Size}")
+        .AddClass("arcadia-chip--clickable", Clickable)
+        .AddClass("arcadia-chip--deletable", Deletable)
+        .AddClass(Class)
+        .Build();
+
+    private RenderFragment RenderChipContent => __builder =>
+    {
+        if (!string.IsNullOrEmpty(Avatar))
+        {
+            <img class="arcadia-chip__avatar" src="@Avatar" alt="" aria-hidden="true" />
+        }
+        <span class="arcadia-chip__label">
+            @if (ChildContent is not null)
+            {
+                @ChildContent
+            }
+            else
+            {
+                @Label
+            }
+        </span>
+        if (Deletable)
+        {
+            <button class="arcadia-chip__delete"
+                    type="button"
+                    aria-label="Remove"
+                    @onclick="OnDeleteAsync"
+                    @onclick:stopPropagation="true">
+                <svg viewBox="0 0 16 16" fill="none" width="12" height="12" aria-hidden="true">
+                    <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        }
+    };
+
+    private async Task OnDeleteAsync()
+    {
+        await OnDelete.InvokeAsync();
+    }
+}

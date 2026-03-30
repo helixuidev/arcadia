@@ -1,0 +1,136 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+
+    @if (Tags != null)
+    {
+        @foreach (var tag in Tags)
+        {
+            var currentTag = tag;
+            <span class="arcadia-tag-input__tag">
+                <span class="arcadia-tag-input__tag-text">@currentTag</span>
+                @if (!Disabled)
+                {
+                    <button type="button"
+                            class="arcadia-tag-input__tag-remove"
+                            aria-label="@($"Remove {currentTag}")"
+                            @onclick="() => RemoveTagAsync(currentTag)">
+                        <svg viewBox="0 0 16 16" class="arcadia-tag-input__remove-icon" aria-hidden="true">
+                            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        </svg>
+                    </button>
+                }
+            </span>
+        }
+    }
+
+    <input type="text"
+           class="arcadia-tag-input__input"
+           placeholder="@(CanAddMore ? Placeholder : "")"
+           disabled="@(Disabled || !CanAddMore)"
+           aria-label="@Placeholder"
+           @bind-value="_inputValue"
+           @bind-value:event="oninput"
+           @onkeydown="OnKeyDownAsync" />
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the list of tags. Supports two-way binding via <see cref="TagsChanged"/>.
+    /// </summary>
+    [Parameter]
+    public List<string> Tags { get; set; } = new();
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Tags"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<List<string>> TagsChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the placeholder text for the input. Default is "Add tag...".
+    /// </summary>
+    [Parameter]
+    public string Placeholder { get; set; } = "Add tag...";
+
+    /// <summary>
+    /// Gets or sets the maximum number of tags allowed. 0 means unlimited. Default is 0.
+    /// </summary>
+    [Parameter]
+    public int MaxTags { get; set; } = 0;
+
+    /// <summary>
+    /// Gets or sets whether duplicate tags are allowed. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool AllowDuplicates { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the tag input is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when a tag is added.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> OnTagAdded { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when a tag is removed.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> OnTagRemoved { get; set; }
+
+    private string _inputValue = "";
+
+    private bool CanAddMore => MaxTags <= 0 || (Tags?.Count ?? 0) < MaxTags;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-tag-input")
+        .AddClass("arcadia-tag-input--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnKeyDownAsync(KeyboardEventArgs args)
+    {
+        if (Disabled) return;
+
+        if (args.Key is "Enter" or ",")
+        {
+            await AddTagAsync();
+        }
+        else if (args.Key == "Backspace" && string.IsNullOrEmpty(_inputValue) && Tags?.Count > 0)
+        {
+            var lastTag = Tags[^1];
+            await RemoveTagAsync(lastTag);
+        }
+    }
+
+    private async Task AddTagAsync()
+    {
+        var tagValue = _inputValue.Trim().TrimEnd(',');
+        if (string.IsNullOrWhiteSpace(tagValue)) return;
+        if (!CanAddMore) return;
+        if (!AllowDuplicates && Tags != null && Tags.Contains(tagValue)) return;
+
+        Tags ??= new();
+        Tags.Add(tagValue);
+        _inputValue = "";
+
+        await TagsChanged.InvokeAsync(Tags);
+        await OnTagAdded.InvokeAsync(tagValue);
+    }
+
+    private async Task RemoveTagAsync(string tag)
+    {
+        if (Disabled || Tags == null) return;
+
+        Tags.Remove(tag);
+        await TagsChanged.InvokeAsync(Tags);
+        await OnTagRemoved.InvokeAsync(tag);
+    }
+}

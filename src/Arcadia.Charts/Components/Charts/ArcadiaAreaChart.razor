@@ -2,12 +2,14 @@
 @typeparam T
 @inherits ArcadiaLineChart<T>
 
+@* Area chart renders via ArcadiaLineChart which provides role="figure" and arcadia-sr-only table *@
 @{ base.BuildRenderTree(__builder); }
 
 @code {
     /// <summary>
     /// Area chart — a line chart with filled area below the line.
     /// Equivalent to ArcadiaLineChart with ShowArea enabled on all series.
+    /// Inherits full accessibility from ArcadiaLineChart: role="figure", aria-label, and sr-only data table.
     /// </summary>
     /// <example>
     /// <code>

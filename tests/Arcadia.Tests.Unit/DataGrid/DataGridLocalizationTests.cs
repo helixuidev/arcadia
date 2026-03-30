@@ -81,7 +81,7 @@ public class DataGridLocalizationTests : DataGridTestBase
     {
         var cut = RenderLocalizableGrid(p => p.Add(g => g.TextCsv, "Exportar CSV"));
 
-        var csvBtn = cut.FindAll("button.arcadia-grid__filter-toggle")
+        var csvBtn = cut.FindAll("button.arcadia-grid__export-btn")
             .FirstOrDefault(b => b.TextContent.Trim() == "Exportar CSV");
 
         csvBtn.Should().NotBeNull("toolbar should contain CSV button with custom text");
@@ -92,7 +92,7 @@ public class DataGridLocalizationTests : DataGridTestBase
     {
         var cut = RenderLocalizableGrid(p => p.Add(g => g.TextExcel, "Exportar Excel"));
 
-        var excelBtn = cut.FindAll("button.arcadia-grid__filter-toggle")
+        var excelBtn = cut.FindAll("button.arcadia-grid__export-btn")
             .FirstOrDefault(b => b.TextContent.Trim() == "Exportar Excel");
 
         excelBtn.Should().NotBeNull("toolbar should contain Excel button with custom text");

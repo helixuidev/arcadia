@@ -485,8 +485,11 @@ public partial class ArcadiaLineChart<T> : ChartBase<T>
     private string GetPointStyle(int index)
     {
         var style = "";
-        if (AnimateOnLoad)
-            style += $"animation-delay: {index * 40}ms;";
+        if (AnimateOnLoad && ShouldStagger(Data?.Count ?? 0))
+        {
+            var delay = GetAnimationDelay(index, Data?.Count ?? 0, 40);
+            if (delay > 0) style += $"animation-delay: {delay}ms;";
+        }
         if (OnPointClick.HasDelegate)
             style += "cursor:pointer;";
         return style;

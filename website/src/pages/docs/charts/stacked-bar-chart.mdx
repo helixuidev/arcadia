@@ -1,0 +1,80 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Stacked Bar Chart
+description: Blazor stacked bar chart component with multi-series stacking, rounded corners, and data labels. Pure SVG rendering by Arcadia Controls.
+---
+
+# Stacked Bar Chart
+
+A stacked bar chart renders multiple series stacked on top of each other within each category, making it easy to compare both individual values and totals across categories.
+
+## Basic Usage
+
+```razor
+<ArcadiaStackedBarChart TItem="QuarterlySale" Data="@data"
+                      XField="@(d => (object)d.Quarter)"
+                      Series="@series"
+                      Height="350" Width="600" />
+
+@code {
+    record QuarterlySale(string Quarter, double Online, double Retail, double Wholesale);
+
+    var data = new List<QuarterlySale>
+    {
+        new("Q1", 30000, 20000, 15000),
+        new("Q2", 35000, 22000, 18000),
+        new("Q3", 28000, 25000, 20000),
+        new("Q4", 42000, 30000, 22000),
+    };
+
+    var series = new List<SeriesConfig<QuarterlySale>>
+    {
+        new() { Name = "Online", Field = d => d.Online, Color = "primary" },
+        new() { Name = "Retail", Field = d => d.Retail, Color = "secondary" },
+        new() { Name = "Wholesale", Field = d => d.Wholesale, Color = "warning" },
+    };
+}
+```
+
+## With Data Labels and Rounded Corners
+
+```razor
+<ArcadiaStackedBarChart TItem="QuarterlySale" Data="@data"
+                      XField="@(d => (object)d.Quarter)"
+                      Series="@series"
+                      ShowDataLabels="true"
+                      Rounded="true" CornerRadius="4" />
+```
+
+## Parameters
+
+`ArcadiaStackedBarChart` inherits from `ArcadiaBarChart` with `Stacked` defaulting to `true`.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `XField` | `Func<T, object>` | required | Category label selector |
+| `Series` | `List<SeriesConfig<T>>` | required | Series configurations |
+| `Stacked` | `bool` | `true` | Stack bars (always true by default) |
+| `Rounded` | `bool` | `false` | Round bar corners |
+| `CornerRadius` | `int` | `0` | Corner radius in pixels |
+| `ShowDataLabels` | `bool` | `false` | Show value labels on bars |
+
+Plus all [shared ChartBase parameters](/docs/charts).
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `OnPointClick` | `EventCallback<PointClickEventArgs<T>>` | Fired when a bar segment is clicked |
+
+## Accessibility
+
+- SVG has `role="figure"` and `aria-label`
+- Hidden `<table>` with Category and series value columns for screen readers
+- Animations respect `prefers-reduced-motion`
+
+## Use Cases
+
+- **Revenue breakdown by channel** — compare channels within each period
+- **Survey results** — stack response categories per question
+- **Resource allocation** — show team hours across projects by quarter

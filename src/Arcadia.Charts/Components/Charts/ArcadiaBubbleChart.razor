@@ -2,10 +2,12 @@
 @typeparam T
 @inherits ArcadiaScatterChart<T>
 
+@* Bubble chart renders via ArcadiaScatterChart which provides role="figure" and arcadia-sr-only table *@
 @{ base.BuildRenderTree(__builder); }
 
 @code {
     // Bubble chart — a scatter chart where point size represents a third dimension.
     // Equivalent to ArcadiaScatterChart with SizeField set.
+    // Inherits full accessibility from ArcadiaScatterChart: role="figure", aria-label, and sr-only data table.
     // Set SizeField to a lambda that returns the bubble size value.
 }

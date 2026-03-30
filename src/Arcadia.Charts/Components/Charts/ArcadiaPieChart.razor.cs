@@ -163,8 +163,11 @@ public partial class ArcadiaPieChart<T> : ChartBase<T>
     private string GetSliceStyle(int index)
     {
         var style = "";
-        if (AnimateOnLoad)
-            style += "animation-delay: " + (index * 100) + "ms;";
+        if (AnimateOnLoad && ShouldStagger(_slices.Count))
+        {
+            var delay = GetAnimationDelay(index, _slices.Count, 100);
+            if (delay > 0) style += $"animation-delay: {delay}ms;";
+        }
         if (OnPointClick.HasDelegate || OnSliceClick.HasDelegate)
             style += "cursor:pointer;";
         return style;

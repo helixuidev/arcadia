@@ -205,6 +205,34 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   border-color: var(--_accent);
 }
 
+/* Export buttons — distinct from filter toggles */
+.arcadia-grid__export-btn {
+  border: 1px solid var(--_border);
+  background: transparent;
+  color: var(--_muted);
+  padding: 5px 14px;
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  margin-left: 2px;
+}
+.arcadia-grid__export-btn::before {
+  content: '↓ ';
+  font-size: 0.625rem;
+}
+.arcadia-grid__export-btn:hover {
+  background: rgba(22,163,74,0.1);
+  color: var(--arcadia-color-success, #16a34a);
+  border-color: var(--arcadia-color-success, #16a34a);
+}
+.arcadia-grid__export-btn:focus-visible {
+  outline: 2px solid var(--_accent);
+  outline-offset: -2px;
+}
+
 .arcadia-grid__selection-count {
   font-size: 0.75rem;
   font-weight: 500;
@@ -304,6 +332,11 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 }
 
 /* ── Footer aggregates ── */
+.arcadia-grid__tfoot--sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
 .arcadia-grid__footer-row > .arcadia-grid__td--footer {
   background: var(--_header);
   font-weight: 600;
@@ -330,6 +363,32 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
 }
 
+/* ── Edit validation ── */
+.arcadia-grid__edit-wrapper {
+  position: relative;
+}
+.arcadia-grid__edit-input--invalid {
+  border-color: var(--arcadia-color-danger, #dc2626) !important;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.15) !important;
+}
+.arcadia-grid__edit-error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: 4px 8px;
+  margin-top: 2px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--arcadia-color-danger, #dc2626);
+  background: var(--_bg, #0f0d1a);
+  border: 1px solid var(--arcadia-color-danger, #dc2626);
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
 /* ── Group header ── */
 .arcadia-grid__group-row > td {
   background: var(--_header);
@@ -347,6 +406,18 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   color: var(--_muted);
   margin-left: 8px;
   font-size: 0.75rem;
+}
+.arcadia-grid__group-agg {
+  margin-left: 16px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--_accent);
+  font-variant-numeric: tabular-nums;
+}
+.arcadia-grid__group-agg-label {
+  font-weight: 400;
+  color: var(--_muted);
+  margin-right: 4px;
 }
 
 /* ── Pagination ── */
@@ -778,7 +849,7 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
 .arcadia-grid__resize-handle--active {
   background: rgba(139,92,246,0.08);
 }
-.arcadia-grid__th { position: relative; } /* enable resize handle positioning */
+.arcadia-grid__th { position: relative; overflow: hidden; } /* enable resize handle positioning, clip handle */
 
 /* Column drag visual feedback */
 .arcadia-grid__th--dragging {
@@ -965,6 +1036,146 @@ th[aria-sort="descending"] .arcadia-grid__sort-icon {
   min-width: 14px; height: 14px; font-size: 9px; font-weight: 700;
   border-radius: 7px; background: var(--_accent, #8b5cf6); color: #fff;
   margin-left: 2px; padding: 0 3px; line-height: 1;
+}
+
+/* ── Conditional Formatting ── */
+
+/* DataBar: horizontal bar behind cell value */
+.arcadia-grid__cf-databar {
+  position: relative;
+}
+.arcadia-grid__cf-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(139, 92, 246, 0.12);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 0;
+  transition: width 0.3s ease;
+}
+.arcadia-grid__cf-databar > :not(.arcadia-grid__cf-bar) {
+  position: relative;
+  z-index: 1;
+}
+
+/* RedGreenScale: background applied via inline style */
+.arcadia-grid__cf-redgreen {
+  transition: background 0.3s ease;
+}
+
+/* IconSet: arrow icons */
+.arcadia-grid__cf-icon {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 0.85em;
+  line-height: 1;
+}
+.arcadia-grid__cf-iconset .arcadia-grid__cf-icon {
+  color: var(--_accent);
+}
+
+/* ── Frozen Right shadow (mirrored from left) ── */
+.arcadia-grid__td[style*="right:0"],
+.arcadia-grid__th[style*="right:0"] {
+  z-index: 1;
+}
+.arcadia-grid__td[style*="right:0"]::before,
+.arcadia-grid__th[style*="right:0"]::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to left, rgba(0,0,0,0.08), transparent);
+  pointer-events: none;
+}
+
+/* ── Infinite Scroll ── */
+.arcadia-grid__infinite-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  font-size: 0.8rem;
+  color: var(--_muted);
+  border-top: 1px solid var(--_border);
+  background: var(--_header);
+}
+.arcadia-grid__infinite-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--_border);
+  border-top-color: var(--_accent);
+  border-radius: 50%;
+  animation: arcadia-grid-spin 0.6s linear infinite;
+}
+@keyframes arcadia-grid-spin { to { transform: rotate(360deg); } }
+
+/* ── Tooltip ── */
+.arcadia-grid__tooltip-wrapper {
+  position: relative;
+}
+.arcadia-grid__tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #fff;
+  background: #1a1625;
+  border: 1px solid var(--_border, rgba(139,92,246,0.2));
+  border-radius: var(--arcadia-radius-sm, 0.375rem);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+}
+.arcadia-grid__tooltip-wrapper:hover .arcadia-grid__tooltip {
+  display: block;
+}
+[data-arcadia-theme="light"] .arcadia-grid__tooltip,
+.arcadia-grid[data-theme="light"] .arcadia-grid__tooltip {
+  color: #fff;
+  background: #1a1625;
+}
+
+/* ── Column Reorder (drag-and-drop) ── */
+.arcadia-grid__th--reorderable {
+  cursor: grab;
+}
+.arcadia-grid__th--reorderable:active {
+  cursor: grabbing;
+}
+.arcadia-grid__th--drag-over {
+  border-left: 3px solid var(--_accent, #8b5cf6) !important;
+}
+
+/* ── Stacked / Grouped Column Headers ── */
+.arcadia-grid__header-group th {
+  text-align: center;
+  background: var(--_header);
+  border-bottom: 2px solid var(--_border);
+  color: var(--_muted);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 8px 16px;
+}
+.arcadia-grid__th--group {
+  background: color-mix(in srgb, var(--_header) 90%, var(--_accent) 10%) !important;
+}
+.arcadia-grid__th--group:not(:last-child) {
+  border-right: 1px solid var(--_border);
 }
 
 /* Screen reader only */

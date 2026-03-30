@@ -1,0 +1,81 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Area Chart
+description: Blazor area chart component with multi-series support, stacking, trendlines, and streaming data. Pure SVG rendering by Arcadia Controls.
+---
+
+# Area Chart
+
+An area chart is a line chart with the region below each line filled with a semi-transparent color. Use it to emphasize volume or cumulative totals over time.
+
+## Basic Usage
+
+```razor
+<ArcadiaAreaChart TItem="SalesRecord" Data="@data"
+                XField="@(d => (object)d.Month)"
+                Series="@series"
+                Height="300" Width="600" />
+
+@code {
+    record SalesRecord(string Month, double Revenue);
+
+    var data = new List<SalesRecord>
+    {
+        new("Jan", 45000), new("Feb", 52000),
+        new("Mar", 48000), new("Apr", 61000),
+    };
+
+    var series = new List<SeriesConfig<SalesRecord>>
+    {
+        new() { Name = "Revenue", Field = d => d.Revenue }
+    };
+}
+```
+
+## Multi-Series Stacked
+
+```csharp
+var series = new List<SeriesConfig<SalesRecord>>
+{
+    new() { Name = "Online", Field = d => d.Online, Color = "primary" },
+    new() { Name = "Retail", Field = d => d.Retail, Color = "secondary" },
+};
+
+<ArcadiaAreaChart TItem="SalesRecord" Data="@data"
+                XField="@(d => (object)d.Month)"
+                Series="@series" Stacked="true" />
+```
+
+## Parameters
+
+`ArcadiaAreaChart` inherits from `ArcadiaLineChart` and shares all its parameters. By default, `ShowArea` is enabled on every series and `AreaOpacity` defaults to `0.2`.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `XField` | `Func<T, object>` | required | X-axis label selector |
+| `Series` | `List<SeriesConfig<T>>` | required | Series configurations |
+| `ShowPoints` | `bool` | `true` | Show data point dots on lines |
+| `Stacked` | `bool` | `false` | Stack area fills on top of each other |
+| `SlidingWindow` | `int` | `0` | Max points for streaming mode |
+| `NullHandling` | `NullHandling` | `Gap` | How to handle missing data: Gap, Connect, Zero |
+
+Plus all [shared ChartBase parameters](/docs/charts).
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `OnPointClick` | `EventCallback<PointClickEventArgs<T>>` | Fired when a data point is clicked |
+| `OnSeriesClick` | `EventCallback<int>` | Fired when a series is clicked |
+
+## Accessibility
+
+- SVG has `role="figure"` and `aria-label`
+- Hidden `<table>` with all data for screen readers
+- Animations respect `prefers-reduced-motion`
+
+## Use Cases
+
+- **Revenue over time** — show volume with filled regions
+- **Stacked composition** — visualize how parts contribute to a whole over time
+- **Streaming dashboards** — use `SlidingWindow` for real-time data feeds

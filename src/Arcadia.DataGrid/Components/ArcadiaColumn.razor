@@ -18,6 +18,12 @@
     /// <summary>CSS width (e.g., "200px", "30%"). Null = auto.</summary>
     [Parameter] public string? Width { get; set; }
 
+    /// <summary>Runtime-mutable width for resize and state restoration. Falls back to the Width parameter when not set.</summary>
+    internal string? RuntimeWidth { get; set; }
+
+    /// <summary>Effective width: RuntimeWidth if set by resize/restore, otherwise the original Width parameter.</summary>
+    internal string? EffectiveWidth => RuntimeWidth ?? Width;
+
     /// <summary>Text alignment: left, center, right.</summary>
     [Parameter] public string Align { get; set; } = "left";
 
@@ -45,6 +51,9 @@
     /// <summary>Pin this column to the left edge (stays visible on horizontal scroll). Requires Width to be set.</summary>
     [Parameter] public bool Frozen { get; set; }
 
+    /// <summary>Position for frozen columns: "left" (default) or "right". Only applies when Frozen/IsFrozen is true.</summary>
+    [Parameter] public string FrozenPosition { get; set; } = "left";
+
     /// <summary>Internal frozen state for runtime pin/unpin toggling.</summary>
     internal bool IsFrozen { get; set; }
 
@@ -60,8 +69,35 @@
     /// <summary>Custom footer template (overrides Aggregate when set).</summary>
     [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
+    /// <summary>Rich tooltip template shown on cell hover. Takes precedence over Tooltip text.</summary>
+    [Parameter] public RenderFragment<TItem>? TooltipTemplate { get; set; }
+
+    /// <summary>Simple text tooltip shown on cell hover (via title attribute). Ignored when TooltipTemplate is set.</summary>
+    [Parameter] public string? Tooltip { get; set; }
+
     /// <summary>Dynamic CSS class for cells in this column.</summary>
     [Parameter] public Func<TItem, string?>? CellClass { get; set; }
+
+    /// <summary>Conditional formatting preset: "DataBar", "RedGreenScale", or "IconSet". Applies visual formatting based on cell values relative to column min/max.</summary>
+    [Parameter] public string? ConditionalFormat { get; set; }
+
+    /// <summary>Computed minimum value for this column (used by ConditionalFormat). Set by the parent grid.</summary>
+    internal double ColumnMin { get; set; }
+
+    /// <summary>Computed maximum value for this column (used by ConditionalFormat). Set by the parent grid.</summary>
+    internal double ColumnMax { get; set; }
+
+    /// <summary>ColSpan function for cell merging. Returns the number of columns a cell should span. Adjacent columns are skipped.</summary>
+    [Parameter] public Func<TItem, int>? ColSpan { get; set; }
+
+    /// <summary>Validation function for inline cell editing. Receives the raw string value from the edit input. Returns null/empty for valid, or an error message string for invalid.</summary>
+    [Parameter] public Func<string, string?>? Validator { get; set; }
+
+    /// <summary>Current validation error message for this column's active edit cell. Set by the grid during editing.</summary>
+    internal string? ValidationError { get; set; }
+
+    /// <summary>Group name for stacked/grouped column headers. Columns with the same Group value share a spanning header row above them.</summary>
+    [Parameter] public string? Group { get; set; }
 
     /// <summary>Unique key for this column. Auto-generated from Title when not set.</summary>
     [Parameter] public string? Key { get; set; }
@@ -111,6 +147,77 @@
         // Auto-generate title from property name if not set
         if (string.IsNullOrEmpty(Title))
             Title = System.Text.RegularExpressions.Regex.Replace(Property, "([a-z])([A-Z])", "$1 $2");
+    }
+
+    /// <summary>Get the conditional format CSS class for a cell value.</summary>
+    internal string GetConditionalFormatClass()
+    {
+        return ConditionalFormat switch
+        {
+            "DataBar" => "arcadia-grid__cf-databar",
+            "RedGreenScale" => "arcadia-grid__cf-redgreen",
+            "IconSet" => "arcadia-grid__cf-iconset",
+            _ => ""
+        };
+    }
+
+    /// <summary>Get inline style for conditional formatting based on the cell's numeric value.</summary>
+    internal string GetConditionalFormatStyle(object? rawValue)
+    {
+        if (string.IsNullOrEmpty(ConditionalFormat) || rawValue is null) return "";
+
+        double val;
+        switch (rawValue)
+        {
+            case double d: val = d; break;
+            case int i: val = i; break;
+            case long l: val = l; break;
+            case decimal m: val = (double)m; break;
+            case float f: val = f; break;
+            default:
+                if (!double.TryParse(rawValue.ToString(), out val)) return "";
+                break;
+        }
+
+        var range = ColumnMax - ColumnMin;
+        if (range <= 0) return "";
+        var normalized = Math.Clamp((val - ColumnMin) / range, 0, 1);
+
+        return ConditionalFormat switch
+        {
+            "DataBar" => $"--cf-pct:{normalized * 100:F1}%;",
+            "RedGreenScale" =>
+                $"background:color-mix(in srgb, rgba(220,38,38,0.18) {((1.0 - normalized) * 100):F0}%, rgba(22,163,74,0.18) {(normalized * 100):F0}%);",
+            "IconSet" => "", // icon is rendered in markup, not via style
+            _ => ""
+        };
+    }
+
+    /// <summary>Get the icon for IconSet conditional formatting.</summary>
+    internal string GetConditionalFormatIcon(object? rawValue)
+    {
+        if (ConditionalFormat != "IconSet" || rawValue is null) return "";
+
+        double val;
+        switch (rawValue)
+        {
+            case double d: val = d; break;
+            case int i: val = i; break;
+            case long l: val = l; break;
+            case decimal m: val = (double)m; break;
+            case float f: val = f; break;
+            default:
+                if (!double.TryParse(rawValue.ToString(), out val)) return "";
+                break;
+        }
+
+        var range = ColumnMax - ColumnMin;
+        if (range <= 0) return "\u2192"; // → neutral arrow
+        var normalized = (val - ColumnMin) / range;
+
+        if (normalized >= 0.67) return "\u2191"; // ↑ up
+        if (normalized <= 0.33) return "\u2193"; // ↓ down
+        return "\u2192"; // → neutral
     }
 
     private void DetectDataType()

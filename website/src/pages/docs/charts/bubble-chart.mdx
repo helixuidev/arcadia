@@ -1,0 +1,75 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: Bubble Chart
+description: Blazor bubble chart component with size-mapped data points, trendlines, and tooltips. Pure SVG rendering by Arcadia Controls.
+---
+
+# Bubble Chart
+
+A bubble chart extends the scatter chart by mapping a third data dimension to point radius. Larger values render as bigger circles, making it easy to compare three variables at once.
+
+## Basic Usage
+
+```razor
+<ArcadiaBubbleChart TItem="Company" Data="@companies"
+                  XField="@(d => d.Revenue)"
+                  YField="@(d => d.Growth)"
+                  SizeField="@(d => d.Employees)"
+                  Height="400" Width="0" Color="primary"
+                  Title="Revenue vs Growth (bubble = employees)" />
+
+@code {
+    record Company(double Revenue, double Growth, double Employees);
+
+    List<Company> companies = new()
+    {
+        new(120, 15, 500), new(80, 25, 200),
+        new(200, 8, 1200), new(50, 30, 100),
+    };
+}
+```
+
+## With Trendline
+
+```razor
+<ArcadiaBubbleChart TItem="Company" Data="@companies"
+                  XField="@(d => d.Revenue)"
+                  YField="@(d => d.Growth)"
+                  SizeField="@(d => d.Employees)"
+                  Trendline="@(new TrendlineConfig { Type = TrendlineType.Linear })" />
+```
+
+## Parameters
+
+`ArcadiaBubbleChart` inherits from `ArcadiaScatterChart` and shares all its parameters. The key differentiator is the `SizeField` parameter.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `XField` | `Func<T, double>` | required | X value selector |
+| `YField` | `Func<T, double>` | required | Y value selector |
+| `SizeField` | `Func<T, double>?` | null | Bubble size selector (required for bubble effect) |
+| `PointSize` | `double` | 5 | Minimum point radius |
+| `PointOpacity` | `double` | 0.7 | Opacity of bubbles (0.0 to 1.0) |
+| `Color` | `string?` | null | Bubble color |
+| `Trendline` | `TrendlineConfig?` | null | Trendline config |
+| `TrendlineOpacity` | `double` | 0.6 | Opacity of the trendline |
+
+Plus all [shared ChartBase parameters](/docs/charts).
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `OnPointClick` | `EventCallback<PointClickEventArgs<T>>` | Fired when a bubble is clicked |
+
+## Accessibility
+
+- SVG has `role="figure"` and `aria-label`
+- Hidden `<table>` with X, Y, and Size columns for screen readers
+- Animations respect `prefers-reduced-motion`
+
+## Use Cases
+
+- **Market analysis** — plot revenue vs growth with company size as bubble radius
+- **Portfolio visualization** — risk vs return with investment size
+- **Geographic data** — population density comparisons

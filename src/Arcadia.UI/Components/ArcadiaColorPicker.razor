@@ -1,0 +1,117 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+
+    <div class="arcadia-color-picker__swatches" role="radiogroup" aria-label="Color presets">
+        @foreach (var color in EffectivePresets)
+        {
+            var c = color;
+            <button type="button"
+                    class="@SwatchClass(c)"
+                    style="background-color: @c;"
+                    role="radio"
+                    aria-checked="@(string.Equals(Value, c, System.StringComparison.OrdinalIgnoreCase) ? "true" : "false")"
+                    aria-label="@($"Select color {c}")"
+                    disabled="@Disabled"
+                    @onclick="() => SelectColorAsync(c)">
+                @if (string.Equals(Value, c, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    <svg class="arcadia-color-picker__check" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M3.5 8.5l3 3 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                    </svg>
+                }
+            </button>
+        }
+    </div>
+
+    @if (ShowInput)
+    {
+        <div class="arcadia-color-picker__input-row">
+            <span class="arcadia-color-picker__preview" style="background-color: @(Value ?? "transparent");"></span>
+            <input type="text"
+                   class="arcadia-color-picker__input"
+                   value="@Value"
+                   placeholder="#000000"
+                   maxlength="7"
+                   disabled="@Disabled"
+                   aria-label="Hex color value"
+                   @onchange="OnInputChangedAsync" />
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the selected hex color value (e.g., "#8b5cf6"). Supports two-way binding via <see cref="ValueChanged"/>.
+    /// </summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Value"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets optional preset color swatches. If null or empty, a default 12-color palette is used.
+    /// </summary>
+    [Parameter]
+    public string[]? Presets { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the hex text input is shown. Default is true.
+    /// </summary>
+    [Parameter]
+    public bool ShowInput { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets whether the color picker is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    private static readonly string[] DefaultPresets = new[]
+    {
+        "#ef4444", "#f97316", "#eab308", "#22c55e",
+        "#14b8a6", "#3b82f6", "#8b5cf6", "#ec4899",
+        "#f43f5e", "#6366f1", "#0ea5e9", "#a855f7"
+    };
+
+    private string[] EffectivePresets => Presets is { Length: > 0 } ? Presets : DefaultPresets;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-color-picker")
+        .AddClass("arcadia-color-picker--disabled", Disabled)
+        .AddClass(Class)
+        .Build();
+
+    private string SwatchClass(string color) =>
+        Arcadia.Core.Utilities.CssBuilder.Default("arcadia-color-picker__swatch")
+            .AddClass("arcadia-color-picker__swatch--selected",
+                string.Equals(Value, color, System.StringComparison.OrdinalIgnoreCase))
+            .Build() ?? "arcadia-color-picker__swatch";
+
+    private async Task SelectColorAsync(string color)
+    {
+        if (Disabled) return;
+
+        Value = color;
+        await ValueChanged.InvokeAsync(color);
+    }
+
+    private async Task OnInputChangedAsync(ChangeEventArgs args)
+    {
+        if (Disabled) return;
+
+        var raw = args.Value?.ToString()?.Trim();
+        if (!string.IsNullOrEmpty(raw))
+        {
+            if (!raw.StartsWith('#')) raw = "#" + raw;
+            Value = raw;
+            await ValueChanged.InvokeAsync(raw);
+        }
+    }
+}

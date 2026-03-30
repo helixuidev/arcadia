@@ -1,0 +1,135 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
+
+<div class="@CssClass"
+     style="@Style"
+     @onmouseenter="OnMouseEnterAsync"
+     @onmouseleave="OnMouseLeaveAsync"
+     @onfocusin="OnMouseEnterAsync"
+     @onfocusout="OnMouseLeaveAsync"
+     @attributes="AdditionalAttributes">
+    <div class="arcadia-hover-card__trigger">
+        @ChildContent
+    </div>
+    @if (_visible)
+    {
+        <div class="arcadia-hover-card__content arcadia-hover-card__content--@NormalizedPosition"
+             role="tooltip"
+             aria-live="polite">
+            @Content
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the trigger element content that activates the hover card.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaHoverCard Position="bottom" OpenDelay="300"&gt;
+    ///     &lt;ChildContent&gt;&lt;a href="#"&gt;@username&lt;/a&gt;&lt;/ChildContent&gt;
+    ///     &lt;Content&gt;&lt;div&gt;User profile card&lt;/div&gt;&lt;/Content&gt;
+    /// &lt;/ArcadiaHoverCard&gt;
+    /// </code>
+    /// </example>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the hover card content displayed on hover.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    /// <summary>
+    /// Gets or sets the delay in milliseconds before the hover card appears. Defaults to 300.
+    /// </summary>
+    [Parameter]
+    public int OpenDelay { get; set; } = 300;
+
+    /// <summary>
+    /// Gets or sets the delay in milliseconds before the hover card hides. Defaults to 200.
+    /// </summary>
+    [Parameter]
+    public int CloseDelay { get; set; } = 200;
+
+    /// <summary>
+    /// Gets or sets the position of the hover card relative to the trigger.
+    /// Valid values: "top", "bottom", "left", "right". Defaults to "bottom".
+    /// </summary>
+    [Parameter]
+    public string Position { get; set; } = "bottom";
+
+    private bool _visible;
+    private CancellationTokenSource? _cts;
+
+    private string NormalizedPosition => Position?.ToLowerInvariant() switch
+    {
+        "top" => "top",
+        "left" => "left",
+        "right" => "right",
+        _ => "bottom"
+    };
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-hover-card")
+        .AddClass("arcadia-hover-card--open", _visible)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnMouseEnterAsync()
+    {
+        CancelPending();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+
+        try
+        {
+            await Task.Delay(OpenDelay, token);
+            if (!token.IsCancellationRequested)
+            {
+                _visible = true;
+                StateHasChanged();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            // Expected when mouse leaves before delay completes
+        }
+    }
+
+    private async Task OnMouseLeaveAsync()
+    {
+        CancelPending();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+
+        try
+        {
+            await Task.Delay(CloseDelay, token);
+            if (!token.IsCancellationRequested)
+            {
+                _visible = false;
+                StateHasChanged();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            // Expected when mouse re-enters before delay completes
+        }
+    }
+
+    private void CancelPending()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        CancelPending();
+    }
+}

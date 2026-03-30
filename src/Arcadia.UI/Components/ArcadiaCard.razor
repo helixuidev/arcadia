@@ -2,104 +2,349 @@
 @inherits Arcadia.Core.Base.ArcadiaComponentBase
 
 <div class="@CssClass"
-     style="@Style"
+     style="@ComputedStyle"
      role="@(Clickable ? "button" : null)"
      tabindex="@(Clickable ? 0 : -1)"
+     aria-disabled="@(Disabled ? "true" : null)"
      @onclick="HandleClick"
      @onkeydown="HandleKeyDown"
      @attributes="AdditionalAttributes">
 
-    @if (HeaderTemplate is not null)
+    @if (Loading)
     {
-        <div class="arcadia-card__header">
-            @HeaderTemplate
-        </div>
-    }
-    else if (!string.IsNullOrEmpty(Title))
-    {
-        <div class="arcadia-card__header">
-            <h3 class="arcadia-card__title">@Title</h3>
-            @if (!string.IsNullOrEmpty(Subtitle))
+        <div class="arcadia-card__skeleton arcadia-card__skeleton--@LoadingAnimation">
+            @if (!string.IsNullOrEmpty(ImageUrl))
             {
-                <p class="arcadia-card__subtitle">@Subtitle</p>
+                <div class="arcadia-card__skeleton-image" style="@(ImageHeight is not null ? $"height:{ImageHeight};" : "")"></div>
             }
+            <div class="arcadia-card__skeleton-lines">
+                <div class="arcadia-card__skeleton-line" style="width:60%"></div>
+                <div class="arcadia-card__skeleton-line" style="width:40%"></div>
+                <div class="arcadia-card__skeleton-line" style="width:90%"></div>
+                <div class="arcadia-card__skeleton-line" style="width:75%"></div>
+            </div>
         </div>
     }
-
-    <div class="arcadia-card__body">
-        @ChildContent
-    </div>
-
-    @if (FooterTemplate is not null)
+    else
     {
-        <div class="arcadia-card__footer">
-            @FooterTemplate
+        @if (Selected)
+        {
+            <div class="arcadia-card__selected-check">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+        }
+
+        @if (MenuTemplate is not null)
+        {
+            <div class="arcadia-card__menu-container">
+                <button class="arcadia-card__menu-trigger" @onclick="ToggleMenu" @onclick:stopPropagation="true" type="button" aria-label="Card menu">&#x22EF;</button>
+                @if (_showMenu)
+                {
+                    <div class="arcadia-card__menu-dropdown">
+                        @MenuTemplate
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(ImageUrl))
+        {
+            <div class="arcadia-card__image" style="@ImageStyle">
+                @if (ImageOverlay)
+                {
+                    <div class="arcadia-card__image-overlay"></div>
+                }
+            </div>
+        }
+
+        @if (HeaderTemplate is not null)
+        {
+            <div class="arcadia-card__header">
+                @HeaderTemplate
+                @if (HeaderActions is not null)
+                {
+                    <div class="arcadia-card__header-actions">@HeaderActions</div>
+                }
+                @if (Collapsible)
+                {
+                    <button class="arcadia-card__collapse-toggle @(_collapsed ? "" : "arcadia-card__collapse-toggle--expanded")"
+                            @onclick="ToggleCollapsed" @onclick:stopPropagation="true" type="button" aria-label="Toggle card body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                }
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Title))
+        {
+            <div class="arcadia-card__header">
+                <div class="arcadia-card__header-content">
+                    @if (!string.IsNullOrEmpty(Badge))
+                    {
+                        <span class="arcadia-card__badge">@Badge</span>
+                    }
+                    <h3 class="arcadia-card__title">@Title</h3>
+                    @if (!string.IsNullOrEmpty(Subtitle))
+                    {
+                        <p class="arcadia-card__subtitle">@Subtitle</p>
+                    }
+                </div>
+                @if (HeaderActions is not null)
+                {
+                    <div class="arcadia-card__header-actions">@HeaderActions</div>
+                }
+                @if (Collapsible)
+                {
+                    <button class="arcadia-card__collapse-toggle @(_collapsed ? "" : "arcadia-card__collapse-toggle--expanded")"
+                            @onclick="ToggleCollapsed" @onclick:stopPropagation="true" type="button" aria-label="Toggle card body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                }
+            </div>
+        }
+
+        <div class="arcadia-card__body" style="@(_collapsed && Collapsible ? "max-height:0;overflow:hidden;padding:0;" : "")">
+            @ChildContent
         </div>
+
+        @if (FooterTemplate is not null)
+        {
+            <div class="arcadia-card__footer">
+                @FooterTemplate
+            </div>
+        }
     }
 </div>
 
 @code {
-    /// <summary>
-    /// Gets or sets the card title displayed in the header. Ignored when HeaderTemplate is set.
-    /// </summary>
-    [Parameter]
-    public string? Title { get; set; }
+    /// <summary>Card title displayed in the header.</summary>
+    [Parameter] public string? Title { get; set; }
 
-    /// <summary>
-    /// Gets or sets the card subtitle displayed below the title. Ignored when HeaderTemplate is set.
-    /// </summary>
-    [Parameter]
-    public string? Subtitle { get; set; }
+    /// <summary>Card subtitle displayed below the title.</summary>
+    [Parameter] public string? Subtitle { get; set; }
 
-    /// <summary>
-    /// Gets or sets a custom header template. When set, Title and Subtitle are ignored.
-    /// </summary>
-    [Parameter]
-    public RenderFragment? HeaderTemplate { get; set; }
+    /// <summary>Small badge/tag displayed above the title (e.g., "New", "Pro", "Free").</summary>
+    [Parameter] public string? Badge { get; set; }
 
-    /// <summary>
-    /// Gets or sets a custom footer template for action buttons or additional content.
-    /// </summary>
-    [Parameter]
-    public RenderFragment? FooterTemplate { get; set; }
+    /// <summary>Custom header template. When set, Title/Subtitle/Badge are ignored.</summary>
+    [Parameter] public RenderFragment? HeaderTemplate { get; set; }
 
-    /// <summary>
-    /// Gets or sets the card body content.
-    /// </summary>
-    [Parameter]
-    public RenderFragment? ChildContent { get; set; }
+    /// <summary>Custom footer template for action buttons.</summary>
+    [Parameter] public RenderFragment? FooterTemplate { get; set; }
 
-    /// <summary>
-    /// Gets or sets whether the card is clickable with a hover effect. Default is false.
-    /// </summary>
-    /// <remarks>When true, adds hover effect and role="button". Use OnClick for the click handler.</remarks>
-    [Parameter]
-    public bool Clickable { get; set; }
+    /// <summary>Card body content.</summary>
+    [Parameter] public RenderFragment? ChildContent { get; set; }
 
-    /// <summary>
-    /// Event callback fired when the card is clicked (only when Clickable is true).
-    /// </summary>
-    [Parameter]
-    public EventCallback OnClick { get; set; }
+    /// <summary>Clickable with hover effect. Default: false.</summary>
+    /// <remarks>When true, adds hover lift effect and role="button".</remarks>
+    [Parameter] public bool Clickable { get; set; }
+
+    /// <summary>Click event callback.</summary>
+    [Parameter] public EventCallback OnClick { get; set; }
+
+    // ── Visual Style ──
+
+    /// <summary>Card variant: "solid" (default), "glass", "outlined", "ghost". Glass enables frosted-glass/glassmorphism effect.</summary>
+    /// <example><code>&lt;ArcadiaCard Variant="glass" /&gt;</code></example>
+    [Parameter] public string Variant { get; set; } = "solid";
+
+    /// <summary>Elevation level (0-5). Higher = more shadow depth. Default: 1.</summary>
+    /// <remarks>0 = flat (no shadow), 1 = subtle, 2 = medium, 3 = raised, 4 = floating, 5 = overlay.</remarks>
+    [Parameter] public int Elevation { get; set; } = 1;
+
+    /// <summary>Blur intensity for glass variant in pixels. Default: 16.</summary>
+    [Parameter] public int BlurAmount { get; set; } = 16;
+
+    /// <summary>Background opacity for glass variant (0.0-1.0). Default: 0.12.</summary>
+    [Parameter] public double GlassOpacity { get; set; } = 0.12;
+
+    /// <summary>Accent border color. Null = default theme border. Set to a CSS color for a colored left border accent.</summary>
+    [Parameter] public string? AccentColor { get; set; }
+
+    /// <summary>Enable gradient border effect. Default: false.</summary>
+    [Parameter] public bool GradientBorder { get; set; }
+
+    // ── Image ──
+
+    /// <summary>Header image URL. Renders a full-width image above the card content.</summary>
+    [Parameter] public string? ImageUrl { get; set; }
+
+    /// <summary>Image height CSS value (e.g., "200px", "40%"). Default: 180px.</summary>
+    [Parameter] public string? ImageHeight { get; set; } = "180px";
+
+    /// <summary>Show a dark gradient overlay on the image (for text readability). Default: false.</summary>
+    [Parameter] public bool ImageOverlay { get; set; }
+
+    // ── Loading / Skeleton State ──
+
+    /// <summary>When true, replaces card content with a shimmer skeleton placeholder. Default: false.</summary>
+    [Parameter] public bool Loading { get; set; }
+
+    /// <summary>Skeleton loading animation style: "wave", "pulse", or "fade". Default: "wave".</summary>
+    [Parameter] public string LoadingAnimation { get; set; } = "wave";
+
+    // ── Collapsible Body ──
+
+    /// <summary>When true, the card body can be collapsed/expanded via a chevron in the header. Default: false.</summary>
+    [Parameter] public bool Collapsible { get; set; }
+
+    /// <summary>Whether the card body is currently collapsed. Supports two-way binding. Default: false.</summary>
+    [Parameter] public bool Collapsed { get; set; }
+
+    /// <summary>Event callback for two-way binding of <see cref="Collapsed"/>.</summary>
+    [Parameter] public EventCallback<bool> CollapsedChanged { get; set; }
+
+    // ── Header Actions Slot ──
+
+    /// <summary>Render fragment displayed flush-right in the header row for action buttons/icons.</summary>
+    [Parameter] public RenderFragment? HeaderActions { get; set; }
+
+    // ── Status / Severity Bar ──
+
+    /// <summary>Status severity: "info", "warning", "error", "success", or null. Adds a colored top border bar.</summary>
+    [Parameter] public string? Status { get; set; }
+
+    // ── Horizontal Orientation ──
+
+    /// <summary>Card orientation: "vertical" (default) or "horizontal". Horizontal places image on the left.</summary>
+    [Parameter] public string Orientation { get; set; } = "vertical";
+
+    // ── Image Aspect Ratio ──
+
+    /// <summary>CSS aspect-ratio for the image (e.g., "16/9", "4/3", "1/1"). When set, overrides ImageHeight.</summary>
+    [Parameter] public string? ImageAspectRatio { get; set; }
+
+    // ── Selected State ──
+
+    /// <summary>Whether the card is in a selected state. Adds a primary-colored border and checkmark. Default: false.</summary>
+    [Parameter] public bool Selected { get; set; }
+
+    /// <summary>Event callback for two-way binding of <see cref="Selected"/>.</summary>
+    [Parameter] public EventCallback<bool> SelectedChanged { get; set; }
+
+    // ── Disabled State ──
+
+    /// <summary>When true, the card is visually dimmed and all interactions are disabled. Default: false.</summary>
+    [Parameter] public bool Disabled { get; set; }
+
+    // ── Context Menu ──
+
+    /// <summary>Render fragment for a context menu dropdown. When set, a three-dot menu button appears in the top-right corner.</summary>
+    [Parameter] public RenderFragment? MenuTemplate { get; set; }
+
+    // ── Private State ──
+
+    private bool _collapsed;
+    private bool _showMenu;
+
+    protected override void OnParametersSet()
+    {
+        _collapsed = Collapsed;
+    }
+
+    // ── Computed ──
+
+    private string StatusBorderStyle => Status switch
+    {
+        "info" => "border-top:4px solid #3b82f6;",
+        "warning" => "border-top:4px solid #f59e0b;",
+        "error" => "border-top:4px solid #ef4444;",
+        "success" => "border-top:4px solid #16a34a;",
+        _ => ""
+    };
+
+    private string ImageStyle
+    {
+        get
+        {
+            var parts = new List<string>();
+            parts.Add($"background-image:url('{ImageUrl}')");
+            if (!string.IsNullOrEmpty(ImageAspectRatio))
+            {
+                parts.Add($"aspect-ratio:{ImageAspectRatio}");
+                parts.Add("height:auto");
+            }
+            else if (ImageHeight is not null)
+            {
+                parts.Add($"height:{ImageHeight}");
+            }
+            return string.Join(";", parts);
+        }
+    }
 
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-card")
         .AddClass("arcadia-card--clickable", Clickable)
+        .AddClass($"arcadia-card--{Variant}", Variant != "solid")
+        .AddClass($"arcadia-card--elevation-{Elevation}")
+        .AddClass("arcadia-card--gradient-border", GradientBorder)
+        .AddClass("arcadia-card--accent", AccentColor is not null)
+        .AddClass("arcadia-card--loading", Loading)
+        .AddClass("arcadia-card--collapsed", _collapsed && Collapsible)
+        .AddClass($"arcadia-card--status-{Status}", !string.IsNullOrEmpty(Status))
+        .AddClass("arcadia-card--horizontal", Orientation == "horizontal")
+        .AddClass("arcadia-card--selected", Selected)
+        .AddClass("arcadia-card--disabled", Disabled)
         .AddClass(Class)
         .Build();
 
+    private string ComputedStyle
+    {
+        get
+        {
+            var parts = new List<string>();
+            if (Variant == "glass")
+            {
+                parts.Add($"backdrop-filter:blur({BlurAmount}px)");
+                parts.Add($"-webkit-backdrop-filter:blur({BlurAmount}px)");
+                parts.Add($"background:rgba(255,255,255,{GlassOpacity.ToString("F2")})");
+            }
+            if (AccentColor is not null)
+                parts.Add($"border-left:3px solid {AccentColor}");
+            if (!string.IsNullOrEmpty(Status))
+                parts.Add(StatusBorderStyle);
+            if (Selected)
+                parts.Add("border:2px solid var(--arcadia-primary, #3b82f6)");
+            if (!string.IsNullOrEmpty(Style))
+                parts.Add(Style);
+            return string.Join(";", parts);
+        }
+    }
+
     private async Task HandleClick()
     {
+        if (Disabled) return;
         if (Clickable)
         {
+            if (SelectedChanged.HasDelegate)
+            {
+                Selected = !Selected;
+                await SelectedChanged.InvokeAsync(Selected);
+            }
             await OnClick.InvokeAsync();
         }
     }
 
     private async Task HandleKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs e)
     {
-        if (Clickable && (e.Key == "Enter" || e.Key == " "))
-        {
-            await OnClick.InvokeAsync();
-        }
+        if (Disabled) return;
+        if (Clickable && (e.Key == "Enter" || e.Key == " ")) await HandleClick();
+    }
+
+    private async Task ToggleCollapsed()
+    {
+        if (Disabled) return;
+        _collapsed = !_collapsed;
+        await CollapsedChanged.InvokeAsync(_collapsed);
+    }
+
+    private void ToggleMenu()
+    {
+        if (Disabled) return;
+        _showMenu = !_showMenu;
     }
 }

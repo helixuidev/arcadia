@@ -1,0 +1,111 @@
+---
+layout: ../../../layouts/DocsLayout.astro
+title: DragGrid
+description: ArcadiaDragGrid component reference — drag-and-drop dashboard grid with resize, keyboard navigation, and state persistence.
+---
+
+# ArcadiaDragGrid
+
+A CSS Grid-based drag-and-drop layout component. Renders `ArcadiaDragGridItem` children in a responsive grid with drag reordering and resize support.
+
+## Basic Usage
+
+```razor
+<ArcadiaDragGrid Columns="4" RowHeight="120" Gap="16"
+                 EditMode="true" AllowResize="true"
+                 OnReorder="HandleReorder">
+    <ArcadiaDragGridItem Id="panel-1" ColSpan="2" RowSpan="1">
+        <HeaderContent>Sales</HeaderContent>
+        <ChildContent>
+            <p>Panel content here</p>
+        </ChildContent>
+    </ArcadiaDragGridItem>
+</ArcadiaDragGrid>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | — | Child content (should contain `ArcadiaDragGridItem` components) |
+| `Columns` | `int` | `4` | Number of columns in the grid |
+| `RowHeight` | `int` | `120` | Height of each row in pixels |
+| `Gap` | `int` | `16` | Gap between grid items in pixels |
+| `Layout` | `DragGridLayout?` | — | Current layout state for two-way binding |
+| `LayoutChanged` | `EventCallback<DragGridLayout>` | — | Callback when layout changes due to drag or resize |
+| `EditMode` | `bool` | `true` | Whether drag and resize are enabled |
+| `DragMode` | `string` | `"direct"` | `"direct"` (drag from handle) or `"longpress"` (iOS-style wiggle mode) |
+| `LongPressDuration` | `int` | `500` | Milliseconds before long-press activates wiggle mode |
+| `AllowResize` | `bool` | `true` | Whether items can be resized |
+| `DragScaleUp` | `double` | `1.03` | Scale factor applied to items while being dragged |
+| `SpringStiffness` | `int` | `170` | Spring stiffness for drag animations |
+| `SpringDamping` | `int` | `26` | Spring damping for drag animations |
+| `AutoSave` | `bool` | `false` | Auto-save layout to localStorage on every drop/resize |
+| `ShowAddButton` | `bool` | `false` | Show an "Add Panel" button above the grid |
+| `AllowRemove` | `bool` | `false` | Show remove ("x") button on each panel |
+
+## Events
+
+| Event | Type | Description |
+|-------|------|-------------|
+| `LayoutChanged` | `EventCallback<DragGridLayout>` | Fired when layout changes |
+| `OnReorder` | `EventCallback<DragGridReorderEventArgs>` | Fired when an item is reordered via drag |
+| `OnItemResized` | `EventCallback<DragGridResizeEventArgs>` | Fired when an item is resized |
+| `OnAddPanel` | `EventCallback` | Fired when the "Add Panel" button is clicked |
+| `OnRemovePanel` | `EventCallback<string>` | Fired when a panel's remove button is clicked (receives panel ID) |
+
+## Drag Modes
+
+### Direct Mode (default)
+
+Drag immediately from the panel's drag handle:
+
+```razor
+<ArcadiaDragGrid DragMode="direct" ... />
+```
+
+### Long-Press / Wiggle Mode
+
+iOS-style: long-press any card to enter wiggle mode, then drag to reorder. Tap "Done" to exit:
+
+```razor
+<ArcadiaDragGrid DragMode="longpress" LongPressDuration="500" ... />
+```
+
+## State Persistence
+
+### Auto-Save
+
+```razor
+<ArcadiaDragGrid AutoSave="true" ... />
+```
+
+### Manual Save/Load
+
+```csharp
+@code {
+    ArcadiaDragGrid? grid;
+
+    async Task Save() => await grid!.SaveLayoutAsync("my-dashboard");
+    async Task Load() => await grid!.LoadLayoutAsync("my-dashboard");
+}
+```
+
+## Keyboard Navigation
+
+When `EditMode` is enabled:
+
+| Key | Action |
+|-----|--------|
+| `Enter` / `Space` | Pick up or drop the focused panel |
+| `Arrow keys` | Move the picked-up panel (left/right by 1, up/down by column count) |
+| `Escape` | Cancel the current move |
+
+Live ARIA announcements keep screen reader users informed of panel positions during keyboard drag operations.
+
+## Accessibility
+
+- `role="grid"` on the container
+- `aria-label` announcements for drag start, move, and drop
+- Keyboard-only drag-and-drop with full screen reader support
+- Respects `prefers-reduced-motion` for drag animations

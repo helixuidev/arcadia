@@ -1,0 +1,134 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="arcadia-textarea__label" for="@InputId">@Label</label>
+    }
+
+    <textarea id="@InputId"
+              class="arcadia-textarea__input"
+              placeholder="@Placeholder"
+              rows="@Rows"
+              maxlength="@MaxLength"
+              disabled="@Disabled"
+              aria-label="@(Label ?? Placeholder)"
+              aria-describedby="@DescribedById"
+              aria-invalid="@(!string.IsNullOrEmpty(ErrorText) ? "true" : null)"
+              @oninput="OnInputAsync">@Value</textarea>
+
+    <div class="arcadia-textarea__footer">
+        @if (!string.IsNullOrEmpty(ErrorText))
+        {
+            <span id="@DescribedById" class="arcadia-textarea__error">@ErrorText</span>
+        }
+        else if (!string.IsNullOrEmpty(HelperText))
+        {
+            <span id="@DescribedById" class="arcadia-textarea__helper">@HelperText</span>
+        }
+        else
+        {
+            <span></span>
+        }
+
+        @if (ShowCount && MaxLength.HasValue)
+        {
+            <span class="arcadia-textarea__count">@CharacterCount / @MaxLength</span>
+        }
+        else if (ShowCount)
+        {
+            <span class="arcadia-textarea__count">@CharacterCount</span>
+        }
+    </div>
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the text value. Supports two-way binding via <see cref="ValueChanged"/>.
+    /// </summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Value"/> changes.
+    /// </summary>
+    [Parameter]
+    public EventCallback<string?> ValueChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the placeholder text.
+    /// </summary>
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    /// <summary>
+    /// Gets or sets the label text displayed above the textarea.
+    /// </summary>
+    [Parameter]
+    public string? Label { get; set; }
+
+    /// <summary>
+    /// Gets or sets the number of visible text rows. Default is 4.
+    /// </summary>
+    [Parameter]
+    public int Rows { get; set; } = 4;
+
+    /// <summary>
+    /// Gets or sets the maximum number of characters allowed. Null means no limit.
+    /// </summary>
+    [Parameter]
+    public int? MaxLength { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the character count is shown. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool ShowCount { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the textarea is disabled.
+    /// </summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the textarea auto-resizes with content. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool AutoResize { get; set; }
+
+    /// <summary>
+    /// Gets or sets the helper text displayed below the textarea.
+    /// </summary>
+    [Parameter]
+    public string? HelperText { get; set; }
+
+    /// <summary>
+    /// Gets or sets the error text displayed below the textarea. Takes precedence over helper text.
+    /// </summary>
+    [Parameter]
+    public string? ErrorText { get; set; }
+
+    private string InputId => $"{ElementId}-input";
+    private string DescribedById => $"{ElementId}-desc";
+    private int CharacterCount => Value?.Length ?? 0;
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-textarea")
+        .AddClass("arcadia-textarea--disabled", Disabled)
+        .AddClass("arcadia-textarea--error", !string.IsNullOrEmpty(ErrorText))
+        .AddClass("arcadia-textarea--auto-resize", AutoResize)
+        .AddClass(Class)
+        .Build();
+
+    private async Task OnInputAsync(ChangeEventArgs args)
+    {
+        if (Disabled) return;
+
+        Value = args.Value?.ToString();
+        await ValueChanged.InvokeAsync(Value);
+    }
+}

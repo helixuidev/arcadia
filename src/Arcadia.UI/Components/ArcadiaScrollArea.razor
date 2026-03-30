@@ -1,0 +1,60 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@ComputedStyle"
+     tabindex="0"
+     @attributes="AdditionalAttributes">
+    @ChildContent
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the child content rendered inside the scroll area.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum height of the scroll area (e.g., "300px", "50vh").
+    /// </summary>
+    [Parameter]
+    public string? Height { get; set; }
+
+    /// <summary>
+    /// Gets or sets the width of the scroll area (e.g., "100%", "400px").
+    /// </summary>
+    [Parameter]
+    public string? Width { get; set; }
+
+    /// <summary>
+    /// Gets or sets the scroll orientation.
+    /// Accepted values: "vertical", "horizontal", "both". Default is "vertical".
+    /// </summary>
+    [Parameter]
+    public string Orientation { get; set; } = "vertical";
+
+    /// <summary>
+    /// Gets or sets whether the scrollbar is auto-hidden. Default is false.
+    /// </summary>
+    [Parameter]
+    public bool HideScrollbar { get; set; }
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-scroll-area")
+        .AddClass($"arcadia-scroll-area--{Orientation}")
+        .AddClass("arcadia-scroll-area--hide-scrollbar", HideScrollbar)
+        .AddClass(Class)
+        .Build();
+
+    private string? ComputedStyle
+    {
+        get
+        {
+            var parts = new List<string>();
+            if (!string.IsNullOrEmpty(Height)) parts.Add($"max-height: {Height};");
+            if (!string.IsNullOrEmpty(Width)) parts.Add($"width: {Width};");
+            if (!string.IsNullOrEmpty(Style)) parts.Add(Style);
+            return parts.Count > 0 ? string.Join(" ", parts) : null;
+        }
+    }
+}

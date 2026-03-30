@@ -53,6 +53,9 @@ jobs:
         run: |
           mkdir -p website/dist/playground
           cp -r /tmp/wasm-out/wwwroot/* website/dist/playground/
+          # SPA fallback: GitHub Pages serves 404.html for missing routes,
+          # so Blazor WASM router can handle client-side navigation
+          cp website/dist/playground/index.html website/dist/playground/404.html
           # Add .nojekyll to prevent GitHub Pages from ignoring _framework
           touch website/dist/.nojekyll
 

@@ -1,0 +1,103 @@
+@namespace Arcadia.UI.Components
+@inherits Arcadia.Core.Base.ArcadiaComponentBase
+
+<div class="@CssClass"
+     style="@Style"
+     @attributes="AdditionalAttributes">
+    <div class="arcadia-popover__trigger" @onclick="ToggleAsync">
+        @ChildContent
+    </div>
+    @if (Open)
+    {
+        @if (CloseOnClickOutside)
+        {
+            <div class="arcadia-popover__backdrop" @onclick="CloseAsync"></div>
+        }
+        <div class="arcadia-popover__content arcadia-popover__content--@NormalizedPosition"
+             role="dialog"
+             aria-modal="false"
+             @onkeydown="OnKeyDownAsync">
+            @Content
+        </div>
+    }
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets the trigger element that opens the popover on click.
+    /// </summary>
+    /// <example>
+    /// <code>
+    /// &lt;ArcadiaPopover Position="bottom" @bind-Open="isOpen"&gt;
+    ///     &lt;ChildContent&gt;&lt;button&gt;Options&lt;/button&gt;&lt;/ChildContent&gt;
+    ///     &lt;Content&gt;&lt;div&gt;Popover panel&lt;/div&gt;&lt;/Content&gt;
+    /// &lt;/ArcadiaPopover&gt;
+    /// </code>
+    /// </example>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets the popover content displayed when open.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether the popover is open.
+    /// </summary>
+    [Parameter]
+    public bool Open { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when <see cref="Open"/> changes. Supports two-way binding.
+    /// </summary>
+    [Parameter]
+    public EventCallback<bool> OpenChanged { get; set; }
+
+    /// <summary>
+    /// Gets or sets the position of the popover relative to the trigger.
+    /// Valid values: "top", "bottom", "left", "right". Defaults to "bottom".
+    /// </summary>
+    [Parameter]
+    public string Position { get; set; } = "bottom";
+
+    /// <summary>
+    /// Gets or sets whether clicking outside the popover closes it. Defaults to true.
+    /// </summary>
+    [Parameter]
+    public bool CloseOnClickOutside { get; set; } = true;
+
+    private string NormalizedPosition => Position?.ToLowerInvariant() switch
+    {
+        "top" => "top",
+        "left" => "left",
+        "right" => "right",
+        _ => "bottom"
+    };
+
+    private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-popover")
+        .AddClass("arcadia-popover--open", Open)
+        .AddClass(Class)
+        .Build();
+
+    private async Task ToggleAsync()
+    {
+        Open = !Open;
+        await OpenChanged.InvokeAsync(Open);
+    }
+
+    private async Task CloseAsync()
+    {
+        Open = false;
+        await OpenChanged.InvokeAsync(false);
+    }
+
+    private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            await CloseAsync();
+        }
+    }
+}

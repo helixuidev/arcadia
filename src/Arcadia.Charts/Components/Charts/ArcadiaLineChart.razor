@@ -122,7 +122,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && Series is n
                         var barH = Math.Abs(pt.Y - zeroY);
                         <rect x="@F(barX)" y="@F(barY)" width="@F(barWidth)" height="@F(Math.Max(1, barH))"
                               rx="3" fill="@color" opacity="0.8"
-                              class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
+                              class="arcadia-chart__bar @(AnimateOnLoad && ShouldStagger(Data!.Count) ? "arcadia-animate-bar" : "")"
                               @onmouseover="@(e => ShowTooltipForPoint(series.Name, pt.Value, e.ClientX, e.ClientY))"
                               @onmouseout="HideTooltipAction" />
                     }
@@ -137,7 +137,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && Series is n
                             ? series.PointColorField(Data[pt.Index]) ?? color
                             : color;
                         <circle cx="@F(pt.X)" cy="@F(pt.Y)" r="@PointRadius.ToString("F1")" fill="@pointColor"
-                                class="arcadia-chart__point @(AnimateOnLoad ? "arcadia-animate-point" : "")"
+                                class="arcadia-chart__point @(AnimateOnLoad && ShouldStagger(Data!.Count) ? "arcadia-animate-point" : "")"
                                 style="@GetPointStyle(pt.Index)"
                                 @onmouseover="@(e => HandlePointHover(series.Name, pt, e))"
                                 @onmouseout="HideTooltipOrTemplate"

@@ -25,8 +25,8 @@ else if (HasData) {
             var link = _layoutLinks[i];
             var idx = i;
             <path d="@link.Path" fill="@link.Color" opacity="@F(LinkOpacity)"
-                  class="arcadia-chart__sankey-link @(AnimateOnLoad ? "arcadia-animate-sankey" : "")"
-                  style="@(AnimateOnLoad ? $"animation-delay: {idx * 60}ms;" : "")"
+                  class="arcadia-chart__sankey-link @(AnimateOnLoad && ShouldStagger(_layoutLinks.Count) ? "arcadia-animate-sankey" : "")"
+                  style="@(AnimateOnLoad && ShouldStagger(_layoutLinks.Count) ? $"animation-delay: {GetAnimationDelay(idx, _layoutLinks.Count, 60)}ms;" : "")"
                   @onmouseover="@(e => ShowSankeyTooltip(link, e.ClientX, e.ClientY))"
                   @onmouseout="HideTooltipAction"
                   @onclick="@(() => HandleLinkClick(link))" />

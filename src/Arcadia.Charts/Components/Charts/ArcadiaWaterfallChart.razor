@@ -31,8 +31,8 @@ else if (HasData && CategoryField is not null && ValueField is not null && _ySca
                 var bar = _bars[i];
                 <rect x="@F(bar.X)" y="@F(bar.Y)" width="@F(bar.W)" height="@F(bar.H)"
                       rx="2" fill="@bar.Color"
-                      class="arcadia-chart__bar @(AnimateOnLoad ? "arcadia-animate-bar" : "")"
-                      style="@(AnimateOnLoad ? $"animation-delay: {i * 60}ms;" : "")"
+                      class="arcadia-chart__bar @(AnimateOnLoad && ShouldStagger(_bars.Count) ? "arcadia-animate-bar" : "")"
+                      style="@(AnimateOnLoad && ShouldStagger(_bars.Count) ? $"animation-delay: {GetAnimationDelay(i, _bars.Count, 60)}ms;" : "")"
                       @onmouseover="@(e => ShowTooltipForPoint(bar.Label, bar.Value, e.ClientX, e.ClientY))"
                       @onmouseout="HideTooltipAction" />
 
