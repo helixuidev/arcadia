@@ -33,7 +33,7 @@ A commercial Blazor component library for enterprise .NET developers. Pure SVG c
 | Scatter / Bubble | `ArcadiaScatterChart<T>` | Community (Free) |
 | Candlestick (OHLC) | `ArcadiaCandlestickChart<T>` | Pro |
 | Radar / Spider | `ArcadiaRadarChart<T>` | Pro |
-| Gauge | `ArcadiaGaugeChart` | Pro |
+| Gauge | `ArcadiaGaugeChart` | Pro (or free via `Arcadia.Gauge`) |
 | Heatmap | `ArcadiaHeatmap<T>` | Pro |
 | Funnel | `ArcadiaFunnelChart<T>` | Pro |
 | Treemap | `ArcadiaTreemapChart<T>` | Pro |
@@ -124,6 +124,7 @@ dotnet add package Arcadia.Theme
 | `Arcadia.DataGrid` | High-performance data grid with sorting, filtering, virtual scrolling, inline editing, and CSV export |
 | `Arcadia.FormBuilder` | Dynamic forms, validation, wizards |
 | `Arcadia.Notifications` | Toast notification system |
+| `Arcadia.Gauge` | Free standalone gauge component (MIT) — zero dependencies, under 15 KB |
 
 ## AI Integration
 

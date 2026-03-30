@@ -10,6 +10,8 @@ A high-performance circular gauge component for Blazor dashboards and KPI displa
 
 **Free in Community Edition** (MIT licensed). No watermark, no limitations.
 
+> **Standalone package available:** The gauge is also available as a free standalone package: `dotnet add package Arcadia.Gauge` — MIT licensed, zero dependencies, under 15 KB. [View on NuGet](https://www.nuget.org/packages/Arcadia.Gauge)
+
 ## Why Arcadia Gauge?
 
 - **Pure SVG** — renders on the server, no JS hydration flash
@@ -126,6 +128,126 @@ Control the arc thickness:
 | `Height` | `double` | 200 | Height in pixels |
 | `Width` | `double` | 300 | Width in pixels (0 = responsive) |
 | `AriaLabel` | `string?` | null | Accessible description for screen readers |
+
+## Needle Pointer
+
+Add a physical needle indicator on top of the arc for a classic speedometer look:
+
+```razor
+<ArcadiaGaugeChart Value="72" Min="0" Max="100" Label="Speed"
+                 ShowNeedle="true"
+                 NeedleColor="#8b5cf6"
+                 NeedleBaseWidth="8"
+                 NeedleCapRadius="6"
+                 Width="220" Height="180" />
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ShowNeedle` | `bool` | false | Display a needle pointer at the current value |
+| `NeedleColor` | `string` | primary | Color of the needle |
+| `NeedleBaseWidth` | `double` | 6 | Width of the needle base in pixels |
+| `NeedleCapRadius` | `double` | 5 | Radius of the center cap circle |
+
+## Tick Marks
+
+Add major and minor tick marks around the gauge arc with optional labels:
+
+```razor
+<ArcadiaGaugeChart Value="65" Min="0" Max="100" Label="RPM"
+                 ShowTicks="true"
+                 MajorTickCount="5"
+                 MinorTickCount="4"
+                 ShowTickLabels="true"
+                 Width="220" Height="180" />
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ShowTicks` | `bool` | false | Display tick marks around the arc |
+| `MajorTickCount` | `int` | 5 | Number of major (long) tick marks |
+| `MinorTickCount` | `int` | 4 | Number of minor ticks between each major tick |
+| `ShowTickLabels` | `bool` | false | Show numeric labels at major tick positions |
+
+## Gradient Arcs
+
+Replace the solid arc color with a smooth gradient for a modern look:
+
+```razor
+<ArcadiaGaugeChart Value="80" Min="0" Max="100" Label="Performance"
+                 GradientColors="@(new[] { "#8b5cf6", "#d946ef", "#ec4899" })"
+                 Width="200" Height="160" />
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `GradientColors` | `string[]?` | null | Array of colors for a gradient arc (overrides `Color`) |
+
+## Colored Ranges
+
+Define colored bands along the arc to indicate zones such as poor, fair, good, and excellent:
+
+```razor
+@code {
+    List<GaugeRange> ranges = new()
+    {
+        new() { Start = 0,  End = 25,  Color = "#ef4444", Label = "Poor" },
+        new() { Start = 25, End = 50,  Color = "#f59e0b", Label = "Fair" },
+        new() { Start = 50, End = 75,  Color = "#3b82f6", Label = "Good" },
+        new() { Start = 75, End = 100, Color = "#22c55e", Label = "Excellent" },
+    };
+}
+
+<ArcadiaGaugeChart Value="68" Min="0" Max="100" Label="Quality Score"
+                 Ranges="@ranges"
+                 ShowNeedle="true"
+                 Width="220" Height="180" />
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Ranges` | `List<GaugeRange>?` | null | Colored bands along the arc with start/end values |
+
+## Editable Mode
+
+Allow users to click or drag the gauge arc to change the value interactively:
+
+```razor
+<ArcadiaGaugeChart @bind-Value="temperature"
+                 Min="16" Max="30" Label="Thermostat"
+                 Editable="true"
+                 ShowNeedle="true"
+                 Width="200" Height="160" />
+
+@code {
+    double temperature = 22;
+}
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Editable` | `bool` | false | Allow the user to change the value by clicking/dragging the arc |
+
+## Custom Angles
+
+Control the start and end angles to create quarter-circle, three-quarter, or any custom sweep:
+
+```razor
+@* Three-quarter circle gauge *@
+<ArcadiaGaugeChart Value="75" Min="0" Max="100" Label="Progress"
+                 StartAngle="135" EndAngle="405"
+                 Width="200" Height="200" />
+
+@* Quarter-circle gauge (bottom-right) *@
+<ArcadiaGaugeChart Value="42" Min="0" Max="100" Label="Load"
+                 StartAngle="0" EndAngle="90"
+                 Width="160" Height="160" />
+```
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `StartAngle` | `double` | 180 | Start angle in degrees (0 = top, 90 = right, 180 = left) |
+| `EndAngle` | `double` | 360 | End angle in degrees |
 
 ## Accessibility
 
