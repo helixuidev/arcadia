@@ -2,6 +2,22 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.18] — 2026-03-29
+
+### Added
+- **Charts GaugeChart parity** with standalone Gauge: needle, ticks, gradient, ranges, editable, custom angles, center template (41 params, was 17)
+- **GaugeRange model** for colored arc bands (separate from GaugeThreshold)
+
+### Fixed
+- **ShowToolbar default: false** (was true, causing 60+ export buttons per dashboard)
+- **Removed watermarks from 16 Pro components** (Charts, Dashboard widgets, DataGrid)
+- **Helpful error messages** for Sankey/Heatmap/Candlestick missing fields
+- **DataGrid SSR skeleton** auto-shows shimmer when Data is null
+
+### Changed
+- Watermarks now ONLY on free community charts (Line, Bar, Pie, Scatter)
+- Gauge doc page updated with 6 new feature sections + standalone package callout
+
 ## [1.0.0-beta.17] — 2026-03-29
 
 ### Added
