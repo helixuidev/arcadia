@@ -18,6 +18,8 @@
     <ProjectReference Include="..\..\src\Arcadia.Charts\Arcadia.Charts.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.DataGrid\Arcadia.DataGrid.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.UI\Arcadia.UI.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Gauge\Arcadia.Gauge.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.DashboardKit\Arcadia.DashboardKit.csproj" />
   </ItemGroup>
 
 </Project>
