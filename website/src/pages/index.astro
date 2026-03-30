@@ -152,10 +152,112 @@ import Layout from '../layouts/Layout.astro';
   <!-- STATS ROW -->
   <section class="py-12 px-6 border-y border-purple-500/10">
     <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div><div class="text-3xl font-bold gradient-text">80+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Components</div></div>
-      <div><div class="text-3xl font-bold gradient-text">1,350+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Tests</div></div>
-      <div><div class="text-3xl font-bold gradient-text">8</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Packages</div></div>
+      <div><div class="text-3xl font-bold gradient-text">90+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Components</div></div>
+      <div><div class="text-3xl font-bold gradient-text">1,400+</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Tests</div></div>
+      <div><div class="text-3xl font-bold gradient-text">9</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">Packages</div></div>
       <div><div class="text-3xl font-bold gradient-text">&lt;12 KB</div><div class="text-sm text-[var(--arc-text-muted)] mt-1">JavaScript</div></div>
+    </div>
+  </section>
+
+  <!-- FREE CONTROLS -->
+  <section class="py-24 px-6 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-green-500/5 via-transparent to-transparent pointer-events-none"></div>
+    <div class="max-w-6xl mx-auto relative">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-500/30 bg-green-500/10 text-sm text-green-400 mb-6">
+          <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+          100% Free &amp; MIT Licensed
+        </div>
+        <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Free Blazor Controls</h2>
+        <p class="text-xl text-[var(--arc-text-muted)] max-w-2xl mx-auto">
+          Production-ready components. No watermarks. No time limits. No strings attached.
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 mb-12">
+        <!-- Free Gauge -->
+        <div class="gradient-border">
+          <div class="bg-[#060012] rounded-2xl p-6 text-center">
+            <div class="mb-4">
+              <svg viewBox="0 0 200 130" class="w-full max-w-[180px] mx-auto">
+                <defs>
+                  <linearGradient id="fg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#16a34a"/><stop offset="50%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#ef4444"/></linearGradient>
+                </defs>
+                <path d="M 30 110 A 70 70 0 0 1 170 110" fill="none" stroke="#1e1545" stroke-width="12" stroke-linecap="round"/>
+                <path d="M 30 110 A 70 70 0 0 1 145 52" fill="none" stroke="url(#fg1)" stroke-width="12" stroke-linecap="round"/>
+                <line x1="100" y1="110" x2="138" y2="62" stroke="#f1f0f9" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="100" cy="110" r="5" fill="#f1f0f9"/>
+                <text x="100" y="95" fill="#f1f0f9" font-size="22" font-weight="bold" text-anchor="middle">78</text>
+                <text x="100" y="128" fill="#6b6490" font-size="9" text-anchor="middle">Credit Score</text>
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold mb-1">Radial Gauge</h3>
+            <p class="text-sm text-[var(--arc-text-muted)] mb-3">41 parameters. Ranges, ticks, gradients, editable mode, custom angles.</p>
+            <code class="text-xs bg-green-500/10 text-green-400 px-3 py-1.5 rounded-lg border border-green-500/20 block">dotnet add package Arcadia.Gauge</code>
+          </div>
+        </div>
+
+        <!-- Free Charts -->
+        <div class="gradient-border">
+          <div class="bg-[#060012] rounded-2xl p-6 text-center">
+            <div class="mb-4">
+              <svg viewBox="0 0 200 120" class="w-full max-w-[180px] mx-auto">
+                <path d="M20,100 L55,70 L90,80 L125,45 L160,55 L180,30" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M20,100 L55,70 L90,80 L125,45 L160,55 L180,30 L180,100 Z" fill="#8b5cf6" opacity="0.1"/>
+                <circle cx="180" cy="30" r="4" fill="#8b5cf6"/><circle cx="180" cy="30" r="7" fill="#8b5cf6" opacity="0.2"/>
+                <rect x="22" y="85" width="18" height="15" rx="2" fill="#06b6d4" opacity="0.7"/>
+                <rect x="47" y="65" width="18" height="35" rx="2" fill="#06b6d4" opacity="0.7"/>
+                <rect x="72" y="72" width="18" height="28" rx="2" fill="#06b6d4" opacity="0.7"/>
+                <rect x="97" y="50" width="18" height="50" rx="2" fill="#06b6d4" opacity="0.7"/>
+                <rect x="122" y="58" width="18" height="42" rx="2" fill="#06b6d4" opacity="0.7"/>
+                <rect x="147" y="42" width="18" height="58" rx="2" fill="#06b6d4" opacity="0.7"/>
+              </svg>
+            </div>
+            <h3 class="text-lg font-bold mb-1">4 Chart Types</h3>
+            <p class="text-sm text-[var(--arc-text-muted)] mb-3">Line, Bar, Pie, Scatter. Pure SVG. Tooltips, legends, animations, dark mode.</p>
+            <code class="text-xs bg-green-500/10 text-green-400 px-3 py-1.5 rounded-lg border border-green-500/20 block">dotnet add package Arcadia.Charts</code>
+          </div>
+        </div>
+
+        <!-- Free UI + Notifications -->
+        <div class="gradient-border">
+          <div class="bg-[#060012] rounded-2xl p-6 text-center">
+            <div class="mb-4 flex justify-center gap-2">
+              <div class="bg-[#1a1430] rounded-lg px-3 py-2 text-xs border border-purple-500/15">
+                <div class="text-green-400 font-semibold mb-1">Success</div>
+                <div class="text-[#6b6490]">File uploaded</div>
+              </div>
+              <div class="bg-[#1a1430] rounded-lg px-3 py-2 text-xs border border-purple-500/15">
+                <div class="flex items-center gap-1 mb-1"><span class="w-6 h-3 rounded-full bg-purple-500 relative"><span class="absolute right-0.5 top-0.5 w-2 h-2 rounded-full bg-white"></span></span> <span class="text-[#f1f0f9]">Toggle</span></div>
+                <div class="text-[#6b6490]">Switch, Slider</div>
+              </div>
+              <div class="bg-[#1a1430] rounded-lg px-3 py-2 text-xs border border-purple-500/15">
+                <div class="flex gap-0.5 mb-1"><span class="text-yellow-400">&#9733;</span><span class="text-yellow-400">&#9733;</span><span class="text-yellow-400">&#9733;</span><span class="text-yellow-400">&#9733;</span><span class="text-[#6b6490]">&#9733;</span></div>
+                <div class="text-[#6b6490]">Rating</div>
+              </div>
+            </div>
+            <h3 class="text-lg font-bold mb-1">46 UI Components</h3>
+            <p class="text-sm text-[var(--arc-text-muted)] mb-3">Dialog, Tabs, Card, Alert, Toast, Switch, Slider, Rating, Pagination, and more.</p>
+            <code class="text-xs bg-green-500/10 text-green-400 px-3 py-1.5 rounded-lg border border-green-500/20 block">dotnet add package Arcadia.UI</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <div class="inline-flex flex-wrap items-center justify-center gap-3 mb-6">
+          <span class="flex items-center gap-1.5 text-sm text-[var(--arc-text-muted)]"><span class="text-green-400">&#10003;</span> MIT License</span>
+          <span class="flex items-center gap-1.5 text-sm text-[var(--arc-text-muted)]"><span class="text-green-400">&#10003;</span> No watermarks</span>
+          <span class="flex items-center gap-1.5 text-sm text-[var(--arc-text-muted)]"><span class="text-green-400">&#10003;</span> Commercial use OK</span>
+          <span class="flex items-center gap-1.5 text-sm text-[var(--arc-text-muted)]"><span class="text-green-400">&#10003;</span> Free forever</span>
+          <span class="flex items-center gap-1.5 text-sm text-[var(--arc-text-muted)]"><span class="text-green-400">&#10003;</span> .NET 5-9</span>
+        </div>
+        <div>
+          <a href="/docs/quick-start" class="btn-gradient !bg-gradient-to-r !from-green-500 !to-emerald-600 text-lg !py-3 !px-8">
+            Start Building Free
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+          </a>
+        </div>
+      </div>
     </div>
   </section>
 
