@@ -10,6 +10,7 @@
 @using Arcadia.FormBuilder.Components.Fields
 @using Arcadia.FormBuilder.Components.Layout
 @inject Arcadia.Notifications.ToastService ToastService
+@inject NavigationManager Nav
 
 <PageTitle>Arcadia Controls — Component Gallery</PageTitle>
 
@@ -64,10 +65,10 @@
             </button>
             @if (_datagridOpen)
             {
-                <a href="/playground/datagrid/basics" class="gallery__nav-btn" style="text-decoration:none;">Basics</a>
-                <a href="/playground/datagrid/editing" class="gallery__nav-btn" style="text-decoration:none;">Editing</a>
-                <a href="/playground/datagrid/advanced" class="gallery__nav-btn" style="text-decoration:none;">Advanced</a>
-                <a href="/playground/datagrid/enterprise" class="gallery__nav-btn" style="text-decoration:none;">Enterprise</a>
+                <button class="gallery__nav-btn" @onclick='() => Nav.NavigateTo("datagrid/basics")'>Basics</button>
+                <button class="gallery__nav-btn" @onclick='() => Nav.NavigateTo("datagrid/editing")'>Editing</button>
+                <button class="gallery__nav-btn" @onclick='() => Nav.NavigateTo("datagrid/advanced")'>Advanced</button>
+                <button class="gallery__nav-btn" @onclick='() => Nav.NavigateTo("datagrid/enterprise")'>Enterprise</button>
             }
 
             <button class="gallery__nav-group" @onclick="() => _formsOpen = !_formsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;background:transparent;border:none;color:inherit;font:inherit;padding:0;">
@@ -97,10 +98,10 @@
                 <button class="gallery__nav-btn @(_tab == "toasts" ? "gallery__nav-btn--active" : "")" @onclick='() => _tab = "toasts"'>Notifications</button>
             }
 
-            <a href="drag-grid" class="gallery__nav-btn" style="text-decoration:none;color:var(--arcadia-color-primary, #8b5cf6);font-weight:600;">
+            <button class="gallery__nav-btn" style="color:var(--arcadia-color-primary, #8b5cf6);font-weight:600;display:flex;align-items:center;" @onclick='() => Nav.NavigateTo("drag-grid")'>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
                 Dashboard Grid
-            </a>
+            </button>
 
             <button class="gallery__nav-group" @onclick="() => _toolsOpen = !_toolsOpen" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;width:100%;gap:6px;background:transparent;border:none;color:inherit;font:inherit;padding:0;">
                 <span style="display:flex;align-items:center;gap:6px;">
@@ -111,7 +112,7 @@
             </button>
             @if (_toolsOpen)
             {
-                <a href="playground-builder" class="gallery__nav-btn" style="text-decoration:none;">Playground Builder</a>
+                <button class="gallery__nav-btn" @onclick='() => Nav.NavigateTo("playground-builder")'>Playground Builder</button>
             }
         </nav>
         <div class="gallery__cta">
