@@ -82,6 +82,72 @@ jobs:
         env:
           PLAYWRIGHT_BROWSERS_PATH: 0
 
+      - name: Playground smoke test
+        run: |
+          npx playwright-core install chromium
+          node -e "
+          const { chromium } = require('playwright-core');
+          (async () => {
+            const browser = await chromium.launch();
+            const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+            const errors = [];
+            page.on('pageerror', e => errors.push(e.message));
+
+            await page.goto('http://localhost:5050/', { timeout: 30000 });
+            await new Promise(r => setTimeout(r, 5000));
+
+            // Sidebar visible on desktop
+            const sidebar = await page.evaluate(() => document.querySelector('.gallery__sidebar')?.offsetWidth > 50);
+            if (!sidebar) { console.error('FAIL: Sidebar not visible on desktop'); process.exit(1); }
+
+            // Mobile bar hidden on desktop
+            const mobileHidden = await page.evaluate(() => getComputedStyle(document.querySelector('.gallery__mobile-bar')).display === 'none');
+            if (!mobileHidden) { console.error('FAIL: Mobile bar visible on desktop'); process.exit(1); }
+
+            // Click through chart tabs
+            const tabs = ['Dashboard Widgets','Line & Area','Bar','Pie & Donut','Scatter','Candlestick','Gauges','Radar'];
+            for (const tab of tabs) {
+              const btn = page.locator('button:has-text(\"' + tab + '\")').first();
+              if (await btn.isVisible({ timeout: 1000 }).catch(() => false)) {
+                await btn.click();
+                await new Promise(r => setTimeout(r, 1500));
+              }
+            }
+
+            // Expand and test DataGrid, Forms, UI
+            for (const s of ['DATAGRID','FORMS','UI']) {
+              const g = page.locator('button:has-text(\"' + s + '\")').first();
+              if (await g.isVisible({ timeout: 500 }).catch(() => false)) await g.click();
+            }
+            await new Promise(r => setTimeout(r, 500));
+            for (const tab of ['Dialog / Tabs / Tooltip','Notifications','Field Types']) {
+              const btn = page.locator('button:has-text(\"' + tab + '\")').first();
+              if (await btn.isVisible({ timeout: 1000 }).catch(() => false)) {
+                await btn.click();
+                await new Promise(r => setTimeout(r, 1500));
+              }
+            }
+
+            // Dashboard Grid link
+            const dg = page.locator('a:has-text(\"Dashboard Grid\")').first();
+            if (await dg.isVisible({ timeout: 1000 }).catch(() => false)) {
+              await dg.click();
+              await new Promise(r => setTimeout(r, 2000));
+              const grid = await page.evaluate(() => document.querySelector('.arcadia-draggrid') !== null);
+              if (!grid) { console.error('FAIL: DragGrid not rendered'); process.exit(1); }
+              await page.goBack();
+            }
+
+            if (errors.length > 0) {
+              console.error('JS errors:', errors);
+              process.exit(1);
+            }
+
+            console.log('Playground smoke test PASSED — all tabs render, no JS errors');
+            await browser.close();
+          })();
+          "
+
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
         if: always()
@@ -137,6 +203,12 @@ jobs:
 
       - name: Pack Arcadia.UI
         run: dotnet pack src/Arcadia.UI/Arcadia.UI.csproj --configuration Release --no-build --output ./nupkgs
+
+      - name: Pack Arcadia.Gauge
+        run: dotnet pack src/Arcadia.Gauge/Arcadia.Gauge.csproj --configuration Release --no-build --output ./nupkgs
+
+      - name: Pack Arcadia.DashboardKit
+        run: dotnet pack src/Arcadia.DashboardKit/Arcadia.DashboardKit.csproj --configuration Release --no-build --output ./nupkgs
 
       - name: Upload NuGet packages
         uses: actions/upload-artifact@v4
