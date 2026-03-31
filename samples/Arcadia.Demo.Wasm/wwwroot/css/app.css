@@ -604,6 +604,11 @@ div[style*="fixed"] .arcadia-theme-toggle {
    MOBILE RESPONSIVE
    ══════════════════════════════════════════ */
 
+/* Mobile bar — hidden on desktop */
+.gallery__mobile-bar {
+  display: none;
+}
+
 /* Hamburger button — hidden on desktop */
 .gallery__mobile-toggle {
   display: none;
@@ -667,7 +672,13 @@ div[style*="fixed"] .arcadia-theme-toggle {
     display: block;
   }
 
-  /* Show hamburger button */
+  /* Show mobile bar and hamburger */
+  .gallery__mobile-bar {
+    display: flex;
+    padding: 8px 12px;
+    align-items: center;
+    gap: 8px;
+  }
   .gallery__mobile-toggle {
     display: flex;
     align-items: center;
