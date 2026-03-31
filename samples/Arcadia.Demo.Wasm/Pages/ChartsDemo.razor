@@ -14,7 +14,14 @@
 <PageTitle>Arcadia Controls — Component Gallery</PageTitle>
 
 <div class="gallery">
-    <div class="gallery__sidebar">
+    <div class="gallery__sidebar-overlay @(_sidebarOpen ? "gallery__sidebar-overlay--visible" : "")" @onclick="() => _sidebarOpen = false"></div>
+    <div style="padding: 8px 12px; display: flex; align-items: center; gap: 8px;">
+        <button class="gallery__mobile-toggle" @onclick="() => _sidebarOpen = !_sidebarOpen" aria-label="Toggle menu">
+            @if (_sidebarOpen) { <span>✕</span> } else { <span>☰</span> }
+        </button>
+    </div>
+
+    <div class="gallery__sidebar @(_sidebarOpen ? "gallery__sidebar--open" : "")"
         <h2 class="gallery__title">Arcadia Controls</h2>
         <p class="gallery__subtitle">Component Gallery</p>
         <nav class="gallery__nav">
@@ -1001,6 +1008,7 @@ dotnet add package Arcadia.Theme</code></pre>
 
 @code {
     string _tab = "home";
+    bool _sidebarOpen;
     bool _chartsOpen = true;
     bool _datagridOpen = false;
     bool _formsOpen = false;
