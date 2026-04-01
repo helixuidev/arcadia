@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Arcadia.Core.Base;
+using Arcadia.Core.Utilities;
 using Arcadia.DataGrid.Core;
 
 namespace Arcadia.DataGrid.Components;
@@ -260,6 +261,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
     private IJSObjectReference? _jsModule;
     private bool _disposed;
+    private CollectionObserver<TItem>? _collectionObserver;
 
     /// <summary>Display toolbar with search, filter toggle, and export. Default is false.</summary>
     /// <example>
@@ -352,6 +354,21 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 
         // Calculate min/max for columns with ConditionalFormat
         CalculateConditionalFormatRanges();
+
+        // Observable collection auto-refresh
+        if (!LoadData.HasDelegate) // Skip for server-side mode
+        {
+            _collectionObserver ??= new CollectionObserver<TItem>(
+                () =>
+                {
+                    CalculateConditionalFormatRanges();
+                    StateHasChanged();
+                    return Task.CompletedTask;
+                },
+                InvokeAsync
+            );
+            _collectionObserver.Attach(Data);
+        }
     }
 
     /// <summary>Calculate min/max values for columns that have ConditionalFormat set.</summary>
@@ -1359,6 +1376,11 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     internal void TrackBatchChange(TItem item, string columnKey, object? oldValue, object? newValue)
     {
         if (!BatchEdit) return;
+
+        // Suppress observer on first batch change to avoid mid-edit rerenders
+        if (_batchChanges.Count == 0)
+            _collectionObserver?.Suppress();
+
         var existing = _batchChanges.FirstOrDefault(c =>
             EqualityComparer<TItem>.Default.Equals(c.Item, item) && c.ColumnKey == columnKey);
         if (existing is not null)
@@ -1390,6 +1412,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
         if (OnBatchCommit.HasDelegate)
             await OnBatchCommit.InvokeAsync(_batchChanges.ToList());
         _batchChanges.Clear();
+        _collectionObserver?.Resume(triggerImmediately: true);
         Announce($"Saved {_batchChanges.Count} changes");
         StateHasChanged();
     }
@@ -1398,6 +1421,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
     public void DiscardBatch()
     {
         _batchChanges.Clear();
+        _collectionObserver?.Resume(triggerImmediately: true);
         Announce("Changes discarded");
         StateHasChanged();
     }
@@ -1752,6 +1776,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
 #endif
         catch (ObjectDisposedException) { }
         _dotNetRef?.Dispose();
+        _collectionObserver?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

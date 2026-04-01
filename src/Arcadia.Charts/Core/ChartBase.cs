@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using Microsoft.AspNetCore.Components;
+using Arcadia.Core.Utilities;
 using Arcadia.Charts.Core.Layout;
 using Arcadia.Charts.Core.Scales;
 
@@ -218,6 +219,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     private protected ChartInteropService? Interop { get; set; }
     protected ElementReference ContainerRef;
     private bool _disposed;
+    private CollectionObserver<T>? _collectionObserver;
 
     protected string EffectiveGridColor => GridColor ?? "var(--arcadia-color-border, #e2e8f0)";
 
@@ -229,6 +231,15 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     protected override void OnInitialized()
     {
         Interop = new ChartInteropService(JSRuntime);
+    }
+
+    protected override void OnParametersSet()
+    {
+        _collectionObserver ??= new CollectionObserver<T>(
+            () => { OnParametersSet(); StateHasChanged(); return Task.CompletedTask; },
+            InvokeAsync
+        );
+        _collectionObserver.Attach(Data);
     }
 
     private DotNetObjectReference<ResizeCallbackHandler>? _resizeRef;
@@ -572,6 +583,7 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
         catch (ObjectDisposedException) { }
         catch (InvalidOperationException) { }
 
+        _collectionObserver?.Dispose();
         _resizeRef?.Dispose();
         _panZoomRef?.Dispose();
 
