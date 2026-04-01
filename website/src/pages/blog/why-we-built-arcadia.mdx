@@ -1,0 +1,123 @@
+---
+layout: ../../layouts/BlogLayout.astro
+title: "Why We Built Our Own Blazor Component Library"
+description: "We were tired of wrapping other people's wrappers. Here's why we built Arcadia Controls from scratch — the technical decisions, the mistakes, and where we are now."
+date: "2026-04-01"
+readTime: "12 min read"
+tags: ["Blazor", ".NET", "Architecture", "Open Source", "Enterprise"]
+---
+
+Let me save you the corporate origin story. We didn't start Arcadia Controls because we had a "vision for the future of Blazor UI." We started it because we were angry.
+
+We were building enterprise Blazor apps — dashboards, admin panels, data-heavy internal tools — and every component library we tried made us want to flip a table. MudBlazor was great until we needed a real DataGrid that could handle 50K rows without melting. Syncfusion had everything but cost over $1,000 per developer per year and the bundle size was enormous. Telerik's API was inconsistent — half the components used one naming convention, the other half used another. We kept writing wrapper components around other people's wrappers, and at some point you have to ask: why?
+
+So we built our own.
+
+## What we actually wanted
+
+Before writing a single line of code, we wrote down what a Blazor component library *should* be in 2026. Not what was technically impressive. What we'd actually want to use every day.
+
+- **Pure .NET rendering** — Zero JavaScript where possible, minimal where necessary. If you're writing a Blazor app, your components should render in the Blazor component tree, not delegate to a JS library via interop and hope for the best.
+- **Tree-shakeable packages** — Separate NuGet packages for Charts, DataGrid, DashboardKit, Forms, UI primitives. Not one 15MB mega-bundle where you pay the cost for components you never use. This matters enormously for WASM bundle size.
+- **Accessible by default** — WCAG 2.1 AA compliance baked into every component from day one, not "accessibility support coming in a future release." Hidden data tables for charts. Full keyboard navigation. ARIA labels everywhere. `prefers-reduced-motion` respected.
+- **Actually typed** — Generic components with `TItem`, not `object` everywhere. If your DataGrid is `ArcadiaDataGrid<Employee>`, your column accessors, sort functions, and event callbacks should all be strongly typed against `Employee`.
+- **Render mode agnostic** — The same component code works in Blazor Server, WebAssembly, and Auto mode. No conditional rendering hacks. No "this feature only works in WASM." We multi-target .NET 5 through .NET 10, and every component works on every supported framework.
+
+That's it. Five things. It turns out building all five well is brutally hard.
+
+## The technical decisions that define Arcadia
+
+### SVG charts instead of Canvas and JS charting libraries
+
+Every other Blazor chart library — Telerik, Syncfusion, even MudBlazor — wraps a JavaScript charting engine. Your C# data gets serialized to JSON, marshaled across the interop boundary, and rendered by Chart.js or ApexCharts or some proprietary canvas engine. This means your charts don't participate in Blazor's component lifecycle. They don't diff efficiently. They can't render during SSR without a JS runtime.
+
+We render charts as SVG elements directly from C# Blazor components. Our `ChartBase<T>` class manages the full SVG viewBox, axis layout, grid lines, legends, tooltips, crosshairs, pan/zoom, and animations — all in the Blazor render tree. The chart *is* a Blazor component, not a Blazor component that hosts a JavaScript component.
+
+The result: zero JavaScript payload for chart rendering. The only cost is the .NET assembly itself (~45 KB). Compare that to ~350 KB for Telerik's chart bundle or ~400 KB for Syncfusion's.
+
+We do use minimal JS interop for three things: ResizeObserver (responsive sizing), pan/zoom mouse events, and PNG/SVG export. Everything else is pure C#.
+
+### CSS Grid for the DataGrid
+
+Our `ArcadiaDataGrid<TItem>` uses CSS Grid for layout instead of a JS-based virtual DOM. Sorting, filtering, grouping, inline editing, selection, batch editing, context menus, virtual scrolling, CSV export, state persistence — all 40+ features are implemented in C# with CSS Grid handling the visual layout.
+
+This means the DataGrid participates in Blazor's diffing algorithm. When you sort a column, Blazor diffs the rows and patches the DOM efficiently. No full re-render. No JS round-trip to ask a grid engine to re-sort and re-render.
+
+The performance numbers back this up: initial render under 100ms for 1,000 rows, sort and filter under 50ms for 10,000 rows client-side, and 60fps virtualized scrolling.
+
+### CSS custom properties for theming
+
+We ship 8 themes in under 12KB total. How? CSS custom properties.
+
+Every Arcadia component reads its colors, spacing, radii, and shadows from CSS custom properties like `--arcadia-color-primary`, `--arcadia-color-border`, `--arcadia-color-surface`. A theme is just a set of variable overrides. Dark mode is a `.dark` class that swaps 40-odd variables. No runtime CSS generation. No CSS-in-JS. No JavaScript involved in theming at all.
+
+This also means you can integrate Arcadia with Tailwind CSS trivially — we ship a Tailwind plugin that exposes our design tokens as Tailwind utilities.
+
+### Separate NuGet packages
+
+Every Arcadia component lives in its own NuGet package. `Arcadia.Charts`, `Arcadia.DataGrid`, `Arcadia.DashboardKit`, `Arcadia.FormBuilder`, `Arcadia.UI`, `Arcadia.Notifications`. The only shared dependency is `Arcadia.Core`, which contains base classes, theming utilities, and the CSS custom property engine.
+
+Why does this matter? WASM bundle size. If you only need charts, you only pay for charts. If you only need the DataGrid, you only pay for the DataGrid. Syncfusion's all-in-one package pulls in megabytes of assemblies you'll never use. Tree-shaking at the package level is the only way to keep WASM apps fast.
+
+### LTTB downsampling for large datasets
+
+What happens when someone passes 100,000 data points to a line chart? Most libraries choke. We use Largest Triangle Three Buckets (LTTB) downsampling to reduce the visual dataset while preserving the shape of the data. The chart looks identical to the human eye but renders with a fraction of the SVG elements.
+
+We also cap stagger animations above 200 elements (no per-point entrance animation when you're rendering thousands of points) and auto-scale animation timing so total entrance duration never exceeds 2 seconds regardless of dataset size.
+
+### FLIP animations in DashboardKit
+
+Our drag-and-drop dashboard grid (`ArcadiaDragGrid`) uses spring physics for panel reordering — not CSS transitions. The spring stiffness (default 170) and damping (default 26) create a natural, iOS-like feel when dragging panels around. We even support a long-press "wiggle mode" inspired by iOS home screen editing.
+
+The layout engine uses a 2D occupancy grid algorithm to compute explicit CSS Grid positions for each panel, supporting variable column and row spans, locked panels, and responsive reflow. Layout state is serializable to JSON and can be persisted to localStorage or a backend.
+
+This wasn't strictly necessary. CSS transitions would have been "good enough." But we think the details matter, especially in dashboard products where users spend hours per day.
+
+## What we got wrong
+
+We'd be lying if we said we nailed everything on the first try.
+
+**The initial API surface was too complex.** Our early chart components had 50+ parameters each, many of which duplicated functionality. We had both `Sortable` and `EnableSorting` on the DataGrid doing the same thing. In beta.15 we did a painful but necessary API consolidation — breaking changes, migration guide, the works. The current API is cleaner. `ChartBase<T>` still has a lot of parameters, but every one of them earns its place.
+
+**Accessibility was an afterthought in early versions.** We're embarrassed to admit this given that "accessible by default" was literally on our requirements list. The truth is, we shipped charts without hidden data tables and without keyboard navigation in the first few betas. It took a pointed code review from a developer who uses a screen reader daily to make us take it seriously. Every chart now renders a visually hidden `<table>` with the full dataset for screen readers. Every interactive element is keyboard navigable. Every chart SVG has an `AriaLabel` parameter. We're WCAG 2.1 AA compliant across all components now, but it should have been there from day one.
+
+**We underestimated how important the DataGrid would be.** We thought charts would be our flagship. We were wrong. The DataGrid is by far our most complex component and the one most customers evaluate first. Sorting, filtering, grouping, inline editing, batch editing, master-detail, virtual scrolling, column reordering, context menus, state persistence, CSV export, localization — the feature list kept growing. It's now 40+ features deep, and we probably need 40 more. If you're building a Blazor component library, start with your DataGrid. Everything else is a sideshow until the grid works.
+
+## Where we are now
+
+The numbers, as of today:
+
+- **85+ components** across 9 NuGet packages
+- **1,400+ tests** (bUnit unit tests and Playwright E2E)
+- **20 chart types** with pure SVG rendering — Line, Area, Bar, Stacked Bar, Pie, Donut, Scatter, Bubble, Candlestick, Radar, Heatmap, Funnel, Treemap, Waterfall, Rose, Range Area, Box Plot, Sankey, Chord, plus Circular and Linear Gauges
+- **DataGrid with 40+ features** — sorting, filtering, grouping, selection, inline editing, batch editing, virtual scrolling, master-detail, context menu, state persistence, CSV export, and more
+- **46 UI primitives** — all pure Blazor, no JS dependencies. Buttons, dialogs, tabs, accordions, inputs, date pickers, dropdowns, tooltips, drawers, and more.
+- **Drag-and-drop dashboard grid** with spring physics, keyboard accessibility, wiggle mode, auto-save, and serializable layouts
+- **MCP server** for AI-assisted code generation — describe what you want in plain English, get working Blazor code
+- **Free Community Edition** — the Gauge component, 4 chart types (Line, Bar, Pie, Scatter), all 46 UI components, Notifications, and the full theme engine. Free forever, MIT-licensed.
+
+We multi-target .NET 5 through .NET 10. We support Blazor Server, WebAssembly, and Auto render modes. We treat warnings as errors. Nullable reference types are enabled everywhere. Every public API has XML documentation.
+
+## What's next
+
+We're not done. Not even close.
+
+**Real-time data binding** is the next major feature. SignalR integration for live-updating charts and grids that push new data points without full re-renders. If you're building monitoring dashboards or trading screens, this is for you.
+
+**Scheduler and Workflow components** are in development. Calendar views, appointment scheduling, and a visual approval workflow designer. These are the two most-requested component types from our enterprise customers.
+
+**AI-assisted features** are coming to the components themselves — not just the MCP code generation server. Think smart filters that suggest filter criteria based on data distribution. Anomaly detection that highlights outliers in charts automatically. We're exploring what's possible without turning it into a gimmick.
+
+## Try it
+
+If you've read this far, you're probably the kind of developer who evaluates component libraries seriously. Good. We built Arcadia for you.
+
+```bash
+dotnet add package Arcadia.Charts
+dotnet add package Arcadia.DataGrid
+dotnet add package Arcadia.UI
+```
+
+The Community Edition is free. The [documentation](/docs) is thorough. The code is real, the performance is measured, and the accessibility is tested.
+
+We're not the biggest Blazor component library. We're not the cheapest (though we're close). But we might be the most honest about what a Blazor UI components library should actually be: pure .NET, strongly typed, accessible, and fast. No JavaScript wrappers pretending to be Blazor components. No WASM blazor components that ship megabytes of JS. Just Blazor, done right.
