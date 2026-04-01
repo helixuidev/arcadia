@@ -8,7 +8,9 @@ interface Props {
   activeSlug?: string;
 }
 
-const { title, description, section, activeSlug } = Astro.props;
+// MDX pages pass frontmatter via Astro.props.frontmatter; .astro pages pass directly
+const fm = (Astro.props as any).frontmatter ?? Astro.props;
+const { title, description, section, activeSlug } = fm;
 
 const nav = [
   {
