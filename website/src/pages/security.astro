@@ -1,0 +1,370 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Security Practices — Arcadia Controls" description="How Arcadia Controls protects your application. Security by design with Blazor's built-in XSS protection, zero third-party C# dependencies, and strict supply chain controls.">
+
+  <!-- HERO -->
+  <section class="pt-32 pb-16 px-6">
+    <div class="max-w-5xl mx-auto text-center">
+      <h1 class="text-5xl md:text-6xl font-extrabold leading-tight mb-6 tracking-tight">
+        Security<br/>
+        <span class="gradient-text">by design</span>
+      </h1>
+      <p class="text-xl text-[var(--arc-text-muted)] max-w-2xl mx-auto leading-relaxed">
+        Arcadia Controls is built on Blazor's secure-by-default architecture.
+        No raw HTML injection, no eval(), no third-party C# dependencies in Core.
+        Here is how we protect your application.
+      </p>
+    </div>
+  </section>
+
+  <!-- SECURITY SECTIONS -->
+  <section class="py-16 px-6">
+    <div class="max-w-4xl mx-auto space-y-20">
+
+      <!-- 1. Security by Design -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Built-in XSS Protection</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Blazor's Razor engine HTML-encodes all output by default, eliminating the most common class of web vulnerabilities. Arcadia Controls never bypasses this protection.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>No use of <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">MarkupString</code> or raw HTML rendering in component output</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>DataGrid export uses <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">HtmlEncode</code> and <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">SecurityElement.Escape</code> for all user-supplied values</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>All chart rendering is pure server-side SVG generated in C# -- no client-side HTML injection</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. Dependency Management -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Zero Third-Party C# Dependencies</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Arcadia.Core has zero third-party NuGet dependencies. The only runtime dependency is Microsoft.AspNetCore.Components, matched per target framework. This eliminates transitive dependency vulnerabilities entirely for the core library.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Central package management via <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">Directory.Packages.props</code> ensures version consistency</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>JavaScript is used only where Blazor cannot natively operate (clipboard, resize observers, drag-and-drop)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>No CDN dependencies at runtime -- all assets are bundled in the NuGet package</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. JS Interop Security -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">JS Interop Security</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Where JavaScript is required, we follow strict isolation patterns to minimize attack surface.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>All JS modules use isolated <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">IJSObjectReference</code> -- no global scope pollution</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>No use of <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">eval()</code> or <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">new Function()</code> anywhere in the codebase</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>86 JS interop call sites across 20 components, all using typed <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">InvokeAsync&lt;T&gt;</code> with explicit return types</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Proper <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">IAsyncDisposable</code> on all interop components (41 disposal sites) to prevent memory leaks</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Input Validation -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Input Validation</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Every data entry point in Arcadia Controls supports validation to prevent malformed or malicious input from reaching your application logic.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>DataGrid inline editing includes per-column <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">Validator</code> delegates with live validation as the user types</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>FormBuilder supports <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">IFieldValidator</code> and <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">IAsyncFieldValidator</code> for synchronous and async cross-field validation</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Schema-driven validation rules ensure consistent enforcement across server and client render modes</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Accessibility = Security -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Accessibility as a Security Layer</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              WCAG 2.1 AA compliance is not just about inclusivity -- it is a security practice. Proper focus management prevents UI spoofing and clickjacking attacks.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Dedicated <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">FocusTrap</code> component prevents focus escaping modal dialogs</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>All interactive components support full keyboard navigation</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>ARIA attributes are programmatically enforced, not optional</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Supply Chain -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Supply Chain Integrity</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              We apply defense-in-depth to the build and distribution pipeline to prevent supply chain attacks.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>C# nullable reference types enabled with <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">TreatWarningsAsErrors</code> -- type safety is enforced at compile time</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Roslyn analyzers (<code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">Microsoft.CodeAnalysis.Analyzers</code>) at <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">latest-recommended</code> analysis level</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>No CDN dependencies at runtime -- all JavaScript ships inside the NuGet package as static web assets</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Multi-target build (.NET 5 through .NET 10) validated in CI against all supported frameworks</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Data Handling -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Data Handling</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Arcadia Controls components never transmit your data externally. Your data stays in your application.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>No analytics, telemetry, or tracking in any component package</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>No outbound network calls from component code</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>State persistence (where applicable) uses browser <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">localStorage</code> under user control</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Components are render-mode agnostic -- the same security guarantees apply in Server, WASM, and Auto modes</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Disposal & Memory -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Disposal and Memory Safety</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Improper resource disposal leads to memory leaks and potential denial-of-service in long-running Blazor Server applications. Arcadia Controls handles this systematically.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span><code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">IAsyncDisposable</code> implemented on every component with JS interop</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span><code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">JSDisconnectedException</code> handling for graceful Blazor Server circuit disconnect</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>Shared <code class="bg-white/5 px-1.5 py-0.5 rounded text-purple-300 text-xs">ArcadiaInteropBase</code> base class enforces consistent disposal across all components</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. Testing -->
+      <div class="glass-card p-8 rounded-2xl">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Automated Testing</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              Every commit is validated by our CI pipeline. Security regressions are caught before they reach a release.
+            </p>
+            <ul class="space-y-2 text-[var(--arc-text-muted)] text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>1,400+ automated unit tests with bUnit</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>End-to-end tests with Playwright covering real browser interactions</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>CI pipeline validates every commit across all supported .NET target frameworks</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-0.5">&#10003;</span>
+                <span>NUnit analyzers enforce test quality standards</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Vulnerability Reporting -->
+      <div class="glass-card p-8 rounded-2xl border border-purple-500/20">
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0 mt-1">
+            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold mb-3">Vulnerability Reporting</h2>
+            <p class="text-[var(--arc-text-muted)] leading-relaxed mb-4">
+              We take responsible disclosure seriously. If you discover a security vulnerability in Arcadia Controls, please report it privately.
+            </p>
+            <div class="bg-white/5 rounded-xl p-6 mt-4">
+              <p class="text-sm text-[var(--arc-text-muted)] mb-3">
+                <strong class="text-white">Email:</strong>
+                <a href="mailto:security@arcadiaui.com" class="text-purple-400 hover:text-purple-300 transition-colors ml-1">security@arcadiaui.com</a>
+              </p>
+              <p class="text-sm text-[var(--arc-text-muted)] mb-3">
+                <strong class="text-white">Response time:</strong> We acknowledge reports within 48 hours and provide a resolution timeline within 5 business days.
+              </p>
+              <p class="text-sm text-[var(--arc-text-muted)]">
+                <strong class="text-white">Scope:</strong> All Arcadia NuGet packages (Arcadia.Core, Arcadia.Charts, Arcadia.DataGrid, Arcadia.FormBuilder, Arcadia.DashboardKit, Arcadia.Notifications, Arcadia.Theme).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-20 px-6 text-center">
+    <div class="max-w-2xl mx-auto">
+      <h2 class="text-3xl font-bold mb-4">
+        Questions about our <span class="gradient-text">security posture</span>?
+      </h2>
+      <p class="text-[var(--arc-text-muted)] mb-8">
+        Enterprise customers can request a detailed security questionnaire response. Contact our team for more information.
+      </p>
+      <div class="flex items-center justify-center gap-4 flex-wrap">
+        <a href="mailto:security@arcadiaui.com" class="btn-gradient text-sm !py-3 !px-8">Contact Security Team</a>
+        <a href="/docs" class="text-sm text-purple-400 hover:text-purple-300 transition-colors">View Documentation</a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
