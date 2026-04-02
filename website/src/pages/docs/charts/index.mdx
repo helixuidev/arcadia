@@ -144,3 +144,77 @@ The `TooltipTemplate` parameter accepts a `RenderFragment<T>` for fully custom H
 ```
 
 > **Note:** Custom tooltip templates require an interactive render mode (Server or WASM). In static SSR, the default text tooltips are used instead.
+
+## Real-Time Data (ObservableCollection)
+
+All chart types automatically detect when `Data` is an `ObservableCollection<T>` and re-render when items are added, removed, or cleared. No manual `StateHasChanged()` needed.
+
+### Basic Usage
+
+```razor
+@using System.Collections.ObjectModel
+
+<ArcadiaLineChart TItem="StockTick" Data="@_ticks"
+    XField="@(d => (object)d.Time)"
+    Series="@_series"
+    Height="300"
+    ShowPoints="false"
+    AnimateOnLoad="false" />
+
+@code {
+    private ObservableCollection<StockTick> _ticks = new();
+
+    private List<SeriesConfig<StockTick>> _series = new()
+    {
+        new() { Name = "Price", Field = d => d.Price }
+    };
+
+    // Adding a tick auto-updates the chart — no StateHasChanged needed
+    private void AddTick() => _ticks.Add(new StockTick(DateTime.Now, 142.50));
+}
+```
+
+### Timer-Based Streaming
+
+```razor
+@implements IDisposable
+
+<ArcadiaLineChart TItem="SensorReading" Data="@_readings"
+    XField="@(d => (object)d.Timestamp)"
+    Series="@_series" Height="250" ShowPoints="false" />
+
+@code {
+    private ObservableCollection<SensorReading> _readings = new();
+    private System.Threading.Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        _timer = new System.Threading.Timer(_ =>
+        {
+            InvokeAsync(() =>
+            {
+                _readings.Add(new SensorReading(DateTime.Now, ReadSensor()));
+                if (_readings.Count > 60) _readings.RemoveAt(0);
+            });
+        }, null, 0, 1000);
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}
+```
+
+### SignalR Integration
+
+```csharp
+// In a Blazor Server component
+hubConnection.On<SensorReading>("NewReading", reading =>
+{
+    _readings.Add(reading);
+    if (_readings.Count > 100) _readings.RemoveAt(0);
+    // Chart updates automatically!
+});
+```
+
+### Debouncing
+
+Rapid changes (e.g., 100 items added in 50ms) are automatically debounced into a single re-render for optimal performance. The default debounce window is 16ms (one frame at 60fps).

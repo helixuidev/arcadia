@@ -112,6 +112,47 @@ No service registration is required. The component is ready to use after adding 
 | `FooterTemplate` | `RenderFragment?` | `null` | Custom footer template (overrides `Aggregate` when set) |
 | `CellClass` | `Func<TItem, string?>?` | `null` | Dynamic CSS class for cells in this column |
 
+## Live Data (ObservableCollection)
+
+The DataGrid automatically detects when `Data` is an `ObservableCollection<T>` and re-renders when items are added, removed, or cleared. No manual `StateHasChanged()` needed.
+
+### Basic Usage
+
+```razor
+@using System.Collections.ObjectModel
+
+<ArcadiaDataGrid TItem="Order" Data="@_orders">
+    <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Id)" Title="ID" />
+    <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Product)" Title="Product" />
+</ArcadiaDataGrid>
+
+@code {
+    private ObservableCollection<Order> _orders = new(initialData);
+
+    // Adding an item auto-updates the grid — no StateHasChanged needed
+    private void AddOrder() => _orders.Add(new Order(...));
+}
+```
+
+### SignalR Integration
+
+```csharp
+// In a Blazor Server component
+hubConnection.On<Order>("NewOrder", order =>
+{
+    _orders.Insert(0, order);
+    // Grid updates automatically!
+});
+```
+
+### Batch Edit Guard
+
+During batch editing, live updates are suppressed to avoid disrupting the user's in-progress edits. Updates resume automatically when the batch is committed or discarded.
+
+### Debouncing
+
+Rapid changes (e.g., 100 items added in 50ms) are automatically debounced into a single re-render for optimal performance.
+
 ## Feature Pages
 
 - [Sorting](/docs/datagrid/sorting) -- Click-to-sort, multi-direction cycling, SortChanged event
