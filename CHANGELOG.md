@@ -2,6 +2,26 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.20] — 2026-04-02
+
+### New Features
+- **ObservableCollection binding** on Charts and DataGrid — auto-rerender on add/remove/clear with 16ms debounce and batch-edit suppression
+- **CollectionObserver\<T\>** utility in Core — reusable, thread-safe, with Suppress/Resume API
+- **Security practices page** at /security — documents XSS protection, supply chain, disposal patterns
+- **Live data demo** at /test/live-data — streaming chart + live DataGrid + gauge, all via ObservableCollection
+
+### Security
+- Eliminated `innerHTML` in chart tooltip rendering — replaced with DOMParser + sanitizeHtml()
+- Eliminated `document.write` in DataGrid print — replaced with DOM construction API
+- Zero unsafe DOM operations remain in codebase
+
+### Fixes
+- SEO: all doc pages had empty `<title>` tags (MDX frontmatter not passed to DocsLayout)
+- Documentation sync: README, CHANGELOG, CLAUDE.md, all package READMEs updated
+
+### Tests
+- 1,426 total (+22 from beta.19): 10 CollectionObserver, 5 Chart observable, 7 DataGrid observable
+
 ## [1.0.0-beta.19] — 2026-04-01
 
 ### New Packages

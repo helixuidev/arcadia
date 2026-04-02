@@ -1,0 +1,128 @@
+@page "/test/live-data"
+@using System.Collections.ObjectModel
+@using Arcadia.Charts.Components.Charts
+@using Arcadia.Charts.Core
+@using Arcadia.DataGrid.Components
+@using Arcadia.Gauge.Components
+@implements IDisposable
+
+<h2 style="color:#f1f0f9;margin-bottom:16px;">Live Data Dashboard</h2>
+<p style="color:#8b87a8;margin-bottom:24px;">
+    All components below use <code>ObservableCollection&lt;T&gt;</code> — no manual StateHasChanged needed.
+    Data updates every 500ms via a timer.
+</p>
+
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;">
+    @* Line chart — streaming stock price *@
+    <div style="background:#0d0525;border-radius:12px;padding:16px;border:1px solid rgba(139,92,246,0.15);">
+        <h3 style="color:#f1f0f9;font-size:0.9rem;margin:0 0 12px;">Stock Price (Live)</h3>
+        <ArcadiaLineChart TItem="StockTick" Data="_stockData"
+            XField="@(d => (object)d.Time)"
+            Series="@_stockSeries"
+            Height="200"
+            ShowPoints="false"
+            AnimateOnLoad="false" />
+    </div>
+
+    @* Gauge — CPU usage *@
+    <div style="background:#0d0525;border-radius:12px;padding:16px;border:1px solid rgba(139,92,246,0.15);display:flex;flex-direction:column;align-items:center;">
+        <h3 style="color:#f1f0f9;font-size:0.9rem;margin:0 0 12px;">CPU Usage</h3>
+        <ArcadiaRadialGauge Value="@_cpuUsage" Min="0" Max="100"
+            Label="%" ShowTicks="true" MajorTickCount="5"
+            GradientColors="@(new List<string> { "#16a34a", "#f59e0b", "#ef4444" })" />
+    </div>
+</div>
+
+@* DataGrid — live order feed *@
+<div style="background:#0d0525;border-radius:12px;padding:16px;border:1px solid rgba(139,92,246,0.15);">
+    <h3 style="color:#f1f0f9;font-size:0.9rem;margin:0 0 12px;">Order Feed (Live)</h3>
+    <ArcadiaDataGrid TItem="Order" Data="_orders" PageSize="8" Dense="true" Striped="true">
+        <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Id)" Title="ID" Width="80px" />
+        <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Product)" Title="Product" />
+        <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Amount)" Title="Amount" Format="C0" />
+        <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Status)" Title="Status" />
+        <ArcadiaColumn TItem="Order" Field="@(d => (object)d.Time)" Title="Time" Format="HH:mm:ss" />
+    </ArcadiaDataGrid>
+</div>
+
+<div style="margin-top:16px;display:flex;gap:8px;">
+    <button @onclick="ToggleTimer" style="padding:8px 16px;border-radius:8px;border:1px solid rgba(139,92,246,0.3);background:rgba(139,92,246,0.1);color:#f1f0f9;cursor:pointer;">
+        @(_running ? "⏸ Pause" : "▶ Resume")
+    </button>
+    <span style="color:#8b87a8;align-self:center;font-size:0.8rem;">
+        @_orders.Count orders · @_stockData.Count ticks
+    </span>
+</div>
+
+@code {
+    private ObservableCollection<StockTick> _stockData = new();
+    private ObservableCollection<Order> _orders = new();
+    private double _cpuUsage = 45;
+    private System.Threading.Timer? _timer;
+    private Random _rng = new(42);
+    private int _orderId = 1000;
+    private double _lastPrice = 142.50;
+    private bool _running = true;
+    private string[] _products = { "Pro License", "Enterprise Suite", "Starter Plan", "Add-on Pack", "Support Tier" };
+    private string[] _statuses = { "Pending", "Processing", "Shipped", "Delivered" };
+
+    private List<SeriesConfig<StockTick>> _stockSeries = new()
+    {
+        new SeriesConfig<StockTick> { Name = "ARCD", Field = d => d.Price, ShowPoints = false }
+    };
+
+    protected override void OnInitialized()
+    {
+        // Seed initial data
+        var now = DateTime.Now;
+        for (int i = 20; i >= 0; i--)
+        {
+            _lastPrice += (_rng.NextDouble() - 0.48) * 2;
+            _stockData.Add(new StockTick(now.AddSeconds(-i), Math.Round(_lastPrice, 2)));
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            _orders.Add(MakeOrder(now.AddSeconds(-i * 3)));
+        }
+
+        _timer = new System.Threading.Timer(OnTick, null, 500, 500);
+    }
+
+    private void OnTick(object? state)
+    {
+        if (!_running) return;
+        InvokeAsync(() =>
+        {
+            // Update stock price
+            _lastPrice += (_rng.NextDouble() - 0.48) * 2;
+            _stockData.Add(new StockTick(DateTime.Now, Math.Round(_lastPrice, 2)));
+            if (_stockData.Count > 60) _stockData.RemoveAt(0);
+
+            // Add new order occasionally
+            if (_rng.NextDouble() > 0.6)
+            {
+                _orders.Insert(0, MakeOrder(DateTime.Now));
+                if (_orders.Count > 20) _orders.RemoveAt(_orders.Count - 1);
+            }
+
+            // Update CPU gauge
+            _cpuUsage = Math.Clamp(_cpuUsage + (_rng.NextDouble() - 0.5) * 10, 5, 95);
+            StateHasChanged(); // Only needed for the gauge (not ObservableCollection)
+        });
+    }
+
+    private Order MakeOrder(DateTime time) => new(
+        ++_orderId,
+        _products[_rng.Next(_products.Length)],
+        Math.Round(_rng.NextDouble() * 500 + 50, 0),
+        _statuses[_rng.Next(_statuses.Length)],
+        time
+    );
+
+    private void ToggleTimer() => _running = !_running;
+
+    public void Dispose() => _timer?.Dispose();
+
+    record StockTick(DateTime Time, double Price);
+    record Order(int Id, string Product, double Amount, string Status, DateTime Time);
+}
