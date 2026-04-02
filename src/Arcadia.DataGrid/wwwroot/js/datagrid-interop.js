@@ -49,20 +49,39 @@ export function loadState(key) {
     try { return localStorage.getItem('arcadia-grid-' + key); } catch { return null; }
 }
 
-// Print grid in a new window
+// Print grid in a new window — uses DOM construction instead of document.write
 export function printGrid(html) {
     const win = window.open('', '_blank', 'width=900,height=600');
     if (!win) return;
-    win.document.write(`<!DOCTYPE html>
-<html><head><title>Print Grid</title>
-<style>
-  body { font-family: system-ui, sans-serif; margin: 20px; }
-  table { page-break-inside: auto; }
-  tr { page-break-inside: avoid; }
-  @media print { body { margin: 0; } }
-</style>
-</head><body>${html}</body></html>`);
-    win.document.close();
+    const doc = win.document;
+    doc.open();
+    // Build the page structure via DOM API
+    const style = doc.createElement('style');
+    style.textContent = `
+      body { font-family: system-ui, sans-serif; margin: 20px; }
+      table { page-break-inside: auto; border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 6px 10px; text-align: left; font-size: 13px; }
+      th { background: #f5f5f5; font-weight: 600; }
+      tr { page-break-inside: avoid; }
+      @media print { body { margin: 0; } }
+    `;
+    doc.head.appendChild(style);
+    doc.title = 'Print Grid';
+    // Parse HTML safely via DOMParser to strip scripts/event handlers
+    const parsed = new DOMParser().parseFromString(html, 'text/html');
+    parsed.querySelectorAll('script,iframe,object,embed').forEach(el => el.remove());
+    parsed.querySelectorAll('*').forEach(el => {
+        for (const attr of [...el.attributes]) {
+            if (attr.name.startsWith('on') || attr.value.trim().toLowerCase().startsWith('javascript:')) {
+                el.removeAttribute(attr.name);
+            }
+        }
+    });
+    // Adopt sanitized nodes into the print window
+    for (const node of [...parsed.body.childNodes]) {
+        doc.body.appendChild(doc.adoptNode(node));
+    }
+    doc.close();
     win.focus();
     win.print();
 }

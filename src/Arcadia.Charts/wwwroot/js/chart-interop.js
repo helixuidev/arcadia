@@ -27,9 +27,25 @@ function ensureTooltip() {
   return tooltipEl;
 }
 
+// Sanitize HTML: parse via DOMParser, strip scripts and event handler attributes
+function sanitizeHtml(html) {
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  // Remove <script>, <iframe>, <object>, <embed>, <form> tags
+  doc.querySelectorAll('script,iframe,object,embed,form,link[rel="import"]').forEach(el => el.remove());
+  // Remove all on* event handler attributes
+  doc.querySelectorAll('*').forEach(el => {
+    for (const attr of [...el.attributes]) {
+      if (attr.name.startsWith('on') || attr.value.trim().toLowerCase().startsWith('javascript:')) {
+        el.removeAttribute(attr.name);
+      }
+    }
+  });
+  return doc.body.childNodes;
+}
+
 export function showTooltip(html, x, y) {
   const el = ensureTooltip();
-  el.innerHTML = html;
+  el.replaceChildren(...sanitizeHtml(html));
   el.style.opacity = '1';
   
   // Smart positioning — keep within viewport
