@@ -8,24 +8,28 @@ Multi-targets .NET 5 through .NET 10. Supports Blazor Server, WebAssembly, and A
 ```
 /helixui
 ├── src/
-│   ├── HelixUI.Core/           # Shared utilities, base classes, theming engine
-│   ├── HelixUI.Theme/          # Design tokens, CSS, Tailwind plugin
-│   ├── HelixUI.DataGrid/       # AG Grid Blazor wrapper
-│   ├── HelixUI.FormBuilder/    # Dynamic form builder
-│   ├── HelixUI.DashboardKit/   # Dashboard layout + widgets
-│   ├── HelixUI.RichText/       # Rich text editor
-│   ├── HelixUI.FileManager/    # File explorer component
-│   ├── HelixUI.Scheduler/      # Calendar/scheduling
-│   ├── HelixUI.Workflow/       # Approval workflow designer
-│   └── HelixUI.Notifications/  # Notification center
+│   ├── Arcadia.Core/           # Shared utilities, base classes, theming engine
+│   ├── Arcadia.Theme/          # Design tokens, CSS, Tailwind plugin
+│   ├── Arcadia.Charts/         # 20 chart types + 7 dashboard widgets (pure SVG)
+│   ├── Arcadia.DataGrid/       # High-performance Blazor DataGrid (pure C#, no AG Grid)
+│   ├── Arcadia.FormBuilder/    # Dynamic form builder (21 field types)
+│   ├── Arcadia.DashboardKit/   # Drag-and-drop dashboard grid with FLIP animations
+│   ├── Arcadia.UI/             # 46 general-purpose UI components (Dialog, Tabs, Card, etc.)
+│   ├── Arcadia.Gauge/          # Free standalone gauge component (MIT)
+│   ├── Arcadia.Notifications/  # Toast notification system
+│   ├── Arcadia.Analyzers/      # Roslyn analyzers for Arcadia API usage
+│   ├── Arcadia.RichText/       # (placeholder — not yet implemented)
+│   ├── Arcadia.FileManager/    # (placeholder — not yet implemented)
+│   ├── Arcadia.Scheduler/      # (placeholder — not yet implemented)
+│   └── Arcadia.Workflow/       # (placeholder — not yet implemented)
 ├── tests/
-│   ├── HelixUI.Tests.Unit/     # bUnit tests
-│   └── HelixUI.Tests.E2E/      # Playwright tests
+│   ├── HelixUI.Tests.Unit/     # bUnit tests (1,161+)
+│   └── HelixUI.Tests.E2E/      # Playwright tests (251+)
 ├── samples/
 │   ├── HelixUI.Demo.Server/    # Server-side demo app
 │   └── HelixUI.Demo.Wasm/      # WASM demo app
-├── docs/                        # DocFX documentation site
-└── figma/                       # Figma export assets
+├── website/                     # Astro documentation site (arcadiaui.com)
+└── tools/                       # MCP server, IDE snippets
 ```
 
 ## Architecture Principles
@@ -50,11 +54,16 @@ Multi-targets .NET 5 through .NET 10. Supports Blazor Server, WebAssembly, and A
 - CSS class parameter: always named `Class` (additional CSS), never override root class
 
 ## NuGet Package Naming
-- `HelixUI.Core`
-- `HelixUI.Theme`
-- `HelixUI.DataGrid`
-- `HelixUI.FormBuilder`
-- etc.
+- `Arcadia.Core`
+- `Arcadia.Theme`
+- `Arcadia.Charts`
+- `Arcadia.DataGrid`
+- `Arcadia.FormBuilder`
+- `Arcadia.DashboardKit`
+- `Arcadia.UI`
+- `Arcadia.Gauge`
+- `Arcadia.Notifications`
+- `Arcadia.Analyzers`
 
 ## Target Frameworks
 - **Multi-target: net5.0, net6.0, net7.0, net8.0, net9.0, net10.0**
@@ -67,8 +76,8 @@ Multi-targets .NET 5 through .NET 10. Supports Blazor Server, WebAssembly, and A
 ## Key Dependencies
 - Microsoft.AspNetCore.Components (Blazor) — version matched per TFM
 - No third-party C# dependencies in Core (keep it clean)
-- AG Grid (JS, for DataGrid wrapper only)
 - Tailwind CSS 4.x (for Theme package)
+- DataGrid is pure C# (no AG Grid dependency — uses Blazor Virtualize)
 
 ## Documentation Rules
 - **Every new or changed public API must have documentation updated in the same commit**

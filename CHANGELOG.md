@@ -2,6 +2,34 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [1.0.0-beta.19] — 2026-04-01
+
+### New Packages
+- **Arcadia.DashboardKit** — Drag-and-drop dashboard grid with FLIP animations, spring physics, iOS wiggle mode, state persistence
+
+### New Components (23 UI)
+- CommandPalette, HoverCard, Popover, ContextMenu, Switch, Slider, Rating, TagInput, ColorPicker, TextArea, Alert, Progress, CircularProgress, Spinner, EmptyState, Chip, Carousel, Pagination, Separator, AspectRatio, ScrollArea
+
+### New Features
+- **DataGrid**: Column reorder, stacked headers, infinite scroll, cell tooltips, copy with headers (Ctrl+Shift+C), cell validation, sticky footer, group aggregates, PDF export, command column, inline add row, conditional formatting
+- **Card**: Glassmorphism variants (glass/outlined/ghost), 6 elevation levels, gradient border, skeleton loading, collapsible, status bar, horizontal layout
+- **Charts**: Animation performance caps (200+ points stagger disabled), accessibility on 4 new chart types
+- **ObservableCollection binding**: Live data on Charts and DataGrid with 16ms debounce, batch-edit suppression
+
+### Fixed
+- Desktop layout broken by mobile CSS
+- WASM playground navigation 404s
+- SEO: empty titles on all doc pages (MDX frontmatter not passed to layout)
+- Security: eliminated innerHTML and document.write from JS interop
+
+### Infrastructure
+- Playground smoke test in CI pipeline
+- DashboardKit + Gauge added to release.yml and ci.yml pack steps
+- Mobile responsive playground with hamburger menu
+- Free Controls section on homepage
+- Security practices page at /security
+- Railway deployment config (Dockerfile.website)
+
 ## [1.0.0-beta.18] — 2026-03-29
 
 ### Added

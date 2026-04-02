@@ -1,6 +1,6 @@
 <p align="center">
   <strong>Arcadia.UI</strong><br>
-  <em>Essential Blazor UI components: Dialog, Tabs, Tooltip, Sidebar, Accordion, Breadcrumb, Card, Badge, Avatar</em>
+  <em>46 essential Blazor UI components: Dialog, Tabs, Card, CommandPalette, HoverCard, Popover, TreeView, and more</em>
 </p>
 
 ## Why Arcadia UI?
@@ -10,19 +10,47 @@
 - **Themeable** — CSS custom properties integrate with Arcadia.Theme
 - **Lightweight** — each component is a single Razor file, tree-shakeable
 
-## Components
+## Components (46)
 
 | Component | Description |
 |-----------|-------------|
-| Dialog | Modal dialog with overlay, focus trap, Escape close |
-| Tabs | Tabbed content with arrow key navigation |
-| Tooltip | Hover tooltip with 4 positions |
-| Sidebar | Collapsible navigation sidebar |
 | Accordion | Expandable content sections |
-| Breadcrumb | Navigation breadcrumb trail |
-| Card | Content card with header/body/footer |
-| Badge | Status indicator (count or dot) |
+| Alert | Contextual feedback messages |
+| AspectRatio | Maintain width/height ratio for content |
 | Avatar | User avatar (image or initials) |
+| Badge | Status indicator (count or dot) |
+| Breadcrumb | Navigation breadcrumb trail |
+| Card | Content card with header/body/footer, glassmorphism variants |
+| Carousel | Image/content slideshow |
+| Chip | Compact element for tags and selections |
+| CircularProgress | Circular progress indicator |
+| ColorPicker | Color selection input |
+| CommandPalette | Searchable command launcher (Ctrl+K) |
+| ContextMenu | Right-click context menu |
+| DatePicker | Date selection input |
+| Dialog | Modal dialog with overlay, focus trap, Escape close |
+| Drawer | Slide-out panel from any edge |
+| EmptyState | Placeholder for empty content areas |
+| HoverCard | Rich content preview on hover |
+| Menu | Dropdown menu with items |
+| Pagination | Page navigation controls |
+| Popover | Floating content anchored to a trigger |
+| Progress | Linear progress bar |
+| Rating | Star rating input |
+| ScrollArea | Custom scrollbar container |
+| Separator | Visual divider between sections |
+| Sidebar | Collapsible navigation sidebar |
+| Skeleton | Loading placeholder with shimmer animation |
+| Slider | Range input slider |
+| Spinner | Loading spinner animation |
+| Stepper | Multi-step workflow indicator |
+| Switch | Toggle switch input |
+| Tabs | Tabbed content with arrow key navigation |
+| TagInput | Multi-value tag input field |
+| TextArea | Multi-line text input |
+| Timeline | Vertical event timeline |
+| Tooltip | Hover tooltip with 4 positions |
+| TreeView | Hierarchical tree navigation |
 
 ## Quick Start
 

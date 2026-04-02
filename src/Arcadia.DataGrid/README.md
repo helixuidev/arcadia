@@ -24,7 +24,13 @@
 | Virtual scrolling | CSS Grid layout for 100K+ rows |
 | Column templates | Cell, header, footer, and detail row templates |
 | CSV export | One-click export with column/row filtering |
-| Clipboard copy | Ctrl+C copies selected rows as TSV |
+| Clipboard copy | Ctrl+C copies selected rows as TSV; Ctrl+Shift+C copies with headers |
+| Column reorder | Drag-and-drop column reordering |
+| Stacked headers | Multi-row header groups for complex column layouts |
+| Infinite scroll | Continuous data loading as user scrolls |
+| Cell tooltips | Hover tooltips on truncated cell content |
+| Conditional formatting | Data-driven cell styles via `CellClass` |
+| ObservableCollection | Live data binding with automatic 16ms debounced re-renders |
 | Context menu | Custom right-click menus via `ContextMenuTemplate` |
 | State persistence | Auto-save sort/filter/columns to localStorage |
 | Keyboard nav | Arrow keys, Enter to edit, Escape to cancel, Ctrl+C to copy |
@@ -63,6 +69,6 @@ Drop in a grid:
 | Blazor WebAssembly | Fully supported |
 | Blazor Auto (net8+) | Fully supported |
 
-Multi-targets .NET 5 through .NET 9.
+Multi-targets .NET 5 through .NET 10.
 
 **[Live Demo](https://arcadiaui.com/playground/)** · **[Documentation](https://arcadiaui.com/docs/datagrid)** · **[Changelog](https://github.com/ArcadiaUIDev/arcadia/blob/main/CHANGELOG.md)** · **[Benchmarks](https://arcadiaui.com/docs/benchmarks)** · **[GitHub](https://github.com/ArcadiaUIDev/arcadia)**

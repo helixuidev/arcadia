@@ -18,6 +18,15 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 <pre><code># Charts + Dashboard Widgets (includes Core)
 dotnet add package Arcadia.Charts
 
+# High-performance DataGrid (includes Core)
+dotnet add package Arcadia.DataGrid
+
+# Drag-and-drop Dashboard Grid (includes Core)
+dotnet add package Arcadia.DashboardKit
+
+# 46 UI Components (includes Core)
+dotnet add package Arcadia.UI
+
 # Form Builder (includes Core)
 dotnet add package Arcadia.FormBuilder
 
@@ -27,10 +36,8 @@ dotnet add package Arcadia.Notifications
 # Theme Engine (includes Core)
 dotnet add package Arcadia.Theme
 
-# Or install everything
-dotnet add package Arcadia.Charts
-dotnet add package Arcadia.FormBuilder
-dotnet add package Arcadia.Notifications</code></pre>
+# Free standalone gauge (MIT)
+dotnet add package Arcadia.Gauge</code></pre>
 
 <h2>Add Stylesheets</h2>
 <p>Add the CSS files to your app's <code>&lt;head&gt;</code> (in <code>App.razor</code> or <code>index.html</code>):</p>
@@ -40,6 +47,12 @@ dotnet add package Arcadia.Notifications</code></pre>
 
 &lt;!-- Charts styles --&gt;
 &lt;link href="_content/Arcadia.Charts/css/arcadia-charts.css" rel="stylesheet" /&gt;
+
+&lt;!-- DataGrid styles --&gt;
+&lt;link href="_content/Arcadia.DataGrid/css/arcadia-datagrid.css" rel="stylesheet" /&gt;
+
+&lt;!-- UI component styles --&gt;
+&lt;link href="_content/Arcadia.UI/css/arcadia-ui.css" rel="stylesheet" /&gt;
 
 &lt;!-- Form styles --&gt;
 &lt;link href="_content/Arcadia.FormBuilder/css/arcadia-forms.css" rel="stylesheet" /&gt;
@@ -112,7 +125,7 @@ builder.Services.AddScoped&lt;ToastService&gt;();</code></pre>
     &#125;;
 &#125;`} /></pre>
 
-<p><code>Width="0"</code> makes the chart responsive — it fills its container automatically. All 16 chart types follow the same pattern: <code>Data</code> + field selectors + <code>Series</code> config.</p>
+<p><code>Width="0"</code> makes the chart responsive — it fills its container automatically. All 20 chart types follow the same pattern: <code>Data</code> + field selectors + <code>Series</code> config.</p>
 
 <div class="callout">
   <div class="callout-title">Next steps</div>

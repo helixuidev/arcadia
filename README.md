@@ -1,6 +1,6 @@
 <p align="center">
   <strong>Arcadia Controls</strong><br>
-  <em>16 chart types, high-performance DataGrid, dashboard widgets, form builder & notifications for Blazor</em>
+  <em>20 chart types, 46 UI components, high-performance DataGrid, drag-and-drop dashboards, form builder & notifications for Blazor</em>
 </p>
 
 <p align="center">
@@ -23,7 +23,7 @@ A commercial Blazor component library for enterprise .NET developers. Pure SVG c
 
 **[Live Demo](https://arcadiaui.com/playground/)** · **[Documentation](https://arcadiaui.com/docs/)** · **[Why Arcadia?](https://arcadiaui.com/why-arcadia/)**
 
-## Charts (16 Types)
+## Charts (20 Types)
 
 | Chart | Component | Tier |
 |-------|-----------|------|
@@ -43,8 +43,12 @@ A commercial Blazor component library for enterprise .NET developers. Pure SVG c
 | Box Plot | `ArcadiaBoxPlot<T>` | Pro |
 | Sankey | `ArcadiaSankeyChart` | Pro |
 | Chord | `ArcadiaChordChart` | Pro |
+| Area | `ArcadiaAreaChart<T>` | Community (Free) |
+| Donut | `ArcadiaDonutChart<T>` | Community (Free) |
+| Stacked Bar | `ArcadiaStackedBarChart<T>` | Community (Free) |
+| Bubble | `ArcadiaBubbleChart<T>` | Community (Free) |
 
-**Plus:** DataGrid with virtual scrolling, 7 dashboard widgets (KPI Card, Sparkline, Progress Bar, Delta Indicator, Bar List, Tracker, Category Bar), Form Builder with 21 field types, and Toast Notifications.
+**Plus:** DataGrid with virtual scrolling, column reorder, stacked headers, infinite scroll, and ObservableCollection binding. 7 dashboard widgets (KPI Card, Sparkline, Progress Bar, Delta Indicator, Bar List, Tracker, Category Bar). Drag-and-drop dashboard grid (DashboardKit). 46 general-purpose UI components. Form Builder with 21 field types. Toast Notifications.
 
 ## Quick Start
 
@@ -97,7 +101,7 @@ dotnet add package Arcadia.Theme
 ## Key Features
 
 - **Pure SVG rendering** — no JavaScript dependencies for chart rendering
-- **16 chart types** — from line charts to Sankey flows, chord diagrams to heatmaps
+- **20 chart types** — from line charts to Sankey flows, chord diagrams to heatmaps
 - **Responsive** — set `Width="0"` and charts auto-fill their container
 - **Dark/Light themes** — full theme support via CSS custom properties
 - **Streaming data** — real-time updates with `AppendAndSlide` and sliding window
@@ -106,11 +110,18 @@ dotnet add package Arcadia.Theme
 - **Smooth curves** — Catmull-Rom interpolation for elegant line charts
 - **Anti-collision layout engine** — labels never overlap
 - **Accessibility** — WCAG 2.1 AA, screen reader tables, `prefers-reduced-motion`
-- **DataGrid** — sorting, filtering, paging, grouping, inline editing, and CSV export
+- **DataGrid** — sorting, filtering, paging, grouping, inline editing, CSV/Excel/PDF export
 - **Virtual scrolling** — DataGrid handles 100K+ rows at 60fps
+- **Column reorder & stacked headers** — drag columns, multi-row header groups
+- **Infinite scroll** — continuous data loading as user scrolls
+- **Cell tooltips & copy with headers** — Ctrl+Shift+C copies with column headers
+- **Conditional formatting & cell merge** — data-driven cell styles and spans
+- **ObservableCollection binding** — live data on Charts and DataGrid with 16ms debounce
 - **Selection modes** — single, multi, and checkbox selection in the DataGrid
 - **Column templates** — cell, header, footer, and detail row templates
 - **6 built-in grid themes** — Obsidian, Vapor, Carbon, Aurora, Slate, Midnight + 3 density modes
+- **DashboardKit** — drag-and-drop dashboard grid with FLIP animations, spring physics, iOS wiggle mode
+- **46 UI components** — Dialog, Tabs, Card, CommandPalette, HoverCard, Popover, and more
 - **Form Builder** — 21 field types, schema-driven or model-driven, wizard mode
 - **Toast Notifications** — fire-and-forget with auto-dismiss and stacking
 
@@ -120,11 +131,14 @@ dotnet add package Arcadia.Theme
 |---------|-------------|
 | `Arcadia.Core` | Base classes, theming engine, accessibility utilities |
 | `Arcadia.Theme` | Design tokens, CSS custom properties, Tailwind plugin |
-| `Arcadia.Charts` | All 16 chart types + 7 dashboard widgets |
-| `Arcadia.DataGrid` | High-performance data grid with sorting, filtering, virtual scrolling, inline editing, and CSV export |
+| `Arcadia.Charts` | All 20 chart types + 7 dashboard widgets |
+| `Arcadia.DataGrid` | High-performance data grid with sorting, filtering, virtual scrolling, inline editing, CSV/Excel/PDF export, column reorder, stacked headers, infinite scroll |
+| `Arcadia.DashboardKit` | Drag-and-drop dashboard grid with FLIP animations, spring physics, iOS wiggle mode |
+| `Arcadia.UI` | 46 general-purpose UI components (Dialog, Tabs, Card, CommandPalette, etc.) |
 | `Arcadia.FormBuilder` | Dynamic forms, validation, wizards |
 | `Arcadia.Notifications` | Toast notification system |
 | `Arcadia.Gauge` | Free standalone gauge component (MIT) — zero dependencies, under 15 KB |
+| `Arcadia.Analyzers` | Roslyn analyzers for Arcadia API usage |
 
 ## AI Integration
 
@@ -148,8 +162,8 @@ See [tools/snippets/README.md](tools/snippets/README.md) for installation.
 
 | Tier | Price | Includes |
 |------|-------|----------|
-| **Community** | Free (MIT) | Line, Bar, Pie, Scatter charts + Sparklines |
-| **Pro** | $299/dev/year | All 16 chart types + DataGrid + Form Builder + Notifications |
+| **Community** | Free (MIT) | Line, Bar, Pie, Scatter + 4 aliases, Gauge, 46 UI components, Notifications |
+| **Pro** | $299/dev/year | All 20 chart types + DataGrid + DashboardKit + Form Builder + Notifications |
 | **Enterprise** | $799/dev/year | Pro + priority support + source code access |
 
 [View pricing](https://arcadiaui.com/#pricing)
@@ -162,14 +176,15 @@ See [tools/snippets/README.md](tools/snippets/README.md) for installation.
 - **Performance budgeted** — render time, memory, and interop calls tracked
 - **Tree-shakeable** — each package is independent, Core is the only shared dependency
 
-## What's New (beta.15)
+## What's New (beta.19)
 
-- **Excel export** — zero-dependency XLSX writer, no DocumentFormat.OpenXml needed
-- **Typed filters** — boolean tri-state, date picker, number input auto-detected
-- **Column pinning UI** — right-click header to Pin/Unpin/Hide/Sort
-- **14 localization parameters** — all UI strings overridable for i18n
-- **1,348 tests** — 1,097 unit + 240 E2E (Playwright) + 11 performance
-- **6 bug fixes** — scientific notation labels, width slider, palette, cell focus, contrast
+- **Arcadia.DashboardKit** — drag-and-drop dashboard grid with FLIP animations, spring physics, iOS wiggle mode
+- **23 new UI components** — CommandPalette, HoverCard, Popover, ContextMenu, Switch, Slider, Rating, and more
+- **DataGrid enhancements** — column reorder, stacked headers, infinite scroll, cell tooltips, copy with headers, conditional formatting, cell merge, PDF export
+- **Card upgrades** — glassmorphism variants, 6 elevation levels, gradient border, skeleton loading, collapsible
+- **ObservableCollection binding** — live data on Charts and DataGrid with 16ms debounce
+- **1,400+ tests** — 1,161 unit + 251 E2E + 11 performance
+- **90+ components** across 10 packages
 
 See [CHANGELOG.md](CHANGELOG.md) for all releases.
 
