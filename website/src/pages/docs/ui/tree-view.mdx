@@ -1,0 +1,88 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Tree View
+description: A hierarchical tree view for displaying nested data with expand/collapse and selection support.
+---
+
+# Tree View
+
+The `ArcadiaTreeView` component renders a hierarchical tree structure from a list of `TreeViewItem` data. Nodes can be expanded, collapsed, and selected.
+
+## Basic Usage
+
+```razor
+<ArcadiaTreeView Items="treeData" OnItemClick="HandleItemClick" />
+
+@code {
+    private List<TreeViewItem> treeData = new()
+    {
+        new TreeViewItem
+        {
+            Id = "1",
+            Text = "Documents",
+            Icon = "folder",
+            Children = new()
+            {
+                new TreeViewItem { Id = "1-1", Text = "Report.pdf", Icon = "file" },
+                new TreeViewItem { Id = "1-2", Text = "Notes.txt", Icon = "file" }
+            }
+        },
+        new TreeViewItem { Id = "2", Text = "Pictures", Icon = "folder" }
+    };
+
+    private void HandleItemClick(TreeViewItem item) { /* ... */ }
+}
+```
+
+## Expand All
+
+```razor
+<ArcadiaTreeView Items="treeData" ExpandAll="true" />
+```
+
+## ArcadiaTreeView Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Items` | `IReadOnlyList<TreeViewItem>?` | `null` | Hierarchical tree data. |
+| `ChildContent` | `RenderFragment?` | `null` | Manual tree item content (as an alternative to `Items`). |
+| `ExpandAll` | `bool` | `false` | Whether all nodes are expanded by default. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaTreeView Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnItemClick` | `EventCallback<TreeViewItem>` | Fired when a tree item is clicked. |
+
+## TreeViewItem Properties
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Id` | `string` | `""` | Unique identifier for this tree item. |
+| `Text` | `string` | `""` | Display text for this tree item. |
+| `Icon` | `string?` | `null` | Optional icon CSS class or name. |
+| `Children` | `List<TreeViewItem>` | `new()` | Child items of this tree node. |
+| `Expanded` | `bool` | `false` | Whether this node is expanded. |
+| `Selected` | `bool` | `false` | Whether this node is selected. |
+
+## ArcadiaTreeViewNode Parameters
+
+`ArcadiaTreeViewNode` is used internally by `ArcadiaTreeView` to render each node recursively. It exposes:
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Item` | `TreeViewItem` | required | The tree item data for this node. |
+| `OnItemClick` | `EventCallback<TreeViewItem>` | — | Callback invoked when this item is clicked. |
+| `ExpandAll` | `bool` | `false` | Whether all nodes should be expanded by default. |
+| `Level` | `int` | `0` | The nesting level of this node (0-based). |
+
+## Accessibility
+
+- The root list uses `role="tree"`.
+- Each node uses `role="treeitem"` with `aria-expanded` (for nodes with children) and `aria-selected`.
+- Child groups use `role="group"`.
+- Each item is keyboard focusable (`tabindex="0"`).
+- Keyboard support: Enter or Space to toggle expansion and select the node.
+- Chevron and spacer icons use `aria-hidden="true"`.

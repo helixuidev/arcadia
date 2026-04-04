@@ -508,8 +508,8 @@
 .arcadia-badge__indicator--dot { min-width: 8px; height: 8px; padding: 0; top: -2px; right: -2px; }
 .arcadia-badge__indicator--primary { background: var(--arcadia-color-primary, #8b5cf6); }
 .arcadia-badge__indicator--success { background: var(--arcadia-color-success, #16a34a); }
-.arcadia-badge__indicator--danger { background: var(--arcadia-color-danger, #dc2626); }
-.arcadia-badge__indicator--warning { background: var(--arcadia-color-warning, #d97706); }
+.arcadia-badge__indicator--danger { background: var(--arcadia-color-danger, #b91c1c); }
+.arcadia-badge__indicator--warning { background: var(--arcadia-color-warning, #b45309); }
 
 /* ── Avatar ── */
 .arcadia-avatar {
@@ -524,8 +524,8 @@
 .arcadia-avatar__initials { user-select: none; line-height: 1; }
 .arcadia-avatar--primary { background: var(--arcadia-color-primary, #8b5cf6); }
 .arcadia-avatar--success { background: var(--arcadia-color-success, #16a34a); }
-.arcadia-avatar--danger { background: var(--arcadia-color-danger, #dc2626); }
-.arcadia-avatar--warning { background: var(--arcadia-color-warning, #d97706); }
+.arcadia-avatar--danger { background: var(--arcadia-color-danger, #b91c1c); }
+.arcadia-avatar--warning { background: var(--arcadia-color-warning, #b45309); }
 
 /* ── Animations ── */
 @keyframes arcadia-fade-in { from { opacity: 0; } to { opacity: 1; } }
@@ -820,8 +820,8 @@
 }
 .arcadia-timeline-item__dot--primary { background: var(--arcadia-color-primary, #8b5cf6); }
 .arcadia-timeline-item__dot--success { background: var(--arcadia-color-success, #16a34a); }
-.arcadia-timeline-item__dot--danger { background: var(--arcadia-color-danger, #dc2626); }
-.arcadia-timeline-item__dot--warning { background: var(--arcadia-color-warning, #d97706); }
+.arcadia-timeline-item__dot--danger { background: var(--arcadia-color-danger, #b91c1c); }
+.arcadia-timeline-item__dot--warning { background: var(--arcadia-color-warning, #b45309); }
 
 .arcadia-timeline-item__icon {
   font-size: 0.5rem; color: #fff; line-height: 1;
@@ -1018,13 +1018,13 @@
 .arcadia-alert--outlined { background: transparent; }
 .arcadia-alert--outlined.arcadia-alert--info    { border: 1px solid #3b82f6; color: #3b82f6; }
 .arcadia-alert--outlined.arcadia-alert--success { border: 1px solid #16a34a; color: #16a34a; }
-.arcadia-alert--outlined.arcadia-alert--warning { border: 1px solid #d97706; color: #d97706; }
+.arcadia-alert--outlined.arcadia-alert--warning { border: 1px solid #b45309; color: #b45309; }
 .arcadia-alert--outlined.arcadia-alert--error   { border: 1px solid #ef4444; color: #ef4444; }
 
 /* Alert — soft variants */
 .arcadia-alert--soft.arcadia-alert--info    { background: rgba(59,130,246,0.12); color: #3b82f6; }
 .arcadia-alert--soft.arcadia-alert--success { background: rgba(22,163,74,0.12); color: #16a34a; }
-.arcadia-alert--soft.arcadia-alert--warning { background: rgba(245,158,11,0.12); color: #d97706; }
+.arcadia-alert--soft.arcadia-alert--warning { background: rgba(180,83,9,0.12); color: #b45309; }
 .arcadia-alert--soft.arcadia-alert--error   { background: rgba(239,68,68,0.12); color: #ef4444; }
 
 /* ── Progress (linear) ── */
@@ -1207,14 +1207,14 @@
 .arcadia-chip--outlined.arcadia-chip--default { border-color: var(--arcadia-color-border, rgba(139,92,246,0.3)); color: var(--arcadia-color-text, #f1f0f9); }
 .arcadia-chip--outlined.arcadia-chip--primary { border-color: var(--arcadia-color-primary, #8b5cf6); color: var(--arcadia-color-primary, #8b5cf6); }
 .arcadia-chip--outlined.arcadia-chip--success { border-color: #16a34a; color: #16a34a; }
-.arcadia-chip--outlined.arcadia-chip--warning { border-color: #d97706; color: #d97706; }
+.arcadia-chip--outlined.arcadia-chip--warning { border-color: #b45309; color: #b45309; }
 .arcadia-chip--outlined.arcadia-chip--danger  { border-color: #ef4444; color: #ef4444; }
 
 /* Chip — soft */
 .arcadia-chip--soft.arcadia-chip--default { background: rgba(139,92,246,0.1); color: var(--arcadia-color-text, #f1f0f9); }
 .arcadia-chip--soft.arcadia-chip--primary { background: rgba(139,92,246,0.12); color: var(--arcadia-color-primary, #8b5cf6); }
 .arcadia-chip--soft.arcadia-chip--success { background: rgba(22,163,74,0.12); color: #16a34a; }
-.arcadia-chip--soft.arcadia-chip--warning { background: rgba(245,158,11,0.12); color: #d97706; }
+.arcadia-chip--soft.arcadia-chip--warning { background: rgba(180,83,9,0.12); color: #b45309; }
 .arcadia-chip--soft.arcadia-chip--danger  { background: rgba(239,68,68,0.12); color: #ef4444; }
 
 /* ── Switch ── */

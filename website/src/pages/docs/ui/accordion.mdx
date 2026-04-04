@@ -1,0 +1,69 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Accordion
+description: A collapsible content panel for organizing related sections of information.
+---
+
+# Accordion
+
+The `ArcadiaAccordion` component groups collapsible `ArcadiaAccordionItem` panels. By default, only one item can be expanded at a time.
+
+## Basic Usage
+
+```razor
+<ArcadiaAccordion>
+    <ArcadiaAccordionItem Title="Section 1">
+        Content for section 1.
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Section 2">
+        Content for section 2.
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Section 3" Disabled="true">
+        This section is disabled.
+    </ArcadiaAccordionItem>
+</ArcadiaAccordion>
+```
+
+## Multiple Expansion
+
+Allow multiple items to be open simultaneously by setting `Multiple="true"`.
+
+```razor
+<ArcadiaAccordion Multiple="true">
+    <ArcadiaAccordionItem Title="Section A" Expanded="true">
+        Initially expanded.
+    </ArcadiaAccordionItem>
+    <ArcadiaAccordionItem Title="Section B">
+        Another section.
+    </ArcadiaAccordionItem>
+</ArcadiaAccordion>
+```
+
+## ArcadiaAccordion Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Multiple` | `bool` | `false` | Whether multiple items can be expanded simultaneously. |
+| `ChildContent` | `RenderFragment?` | `null` | The accordion item elements. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaAccordionItem Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Title` | `string` | `""` | Header text for the accordion item. |
+| `Expanded` | `bool` | `false` | Whether the item is expanded. |
+| `Disabled` | `bool` | `false` | Whether the item is disabled. |
+| `ChildContent` | `RenderFragment?` | `null` | Content displayed when expanded. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Each accordion header is a `<button>` inside an `<h3>` element.
+- Uses `aria-expanded` to indicate open/closed state.
+- Uses `aria-controls` to link the trigger button to its panel.
+- Panels use `role="region"` with `aria-labelledby` referencing the header.
+- The `hidden` attribute is applied to collapsed panels.
+- Disabled items set the `disabled` attribute on the trigger button.

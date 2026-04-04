@@ -1,0 +1,49 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: SwitchField
+description: Toggle switch for boolean on/off values.
+---
+
+# SwitchField
+
+A toggle switch for boolean on/off values. Visually distinct from a checkbox, the switch uses `role="switch"` and `aria-checked` for correct semantics. Use this when the setting takes effect immediately or when the visual metaphor of an on/off toggle is more appropriate than a checkbox.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <SwitchField Field="@nameof(Model.DarkMode)" Label="Enable Dark Mode" />
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `bool` | `false` | Whether the toggle switch is currently in the on position. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<bool>` | | Callback invoked when the user flips the toggle switch. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed next to the switch. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the switch. |
+| `Disabled` | `bool` | `false` | Whether the switch is disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class NotificationSettings
+{
+    public bool EmailNotifications { get; set; } = true;
+}
+```
+
+## Accessibility
+
+- Uses `role="switch"` on the underlying checkbox input for correct switch semantics.
+- Reports state via `aria-checked="true"` or `aria-checked="false"`.
+- Helper text and validation errors are linked via `aria-describedby`.

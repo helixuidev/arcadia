@@ -1,0 +1,45 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Rating
+description: A star rating component with keyboard navigation and read-only support.
+---
+
+# Rating
+
+The `ArcadiaRating` component displays a configurable star rating input with hover preview, keyboard navigation, and read-only mode.
+
+## Basic Usage
+
+```razor
+<ArcadiaRating @bind-Value="rating" Max="5" />
+
+<ArcadiaRating Value="4" ReadOnly="true" Color="warning" />
+
+<ArcadiaRating @bind-Value="score" Max="10" Size="lg" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `int` | `0` | Current rating value. Supports two-way binding. |
+| `Max` | `int` | `5` | Maximum number of stars. |
+| `ReadOnly` | `bool` | `false` | Whether the rating is read-only. |
+| `AllowHalf` | `bool` | `false` | Whether half-star ratings are allowed. |
+| `Size` | `string` | `"md"` | Size: `"sm"`, `"md"`, `"lg"`. |
+| `Color` | `string` | `"warning"` | Color of filled stars. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ValueChanged` | `EventCallback<int>` | Fired when the rating value changes. |
+
+## Accessibility
+
+- Uses `role="slider"` with `aria-valuemin="0"`, `aria-valuemax`, and `aria-valuenow`.
+- Provides `aria-label="Rating"`.
+- Keyboard support: Arrow Right/Up to increase, Arrow Left/Down to decrease, Home for 0, End for max.
+- Read-only rating has `tabindex="-1"`.

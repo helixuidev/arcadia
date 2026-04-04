@@ -1,0 +1,54 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Drawer
+description: A slide-in panel that appears from the edge of the screen with overlay backdrop and focus trapping.
+---
+
+# Drawer
+
+The `ArcadiaDrawer` component slides in from the left, right, or bottom of the viewport with an optional overlay.
+
+## Basic Usage
+
+```razor
+<ArcadiaDrawer @bind-Visible="showDrawer" Title="Settings" Position="right">
+    <p>Drawer content goes here.</p>
+</ArcadiaDrawer>
+```
+
+## Bottom Drawer
+
+```razor
+<ArcadiaDrawer @bind-Visible="showBottom" Title="Details" Position="bottom" Height="40vh">
+    <p>Bottom sheet content.</p>
+</ArcadiaDrawer>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Visible` | `bool` | `false` | Whether the drawer is visible. Supports two-way binding. |
+| `Position` | `string` | `"right"` | Slide-in position: `"left"`, `"right"`, `"bottom"`. |
+| `Width` | `string` | `"320px"` | Drawer width for left/right positions. |
+| `Height` | `string` | `"50vh"` | Drawer height for bottom position. |
+| `ShowOverlay` | `bool` | `true` | Whether the overlay backdrop is shown. |
+| `Title` | `string?` | `null` | Drawer title displayed in the header. |
+| `ChildContent` | `RenderFragment?` | `null` | Drawer body content. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `VisibleChanged` | `EventCallback<bool>` | Fired when the visible state changes (two-way binding). |
+
+## Accessibility
+
+- Uses `role="dialog"` with `aria-modal="true"`.
+- Title is linked via `aria-labelledby`.
+- Focus is trapped inside the drawer using `FocusTrap`.
+- Close button uses `aria-label="Close drawer"`.
+- Escape key closes the drawer.
+- Clicking the overlay closes the drawer.

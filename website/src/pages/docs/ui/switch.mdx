@@ -1,0 +1,46 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Switch
+description: An accessible toggle switch for binary on/off states.
+---
+
+# Switch
+
+The `ArcadiaSwitch` component renders an accessible toggle switch built on a native checkbox with `role="switch"`.
+
+## Basic Usage
+
+```razor
+<ArcadiaSwitch @bind-Value="enabled" Label="Enable notifications" />
+
+<ArcadiaSwitch @bind-Value="darkMode" OnLabel="On" OffLabel="Off" Color="success" />
+
+<ArcadiaSwitch @bind-Value="feature" Size="lg" Disabled="true" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `bool` | `false` | Whether the switch is on. Supports two-way binding. |
+| `Label` | `string?` | `null` | Label text displayed next to the switch. |
+| `OnLabel` | `string?` | `null` | Text displayed inside the switch when on. |
+| `OffLabel` | `string?` | `null` | Text displayed inside the switch when off. |
+| `Disabled` | `bool` | `false` | Whether the switch is disabled. |
+| `Size` | `string` | `"md"` | Size: `"sm"`, `"md"`, `"lg"`. |
+| `Color` | `string` | `"primary"` | Color theme: `"primary"`, `"success"`, `"warning"`, `"danger"`. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ValueChanged` | `EventCallback<bool>` | Fired when the switch value changes. |
+
+## Accessibility
+
+- Uses a native `<input type="checkbox">` with `role="switch"` and `aria-checked`.
+- Wrapped in a `<label>` for click-to-toggle.
+- Provides `aria-label` from the `Label` parameter.
+- Native keyboard support: Space to toggle.

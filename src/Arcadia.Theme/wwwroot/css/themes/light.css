@@ -22,21 +22,21 @@
   --arcadia-color-text: #0f172a;
   --arcadia-color-text-muted: #64748b;
   --arcadia-color-text-inverse: #ffffff;
-  --arcadia-color-text-disabled: #94a3b8;
+  --arcadia-color-text-disabled: #6b7280;
 
   --arcadia-color-border: #e2e8f0;
   --arcadia-color-border-hover: #cbd5e1;
   --arcadia-color-border-focus: #2563eb;
 
-  --arcadia-color-danger: #dc2626;
-  --arcadia-color-danger-hover: #b91c1c;
-  --arcadia-color-danger-active: #991b1b;
+  --arcadia-color-danger: #b91c1c;
+  --arcadia-color-danger-hover: #991b1b;
+  --arcadia-color-danger-active: #7f1d1d;
   --arcadia-color-danger-subtle: #fef2f2;
   --arcadia-color-on-danger: #ffffff;
 
-  --arcadia-color-warning: #d97706;
-  --arcadia-color-warning-hover: #b45309;
-  --arcadia-color-warning-active: #92400e;
+  --arcadia-color-warning: #b45309;
+  --arcadia-color-warning-hover: #92400e;
+  --arcadia-color-warning-active: #78350f;
   --arcadia-color-warning-subtle: #fffbeb;
   --arcadia-color-on-warning: #ffffff;
 

@@ -1,0 +1,71 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: TextField
+description: Single-line text input field for the Arcadia FormBuilder.
+---
+
+# TextField
+
+A single-line text input field that supports two-way binding and integrates with the Arcadia FormBuilder validation system. The `InputType` parameter allows you to leverage browser-native input behaviors for email, URL, telephone, and other text-like types.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <TextField Field="@nameof(Model.FullName)" Label="Full Name" />
+</ArcadiaForm>
+```
+
+## Email Input
+
+```razor
+<TextField Field="@nameof(Model.Email)" Label="Email Address" InputType="email" Placeholder="you@example.com" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The current text entered by the user. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked whenever the user modifies the text. |
+| `InputType` | `string` | `"text"` | The HTML input type attribute. Change to `"email"`, `"url"`, `"tel"`, etc. for browser-native behaviors. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown when the field is empty. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```razor
+<ArcadiaForm Model="model">
+    <TextField Field="@nameof(Model.Username)"
+               Label="Username"
+               Required="true"
+               HelperText="Must be between 3 and 50 characters." />
+</ArcadiaForm>
+```
+
+```csharp
+public class UserModel
+{
+    [Required]
+    [StringLength(50, MinimumLength = 3)]
+    public string Username { get; set; } = "";
+}
+```
+
+## Accessibility
+
+- Label is linked to the input via `for`/`id` attributes.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.
+- Helper text is linked via `aria-describedby`.

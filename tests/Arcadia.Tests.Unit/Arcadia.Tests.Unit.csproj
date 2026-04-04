@@ -22,6 +22,12 @@
     <ProjectReference Include="..\..\src\Arcadia.DataGrid\Arcadia.DataGrid.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.UI\Arcadia.UI.csproj" />
     <ProjectReference Include="..\..\src\Arcadia.DashboardKit\Arcadia.DashboardKit.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Gauge\Arcadia.Gauge.csproj" />
+    <ProjectReference Include="..\..\src\Arcadia.Analyzers\Arcadia.Analyzers.csproj" ReferenceOutputAssembly="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
   </ItemGroup>
 
 </Project>

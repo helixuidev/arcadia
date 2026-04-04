@@ -1,0 +1,51 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Timeline
+description: A vertical timeline for displaying a chronological sequence of events.
+---
+
+# Timeline
+
+The `ArcadiaTimeline` component displays a vertical list of `ArcadiaTimelineItem` entries, each with a colored dot, title, subtitle, and optional content.
+
+## Basic Usage
+
+```razor
+<ArcadiaTimeline>
+    <ArcadiaTimelineItem Title="Order Placed" Subtitle="Mar 15, 2024" Color="primary">
+        Your order has been received and is being processed.
+    </ArcadiaTimelineItem>
+    <ArcadiaTimelineItem Title="Shipped" Subtitle="Mar 16, 2024" Color="success">
+        Package shipped via overnight delivery.
+    </ArcadiaTimelineItem>
+    <ArcadiaTimelineItem Title="Delayed" Subtitle="Mar 17, 2024" Color="warning" Icon="!">
+        Weather delay.
+    </ArcadiaTimelineItem>
+</ArcadiaTimeline>
+```
+
+## ArcadiaTimeline Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | `null` | The timeline item elements. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaTimelineItem Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Title` | `string` | `""` | Title text for the timeline item. |
+| `Subtitle` | `string?` | `null` | Subtitle text (e.g., timestamp or secondary info). |
+| `Color` | `string` | `"primary"` | Dot color variant: `"primary"`, `"success"`, `"danger"`, `"warning"`. |
+| `Icon` | `string?` | `null` | Optional icon displayed inside the dot. |
+| `ChildContent` | `RenderFragment?` | `null` | Detail content displayed below the title and subtitle. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The timeline uses `role="list"` with `aria-label="Timeline"`.
+- Each item uses `role="listitem"`.
+- Marker dots and connector lines use `aria-hidden="true"`.

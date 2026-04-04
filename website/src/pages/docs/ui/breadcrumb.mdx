@@ -1,0 +1,51 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Breadcrumb
+description: A navigation breadcrumb trail showing the user's current location within a hierarchy.
+---
+
+# Breadcrumb
+
+The `ArcadiaBreadcrumb` component renders a navigation trail with `ArcadiaBreadcrumbItem` children. The last item is automatically rendered as the current page.
+
+## Basic Usage
+
+```razor
+<ArcadiaBreadcrumb>
+    <ArcadiaBreadcrumbItem Href="/">Home</ArcadiaBreadcrumbItem>
+    <ArcadiaBreadcrumbItem Href="/products">Products</ArcadiaBreadcrumbItem>
+    <ArcadiaBreadcrumbItem>Widget Pro</ArcadiaBreadcrumbItem>
+</ArcadiaBreadcrumb>
+```
+
+## Custom Separator
+
+```razor
+<ArcadiaBreadcrumb Separator=">">
+    <ArcadiaBreadcrumbItem Href="/">Home</ArcadiaBreadcrumbItem>
+    <ArcadiaBreadcrumbItem>Current Page</ArcadiaBreadcrumbItem>
+</ArcadiaBreadcrumb>
+```
+
+## ArcadiaBreadcrumb Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Separator` | `string` | `"/"` | Separator character displayed between breadcrumb items. |
+| `ChildContent` | `RenderFragment?` | `null` | The breadcrumb item elements. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaBreadcrumbItem Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Href` | `string?` | `null` | URL for this breadcrumb item. If null, rendered as plain text. |
+| `ChildContent` | `RenderFragment?` | `null` | The label content for this breadcrumb item. |
+
+## Accessibility
+
+- Uses `<nav>` with `aria-label="Breadcrumb"`.
+- Items are rendered as an `<ol>` list.
+- The last item receives `aria-current="page"`.
+- Separator elements use `aria-hidden="true"`.

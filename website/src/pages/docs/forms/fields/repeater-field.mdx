@@ -1,0 +1,75 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: RepeaterField
+description: Repeating section field for dynamically adding and removing rows of fields.
+---
+
+# RepeaterField
+
+A repeating section field that allows users to dynamically add and remove rows of fields. Each row is rendered using a customizable `RowTemplate` and the component tracks all row data as a list of dictionaries.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <RepeaterField Label="Line Items"
+                   @bind-Rows="model.LineItems"
+                   MinRows="1"
+                   MaxRows="10"
+                   AddText="+ Add Line Item">
+        <RowTemplate>
+            <TextField Label="Description" @bind-Value="context.Values["description"]" />
+            <NumberField Label="Quantity" @bind-Value="context.Values["quantity"]" />
+        </RowTemplate>
+    </RepeaterField>
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Rows` | `List<Dictionary<string, object?>>` | `new()` | The collection of row data, where each row is a dictionary of field names to values. Supports two-way binding. |
+| `RowsChanged` | `EventCallback<List<Dictionary<string, object?>>>` | | Callback invoked whenever a row is added or removed. |
+| `RowTemplate` | `RenderFragment<RepeaterRowContext>?` | `null` | The template used to render each repeater row. Receives a `RepeaterRowContext`. |
+| `MinRows` | `int` | `0` | The minimum number of rows that must remain. The remove button is disabled at this count. |
+| `MaxRows` | `int?` | `null` | The maximum number of rows allowed. Null means unlimited. The add button is disabled at this count. |
+| `AddText` | `string` | `"+ Add Row"` | The label displayed on the button that adds a new row. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed as the fieldset legend. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the repeater. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the add/remove buttons and all child fields are disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## RepeaterRowContext
+
+The `RowTemplate` receives a `RepeaterRowContext` with the following properties:
+
+| Property | Type | Description |
+|---|---|---|
+| `Index` | `int` | The zero-based row index. |
+| `Values` | `Dictionary<string, object?>` | The row's field values. |
+
+## Validation
+
+```csharp
+public class InvoiceModel
+{
+    [MinLength(1, ErrorMessage = "At least one line item is required.")]
+    public List<Dictionary<string, object?>> LineItems { get; set; } = new();
+}
+```
+
+## Accessibility
+
+- Wrapped in a `<fieldset>` with a `<legend>` for proper grouping.
+- Each remove button has an `aria-label` identifying the row (e.g., "Remove row 1").
+- The add button is disabled when `MaxRows` is reached.
+- The remove button is disabled when `MinRows` is reached.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

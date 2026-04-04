@@ -1,0 +1,39 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Circular Progress
+description: A circular progress indicator rendered as an SVG ring with determinate and indeterminate modes.
+---
+
+# Circular Progress
+
+The `ArcadiaCircularProgress` component displays a circular SVG progress ring with optional percentage label.
+
+## Basic Usage
+
+```razor
+<ArcadiaCircularProgress Value="75" ShowLabel="true" />
+
+<ArcadiaCircularProgress Value="50" Color="success" Size="lg" />
+
+<ArcadiaCircularProgress Indeterminate="true" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double` | `0` | Progress value from 0 to 100. |
+| `Color` | `string` | `"primary"` | Arc color: `"primary"`, `"success"`, `"warning"`, `"danger"`. |
+| `Size` | `string` | `"md"` | Size: `"sm"` (32px), `"md"` (48px), `"lg"` (64px). |
+| `Indeterminate` | `bool` | `false` | Whether to show an animated indeterminate state. |
+| `ShowLabel` | `bool` | `false` | Whether to display the percentage label inside the ring. |
+| `StrokeWidth` | `int` | `4` | Stroke width of the progress arc in pixels. |
+| `ChildContent` | `RenderFragment?` | `null` | Optional content rendered inside the progress ring. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Uses `role="progressbar"` with `aria-valuenow`, `aria-valuemin="0"`, and `aria-valuemax="100"`.
+- In indeterminate mode, `aria-valuenow` is omitted.
+- Provides `aria-label` with the current percentage.

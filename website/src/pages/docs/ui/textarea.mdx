@@ -1,0 +1,58 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: TextArea
+description: A multi-line text input with label, character count, helper text, and validation error display.
+---
+
+# TextArea
+
+The `ArcadiaTextArea` component wraps a native `<textarea>` with label, character count, helper text, and error message support.
+
+## Basic Usage
+
+```razor
+<ArcadiaTextArea @bind-Value="description"
+                 Label="Description"
+                 Placeholder="Enter a description..."
+                 Rows="5" />
+
+<ArcadiaTextArea @bind-Value="bio"
+                 Label="Biography"
+                 MaxLength="500"
+                 ShowCount="true"
+                 HelperText="Tell us about yourself." />
+
+<ArcadiaTextArea @bind-Value="comment"
+                 Label="Comment"
+                 ErrorText="Comment is required." />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The text value. Supports two-way binding. |
+| `Placeholder` | `string?` | `null` | Placeholder text. |
+| `Label` | `string?` | `null` | Label text displayed above the textarea. |
+| `Rows` | `int` | `4` | Number of visible text rows. |
+| `MaxLength` | `int?` | `null` | Maximum number of characters allowed. |
+| `ShowCount` | `bool` | `false` | Whether to show the character count. |
+| `Disabled` | `bool` | `false` | Whether the textarea is disabled. |
+| `AutoResize` | `bool` | `false` | Whether the textarea auto-resizes with content. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the textarea. |
+| `ErrorText` | `string?` | `null` | Error text displayed below. Takes precedence over helper text. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ValueChanged` | `EventCallback<string?>` | Fired when the text value changes. |
+
+## Accessibility
+
+- The `<label>` is linked to the textarea via `for`/`id`.
+- Uses `aria-label` derived from `Label` or `Placeholder`.
+- Uses `aria-describedby` to link the textarea to helper text or error text.
+- When an error is present, sets `aria-invalid="true"`.

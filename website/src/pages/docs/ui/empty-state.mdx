@@ -1,0 +1,39 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Empty State
+description: A placeholder component displayed when no data or content is available.
+---
+
+# Empty State
+
+The `ArcadiaEmptyState` component provides a visual placeholder with icon, title, description, and optional action button for empty data scenarios.
+
+## Basic Usage
+
+```razor
+<ArcadiaEmptyState Title="No results found"
+                   Description="Try adjusting your search or filters." />
+
+<ArcadiaEmptyState Title="No projects yet" Size="lg">
+    <ActionTemplate>
+        <button>Create Project</button>
+    </ActionTemplate>
+</ArcadiaEmptyState>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Title` | `string?` | `"No data"` | Title text displayed in the empty state. |
+| `Description` | `string?` | `null` | Optional description text below the title. |
+| `Icon` | `RenderFragment?` | `null` | Custom icon rendered above the title. A default icon is used if not provided. |
+| `ActionTemplate` | `RenderFragment?` | `null` | Optional action template (e.g., a button to create the first item). |
+| `Size` | `string` | `"md"` | Size: `"sm"`, `"md"`, `"lg"`. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The default icon SVG uses `aria-hidden="true"`.
+- Content is semantic text, readable by screen readers without additional ARIA attributes.

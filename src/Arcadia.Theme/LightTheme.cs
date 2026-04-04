@@ -37,7 +37,7 @@ public class LightTheme : ArcadiaThemeBase
         Set("--arcadia-color-text", "#0f172a");
         Set("--arcadia-color-text-muted", "#64748b");
         Set("--arcadia-color-text-inverse", "#ffffff");
-        Set("--arcadia-color-text-disabled", "#94a3b8");
+        Set("--arcadia-color-text-disabled", "#6b7280");
 
         // Border
         Set("--arcadia-color-border", "#e2e8f0");
@@ -45,13 +45,13 @@ public class LightTheme : ArcadiaThemeBase
         Set("--arcadia-color-border-focus", "#2563eb");
 
         // Status
-        Set("--arcadia-color-danger", "#dc2626");
-        Set("--arcadia-color-danger-hover", "#b91c1c");
+        Set("--arcadia-color-danger", "#b91c1c");
+        Set("--arcadia-color-danger-hover", "#991b1b");
         Set("--arcadia-color-danger-subtle", "#fef2f2");
         Set("--arcadia-color-on-danger", "#ffffff");
 
-        Set("--arcadia-color-warning", "#d97706");
-        Set("--arcadia-color-warning-hover", "#b45309");
+        Set("--arcadia-color-warning", "#b45309");
+        Set("--arcadia-color-warning-hover", "#92400e");
         Set("--arcadia-color-warning-subtle", "#fffbeb");
         Set("--arcadia-color-on-warning", "#ffffff");
 

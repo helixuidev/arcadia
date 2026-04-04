@@ -1,0 +1,51 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: CheckboxField
+description: Single checkbox field for boolean values.
+---
+
+# CheckboxField
+
+A single checkbox for boolean values such as terms acceptance, opt-in flags, or any true/false toggle. The label is displayed inline next to the checkbox.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <CheckboxField Field="@nameof(Model.AcceptTerms)" Label="I accept the terms and conditions" />
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `bool` | `false` | Whether the checkbox is currently checked. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<bool>` | | Callback invoked when the user toggles the checkbox. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed inline next to the checkbox. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the checkbox. |
+| `Required` | `bool` | `false` | Whether the checkbox must be checked. |
+| `Disabled` | `bool` | `false` | Whether the checkbox is disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class RegistrationModel
+{
+    [Range(typeof(bool), "true", "true", ErrorMessage = "You must accept the terms.")]
+    public bool AcceptTerms { get; set; }
+}
+```
+
+## Accessibility
+
+- The label wraps the input, ensuring the entire label text is clickable.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

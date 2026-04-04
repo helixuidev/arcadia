@@ -1,0 +1,53 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: TimeField
+description: Time input field using the browser's native time picker.
+---
+
+# TimeField
+
+A time input field that uses the browser's native `type="time"` picker. The value is a nullable `TimeSpan`, displayed in `HH:mm` format, and returns `null` when no time has been selected.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <TimeField Field="@nameof(Model.StartTime)" Label="Start Time" />
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `TimeSpan?` | `null` | The selected time of day. Null when no time has been chosen. Displayed in HH:mm format. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<TimeSpan?>` | | Callback invoked when the user picks or clears a time. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class AppointmentModel
+{
+    [Required(ErrorMessage = "Start time is required.")]
+    public TimeSpan? StartTime { get; set; }
+}
+```
+
+## Accessibility
+
+- Label is linked to the input via `for`/`id` attributes.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.
+- The browser's native time picker provides built-in keyboard and assistive technology support.

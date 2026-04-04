@@ -1,0 +1,37 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Avatar
+description: Displays a user avatar image or auto-generated initials with configurable size and color.
+---
+
+# Avatar
+
+The `ArcadiaAvatar` component shows a user's profile image or falls back to auto-generated initials derived from the `Name` parameter.
+
+## Basic Usage
+
+```razor
+<ArcadiaAvatar Name="Jane Doe" Src="/images/jane.jpg" />
+
+<ArcadiaAvatar Name="John Smith" Size="lg" Color="success" />
+
+<ArcadiaAvatar Size="sm" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Name` | `string?` | `null` | The user's display name. Used to generate initials when no image is provided. |
+| `Src` | `string?` | `null` | The image URL for the avatar. |
+| `Size` | `string` | `"md"` | Avatar size: `"sm"`, `"md"`, `"lg"`. |
+| `Color` | `string` | `"primary"` | Background color for the initials avatar: `"primary"`, `"success"`, `"danger"`, `"warning"`. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Uses `role="img"` on the root element.
+- Provides `aria-label` based on the `Name` parameter (e.g., "Avatar for Jane Doe") or "User avatar" as a fallback.
+- The `<img>` element includes an `alt` attribute derived from `Name`.
+- On image load error, the component falls back to initials automatically.

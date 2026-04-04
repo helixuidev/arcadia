@@ -1,0 +1,53 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: ColorField
+description: Color picker field with a visual swatch and hex text input.
+---
+
+# ColorField
+
+A color picker field that combines the browser's native `type="color"` swatch with a text input for manual hex value entry. Both inputs stay in sync and update the bound value.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <ColorField Field="@nameof(Model.BrandColor)" Label="Brand Color" />
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The selected color as a hex string (e.g., `"#ff5733"`). Null when no color has been chosen. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked when the user picks a color or edits the hex text input. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether both the color swatch and text input are disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class ThemeModel
+{
+    [Required(ErrorMessage = "Please select a brand color.")]
+    [RegularExpression(@"^#[0-9a-fA-F]{6}$", ErrorMessage = "Must be a valid hex color (e.g., #ff5733).")]
+    public string? BrandColor { get; set; }
+}
+```
+
+## Accessibility
+
+- The color swatch input has its label linked via `for`/`id` attributes.
+- The hex text input has a dedicated `aria-label` (e.g., "Brand Color hex value").
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

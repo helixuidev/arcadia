@@ -1,0 +1,37 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Skeleton
+description: A shimmer placeholder shown while content is loading.
+---
+
+# Skeleton
+
+The `ArcadiaSkeleton` component displays shimmer placeholders with three shape variants for loading states.
+
+## Basic Usage
+
+```razor
+<ArcadiaSkeleton Variant="text" Width="80%" />
+
+<ArcadiaSkeleton Variant="circular" Width="48px" Height="48px" />
+
+<ArcadiaSkeleton Variant="rectangular" Width="100%" Height="200px" />
+
+<ArcadiaSkeleton Variant="text" Count="3" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Variant` | `string` | `"text"` | Skeleton shape: `"text"`, `"circular"`, `"rectangular"`. |
+| `Width` | `string?` | `null` | CSS width of the skeleton element. |
+| `Height` | `string?` | `null` | CSS height of the skeleton element. |
+| `Count` | `int` | `1` | Number of skeleton elements to render. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Skeleton elements use `aria-hidden="true"` so they are ignored by screen readers.
+- For loading states, consider adding a visually hidden "Loading..." message or spinner with appropriate ARIA live region nearby.

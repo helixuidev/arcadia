@@ -1,0 +1,48 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Tag Input
+description: An input field for entering multiple tags with add/remove support and optional duplicate prevention.
+---
+
+# Tag Input
+
+The `ArcadiaTagInput` component accepts a list of string tags. Users can add tags by typing and pressing Enter or comma, and remove tags with the X button or Backspace.
+
+## Basic Usage
+
+```razor
+<ArcadiaTagInput @bind-Tags="tags" Placeholder="Add tags..." />
+
+<ArcadiaTagInput @bind-Tags="skills"
+                 MaxTags="5"
+                 AllowDuplicates="false"
+                 OnTagAdded="HandleAdded"
+                 OnTagRemoved="HandleRemoved" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Tags` | `List<string>` | `new()` | The list of tags. Supports two-way binding. |
+| `Placeholder` | `string` | `"Add tag..."` | Placeholder text for the input. |
+| `MaxTags` | `int` | `0` | Maximum number of tags allowed. 0 means unlimited. |
+| `AllowDuplicates` | `bool` | `false` | Whether duplicate tags are allowed. |
+| `Disabled` | `bool` | `false` | Whether the tag input is disabled. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `TagsChanged` | `EventCallback<List<string>>` | Fired when the tags list changes. |
+| `OnTagAdded` | `EventCallback<string>` | Fired when a tag is added. |
+| `OnTagRemoved` | `EventCallback<string>` | Fired when a tag is removed. |
+
+## Accessibility
+
+- The input has `aria-label` matching the placeholder.
+- Each tag's remove button has `aria-label="Remove {tag name}"`.
+- Keyboard: Enter or comma adds a tag, Backspace (when input empty) removes the last tag.
+- Remove icon SVGs are marked `aria-hidden="true"`.

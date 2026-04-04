@@ -1,0 +1,56 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Tabs
+description: A tabbed interface with keyboard navigation and ARIA tab pattern support.
+---
+
+# Tabs
+
+The `ArcadiaTabs` component provides a tabbed interface where each tab panel is an `ArcadiaTabPanel`.
+
+## Basic Usage
+
+```razor
+<ArcadiaTabs @bind-ActiveIndex="activeTab">
+    <ArcadiaTabPanel Title="Overview">
+        <p>Overview content.</p>
+    </ArcadiaTabPanel>
+    <ArcadiaTabPanel Title="Details" Icon="info">
+        <p>Details content.</p>
+    </ArcadiaTabPanel>
+    <ArcadiaTabPanel Title="Settings" Disabled="true">
+        <p>Settings content.</p>
+    </ArcadiaTabPanel>
+</ArcadiaTabs>
+```
+
+## ArcadiaTabs Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ActiveIndex` | `int` | `0` | Index of the currently active tab. Supports two-way binding. |
+| `ChildContent` | `RenderFragment?` | `null` | The tab panel elements. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+
+## ArcadiaTabs Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ActiveIndexChanged` | `EventCallback<int>` | Fired when the active tab index changes. |
+
+## ArcadiaTabPanel Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Title` | `string` | `""` | Tab header text. |
+| `Icon` | `string?` | `null` | Optional icon CSS class or name for the tab header. |
+| `Disabled` | `bool` | `false` | Whether this tab is disabled. |
+| `ChildContent` | `RenderFragment?` | `null` | Panel body content. |
+
+## Accessibility
+
+- Tab list uses `role="tablist"` with `aria-label="Tabs"`.
+- Tab buttons use `role="tab"` with `aria-selected`, `aria-controls`, and proper `tabindex` (roving tabindex pattern).
+- Tab panels use `role="tabpanel"` with `aria-labelledby`.
+- Keyboard navigation: Arrow Left/Right to move between tabs, skipping disabled tabs.
+- Disabled tabs set the `disabled` attribute on the button.

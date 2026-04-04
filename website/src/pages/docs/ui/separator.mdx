@@ -1,0 +1,36 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Separator
+description: A horizontal or vertical divider line with optional label and line style variants.
+---
+
+# Separator
+
+The `ArcadiaSeparator` component renders a visual divider between content sections, optionally including a centered label.
+
+## Basic Usage
+
+```razor
+<ArcadiaSeparator />
+
+<ArcadiaSeparator Label="OR" />
+
+<ArcadiaSeparator Variant="dashed" Color="muted" />
+
+<ArcadiaSeparator Orientation="vertical" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Orientation` | `string` | `"horizontal"` | Orientation: `"horizontal"` or `"vertical"`. |
+| `Label` | `string?` | `null` | Optional text displayed in the center of the separator. |
+| `Variant` | `string` | `"solid"` | Line style: `"solid"`, `"dashed"`, `"dotted"`. |
+| `Color` | `string` | `"default"` | Color: `"default"`, `"primary"`, `"muted"`. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Uses `role="separator"` with `aria-orientation` reflecting the configured orientation.

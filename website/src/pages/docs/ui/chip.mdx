@@ -1,0 +1,52 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Chip
+description: A compact element representing an attribute, tag, or action with optional avatar and delete support.
+---
+
+# Chip
+
+The `ArcadiaChip` component displays a compact label with configurable color, size, variant, and optional avatar image or delete button.
+
+## Basic Usage
+
+```razor
+<ArcadiaChip Label="Frontend" Color="primary" />
+
+<ArcadiaChip Label="Completed" Color="success" Variant="soft" />
+
+<ArcadiaChip Label="Deletable" Deletable="true" OnDelete="HandleDelete" />
+
+<ArcadiaChip Label="Click Me" Clickable="true" OnClick="HandleClick" />
+
+<ArcadiaChip Avatar="/images/user.jpg" Label="Jane Doe" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Chip label text. Ignored if `ChildContent` is provided. |
+| `ChildContent` | `RenderFragment?` | `null` | Custom content for the chip body. Takes precedence over `Label`. |
+| `Color` | `string` | `"default"` | Color variant: `"default"`, `"primary"`, `"success"`, `"warning"`, `"danger"`. |
+| `Variant` | `string` | `"filled"` | Visual variant: `"filled"`, `"outlined"`, `"soft"`. |
+| `Size` | `string` | `"md"` | Size: `"sm"`, `"md"`, `"lg"`. |
+| `Clickable` | `bool` | `false` | Whether the chip is clickable (renders as a `<button>`). |
+| `Deletable` | `bool` | `false` | Whether a delete button is shown. |
+| `Avatar` | `string?` | `null` | URL for a small avatar image on the left side. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnClick` | `EventCallback` | Fired when the chip is clicked (requires `Clickable="true"`). |
+| `OnDelete` | `EventCallback` | Fired when the delete button is clicked. |
+
+## Accessibility
+
+- Clickable chips render as `<button>` elements for native keyboard support.
+- Non-clickable chips render as `<span>` elements.
+- The delete button uses `aria-label="Remove"` and stops click propagation.
+- Avatar images use `aria-hidden="true"`.

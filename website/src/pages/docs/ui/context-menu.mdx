@@ -1,0 +1,63 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Context Menu
+description: A right-click context menu with keyboard-navigable menu items.
+---
+
+# Context Menu
+
+The `ArcadiaContextMenu` component displays a dropdown menu on right-click within its content area. Menu items are provided via `ArcadiaMenuItem`.
+
+## Basic Usage
+
+```razor
+<ArcadiaContextMenu>
+    <ChildContent>
+        <div style="padding: 2rem; border: 1px dashed gray;">
+            Right-click anywhere in this area.
+        </div>
+    </ChildContent>
+    <MenuContent>
+        <ArcadiaMenuItem Text="Cut" Icon="scissors" OnClick="HandleCut" />
+        <ArcadiaMenuItem Text="Copy" OnClick="HandleCopy" />
+        <ArcadiaMenuItem Text="Paste" OnClick="HandlePaste" />
+        <ArcadiaMenuItem Divider="true" />
+        <ArcadiaMenuItem Text="Delete" OnClick="HandleDelete" Disabled="true" />
+    </MenuContent>
+</ArcadiaContextMenu>
+```
+
+## ArcadiaContextMenu Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | `null` | Content area that triggers the context menu on right-click. |
+| `MenuContent` | `RenderFragment?` | `null` | Menu items content displayed in the context menu. |
+| `Disabled` | `bool` | `false` | When true, the browser default context menu is shown instead. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaMenuItem Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Text` | `string` | `""` | Menu item display text. |
+| `Icon` | `string?` | `null` | Optional icon for the menu item. |
+| `Disabled` | `bool` | `false` | Whether the menu item is disabled. |
+| `Divider` | `bool` | `false` | Whether this item renders as a divider separator line. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaMenuItem Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnClick` | `EventCallback` | Fired when the menu item is clicked. |
+
+## Accessibility
+
+- The menu uses `role="menu"` with `aria-label="Context menu"`.
+- Menu items use `role="menuitem"` with appropriate `tabindex`.
+- Dividers use `role="separator"`.
+- Keyboard navigation: Arrow Up/Down to navigate, Enter to activate, Escape to close.
+- The context menu prevents the browser default context menu when not disabled.

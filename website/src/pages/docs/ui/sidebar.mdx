@@ -1,0 +1,47 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Sidebar
+description: A collapsible navigation sidebar with configurable width, position, and overlay mode.
+---
+
+# Sidebar
+
+The `ArcadiaSidebar` component provides a collapsible navigation panel with a built-in toggle button.
+
+## Basic Usage
+
+```razor
+<ArcadiaSidebar @bind-Visible="sidebarOpen" Width="280px">
+    <nav>
+        <a href="/">Home</a>
+        <a href="/docs">Documentation</a>
+        <a href="/settings">Settings</a>
+    </nav>
+</ArcadiaSidebar>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Visible` | `bool` | `true` | Whether the sidebar is expanded. Supports two-way binding. |
+| `Width` | `string` | `"260px"` | Expanded width of the sidebar. |
+| `CollapsedWidth` | `string` | `"64px"` | Collapsed width of the sidebar. |
+| `Position` | `string` | `"left"` | Position: `"left"` or `"right"`. |
+| `Overlay` | `bool` | `false` | Whether the sidebar uses overlay mode on mobile. |
+| `ChildContent` | `RenderFragment?` | `null` | Navigation items and other sidebar content. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `VisibleChanged` | `EventCallback<bool>` | Fired when the sidebar visibility changes. |
+
+## Accessibility
+
+- Uses `<aside>` with `role="navigation"` and `aria-label="Sidebar navigation"`.
+- The toggle button has `aria-expanded` and a dynamic `aria-label` ("Collapse sidebar" / "Expand sidebar").
+- In overlay mode, clicking the overlay backdrop collapses the sidebar.
+- Toggle icon is marked `aria-hidden="true"`.

@@ -1,0 +1,64 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Command Palette
+description: A searchable modal command palette for quick access to actions, similar to VS Code's Ctrl+K.
+---
+
+# Command Palette
+
+The `ArcadiaCommandPalette` component provides a modal search overlay with keyboard-navigable command items.
+
+## Basic Usage
+
+```razor
+<ArcadiaCommandPalette @bind-Open="showPalette" OnSearch="HandleSearch">
+    <ArcadiaCommandItem Label="New File" Shortcut="Ctrl+N" OnSelect="NewFile" />
+    <ArcadiaCommandItem Label="Open Settings" Icon="gear" OnSelect="OpenSettings" />
+    <ArcadiaCommandItem Label="Toggle Theme" Description="Switch between light and dark" OnSelect="ToggleTheme" />
+</ArcadiaCommandPalette>
+```
+
+## ArcadiaCommandPalette Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Open` | `bool` | `false` | Whether the command palette is open. Supports two-way binding. |
+| `Placeholder` | `string` | `"Search commands..."` | Placeholder text for the search input. |
+| `SearchText` | `string` | `""` | Current search text value. Supports two-way binding. |
+| `ChildContent` | `RenderFragment?` | `null` | Command item elements rendered inside the palette list. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaCommandPalette Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OpenChanged` | `EventCallback<bool>` | Fired when the open state changes. |
+| `OnSearch` | `EventCallback<string>` | Fired when the search input value changes. |
+| `SearchTextChanged` | `EventCallback<string>` | Fired when SearchText changes (two-way binding). |
+
+## ArcadiaCommandItem Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string` | `""` | Display label for the command item. |
+| `Description` | `string?` | `null` | Optional description shown below the label. |
+| `Shortcut` | `string?` | `null` | Keyboard shortcut hint displayed as a badge (e.g., `"Ctrl+N"`). |
+| `Icon` | `string?` | `null` | Optional icon (emoji or text) displayed before the label. |
+| `Disabled` | `bool` | `false` | Whether the command item is disabled. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaCommandItem Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnSelect` | `EventCallback` | Fired when the command item is selected (clicked or Enter). |
+
+## Accessibility
+
+- The palette uses `role="dialog"` with `aria-modal="true"` and `aria-label="Command palette"`.
+- The search input uses `role="combobox"` with `aria-expanded`, `aria-controls`, `aria-activedescendant`, and `aria-autocomplete="list"`.
+- The list uses `role="listbox"` and items use `role="option"` with `aria-selected`.
+- Keyboard navigation: Arrow Up/Down to navigate, Enter to select, Escape to close.
+- Auto-focuses the search input when opened.

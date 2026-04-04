@@ -15,8 +15,11 @@
              role="menu"
              aria-label="Context menu"
              style="left: @(_posX)px; top: @(_posY)px;"
-             @onkeydown="OnKeyDownAsync">
-            @MenuContent
+             @onkeydown="OnKeyDownAsync"
+             @onkeydown:preventDefault="_preventKeyDefault">
+            <CascadingValue Value="this" IsFixed="true">
+                @MenuContent
+            </CascadingValue>
         </div>
     }
 </div>
@@ -54,11 +57,55 @@
     private bool _open;
     private double _posX;
     private double _posY;
+    private readonly List<ArcadiaMenuItem> _menuItems = new();
+    private int _activeIndex = -1;
+    private bool _preventKeyDefault;
 
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-context-menu")
         .AddClass("arcadia-context-menu--disabled", Disabled)
         .AddClass(Class)
         .Build();
+
+    /// <summary>
+    /// Registers a child <see cref="ArcadiaMenuItem"/> with this context menu.
+    /// Called internally by child items. Divider items are not registered.
+    /// </summary>
+    internal void AddMenuItem(ArcadiaMenuItem item)
+    {
+        item.MenuIndex = _menuItems.Count;
+        _menuItems.Add(item);
+        UpdateMenuItemStates();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Removes a child <see cref="ArcadiaMenuItem"/> from this context menu.
+    /// Called internally by child items on disposal.
+    /// </summary>
+    internal void RemoveMenuItem(ArcadiaMenuItem item)
+    {
+        _menuItems.Remove(item);
+        for (var i = 0; i < _menuItems.Count; i++)
+        {
+            _menuItems[i].MenuIndex = i;
+        }
+
+        if (_activeIndex >= _menuItems.Count)
+        {
+            _activeIndex = _menuItems.Count - 1;
+        }
+
+        UpdateMenuItemStates();
+        StateHasChanged();
+    }
+
+    private void UpdateMenuItemStates()
+    {
+        for (var i = 0; i < _menuItems.Count; i++)
+        {
+            _menuItems[i].IsActive = i == _activeIndex;
+        }
+    }
 
     private async Task OnContextMenuAsync(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
@@ -67,20 +114,57 @@
         _posX = args.ClientX;
         _posY = args.ClientY;
         _open = true;
+        _activeIndex = -1;
+        UpdateMenuItemStates();
         await Task.CompletedTask;
     }
 
     private async Task CloseAsync()
     {
         _open = false;
+        _activeIndex = -1;
+        UpdateMenuItemStates();
         await Task.CompletedTask;
     }
 
     private async Task OnKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
     {
+        _preventKeyDefault = false;
+
         if (args.Key == "Escape")
         {
             await CloseAsync();
+            return;
         }
+
+        if (args.Key == "Enter" && _activeIndex >= 0 && _activeIndex < _menuItems.Count)
+        {
+            var item = _menuItems[_activeIndex];
+            if (!item.Disabled)
+            {
+                await item.ActivateAsync();
+                await CloseAsync();
+            }
+            return;
+        }
+
+        var direction = Arcadia.Core.Accessibility.KeyboardNavigation.MapVerticalKey(args.Key);
+        if (direction is null)
+            return;
+
+        _preventKeyDefault = true;
+
+        var startIndex = _activeIndex < 0
+            ? (direction.Value == NavigationDirection.Previous ? 0 : _menuItems.Count - 1)
+            : _activeIndex;
+
+        var nextIndex = Arcadia.Core.Accessibility.KeyboardNavigation.GetNextEnabledIndex(
+            startIndex,
+            _menuItems.Count,
+            direction.Value,
+            i => _menuItems[i].Disabled);
+
+        _activeIndex = nextIndex;
+        UpdateMenuItemStates();
     }
 }

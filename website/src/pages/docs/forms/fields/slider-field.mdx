@@ -1,0 +1,66 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: SliderField
+description: Range slider input for selecting a numeric value within a defined range.
+---
+
+# SliderField
+
+A range slider that lets users select a numeric value by dragging a thumb along a track. The current value is displayed next to the label. Optional min/max labels can be shown beneath the track.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <SliderField Field="@nameof(Model.Volume)" Label="Volume" />
+</ArcadiaForm>
+```
+
+## Custom Range
+
+```razor
+<SliderField Field="@nameof(Model.Temperature)"
+             Label="Temperature"
+             Min="-20"
+             Max="50"
+             Step="0.5"
+             ShowMinMax="true" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double` | `0` | The current position of the slider thumb. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<double>` | | Callback invoked as the user drags the slider thumb. |
+| `Min` | `double` | `0` | The lower bound of the slider range. |
+| `Max` | `double` | `100` | The upper bound of the slider range. |
+| `Step` | `double` | `1` | The increment between selectable values. Use a smaller step for finer granularity. |
+| `ShowMinMax` | `bool` | `true` | Whether min and max values are displayed as labels beneath the slider track. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class SettingsModel
+{
+    [Range(0, 100, ErrorMessage = "Volume must be between 0 and 100.")]
+    public double Volume { get; set; } = 50;
+}
+```
+
+## Accessibility
+
+- The slider uses `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` to communicate the current state to assistive technologies.
+- Required fields set `aria-required="true"`.
+- Helper text and validation errors are linked via `aria-describedby`.

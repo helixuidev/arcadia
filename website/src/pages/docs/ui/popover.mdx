@@ -1,0 +1,49 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Popover
+description: A click-triggered floating panel anchored to a trigger element.
+---
+
+# Popover
+
+The `ArcadiaPopover` component displays a floating panel when the user clicks a trigger element. Unlike a tooltip, popovers can contain interactive content.
+
+## Basic Usage
+
+```razor
+<ArcadiaPopover @bind-Open="isOpen" Position="bottom">
+    <ChildContent>
+        <button>Options</button>
+    </ChildContent>
+    <Content>
+        <div style="padding: 1rem;">
+            <h3>Popover Panel</h3>
+            <p>Interactive content goes here.</p>
+        </div>
+    </Content>
+</ArcadiaPopover>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | `null` | Trigger element that opens the popover on click. |
+| `Content` | `RenderFragment?` | `null` | Popover content displayed when open. |
+| `Open` | `bool` | `false` | Whether the popover is open. Supports two-way binding. |
+| `Position` | `string` | `"bottom"` | Position relative to the trigger: `"top"`, `"bottom"`, `"left"`, `"right"`. |
+| `CloseOnClickOutside` | `bool` | `true` | Whether clicking outside closes the popover. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OpenChanged` | `EventCallback<bool>` | Fired when the open state changes. |
+
+## Accessibility
+
+- The content uses `role="dialog"` with `aria-modal="false"` (non-modal).
+- Escape key closes the popover.
+- When `CloseOnClickOutside` is true, clicking the backdrop closes the popover.

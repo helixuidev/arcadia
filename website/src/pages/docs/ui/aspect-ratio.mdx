@@ -1,0 +1,35 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Aspect Ratio
+description: A container that maintains a fixed aspect ratio for its content.
+---
+
+# Aspect Ratio
+
+The `ArcadiaAspectRatio` component constrains its content to a given aspect ratio using the CSS `aspect-ratio` property.
+
+## Basic Usage
+
+```razor
+<ArcadiaAspectRatio Ratio="16/9">
+    <img src="/images/hero.jpg" alt="Hero" style="width:100%; height:100%; object-fit:cover;" />
+</ArcadiaAspectRatio>
+
+<ArcadiaAspectRatio Ratio="1/1">
+    <div style="background:var(--arcadia-primary); width:100%; height:100%;"></div>
+</ArcadiaAspectRatio>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Ratio` | `string` | `"16/9"` | The aspect ratio in slash notation (e.g., `"16/9"`, `"4/3"`, `"1/1"`, `"21/9"`). |
+| `ChildContent` | `RenderFragment?` | `null` | Content rendered inside the aspect ratio container. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- This is a layout-only component with no specific ARIA attributes.
+- Ensure child content includes appropriate alt text for images or other accessible labels.

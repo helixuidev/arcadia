@@ -147,7 +147,7 @@ else if (Data is not null && Data.Count > 1 && XField is not null && UpperField 
                 @foreach (var item in Data)
                 {
                     <tr>
-                        <td>@XField(item)</td>
+                        <td>@FormatSrX(XField(item))</td>
                         <td>@UpperField(item)</td>
                         <td>@LowerField(item)</td>
                         @if (MiddleField is not null) { <td>@MiddleField(item)</td> }

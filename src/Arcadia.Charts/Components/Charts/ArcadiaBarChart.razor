@@ -96,7 +96,7 @@ else if (Data is not null && Data.Count > 0 && XField is not null && Series is n
             <tbody>
                 @foreach (var item in Data)
                 {
-                    <tr><td>@XField(item)</td>@foreach (var s in Series) { <td>@FormatSrValue(s.Field(item))</td> }</tr>
+                    <tr><td>@FormatSrX(XField(item))</td>@foreach (var s in Series) { <td>@FormatSrValue(s.Field(item))</td> }</tr>
                 }
             </tbody>
         </table>

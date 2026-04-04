@@ -1,0 +1,41 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Progress
+description: A horizontal progress bar with determinate and indeterminate modes, striped pattern, and optional label.
+---
+
+# Progress
+
+The `ArcadiaProgress` component renders a linear progress bar with configurable color, size, and visual options.
+
+## Basic Usage
+
+```razor
+<ArcadiaProgress Value="65" ShowLabel="true" />
+
+<ArcadiaProgress Value="40" Color="success" Size="lg" />
+
+<ArcadiaProgress Indeterminate="true" Label="Loading..." />
+
+<ArcadiaProgress Value="80" Striped="true" Color="warning" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double` | `0` | Progress value from 0 to 100. |
+| `Color` | `string` | `"primary"` | Progress bar color: `"primary"`, `"success"`, `"warning"`, `"danger"`. |
+| `Size` | `string` | `"md"` | Size: `"sm"` (4px), `"md"` (8px), `"lg"` (12px). |
+| `Indeterminate` | `bool` | `false` | Whether to show an animated indeterminate state. |
+| `ShowLabel` | `bool` | `false` | Whether the percentage label is displayed. |
+| `Striped` | `bool` | `false` | Whether the progress bar has a striped pattern. |
+| `Label` | `string?` | `null` | Optional descriptive label for the progress bar. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Uses `role="progressbar"` with `aria-valuenow`, `aria-valuemin="0"`, and `aria-valuemax="100"`.
+- In indeterminate mode, `aria-valuenow` is omitted.
+- Uses `aria-label` from the `Label` parameter, or "Progress" as a fallback.

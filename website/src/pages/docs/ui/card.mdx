@@ -1,0 +1,86 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Card
+description: A versatile content container with support for images, headers, footers, glass effects, and interactive states.
+---
+
+# Card
+
+The `ArcadiaCard` component is a feature-rich content container supporting multiple visual variants, skeleton loading, collapsible body, selection state, and more.
+
+## Basic Usage
+
+```razor
+<ArcadiaCard Title="Getting Started" Subtitle="Quick introduction">
+    <p>Card body content goes here.</p>
+</ArcadiaCard>
+```
+
+## With Image and Footer
+
+```razor
+<ArcadiaCard Title="Product" ImageUrl="/images/product.jpg" ImageHeight="200px">
+    <p>Product description.</p>
+    <FooterTemplate>
+        <button>Buy Now</button>
+    </FooterTemplate>
+</ArcadiaCard>
+```
+
+## Glass Variant
+
+```razor
+<ArcadiaCard Variant="glass" BlurAmount="20" GlassOpacity="0.15" Title="Glassmorphism">
+    Frosted glass effect card.
+</ArcadiaCard>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Title` | `string?` | `null` | Card title displayed in the header. |
+| `Subtitle` | `string?` | `null` | Subtitle displayed below the title. |
+| `Badge` | `string?` | `null` | Small badge/tag above the title (e.g., "New", "Pro"). |
+| `HeaderTemplate` | `RenderFragment?` | `null` | Custom header template. When set, Title/Subtitle/Badge are ignored. |
+| `FooterTemplate` | `RenderFragment?` | `null` | Custom footer template for action buttons. |
+| `ChildContent` | `RenderFragment?` | `null` | Card body content. |
+| `HeaderActions` | `RenderFragment?` | `null` | Render fragment flush-right in the header row for action buttons/icons. |
+| `MenuTemplate` | `RenderFragment?` | `null` | Context menu dropdown content. Shows a three-dot menu button when set. |
+| `Clickable` | `bool` | `false` | Enables hover lift effect and `role="button"`. |
+| `Variant` | `string` | `"solid"` | Card variant: `"solid"`, `"glass"`, `"outlined"`, `"ghost"`. |
+| `Elevation` | `int` | `1` | Shadow depth level (0-5). |
+| `BlurAmount` | `int` | `16` | Blur intensity in pixels for glass variant. |
+| `GlassOpacity` | `double` | `0.12` | Background opacity (0.0-1.0) for glass variant. |
+| `AccentColor` | `string?` | `null` | CSS color for a colored left border accent. |
+| `GradientBorder` | `bool` | `false` | Enable gradient border effect. |
+| `ImageUrl` | `string?` | `null` | Header image URL. |
+| `ImageHeight` | `string?` | `"180px"` | CSS height value for the image. |
+| `ImageOverlay` | `bool` | `false` | Show a dark gradient overlay on the image. |
+| `ImageAspectRatio` | `string?` | `null` | CSS aspect-ratio for the image (overrides ImageHeight when set). |
+| `Loading` | `bool` | `false` | Replace card content with a shimmer skeleton placeholder. |
+| `LoadingAnimation` | `string` | `"wave"` | Skeleton animation style: `"wave"`, `"pulse"`, `"fade"`. |
+| `Collapsible` | `bool` | `false` | Allow the card body to be collapsed/expanded. |
+| `Collapsed` | `bool` | `false` | Whether the card body is collapsed. Supports two-way binding. |
+| `Status` | `string?` | `null` | Status severity: `"info"`, `"warning"`, `"error"`, `"success"`. Adds a colored top border. |
+| `Orientation` | `string` | `"vertical"` | Card orientation: `"vertical"` or `"horizontal"`. |
+| `Selected` | `bool` | `false` | Whether the card is in a selected state with checkmark. |
+| `Disabled` | `bool` | `false` | Visually dims the card and disables all interactions. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnClick` | `EventCallback` | Fired when a clickable card is clicked. |
+| `CollapsedChanged` | `EventCallback<bool>` | Fired when the collapsed state changes. |
+| `SelectedChanged` | `EventCallback<bool>` | Fired when the selected state changes. |
+
+## Accessibility
+
+- Clickable cards use `role="button"` and `tabindex="0"`.
+- Disabled cards set `aria-disabled="true"`.
+- Collapse toggle buttons include `aria-label="Toggle card body"`.
+- Menu trigger buttons include `aria-label="Card menu"`.
+- Keyboard support: Enter and Space activate clickable cards.

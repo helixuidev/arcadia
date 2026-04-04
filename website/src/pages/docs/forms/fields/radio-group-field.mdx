@@ -1,0 +1,65 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: RadioGroupField
+description: Radio button group for selecting a single option from a set of choices.
+---
+
+# RadioGroupField
+
+A group of radio buttons wrapped in a `<fieldset>` with a `<legend>` for selecting a single option from a set of choices. Options can be provided directly or resolved from the field schema.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <RadioGroupField Field="@nameof(Model.ContactMethod)"
+                     Label="Preferred Contact Method"
+                     Options="contactOptions" />
+</ArcadiaForm>
+
+@code {
+    private List<FieldOption> contactOptions = new()
+    {
+        new FieldOption { Value = "email", Label = "Email" },
+        new FieldOption { Value = "phone", Label = "Phone" },
+        new FieldOption { Value = "mail", Label = "Mail" }
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The value of the currently selected radio button. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked when the user selects a different radio option. |
+| `Options` | `List<FieldOption>?` | `null` | The list of radio button options. When null, options are resolved from the field schema. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed as the fieldset legend. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the radio group. |
+| `Required` | `bool` | `false` | Whether a selection is required. |
+| `Disabled` | `bool` | `false` | Whether all radio buttons are disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class ContactModel
+{
+    [Required(ErrorMessage = "Please select a contact method.")]
+    public string? ContactMethod { get; set; }
+}
+```
+
+## Accessibility
+
+- The radio group is wrapped in a `<fieldset>` with a `<legend>` for proper grouping.
+- Uses `role="radiogroup"` on the container.
+- Required groups set `aria-required="true"`.
+- Individual options that are disabled (via `FieldOption.Disabled`) are also marked as disabled on the input.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

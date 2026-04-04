@@ -1,0 +1,56 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: FileField
+description: File upload field with single and multiple file selection, file type filtering, and size limits.
+---
+
+# FileField
+
+File upload field built on Blazor's `IBrowserFile` API. Supports single or multiple files, MIME/extension filtering, and enforced size limits. Works in both Blazor Server (streaming) and WebAssembly.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <FileField Field="@nameof(Model.Resume)"
+               Label="Upload Resume"
+               Accept=".pdf,.docx"
+               MaxFileSize="5242880" />
+</ArcadiaForm>
+```
+
+## Multiple Files
+
+```razor
+<FileField Field="@nameof(Model.Photos)"
+           Label="Photos"
+           Accept="image/*"
+           Multiple="true" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `IReadOnlyList<IBrowserFile>` | empty | Currently selected files. Two-way bindable. |
+| `ValueChanged` | `EventCallback<IReadOnlyList<IBrowserFile>>` | — | Fires when the selection changes. |
+| `Accept` | `string?` | `null` | File type filter (MIME types or extensions, e.g. `.pdf,.docx` or `image/*`). |
+| `Multiple` | `bool` | `false` | Allow selecting more than one file. |
+| `MaxFileSize` | `long` | `10485760` | Maximum allowed file size in bytes (default 10 MB). |
+
+### Inherited from `FieldBase`
+
+| Parameter | Type | Description |
+|---|---|---|
+| `Label` | `string?` | Visible field label. |
+| `HelperText` | `string?` | Guidance text below the field. |
+| `Required` | `bool` | Marks the field as required. |
+| `Disabled` | `bool` | Disables user interaction. |
+| `Errors` | `IReadOnlyList<string>?` | Validation messages to display. |
+
+## Accessibility
+
+- Native `<input type="file">` element ensures full keyboard and screen reader support
+- Error messages linked via `aria-describedby`
+- Required state conveyed via `aria-required`
+- Selected file names are announced after selection

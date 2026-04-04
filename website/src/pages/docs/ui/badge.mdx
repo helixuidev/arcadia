@@ -1,0 +1,39 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Badge
+description: A small status indicator that can display text content or render as a dot, optionally attached to another element.
+---
+
+# Badge
+
+The `ArcadiaBadge` component renders a badge indicator that can be used standalone or attached to child content (such as an icon or avatar).
+
+## Basic Usage
+
+```razor
+<ArcadiaBadge Content="3" Color="danger">
+    <span>Notifications</span>
+</ArcadiaBadge>
+
+<ArcadiaBadge Dot="true" Color="success">
+    <span>Status</span>
+</ArcadiaBadge>
+
+<ArcadiaBadge Content="New" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Content` | `string?` | `null` | Badge text content (e.g., `"3"`, `"New"`). Ignored when `Dot` is true. |
+| `Color` | `string` | `"primary"` | Badge color variant: `"primary"`, `"success"`, `"danger"`, `"warning"`. |
+| `Dot` | `bool` | `false` | Whether the badge is rendered as a dot with no text. |
+| `ChildContent` | `RenderFragment?` | `null` | The element the badge attaches to. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The badge indicator uses `role="status"` for live region announcements.
+- Provides an `aria-label` derived from `Content`, or "Status indicator" for dot badges, or "Badge" as a fallback.

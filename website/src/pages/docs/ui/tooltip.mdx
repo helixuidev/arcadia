@@ -1,0 +1,38 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Tooltip
+description: A CSS-only tooltip with configurable position and appearance delay.
+---
+
+# Tooltip
+
+The `ArcadiaTooltip` component wraps a trigger element and displays a small text tooltip on hover or focus.
+
+## Basic Usage
+
+```razor
+<ArcadiaTooltip Text="Save changes" Position="top">
+    <button>Save</button>
+</ArcadiaTooltip>
+
+<ArcadiaTooltip Text="Delete this item" Position="right" Delay="500">
+    <button>Delete</button>
+</ArcadiaTooltip>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Text` | `string` | `""` | Tooltip text content. |
+| `Position` | `string` | `"top"` | Tooltip position: `"top"`, `"bottom"`, `"left"`, `"right"`. |
+| `Delay` | `int` | `200` | Delay in milliseconds before the tooltip appears. |
+| `ChildContent` | `RenderFragment?` | `null` | Trigger element content the tooltip wraps. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The tooltip popup uses `role="tooltip"`.
+- The trigger container has `aria-describedby` pointing to the tooltip ID.
+- Works with both mouse hover and keyboard focus (CSS `:hover` and `:focus-within`).

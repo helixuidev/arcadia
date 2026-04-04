@@ -1,0 +1,38 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Scroll Area
+description: A scrollable container with configurable orientation and optional hidden scrollbar.
+---
+
+# Scroll Area
+
+The `ArcadiaScrollArea` component provides a scrollable container with configurable height, width, and scroll orientation.
+
+## Basic Usage
+
+```razor
+<ArcadiaScrollArea Height="300px">
+    <div>Lots of content that will scroll vertically...</div>
+</ArcadiaScrollArea>
+
+<ArcadiaScrollArea Height="200px" Width="100%" Orientation="both" HideScrollbar="true">
+    <div style="width: 1500px;">Wide content that scrolls both ways.</div>
+</ArcadiaScrollArea>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | `null` | Content rendered inside the scroll area. |
+| `Height` | `string?` | `null` | Maximum height (e.g., `"300px"`, `"50vh"`). |
+| `Width` | `string?` | `null` | Width (e.g., `"100%"`, `"400px"`). |
+| `Orientation` | `string` | `"vertical"` | Scroll orientation: `"vertical"`, `"horizontal"`, `"both"`. |
+| `HideScrollbar` | `bool` | `false` | Whether to auto-hide the scrollbar. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The scroll area has `tabindex="0"`, enabling keyboard scrolling (arrow keys, Page Up/Down).
+- Respects the `Orientation` parameter for scrollbar display.

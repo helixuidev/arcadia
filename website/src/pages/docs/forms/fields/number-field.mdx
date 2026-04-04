@@ -1,0 +1,69 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: NumberField
+description: Numeric input field with optional min, max, and step constraints.
+---
+
+# NumberField
+
+A numeric input field that uses the browser's native `type="number"` input with optional minimum, maximum, and step constraints. The value is a nullable `double`, returning `null` when the field is empty.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <NumberField Field="@nameof(Model.Quantity)" Label="Quantity" />
+</ArcadiaForm>
+```
+
+## With Constraints
+
+```razor
+<NumberField Field="@nameof(Model.Price)"
+             Label="Price"
+             Min="0"
+             Max="10000"
+             Step="0.01"
+             Placeholder="0.00" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double?` | `null` | The current numeric value. Null when the field is empty. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<double?>` | | Callback invoked whenever the user changes the numeric value. |
+| `Min` | `double?` | `null` | The minimum allowed value. Leave null for no lower bound. |
+| `Max` | `double?` | `null` | The maximum allowed value. Leave null for no upper bound. |
+| `Step` | `string?` | `null` | The increment granularity (e.g., `"1"`, `"0.01"`, `"any"`). Defaults to the browser default of 1. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown when the field is empty. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class OrderModel
+{
+    [Required]
+    [Range(1, 999, ErrorMessage = "Quantity must be between 1 and 999.")]
+    public double? Quantity { get; set; }
+}
+```
+
+## Accessibility
+
+- Label is linked to the input via `for`/`id` attributes.
+- The `min`, `max`, and `step` attributes are set on the native input for browser enforcement.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

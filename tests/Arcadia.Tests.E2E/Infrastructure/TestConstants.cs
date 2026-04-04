@@ -3,6 +3,7 @@ namespace Arcadia.Tests.E2E.Infrastructure;
 public static class TestConstants
 {
     public const string BaseUrl = "http://localhost:5050";
+    public const string WasmBaseUrl = "http://localhost:5051";
     public const string TestPagePrefix = "/test";
     public const int ChartRenderWaitMs = 1500;
 

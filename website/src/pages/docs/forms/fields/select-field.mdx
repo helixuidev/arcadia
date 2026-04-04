@@ -1,0 +1,75 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: SelectField
+description: Dropdown select field for choosing a single option from a list.
+---
+
+# SelectField
+
+A dropdown select field for choosing a single option from a list. Options can be provided directly via the `Options` parameter or resolved from the field's schema definition when used inside a FormBuilder.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <SelectField Field="@nameof(Model.Country)"
+                 Label="Country"
+                 Placeholder="Select a country..."
+                 Options="countryOptions" />
+</ArcadiaForm>
+
+@code {
+    private List<FieldOption> countryOptions = new()
+    {
+        new FieldOption { Value = "us", Label = "United States" },
+        new FieldOption { Value = "ca", Label = "Canada" },
+        new FieldOption { Value = "uk", Label = "United Kingdom" }
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The value of the currently selected option. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked when the user selects a different option. |
+| `Options` | `List<FieldOption>?` | `null` | The list of selectable options. When null, options are resolved from the field schema. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown as the initial disabled option. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## FieldOption
+
+Each option in the list is a `FieldOption` with the following properties:
+
+| Property | Type | Description |
+|---|---|---|
+| `Value` | `string` | The value submitted when this option is selected. |
+| `Label` | `string` | The display text shown to the user. |
+| `Disabled` | `bool` | Whether this individual option is disabled. |
+
+## Validation
+
+```csharp
+public class ProfileModel
+{
+    [Required(ErrorMessage = "Please select a country.")]
+    public string? Country { get; set; }
+}
+```
+
+## Accessibility
+
+- Label is linked to the select via `for`/`id` attributes.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

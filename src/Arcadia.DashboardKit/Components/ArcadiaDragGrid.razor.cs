@@ -17,7 +17,6 @@ public partial class ArcadiaDragGrid : ArcadiaInteropBase
 {
     private readonly List<ArcadiaDragGridItem> _items = new();
     private DotNetObjectReference<ArcadiaDragGrid>? _dotNetRef;
-
     // Keyboard drag state
     private string? _keyboardDragItemId;
     private string _liveAnnouncement = "";

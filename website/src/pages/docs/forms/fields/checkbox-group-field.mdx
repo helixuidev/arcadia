@@ -1,0 +1,66 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: CheckboxGroupField
+description: Group of checkboxes for selecting multiple options from a set.
+---
+
+# CheckboxGroupField
+
+A group of checkboxes wrapped in a `<fieldset>` with a `<legend>` for selecting multiple options from a set. Each checkbox can be independently toggled, and the component tracks the selected values as a `List<string>`.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <CheckboxGroupField Field="@nameof(Model.Interests)"
+                        Label="Interests"
+                        Options="interestOptions" />
+</ArcadiaForm>
+
+@code {
+    private List<FieldOption> interestOptions = new()
+    {
+        new FieldOption { Value = "tech", Label = "Technology" },
+        new FieldOption { Value = "sports", Label = "Sports" },
+        new FieldOption { Value = "music", Label = "Music" },
+        new FieldOption { Value = "travel", Label = "Travel" }
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Values` | `List<string>` | `new()` | The list of currently checked option values. Supports two-way binding. |
+| `ValuesChanged` | `EventCallback<List<string>>` | | Callback invoked whenever a checkbox is checked or unchecked. |
+| `Options` | `List<FieldOption>?` | `null` | The list of available checkbox options. When null, options are resolved from the field schema. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed as the fieldset legend. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the checkbox group. |
+| `Required` | `bool` | `false` | Whether at least one selection is required. |
+| `Disabled` | `bool` | `false` | Whether all checkboxes are disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class PreferencesModel
+{
+    [MinLength(1, ErrorMessage = "Select at least one interest.")]
+    public List<string> Interests { get; set; } = new();
+}
+```
+
+## Accessibility
+
+- The checkbox group is wrapped in a `<fieldset>` with a `<legend>` for proper grouping.
+- Uses `role="group"` on the container.
+- Required groups set `aria-required="true"`.
+- Individual options that are disabled (via `FieldOption.Disabled`) are also marked as disabled on the input.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

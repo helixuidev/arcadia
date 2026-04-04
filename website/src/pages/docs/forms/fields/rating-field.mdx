@@ -1,0 +1,61 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: RatingField
+description: Star rating input with configurable scale and keyboard accessibility.
+---
+
+# RatingField
+
+Star-based rating input. Renders a group of buttons as a WAI-ARIA radio group, so rating selection is fully keyboard and screen reader accessible. Defaults to a 5-star scale but supports any maximum.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <RatingField Field="@nameof(Model.Score)" Label="Rate your experience" />
+</ArcadiaForm>
+```
+
+## Custom Scale
+
+```razor
+<RatingField Field="@nameof(Model.Score)"
+             Label="Detailed score"
+             MaxRating="10" />
+```
+
+## Required (no clear button)
+
+```razor
+<RatingField Field="@nameof(Model.Score)"
+             Label="Rating required"
+             Required="true"
+             ShowClear="false" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `int` | `0` | Current rating (0 means unrated). Two-way bindable. |
+| `ValueChanged` | `EventCallback<int>` | — | Fires when the rating changes. |
+| `MaxRating` | `int` | `5` | Highest selectable value (number of stars rendered). |
+| `ShowClear` | `bool` | `true` | Whether the clear (✕) button appears once a rating is set. |
+
+### Inherited from `FieldBase`
+
+| Parameter | Type | Description |
+|---|---|---|
+| `Label` | `string?` | Visible field label. |
+| `HelperText` | `string?` | Guidance text below the field. |
+| `Required` | `bool` | Marks the field as required. |
+| `Disabled` | `bool` | Disables user interaction. |
+| `Errors` | `IReadOnlyList<string>?` | Validation messages to display. |
+
+## Accessibility
+
+- Wrapped in `role="radiogroup"` with `aria-labelledby` pointing to the label
+- Each star is `role="radio"` with `aria-checked` state
+- Each star has `aria-label="{rating} of {MaxRating}"` for screen readers
+- `aria-required` and `aria-invalid` reflect validation state
+- Error messages linked via `aria-describedby`

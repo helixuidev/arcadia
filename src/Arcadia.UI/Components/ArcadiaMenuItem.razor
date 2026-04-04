@@ -1,5 +1,6 @@
 @namespace Arcadia.UI.Components
 @inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
 
 @if (Divider)
 {
@@ -10,6 +11,7 @@ else
     <button class="@CssClass"
             style="@Style"
             role="menuitem"
+            tabindex="@(IsActive ? 0 : -1)"
             disabled="@Disabled"
             @onclick="OnClickHandler"
             @attributes="AdditionalAttributes">
@@ -52,16 +54,59 @@ else
     [Parameter]
     public bool Divider { get; set; }
 
+    [CascadingParameter]
+    private ArcadiaContextMenu? _contextMenu { get; set; }
+
+    /// <summary>
+    /// The index of this item within the parent context menu. Set internally by the parent.
+    /// </summary>
+    internal int MenuIndex { get; set; }
+
+    /// <summary>
+    /// Whether this item is currently the active (highlighted) item. Set internally by the parent.
+    /// </summary>
+    internal bool IsActive { get; set; }
+
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-menu-item")
+        .AddClass("arcadia-menu-item--active", IsActive)
         .AddClass("arcadia-menu-item--disabled", Disabled)
         .AddClass(Class)
         .Build();
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        if (!Divider)
+        {
+            _contextMenu?.AddMenuItem(this);
+        }
+    }
+
+    /// <summary>
+    /// Invokes the <see cref="OnClick"/> callback. Called internally by the parent context menu on Enter key.
+    /// </summary>
+    internal async Task ActivateAsync()
+    {
+        if (!Disabled)
+        {
+            await OnClick.InvokeAsync();
+        }
+    }
 
     private async Task OnClickHandler()
     {
         if (!Disabled)
         {
             await OnClick.InvokeAsync();
+        }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        if (!Divider)
+        {
+            _contextMenu?.RemoveMenuItem(this);
         }
     }
 }

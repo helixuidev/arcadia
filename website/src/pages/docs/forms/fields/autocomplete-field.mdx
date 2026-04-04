@@ -1,0 +1,74 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: AutocompleteField
+description: Text input with a filterable suggestion dropdown (combobox).
+---
+
+# AutocompleteField
+
+A text input with a filterable suggestion dropdown. As the user types, matching options are displayed in a listbox below the input. The user can select a suggestion or continue typing a free-text value. Uses the combobox ARIA pattern.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <AutocompleteField Field="@nameof(Model.City)"
+                       Label="City"
+                       Placeholder="Search cities..."
+                       Options="cityOptions" />
+</ArcadiaForm>
+
+@code {
+    private List<FieldOption> cityOptions = new()
+    {
+        new FieldOption { Value = "new-york", Label = "New York" },
+        new FieldOption { Value = "london", Label = "London" },
+        new FieldOption { Value = "tokyo", Label = "Tokyo" },
+        new FieldOption { Value = "paris", Label = "Paris" }
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The current text in the input, which may be a free-text query or a selected option value. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked when the user types or selects a suggestion. |
+| `Options` | `List<FieldOption>?` | `null` | The list of suggestion options. When null, options are resolved from the field schema. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown when the field is empty. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Filtering
+
+Options are filtered client-side using a case-insensitive substring match against the `Label` property. When the input is empty, all options are shown.
+
+## Validation
+
+```csharp
+public class AddressModel
+{
+    [Required(ErrorMessage = "City is required.")]
+    public string? City { get; set; }
+}
+```
+
+## Accessibility
+
+- Uses `role="combobox"` on the text input.
+- The suggestion list uses `role="listbox"` with individual `role="option"` items.
+- `aria-expanded` indicates whether the dropdown is open.
+- `aria-controls` links the input to the suggestion list.
+- Required fields set `aria-required="true"`.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

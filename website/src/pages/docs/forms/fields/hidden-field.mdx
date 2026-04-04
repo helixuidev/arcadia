@@ -1,0 +1,35 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: HiddenField
+description: Hidden input for passing non-visible values with the form submission.
+---
+
+# HiddenField
+
+A hidden input element for passing values that should not be visible or editable by the user, such as identifiers, tokens, or tracking data. Unlike other field components, HiddenField does not inherit from `FieldBase` and has no label, validation display, or accessibility markup.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <HiddenField Name="UserId" Value="@model.UserId" />
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Name` | `string?` | `null` | The form field name submitted with the hidden input. |
+| `Value` | `string?` | `null` | The hidden value submitted with the form. |
+| `AdditionalAttributes` | `IReadOnlyDictionary<string, object>?` | `null` | Any additional HTML attributes to apply to the hidden input. |
+
+## Notes
+
+- HiddenField does **not** inherit from `FieldBase`. It renders only a `<input type="hidden">` element.
+- No label, helper text, or validation errors are rendered.
+- Use this for form values that must be submitted but should not be shown to the user.
+
+## Accessibility
+
+- Hidden inputs are not visible and not focusable, so no ARIA attributes are needed.

@@ -233,8 +233,15 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
         Interop = new ChartInteropService(JSRuntime);
     }
 
-    protected override void OnParametersSet()
+    /// <inheritdoc />
+    public override async Task SetParametersAsync(ParameterView parameters)
     {
+        await base.SetParametersAsync(parameters);
+
+        // Set up the collection observer here rather than in OnParametersSet because
+        // derived chart classes commonly override OnParametersSet without calling base,
+        // which would leave the observer uninitialized. SetParametersAsync is always called
+        // by the Blazor runtime when parameters change, regardless of derived overrides.
         _collectionObserver ??= new CollectionObserver<T>(
             () => { OnParametersSet(); StateHasChanged(); return Task.CompletedTask; },
             InvokeAsync
@@ -284,9 +291,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
                     await Interop.EnablePanZoomAsync(ContainerRef, _panZoomRef, ZoomMode);
                 }
             }
-            catch (Microsoft.JSInterop.JSException) { }
+            catch (Microsoft.JSInterop.JSException ex) { System.Diagnostics.Debug.WriteLine($"[ChartBase] JS interop init failed: {ex.Message}"); }
 #if NET6_0_OR_GREATER
-            catch (JSDisconnectedException) { }
+            catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
         }
     }
@@ -369,9 +376,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
             await Interop.ShowTooltipAsync(html, mouseX, mouseY);
         }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
-        catch (ObjectDisposedException) { }
+        catch (ObjectDisposedException) { /* Interop already disposed */ }
     }
 
     /// <summary>Hides the tooltip.</summary>
@@ -383,9 +390,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
             await Interop.HideTooltipAsync();
         }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
-        catch (ObjectDisposedException) { }
+        catch (ObjectDisposedException) { /* Interop already disposed */ }
     }
 
     /// <summary>Exports chart as PNG.</summary>
@@ -411,8 +418,8 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
                 "primary" => "var(--arcadia-color-primary, #2563eb)",
                 "secondary" => "var(--arcadia-color-secondary, #7c3aed)",
                 "success" => "var(--arcadia-color-success, #16a34a)",
-                "danger" => "var(--arcadia-color-danger, #dc2626)",
-                "warning" => "var(--arcadia-color-warning, #d97706)",
+                "danger" => "var(--arcadia-color-danger, #b91c1c)",
+                "warning" => "var(--arcadia-color-warning, #b45309)",
                 "info" => "var(--arcadia-color-info, #0284c7)",
                 _ => color
             };
@@ -442,9 +449,9 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
         {
             try { await Interop.ShowTooltipAsync(fallbackHtml, mouseX, mouseY); }
 #if NET6_0_OR_GREATER
-            catch (JSDisconnectedException) { }
+            catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
-            catch (ObjectDisposedException) { }
+            catch (ObjectDisposedException) { /* Interop already disposed */ }
         }
     }
 
@@ -536,6 +543,20 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
     protected static string FormatSrValue(double value) =>
         double.IsNaN(value) || double.IsInfinity(value) ? "—" : value.ToString("G4");
 
+    /// <summary>Formats an X-axis value for screen reader tables. Applies <see cref="XAxisFormatString"/>
+    /// when set, or an invariant default for DateTime values to avoid locale-dependent output.</summary>
+    protected string FormatSrX(object? value)
+    {
+        if (value is null) return "";
+        if (value is DateTime dt)
+            return dt.ToString(XAxisFormatString ?? "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        if (value is DateTimeOffset dto)
+            return dto.ToString(XAxisFormatString ?? "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+        if (value is IFormattable formattable && XAxisFormatString is not null)
+            return formattable.ToString(XAxisFormatString, System.Globalization.CultureInfo.InvariantCulture);
+        return value.ToString() ?? "";
+    }
+
     /// <summary>Builds a user-friendly message listing which required fields are missing.</summary>
     protected static string GetMissingFieldsMessage(string chartName, string requiredList, (string Name, bool IsMissing)[] fields)
     {
@@ -567,10 +588,10 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
                 await Interop.DisablePanZoomAsync(ContainerRef);
         }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected — expected during teardown */ }
 #endif
-        catch (ObjectDisposedException) { }
-        catch (InvalidOperationException) { } // JS interop not available during SSR prerendering
+        catch (ObjectDisposedException) { /* Already disposed — safe to ignore */ }
+        catch (InvalidOperationException) { /* JS interop not available during SSR prerendering */ }
 
         try
         {
@@ -578,10 +599,10 @@ public abstract class ChartBase<T> : Arcadia.Core.Base.ArcadiaComponentBase, IAs
                 await Interop.DisposeAsync();
         }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected — expected during teardown */ }
 #endif
-        catch (ObjectDisposedException) { }
-        catch (InvalidOperationException) { }
+        catch (ObjectDisposedException) { /* Already disposed — safe to ignore */ }
+        catch (InvalidOperationException) { /* JS interop not available during SSR prerendering */ }
 
         _collectionObserver?.Dispose();
         _resizeRef?.Dispose();

@@ -1,0 +1,55 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Alert
+description: Displays contextual feedback messages with severity levels and optional dismiss behavior.
+---
+
+# Alert
+
+The `ArcadiaAlert` component renders a styled alert message with an icon that matches the severity level.
+
+## Basic Usage
+
+```razor
+<ArcadiaAlert Severity="info" Title="Information">
+    This is an informational alert.
+</ArcadiaAlert>
+
+<ArcadiaAlert Severity="success">
+    Operation completed successfully.
+</ArcadiaAlert>
+
+<ArcadiaAlert Severity="warning" Title="Warning" Dismissible="true">
+    This alert can be dismissed.
+</ArcadiaAlert>
+
+<ArcadiaAlert Severity="error" Variant="outlined">
+    Something went wrong.
+</ArcadiaAlert>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Severity` | `string` | `"info"` | Alert severity level: `"info"`, `"success"`, `"warning"`, `"error"`. |
+| `Title` | `string?` | `null` | Optional title text displayed above the message body. |
+| `ChildContent` | `RenderFragment?` | `null` | The alert message body content. |
+| `Dismissible` | `bool` | `false` | Whether the alert can be dismissed via a close button. |
+| `Visible` | `bool` | `true` | Whether the alert is visible. |
+| `Variant` | `string` | `"filled"` | Visual variant: `"filled"`, `"outlined"`, `"soft"`. |
+| `ActionTemplate` | `RenderFragment?` | `null` | Optional action template rendered in the alert actions area. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnDismiss` | `EventCallback` | Fired when the dismiss button is clicked. |
+
+## Accessibility
+
+- Uses `role="alert"` for screen reader announcement.
+- The dismiss button has `aria-label="Dismiss alert"`.
+- Icon SVGs use `aria-hidden="true"`.

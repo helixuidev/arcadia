@@ -1,0 +1,49 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Slider
+description: A range input slider with min/max, step, label, and optional value display.
+---
+
+# Slider
+
+The `ArcadiaSlider` component wraps a native `<input type="range">` with styling, label support, and an optional value display.
+
+## Basic Usage
+
+```razor
+<ArcadiaSlider @bind-Value="volume" Min="0" Max="100" Label="Volume" />
+
+<ArcadiaSlider @bind-Value="price"
+               Min="0"
+               Max="1000"
+               Step="10"
+               Color="success"
+               ShowValue="true" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `double` | `0` | Current slider value. Supports two-way binding. |
+| `Min` | `double` | `0` | Minimum value. |
+| `Max` | `double` | `100` | Maximum value. |
+| `Step` | `double` | `1` | Step increment. |
+| `ShowValue` | `bool` | `true` | Whether the current value is displayed next to the slider. |
+| `Disabled` | `bool` | `false` | Whether the slider is disabled. |
+| `Color` | `string` | `"primary"` | Color theme: `"primary"`, etc. |
+| `Label` | `string?` | `null` | Label text displayed above the slider. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ValueChanged` | `EventCallback<double>` | Fired when the slider value changes. |
+
+## Accessibility
+
+- The `<label>` element is linked to the input via `for`/`id`.
+- The range input includes `aria-label`, `aria-valuemin`, `aria-valuemax`, and `aria-valuenow`.
+- Native range input provides built-in keyboard support (arrow keys, Home, End, Page Up/Down).

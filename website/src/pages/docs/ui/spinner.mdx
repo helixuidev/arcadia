@@ -1,0 +1,35 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Spinner
+description: A rotating loading spinner with configurable size, color, and optional label.
+---
+
+# Spinner
+
+The `ArcadiaSpinner` component displays an animated circular loading indicator.
+
+## Basic Usage
+
+```razor
+<ArcadiaSpinner />
+
+<ArcadiaSpinner Size="lg" Color="success" Label="Loading data..." />
+
+<ArcadiaSpinner Size="xl" Color="primary" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Size` | `string` | `"md"` | Size: `"sm"` (16px), `"md"` (24px), `"lg"` (40px), `"xl"` (64px). |
+| `Color` | `string` | `"primary"` | Color: `"primary"`, `"success"`, `"warning"`, `"danger"`. |
+| `Label` | `string?` | `null` | Accessible label. Default is "Loading". |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- Uses `role="status"` for live region announcement.
+- Provides `aria-label` from the `Label` parameter, or "Loading" as a fallback.
+- When `Label` is provided, it's also shown visually next to the spinner.

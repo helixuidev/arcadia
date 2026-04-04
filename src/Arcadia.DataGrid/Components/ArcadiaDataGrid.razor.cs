@@ -424,11 +424,11 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                     "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
                 await _jsModule.InvokeVoidAsync("initResizeHandles", TableRef, 50, _dotNetRef);
             }
-            catch (JSException) { } // JS module load failed
+            catch (JSException) { /* JS module load failed — non-critical during SSR or circuit disconnect */ }
 #if NET6_0_OR_GREATER
-            catch (JSDisconnectedException) { } // Circuit disconnected
+            catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
-            catch (InvalidOperationException) { } // JS interop unavailable during static prerendering
+            catch (InvalidOperationException) { /* JS interop unavailable during static prerendering */ }
         }
 
         // Initialize infinite scroll observer
@@ -442,11 +442,11 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                 _infiniteScrollObserver = await _jsModule.InvokeAsync<IJSObjectReference>(
                     "observeInfiniteScroll", _infiniteScrollSentinel, _dotNetRef);
             }
-            catch (JSException) { }
+            catch (JSException) { /* JS module load failed — non-critical during SSR or circuit disconnect */ }
 #if NET6_0_OR_GREATER
-            catch (JSDisconnectedException) { }
+            catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
-            catch (InvalidOperationException) { }
+            catch (InvalidOperationException) { /* JS interop unavailable during static prerendering */ }
         }
     }
 
@@ -979,9 +979,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             await _jsModule.InvokeVoidAsync("downloadBlob", bytes, filename,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         }
-        catch (JSException) { }
+        catch (JSException ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] Excel export failed: {ex.Message}"); }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
     }
 
@@ -1001,9 +1001,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                 "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
             await _jsModule.InvokeVoidAsync("downloadBlob", bytes, filename, "application/pdf");
         }
-        catch (JSException) { }
+        catch (JSException ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] PDF export failed: {ex.Message}"); }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
     }
 
@@ -1033,9 +1033,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             var csv = ToCsv();
             await _jsModule.InvokeVoidAsync("downloadCsv", csv, "export.csv");
         }
-        catch (JSException) { }
+        catch (JSException ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] CSV export failed: {ex.Message}"); }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
     }
 
@@ -1320,7 +1320,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             var suffix = includeHeaders ? " with headers" : "";
             Announce($"Copied {(_selectedItems.Count > 0 ? _selectedItems.Count : "all")} rows{suffix} to clipboard");
         }
-        catch { } // Clipboard API may not be available
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] Clipboard copy failed: {ex.Message}"); }
     }
 
     private Task CopyToClipboardWithHeaders(List<ArcadiaColumn<TItem>> visibleCols)
@@ -1466,9 +1466,9 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                 "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
             await _jsModule.InvokeVoidAsync("printGrid", sb.ToString());
         }
-        catch (JSException) { }
+        catch (JSException ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] Print failed: {ex.Message}"); }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected */ }
 #endif
     }
 
@@ -1548,7 +1548,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                     "import", "./_content/Arcadia.DataGrid/js/datagrid-interop.js");
                 await _jsModule.InvokeVoidAsync("saveState", StateKey, state.ToJson());
             }
-            catch { } // localStorage may not be available
+            catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] Save state failed: {ex.Message}"); }
         }
     }
 
@@ -1566,7 +1566,7 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
                 if (state is not null) RestoreState(state);
             }
         }
-        catch { } // localStorage may not be available
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] Load state failed: {ex.Message}"); }
     }
 
     // ── Infinite Scroll ──
@@ -1765,16 +1765,16 @@ public partial class ArcadiaDataGrid<TItem> : ArcadiaComponentBase, IAsyncDispos
             if (_infiniteScrollObserver is not null)
                 await _infiniteScrollObserver.InvokeVoidAsync("disconnect");
         }
-        catch { }
+        catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[ArcadiaDataGrid] Dispose scroll observer failed: {ex.Message}"); }
         try
         {
             if (_jsModule is not null)
                 await _jsModule.DisposeAsync();
         }
 #if NET6_0_OR_GREATER
-        catch (JSDisconnectedException) { }
+        catch (JSDisconnectedException) { /* Blazor Server circuit disconnected — expected during teardown */ }
 #endif
-        catch (ObjectDisposedException) { }
+        catch (ObjectDisposedException) { /* Module already disposed — safe to ignore */ }
         _dotNetRef?.Dispose();
         _collectionObserver?.Dispose();
         GC.SuppressFinalize(this);

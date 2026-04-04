@@ -1,0 +1,68 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: MultiSelectField
+description: Multi-select field with tag-based selection for choosing multiple options.
+---
+
+# MultiSelectField
+
+A multi-select field that displays selected values as removable tags. Users pick options from a dropdown, and each selected option appears as a tag above the dropdown. Already-selected options are hidden from the available list.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <MultiSelectField Field="@nameof(Model.Skills)"
+                      Label="Skills"
+                      Placeholder="Select skills..."
+                      Options="skillOptions" />
+</ArcadiaForm>
+
+@code {
+    private List<FieldOption> skillOptions = new()
+    {
+        new FieldOption { Value = "csharp", Label = "C#" },
+        new FieldOption { Value = "blazor", Label = "Blazor" },
+        new FieldOption { Value = "sql", Label = "SQL" },
+        new FieldOption { Value = "azure", Label = "Azure" }
+    };
+}
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Values` | `List<string>` | `new()` | The list of currently selected option values. Supports two-way binding. |
+| `ValuesChanged` | `EventCallback<List<string>>` | | Callback invoked whenever a selection is added or removed. |
+| `Options` | `List<FieldOption>?` | `null` | The list of available options. When null, options are resolved from the field schema. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown in the dropdown. Defaults to "Select..." if not set. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class ProfileModel
+{
+    [MinLength(1, ErrorMessage = "Select at least one skill.")]
+    public List<string> Skills { get; set; } = new();
+}
+```
+
+## Accessibility
+
+- The container uses `role="listbox"` with `aria-multiselectable="true"`.
+- The label is linked via `aria-labelledby`.
+- Each tag's remove button has an `aria-label` identifying the item being removed (e.g., "Remove C#").
+- Required fields set `aria-required="true"`.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

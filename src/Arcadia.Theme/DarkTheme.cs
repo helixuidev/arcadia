@@ -45,8 +45,8 @@ public class DarkTheme : ArcadiaThemeBase
         Set("--arcadia-color-border-focus", "#60a5fa");
 
         // Status
-        Set("--arcadia-color-danger", "#f87171");
-        Set("--arcadia-color-danger-hover", "#fca5a5");
+        Set("--arcadia-color-danger", "#fca5a5");
+        Set("--arcadia-color-danger-hover", "#fecaca");
         Set("--arcadia-color-danger-subtle", "#450a0a");
         Set("--arcadia-color-on-danger", "#0f172a");
 

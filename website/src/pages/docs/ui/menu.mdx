@@ -1,0 +1,66 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Menu
+description: A dropdown menu triggered by a button or custom element, with keyboard dismiss support.
+---
+
+# Menu
+
+The `ArcadiaMenu` component provides a dropdown menu activated by clicking a trigger element. Use `ArcadiaMenuItem` for menu items.
+
+## Basic Usage
+
+```razor
+<ArcadiaMenu @bind-Open="menuOpen">
+    <Trigger>
+        <button>Options</button>
+    </Trigger>
+    <ChildContent>
+        <ArcadiaMenuItem Text="Edit" OnClick="HandleEdit" />
+        <ArcadiaMenuItem Text="Duplicate" OnClick="HandleDuplicate" />
+        <ArcadiaMenuItem Divider="true" />
+        <ArcadiaMenuItem Text="Delete" OnClick="HandleDelete" />
+    </ChildContent>
+</ArcadiaMenu>
+```
+
+## ArcadiaMenu Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Trigger` | `RenderFragment?` | `null` | Trigger content (e.g., a button) that opens the menu. |
+| `ChildContent` | `RenderFragment?` | `null` | Menu items content. |
+| `Open` | `bool` | `false` | Whether the menu is open. Supports two-way binding. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaMenu Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OpenChanged` | `EventCallback<bool>` | Fired when the open state changes. |
+
+## ArcadiaMenuItem Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Text` | `string` | `""` | Menu item display text. |
+| `Icon` | `string?` | `null` | Optional icon for the menu item. |
+| `Disabled` | `bool` | `false` | Whether the menu item is disabled. |
+| `Divider` | `bool` | `false` | Whether this item renders as a divider separator line. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaMenuItem Events
+
+| Event | Type | Description |
+|---|---|---|
+| `OnClick` | `EventCallback` | Fired when the menu item is clicked. |
+
+## Accessibility
+
+- The dropdown uses `role="menu"`.
+- Menu items use `role="menuitem"`.
+- Dividers use `role="separator"`.
+- Escape key closes the menu.
+- Clicking outside the menu closes it via a backdrop.

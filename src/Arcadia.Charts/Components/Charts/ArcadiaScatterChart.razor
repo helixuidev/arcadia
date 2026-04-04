@@ -79,7 +79,7 @@ else if (Data is not null && Data.Count > 0 && XField is not null && YField is n
             <tbody>
                 @foreach (var item in Data)
                 {
-                    <tr><td>@XField(item)</td><td>@YField(item)</td>@if (SizeField is not null) { <td>@SizeField(item)</td> }</tr>
+                    <tr><td>@FormatSrX(XField(item))</td><td>@YField(item)</td>@if (SizeField is not null) { <td>@SizeField(item)</td> }</tr>
                 }
             </tbody>
         </table>

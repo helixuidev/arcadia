@@ -1,0 +1,73 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: DateRangeField
+description: Paired date inputs for selecting a start and end date range.
+---
+
+# DateRangeField
+
+A paired date input field for selecting a date range with separate start and end date pickers. Wrapped in a `<fieldset>` with a `<legend>`, it supports customizable sub-labels for each date input.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <DateRangeField Field="@nameof(Model.StartDate)"
+                    Label="Booking Period"
+                    @bind-StartDate="model.StartDate"
+                    @bind-EndDate="model.EndDate" />
+</ArcadiaForm>
+```
+
+## Custom Labels
+
+```razor
+<DateRangeField Label="Stay"
+                StartLabel="Check-in"
+                EndLabel="Check-out"
+                @bind-StartDate="model.CheckIn"
+                @bind-EndDate="model.CheckOut" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `StartDate` | `DateTime?` | `null` | The beginning of the selected date range. Supports two-way binding. |
+| `StartDateChanged` | `EventCallback<DateTime?>` | | Callback invoked when the user changes the start date. |
+| `EndDate` | `DateTime?` | `null` | The end of the selected date range. Supports two-way binding. |
+| `EndDateChanged` | `EventCallback<DateTime?>` | | Callback invoked when the user changes the end date. |
+| `StartLabel` | `string` | `"Start"` | The visible label for the start date input. |
+| `EndLabel` | `string` | `"End"` | The visible label for the end date input. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed as the fieldset legend. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the date range. |
+| `Required` | `bool` | `false` | Whether the start date is required. |
+| `Disabled` | `bool` | `false` | Whether both date inputs are disabled. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class BookingModel
+{
+    [Required(ErrorMessage = "Start date is required.")]
+    public DateTime? StartDate { get; set; }
+
+    [Required(ErrorMessage = "End date is required.")]
+    public DateTime? EndDate { get; set; }
+}
+```
+
+## Accessibility
+
+- Wrapped in a `<fieldset>` with a `<legend>` for proper grouping.
+- Each date input has its own `<label>` linked via `for`/`id` attributes.
+- The separator text "to" is hidden from assistive technologies with `aria-hidden="true"`.
+- Required fields set `aria-required="true"` on the start date input.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

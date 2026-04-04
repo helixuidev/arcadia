@@ -1,0 +1,70 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Carousel
+description: A slide-based carousel with navigation arrows, dot indicators, auto-play, and looping support.
+---
+
+# Carousel
+
+The `ArcadiaCarousel` component displays slides with navigation controls. Wrap each slide in an `ArcadiaCarouselSlide`.
+
+## Basic Usage
+
+```razor
+<ArcadiaCarousel @bind-ActiveIndex="slideIndex">
+    <ArcadiaCarouselSlide>
+        <h2>Slide 1</h2>
+    </ArcadiaCarouselSlide>
+    <ArcadiaCarouselSlide>
+        <h2>Slide 2</h2>
+    </ArcadiaCarouselSlide>
+    <ArcadiaCarouselSlide>
+        <h2>Slide 3</h2>
+    </ArcadiaCarouselSlide>
+</ArcadiaCarousel>
+```
+
+## Auto-Play
+
+```razor
+<ArcadiaCarousel AutoPlay="true" AutoPlayInterval="3000" Loop="true">
+    <ArcadiaCarouselSlide>Slide A</ArcadiaCarouselSlide>
+    <ArcadiaCarouselSlide>Slide B</ArcadiaCarouselSlide>
+</ArcadiaCarousel>
+```
+
+## ArcadiaCarousel Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ActiveIndex` | `int` | `0` | Zero-based index of the currently active slide. |
+| `AutoPlay` | `bool` | `false` | Whether slides auto-advance. |
+| `AutoPlayInterval` | `int` | `5000` | Auto-play interval in milliseconds. |
+| `ShowArrows` | `bool` | `true` | Whether navigation arrows are displayed. |
+| `ShowDots` | `bool` | `true` | Whether dot indicators are displayed. |
+| `Loop` | `bool` | `true` | Whether the carousel wraps from last to first slide. |
+| `ChildContent` | `RenderFragment?` | `null` | The carousel slide elements. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaCarousel Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ActiveIndexChanged` | `EventCallback<int>` | Fired when the active slide index changes. |
+
+## ArcadiaCarouselSlide Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | `null` | Content for this slide. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The carousel container uses `role="region"` with `aria-roledescription="carousel"`.
+- Each slide uses `role="tabpanel"` with `aria-roledescription="slide"` and `aria-hidden` for inactive slides.
+- Arrow buttons use `aria-label` ("Previous slide" / "Next slide").
+- Dot buttons use `role="tab"` with `aria-selected` and `aria-label` ("Go to slide N").
+- Dots container uses `role="tablist"` with `aria-label="Slide navigation"`.

@@ -84,21 +84,34 @@ public sealed class CollectionObserver<T> : IDisposable
     /// </summary>
     public bool IsAttached => _observed is not null;
 
-    private async void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+    private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
         if (_disposed || _suppressed) return;
+
+        // Fire immediately (no debounce) when debounce is disabled.
+        if (_debounceMs <= 0)
+        {
+            try { _ = FireCallback(); }
+            catch (ObjectDisposedException) { }
+            return;
+        }
 
         _debounceCts?.Cancel();
         _debounceCts?.Dispose();
         _debounceCts = new CancellationTokenSource();
         var token = _debounceCts.Token;
 
+        _ = DelayAndFireAsync(token);
+    }
+
+    private async Task DelayAndFireAsync(CancellationToken token)
+    {
         try
         {
-            await Task.Delay(_debounceMs, token);
+            await Task.Delay(_debounceMs, token).ConfigureAwait(false);
             if (!_disposed && !_suppressed)
             {
-                await FireCallback();
+                await FireCallback().ConfigureAwait(false);
             }
         }
         catch (TaskCanceledException)

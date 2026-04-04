@@ -47,11 +47,17 @@ public class IdGeneratorTests : IDisposable
     [Fact]
     public void Generate_IncrementsSequentially()
     {
+        // IdGenerator uses a static counter that is shared across parallel tests, so we
+        // can't assert absolute values. Verify that each call produces a strictly greater
+        // numeric suffix than the previous.
         var id1 = IdGenerator.Generate();
         var id2 = IdGenerator.Generate();
 
-        id1.Should().Be("arcadia-1");
-        id2.Should().Be("arcadia-2");
+        id1.Should().StartWith("arcadia-");
+        id2.Should().StartWith("arcadia-");
+        var n1 = long.Parse(id1.Substring("arcadia-".Length));
+        var n2 = long.Parse(id2.Substring("arcadia-".Length));
+        n2.Should().BeGreaterThan(n1);
     }
 
     [Fact]

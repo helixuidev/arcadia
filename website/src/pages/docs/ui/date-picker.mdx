@@ -1,0 +1,46 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Date Picker
+description: A date input component with optional label, min/max constraints, and two-way binding.
+---
+
+# Date Picker
+
+The `ArcadiaDatePicker` component wraps a native `<input type="date">` with label, placeholder, and date range constraints.
+
+## Basic Usage
+
+```razor
+<ArcadiaDatePicker @bind-Value="selectedDate" Label="Start Date" />
+
+<ArcadiaDatePicker @bind-Value="birthDate"
+                   Label="Birth Date"
+                   Min="@(new DateTime(1900, 1, 1))"
+                   Max="@DateTime.Today" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `DateTime?` | `null` | The selected date value. Supports two-way binding. |
+| `Min` | `DateTime?` | `null` | Minimum selectable date. |
+| `Max` | `DateTime?` | `null` | Maximum selectable date. |
+| `Placeholder` | `string` | `"Select date..."` | Placeholder text when no date is selected. |
+| `Format` | `string` | `"yyyy-MM-dd"` | Internal value format sent to the native date input. |
+| `Disabled` | `bool` | `false` | Whether the date picker is disabled. |
+| `Label` | `string?` | `null` | Label text displayed above the input. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ValueChanged` | `EventCallback<DateTime?>` | Fired when the selected date changes. |
+
+## Accessibility
+
+- The `<label>` element is linked to the input via `for`/`id`.
+- Uses `aria-label` from the `Label` or `Placeholder` parameter.
+- Native date input provides built-in keyboard and screen reader support.

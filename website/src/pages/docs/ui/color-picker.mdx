@@ -1,0 +1,44 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Color Picker
+description: A color selection component with preset swatches and an optional hex input field.
+---
+
+# Color Picker
+
+The `ArcadiaColorPicker` component provides a set of color swatches and an optional hex text input for selecting colors.
+
+## Basic Usage
+
+```razor
+<ArcadiaColorPicker @bind-Value="selectedColor" />
+
+<ArcadiaColorPicker @bind-Value="color" ShowInput="false" />
+
+<ArcadiaColorPicker @bind-Value="color"
+                    Presets="@(new[] { "#ff0000", "#00ff00", "#0000ff" })" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The selected hex color value (e.g., `"#8b5cf6"`). Supports two-way binding. |
+| `Presets` | `string[]?` | `null` | Optional preset color swatches. A default 12-color palette is used if null or empty. |
+| `ShowInput` | `bool` | `true` | Whether the hex text input is shown. |
+| `Disabled` | `bool` | `false` | Whether the color picker is disabled. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ValueChanged` | `EventCallback<string>` | Fired when the selected color changes. |
+
+## Accessibility
+
+- Swatch buttons use `role="radio"` inside a `role="radiogroup"` with `aria-label="Color presets"`.
+- Each swatch has `aria-checked` and `aria-label` indicating the color value.
+- The hex input uses `aria-label="Hex color value"`.
+- Disabled state is reflected on all interactive elements.

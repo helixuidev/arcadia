@@ -1,0 +1,53 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: DateField
+description: Date input field using the browser's native date picker.
+---
+
+# DateField
+
+A date input field that uses the browser's native `type="date"` picker. The value is a nullable `DateTime`, returning `null` when no date has been selected.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <DateField Field="@nameof(Model.BirthDate)" Label="Date of Birth" />
+</ArcadiaForm>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `DateTime?` | `null` | The selected date. Null when no date has been chosen. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<DateTime?>` | | Callback invoked when the user picks or clears a date. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class PersonModel
+{
+    [Required(ErrorMessage = "Date of birth is required.")]
+    public DateTime? BirthDate { get; set; }
+}
+```
+
+## Accessibility
+
+- Label is linked to the input via `for`/`id` attributes.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.
+- The browser's native date picker provides built-in keyboard and assistive technology support.

@@ -1,0 +1,61 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: TextAreaField
+description: Multi-line text input field for longer content.
+---
+
+# TextAreaField
+
+A multi-line text input field for collecting longer content such as descriptions, comments, or notes. The visible height is controlled by the `Rows` parameter.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <TextAreaField Field="@nameof(Model.Description)" Label="Description" />
+</ArcadiaForm>
+```
+
+## Larger Text Area
+
+```razor
+<TextAreaField Field="@nameof(Model.Notes)" Label="Notes" Rows="8" Placeholder="Enter your notes here..." />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The current multi-line text content. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked whenever the user modifies the textarea content. |
+| `Rows` | `int` | `4` | The visible number of text rows in the textarea. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown when the field is empty. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class FeedbackModel
+{
+    [Required]
+    [StringLength(2000, ErrorMessage = "Description cannot exceed 2000 characters.")]
+    public string Description { get; set; } = "";
+}
+```
+
+## Accessibility
+
+- Label is linked to the textarea via `for`/`id` attributes.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

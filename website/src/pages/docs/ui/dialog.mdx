@@ -1,0 +1,51 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Dialog
+description: A modal dialog with focus trapping, overlay backdrop, and configurable close behavior.
+---
+
+# Dialog
+
+The `ArcadiaDialog` component renders a modal dialog with optional title, close button, footer actions, and configurable dismissal behavior.
+
+## Basic Usage
+
+```razor
+<ArcadiaDialog @bind-Visible="showDialog" Title="Confirm Action">
+    <p>Are you sure you want to proceed?</p>
+    <FooterTemplate>
+        <button @onclick="() => showDialog = false">Cancel</button>
+        <button @onclick="Confirm">Confirm</button>
+    </FooterTemplate>
+</ArcadiaDialog>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Visible` | `bool` | `false` | Whether the dialog is visible. Supports two-way binding. |
+| `Title` | `string?` | `null` | Dialog title displayed in the header. |
+| `Width` | `string` | `"480px"` | CSS width of the dialog. |
+| `ShowCloseButton` | `bool` | `true` | Whether the close button is shown in the header. |
+| `CloseOnOverlayClick` | `bool` | `true` | Whether clicking the overlay backdrop closes the dialog. |
+| `CloseOnEscape` | `bool` | `true` | Whether pressing Escape closes the dialog. |
+| `ChildContent` | `RenderFragment?` | `null` | Dialog body content. |
+| `FooterTemplate` | `RenderFragment?` | `null` | Optional footer template for action buttons. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `VisibleChanged` | `EventCallback<bool>` | Fired when the visible state changes (two-way binding). |
+| `OnClose` | `EventCallback` | Fired when the dialog is closed. |
+
+## Accessibility
+
+- Uses `role="dialog"` with `aria-modal="true"`.
+- Title is linked via `aria-labelledby`.
+- Focus is trapped inside the dialog using `FocusTrap`.
+- Close button uses `aria-label="Close dialog"`.
+- Escape key closes the dialog (configurable via `CloseOnEscape`).

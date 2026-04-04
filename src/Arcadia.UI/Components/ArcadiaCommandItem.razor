@@ -1,9 +1,13 @@
 @namespace Arcadia.UI.Components
 @inherits Arcadia.Core.Base.ArcadiaComponentBase
+@implements IDisposable
 
 <button class="@CssClass"
         style="@Style"
+        id="@ElementId"
         role="option"
+        aria-selected="@(IsActive ? "true" : "false")"
+        tabindex="@(IsActive ? 0 : -1)"
         disabled="@Disabled"
         aria-disabled="@(Disabled ? "true" : null)"
         @onclick="OnClickHandler"
@@ -68,10 +72,46 @@
     [Parameter]
     public bool Disabled { get; set; }
 
+    [CascadingParameter]
+    private ArcadiaCommandPalette? _palette { get; set; }
+
+    /// <summary>
+    /// The index of this item within the parent palette. Set internally by the parent.
+    /// </summary>
+    internal int Index { get; set; }
+
+    /// <summary>
+    /// Whether this item is currently the active (highlighted) item. Set internally by the parent.
+    /// </summary>
+    internal bool IsActive { get; set; }
+
+    /// <summary>
+    /// The unique ID for this item, used for aria-activedescendant linking.
+    /// </summary>
+    internal string ItemId => ElementId;
+
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-command-item")
+        .AddClass("arcadia-command-item--active", IsActive)
         .AddClass("arcadia-command-item--disabled", Disabled)
         .AddClass(Class)
         .Build();
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        _palette?.AddItem(this);
+    }
+
+    /// <summary>
+    /// Invokes the <see cref="OnSelect"/> callback. Called internally by the parent palette on Enter key.
+    /// </summary>
+    internal async Task SelectAsync()
+    {
+        if (!Disabled)
+        {
+            await OnSelect.InvokeAsync();
+        }
+    }
 
     private async Task OnClickHandler()
     {
@@ -87,5 +127,11 @@
         {
             await OnSelect.InvokeAsync();
         }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        _palette?.RemoveItem(this);
     }
 }

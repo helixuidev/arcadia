@@ -1,0 +1,61 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Stepper
+description: A multi-step progress indicator with horizontal or vertical orientation.
+---
+
+# Stepper
+
+The `ArcadiaStepper` component displays a sequence of steps with visual indicators for completed, active, and upcoming states. Each step is an `ArcadiaStep`.
+
+## Basic Usage
+
+```razor
+<ArcadiaStepper @bind-ActiveIndex="currentStep">
+    <ArcadiaStep Title="Account" Description="Create your account" />
+    <ArcadiaStep Title="Profile" Description="Add your details" />
+    <ArcadiaStep Title="Confirm" Description="Review and submit" />
+</ArcadiaStepper>
+```
+
+## Vertical Stepper
+
+```razor
+<ArcadiaStepper @bind-ActiveIndex="step" Orientation="vertical">
+    <ArcadiaStep Title="Step 1" Icon="1" />
+    <ArcadiaStep Title="Step 2" Icon="2" />
+    <ArcadiaStep Title="Step 3" Icon="3" Disabled="true" />
+</ArcadiaStepper>
+```
+
+## ArcadiaStepper Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ActiveIndex` | `int` | `0` | Zero-based index of the active step. Supports two-way binding. |
+| `Orientation` | `string` | `"horizontal"` | Orientation: `"horizontal"` or `"vertical"`. |
+| `ChildContent` | `RenderFragment?` | `null` | The step elements. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## ArcadiaStepper Events
+
+| Event | Type | Description |
+|---|---|---|
+| `ActiveIndexChanged` | `EventCallback<int>` | Fired when the active step index changes. |
+
+## ArcadiaStep Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Title` | `string` | `""` | Step title text. |
+| `Description` | `string?` | `null` | Optional step description below the title. |
+| `Icon` | `string?` | `null` | Optional icon in the step indicator instead of the step number. |
+| `Disabled` | `bool` | `false` | Whether this step is disabled (non-clickable). |
+
+## Accessibility
+
+- The stepper uses `role="list"` with `aria-label="Progress steps"`.
+- Each step uses `role="listitem"` with `aria-current="step"` on the active step.
+- The indicator button uses `aria-label` including the step number and title.
+- Completed steps show a checkmark SVG with `aria-hidden="true"`.

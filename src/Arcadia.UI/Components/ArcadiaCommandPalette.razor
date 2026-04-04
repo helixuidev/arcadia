@@ -5,7 +5,8 @@
 {
     <div class="arcadia-command-palette-overlay"
          @onclick="CloseAsync"
-         @onkeydown="HandleKeyDownAsync">
+         @onkeydown="HandleKeyDownAsync"
+         @onkeydown:preventDefault="_preventKeyDefault">
         <div class="@CssClass"
              style="@Style"
              role="dialog"
@@ -29,12 +30,15 @@
                        role="combobox"
                        aria-expanded="true"
                        aria-controls="@ListId"
+                       aria-activedescendant="@ActiveDescendantId"
                        aria-autocomplete="list"
                        autocomplete="off" />
             </div>
-            <div class="arcadia-command-palette__list" id="@ListId" role="listbox">
-                @ChildContent
-            </div>
+            <CascadingValue Value="this" IsFixed="true">
+                <div class="arcadia-command-palette__list" id="@ListId" role="listbox">
+                    @ChildContent
+                </div>
+            </CascadingValue>
         </div>
     </div>
 }
@@ -90,11 +94,59 @@
     public EventCallback<string> SearchTextChanged { get; set; }
 
     private ElementReference _inputRef;
+    private readonly List<ArcadiaCommandItem> _items = new();
+    private int _activeIndex = -1;
+    private bool _preventKeyDefault;
     private string ListId => $"{ElementId}-list";
 
     private string? CssClass => Arcadia.Core.Utilities.CssBuilder.Default("arcadia-command-palette")
         .AddClass(Class)
         .Build();
+
+    private string? ActiveDescendantId => _activeIndex >= 0 && _activeIndex < _items.Count
+        ? _items[_activeIndex].ItemId
+        : null;
+
+    /// <summary>
+    /// Registers a child <see cref="ArcadiaCommandItem"/> with this palette.
+    /// Called internally by child items.
+    /// </summary>
+    internal void AddItem(ArcadiaCommandItem item)
+    {
+        item.Index = _items.Count;
+        _items.Add(item);
+        UpdateItemStates();
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Removes a child <see cref="ArcadiaCommandItem"/> from this palette.
+    /// Called internally by child items on disposal.
+    /// </summary>
+    internal void RemoveItem(ArcadiaCommandItem item)
+    {
+        _items.Remove(item);
+        for (var i = 0; i < _items.Count; i++)
+        {
+            _items[i].Index = i;
+        }
+
+        if (_activeIndex >= _items.Count)
+        {
+            _activeIndex = _items.Count - 1;
+        }
+
+        UpdateItemStates();
+        StateHasChanged();
+    }
+
+    private void UpdateItemStates()
+    {
+        for (var i = 0; i < _items.Count; i++)
+        {
+            _items[i].IsActive = i == _activeIndex;
+        }
+    }
 
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -112,23 +164,69 @@
         }
     }
 
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        if (!Open)
+        {
+            _activeIndex = -1;
+            UpdateItemStates();
+        }
+    }
+
     private async Task CloseAsync()
     {
         Open = false;
+        _activeIndex = -1;
+        UpdateItemStates();
         await OpenChanged.InvokeAsync(false);
     }
 
     private async Task HandleKeyDownAsync(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args)
     {
+        _preventKeyDefault = false;
+
         if (args.Key == "Escape")
         {
             await CloseAsync();
+            return;
         }
+
+        if (args.Key == "Enter" && _activeIndex >= 0 && _activeIndex < _items.Count)
+        {
+            var item = _items[_activeIndex];
+            if (!item.Disabled)
+            {
+                await item.SelectAsync();
+            }
+            return;
+        }
+
+        var direction = Arcadia.Core.Accessibility.KeyboardNavigation.MapVerticalKey(args.Key);
+        if (direction is null)
+            return;
+
+        _preventKeyDefault = true;
+
+        var startIndex = _activeIndex < 0
+            ? (direction.Value == NavigationDirection.Previous ? 0 : _items.Count - 1)
+            : _activeIndex;
+
+        var nextIndex = Arcadia.Core.Accessibility.KeyboardNavigation.GetNextEnabledIndex(
+            startIndex,
+            _items.Count,
+            direction.Value,
+            i => _items[i].Disabled);
+
+        _activeIndex = nextIndex;
+        UpdateItemStates();
     }
 
     private async Task OnInputChangedAsync(ChangeEventArgs args)
     {
         SearchText = args.Value?.ToString() ?? string.Empty;
+        _activeIndex = -1;
+        UpdateItemStates();
         await SearchTextChanged.InvokeAsync(SearchText);
         await OnSearch.InvokeAsync(SearchText);
     }

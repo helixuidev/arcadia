@@ -1,0 +1,80 @@
+---
+layout: ../../../../../layouts/DocsLayout.astro
+title: MaskedField
+description: Text input with an input mask pattern for formatted data entry.
+---
+
+# MaskedField
+
+A text input that applies an input mask to guide users through entering formatted data such as phone numbers, social security numbers, or product codes. The `Value` property holds the raw (unmasked) alphanumeric input, while the display shows the formatted version.
+
+## Basic Usage
+
+```razor
+<ArcadiaForm Model="model">
+    <MaskedField Field="@nameof(Model.Phone)" Label="Phone Number" Mask="(###) ###-####" />
+</ArcadiaForm>
+```
+
+## Mask Characters
+
+| Character | Matches |
+|---|---|
+| `#` | Any digit |
+| `A` | Any letter |
+| `*` | Any alphanumeric character |
+
+All other characters in the mask are treated as literal formatting characters.
+
+## Examples
+
+```razor
+<!-- SSN -->
+<MaskedField Label="SSN" Mask="###-##-####" />
+
+<!-- Product Code -->
+<MaskedField Label="Product Code" Mask="AA-####" />
+
+<!-- Credit Card -->
+<MaskedField Label="Card Number" Mask="#### #### #### ####" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Value` | `string?` | `null` | The raw (unmasked) value with formatting characters stripped. Supports two-way binding. |
+| `ValueChanged` | `EventCallback<string?>` | | Callback invoked whenever the user modifies the input, providing the raw unmasked value. |
+| `Mask` | `string` | `""` | The input mask pattern. Use `#` for digits, `A` for letters, `*` for any character. |
+
+### Inherited from FieldBase
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `Label` | `string?` | `null` | Visible label displayed above the field. |
+| `Placeholder` | `string?` | `null` | Placeholder text shown when the field is empty. Falls back to the mask pattern if not set. |
+| `HelperText` | `string?` | `null` | Helper text displayed below the field. |
+| `Required` | `bool` | `false` | Whether the field is required. |
+| `Disabled` | `bool` | `false` | Whether the field is disabled. |
+| `ReadOnly` | `bool` | `false` | Whether the field is read-only. |
+| `Errors` | `IReadOnlyList<string>?` | `null` | Validation errors to display. |
+| `Schema` | `FieldSchema?` | `null` | Field schema definition for dynamic form generation. |
+
+## Validation
+
+```csharp
+public class ContactModel
+{
+    [Required]
+    [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be 10 digits.")]
+    public string Phone { get; set; } = "";
+}
+```
+
+Note: Validate against the raw value, not the masked display value.
+
+## Accessibility
+
+- Label is linked to the input via `for`/`id` attributes.
+- Required fields set `aria-required="true"` and display a visual `*` indicator.
+- Validation errors are linked via `aria-describedby` and announced with `role="alert"`.

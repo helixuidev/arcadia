@@ -1,0 +1,43 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Hover Card
+description: A card that appears on hover or focus with configurable delay and position.
+---
+
+# Hover Card
+
+The `ArcadiaHoverCard` component displays rich content when the user hovers over or focuses on a trigger element, with configurable open/close delays.
+
+## Basic Usage
+
+```razor
+<ArcadiaHoverCard Position="bottom" OpenDelay="300">
+    <ChildContent>
+        <a href="#">@username</a>
+    </ChildContent>
+    <Content>
+        <div class="user-card">
+            <strong>Jane Doe</strong>
+            <p>Software Engineer</p>
+        </div>
+    </Content>
+</ArcadiaHoverCard>
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `ChildContent` | `RenderFragment?` | `null` | Trigger element content that activates the hover card. |
+| `Content` | `RenderFragment?` | `null` | Hover card content displayed on hover. |
+| `OpenDelay` | `int` | `300` | Delay in milliseconds before the hover card appears. |
+| `CloseDelay` | `int` | `200` | Delay in milliseconds before the hover card hides. |
+| `Position` | `string` | `"bottom"` | Position relative to the trigger: `"top"`, `"bottom"`, `"left"`, `"right"`. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Accessibility
+
+- The hover card content uses `role="tooltip"` with `aria-live="polite"`.
+- Activates on both mouse hover and keyboard focus (`focusin`/`focusout`).
+- Delays prevent accidental activation during quick mouse movements.

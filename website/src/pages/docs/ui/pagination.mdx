@@ -1,0 +1,47 @@
+---
+layout: ../../../../layouts/DocsLayout.astro
+title: Pagination
+description: A page navigation component with first/last, previous/next buttons, and ellipsis for large page ranges.
+---
+
+# Pagination
+
+The `ArcadiaPagination` component renders page navigation with configurable sibling count, first/last buttons, and smart ellipsis.
+
+## Basic Usage
+
+```razor
+<ArcadiaPagination @bind-CurrentPage="page" TotalPages="20" />
+
+<ArcadiaPagination @bind-CurrentPage="page"
+                   TotalPages="50"
+                   SiblingCount="2"
+                   ShowFirstLast="false" />
+```
+
+## Parameters
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `CurrentPage` | `int` | `1` | Current page number (1-based). Supports two-way binding. |
+| `TotalPages` | `int` | `0` | Total number of pages. |
+| `SiblingCount` | `int` | `1` | Number of sibling pages shown around the current page. |
+| `ShowFirstLast` | `bool` | `true` | Whether first/last page buttons are shown. |
+| `ShowPreviousNext` | `bool` | `true` | Whether previous/next page buttons are shown. |
+| `Class` | `string?` | `null` | Additional CSS class names. |
+| `Style` | `string?` | `null` | Inline CSS styles. |
+
+## Events
+
+| Event | Type | Description |
+|---|---|---|
+| `CurrentPageChanged` | `EventCallback<int>` | Fired when the current page changes. |
+
+## Accessibility
+
+- Uses `<nav>` with `role="navigation"` and `aria-label="Pagination"`.
+- Page buttons include `aria-label` (e.g., "Page 3").
+- The active page uses `aria-current="page"`.
+- First/last/prev/next buttons use descriptive `aria-label` values.
+- Disabled buttons use the `disabled` attribute.
+- Ellipsis elements use `aria-hidden="true"`.
