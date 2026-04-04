@@ -78,9 +78,11 @@ jobs:
           for i in $(seq 1 30); do curl -s http://localhost:5050 > /dev/null && break || sleep 2; done
 
       - name: Run E2E tests
+        # Note: PLAYWRIGHT_BROWSERS_PATH intentionally unset so tests use the default
+        # ~/.cache/ms-playwright/ location where the previous step installed browsers.
+        # Setting it to 0 would point Playwright at the binary directory, where nothing
+        # was installed — resulting in "Executable doesn't exist" errors for all tests.
         run: dotnet test tests/Arcadia.Tests.E2E/Arcadia.Tests.E2E.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=e2e-results.trx"
-        env:
-          PLAYWRIGHT_BROWSERS_PATH: 0
 
       - name: Playground smoke test
         run: |
