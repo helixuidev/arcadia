@@ -183,8 +183,8 @@ See [tools/snippets/README.md](tools/snippets/README.md) for installation.
 - **DataGrid enhancements** — column reorder, stacked headers, infinite scroll, cell tooltips, copy with headers, conditional formatting, cell merge, PDF export
 - **Card upgrades** — glassmorphism variants, 6 elevation levels, gradient border, skeleton loading, collapsible
 - **ObservableCollection binding** — live data on Charts and DataGrid with 16ms debounce
-- **1,400+ tests** — 1,161 unit + 251 E2E + 11 performance
-- **90+ components** across 10 packages
+- **1,700+ tests** — 1,525 unit + 198 E2E + 11 performance
+- **100+ components** across 10 packages
 
 See [CHANGELOG.md](CHANGELOG.md) for all releases.
 

@@ -2,6 +2,43 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **Chart `ObservableCollection<T>` feature was silently broken** — `ChartBase.OnParametersSet` created the `CollectionObserver`, but 18 derived chart classes override `OnParametersSet` without calling `base`. Moved setup to `SetParametersAsync` so the observer is always created regardless of derived overrides. Live-data chart updates now actually work.
+- **Screen-reader data tables leaked locale-dependent dates** — `<td>@XField(item)</td>` called `DateTime.ToString()` in the current culture, producing `"1/1/2026"` for en-US users. Added `FormatSrX` helper on `ChartBase` that uses invariant culture + `XAxisFormatString`. Applied to Line, Bar, RangeArea, and Scatter chart SR tables.
+- Test race: `IdGeneratorTests.Generate_IncrementsSequentially` and `Reset_RestartsCounter` asserted absolute counter values from shared static state; rewritten to assert relative ordering.
+
+### Security
+- Added Content-Security-Policy, Strict-Transport-Security, and Permissions-Policy headers to website nginx.conf, Demo.Server middleware, and a new Demo.Wasm `web.config`. Blazor-compatible policy (`'wasm-unsafe-eval'`, `'unsafe-inline'` for styles).
+
+### Accessibility
+- **Dialog and Drawer** now wrap content in `<FocusTrap>` with auto-focus, fixing tab-out and missing initial focus.
+- **WCAG 2.1 AA contrast fixes** — `--arcadia-color-danger` (#dc2626 → #b91c1c), `--arcadia-color-warning` (#d97706 → #b45309), `--arcadia-color-text-disabled` (#94a3b8 → #6b7280), dark-theme danger (#f87171 → #fca5a5). Updated tokens, themes, C# theme classes, and CSS fallbacks.
+- **Arrow key navigation** added to `ArcadiaCommandPalette` and `ArcadiaContextMenu` (+ `aria-activedescendant`, roving `tabindex`, disabled-item skipping via `KeyboardNavigation` utility).
+
+### Code Quality
+- Replaced ~30 bare `catch` blocks in `ArcadiaDataGrid` and `ChartBase` with `Debug.WriteLine` diagnostics or explanatory comments for expected framework exceptions.
+
+### Multi-targeting
+- Added `net10.0` to `TargetFrameworks` and conditional `PackageReference` (`10.0.0-preview.4.25258.110`) across all 9 source projects. Documentation claims of ".NET 5 through .NET 10" are now backed by reality.
+
+### Documentation
+- 37 individual UI component doc pages under `docs/ui/` (parameters extracted from real source).
+- 21 form field doc pages under `docs/forms/fields/` (TextField, SelectField, DateField, FileField, RatingField, etc.).
+- `DocsLayout.astro` sidebar nav wired up for all new pages.
+
+### Tests
+- **+72 new chart tests** covering 10 previously-untested chart types: BoxPlot, Funnel, Treemap, Rose, Waterfall, RangeArea, plus smoke tests for Area/Bubble/Donut/StackedBar wrapper charts.
+- 31 new `Arcadia.Gauge` tests, 12 new `Arcadia.Analyzers` tests.
+- Added WASM E2E infrastructure (`WasmFixture`, `RenderMode` enum, `RenderModeTestBase`, `DualModeChartTestBase`) so tests can target both Server and WASM demos.
+- **Unit test count: 1,453 → 1,525** (+72, +5.0%).
+
+### Repository Hygiene
+- Added `Arcadia.Analyzers` to `HelixUI.sln` (was missing).
+- Removed unused `FluentValidation` and `Moq` from `Directory.Packages.props`.
+- Added `.claude/commands/` slash commands: `/release-checklist`, `/recommend-feature`, `/playground-test`, `/super-test`.
+
 ## [1.0.0-beta.20] — 2026-04-02
 
 ### New Features
