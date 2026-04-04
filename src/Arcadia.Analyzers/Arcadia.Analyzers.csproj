@@ -5,6 +5,9 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+    <!-- RS2008: release tracking files (AnalyzerReleases.Shipped.md / Unshipped.md) are optional for this single-package analyzer; we track releases via CHANGELOG.md instead. -->
+    <NoWarn>$(NoWarn);RS2008</NoWarn>
     <IsPackable>true</IsPackable>
     <PackageId>Arcadia.Analyzers</PackageId>
     <Description>Roslyn analyzers for Arcadia Controls — compile-time warnings for common chart configuration mistakes.</Description>

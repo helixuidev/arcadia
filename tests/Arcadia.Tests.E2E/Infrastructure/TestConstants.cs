@@ -7,6 +7,10 @@ public static class TestConstants
     public const string TestPagePrefix = "/test";
     public const int ChartRenderWaitMs = 1500;
 
+    // TODO(arcadia#e2e-coverage): box-plot, range-area, rose have Server test pages at
+    // /test/boxplot, /test/rangearea, /test/rose but are not in AllChartTypes because adding
+    // them requires generating new baseline screenshots for DarkMode + Responsive suites.
+    // Wrapper charts (area, bubble, donut, stacked-bar) need dedicated test pages first.
     public static readonly string[] AllChartTypes =
     {
         "line", "bar", "pie", "scatter", "radar", "gauge",

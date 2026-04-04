@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>Arcadia.Charts</PackageId>
-    <Description>16 Blazor chart types (Line, Bar, Pie, Scatter, Candlestick, Radar, Gauge, Heatmap, Funnel, Treemap, Waterfall, Rose, Sankey, Chord, Range Area, Box Plot) + 7 dashboard widgets. Pure SVG rendering, zero JS dependencies. arcadiaui.com</Description>
+    <Description>20 Blazor chart types (Line, Bar, Area, Pie, Donut, Scatter, Bubble, Stacked Bar, Candlestick, Radar, Gauge, Heatmap, Funnel, Treemap, Waterfall, Rose, Sankey, Chord, Range Area, Box Plot) + 7 dashboard widgets. Pure SVG rendering, zero JS dependencies. arcadiaui.com</Description>
     <PackageReleaseNotes>https://arcadiaui.com/docs/charts — Full documentation with per-chart pages.
 
 beta.15: SyncGroup for linked charts, 4 financial indicators (SMA/EMA/Bollinger/RSI), rubber band zoom, streaming animation improvements, WCAG AA contrast fixes.</PackageReleaseNotes>

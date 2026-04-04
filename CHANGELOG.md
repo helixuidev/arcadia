@@ -2,7 +2,7 @@
 
 All notable changes to Arcadia Controls are documented here. This project uses [Keep a Changelog](https://keepachangelog.com/) format and [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.0.0-beta.21] — 2026-04-04
 
 ### Fixed
 - **Chart `ObservableCollection<T>` feature was silently broken** — `ChartBase.OnParametersSet` created the `CollectionObserver`, but 18 derived chart classes override `OnParametersSet` without calling `base`. Moved setup to `SetParametersAsync` so the observer is always created regardless of derived overrides. Live-data chart updates now actually work.
