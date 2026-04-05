@@ -82,20 +82,15 @@ jobs:
         # ~/.cache/ms-playwright/ location where the previous step installed browsers.
         # Setting it to 0 would point Playwright at the binary directory, where nothing
         # was installed — resulting in "Executable doesn't exist" errors for all tests.
-        run: dotnet test tests/Arcadia.Tests.E2E/Arcadia.Tests.E2E.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=e2e-results.trx" || true
-        env:
-          UPDATE_SNAPSHOTS: 1
-
-      - name: Upload regenerated baselines
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: regenerated-baselines
-          path: tests/Arcadia.Tests.E2E/Screenshots/baselines/*.png
+        run: dotnet test tests/Arcadia.Tests.E2E/Arcadia.Tests.E2E.csproj --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=e2e-results.trx"
 
       - name: Playground smoke test
         run: |
           npm install --no-save playwright-core
+          # Install the chromium binary that matches npm playwright-core's expected version.
+          # The earlier `.NET Playwright install` step installs browsers for a different
+          # version (.NET bindings), which don't match what npm playwright-core looks for.
+          npx --yes playwright install chromium
           node -e "
           const { chromium } = require('playwright-core');
           (async () => {
