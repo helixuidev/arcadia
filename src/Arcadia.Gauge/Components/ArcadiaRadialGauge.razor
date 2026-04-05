@@ -143,10 +143,10 @@
     /// <summary>Full 360° circle or semi-circle. Default: false (semi-circle 180°).</summary>
     [Parameter] public bool FullCircle { get; set; }
 
-    /// <summary>Start angle in degrees. 0° = top, 90° = right. Default: -225° (semi) or -270° (full).</summary>
+    /// <summary>Start angle in degrees. 0° = right (3 o'clock), 90° = down (6 o'clock). Default: -180° (semi-circle, left side) or -270° (full circle, top).</summary>
     [Parameter] public double? StartAngle { get; set; }
 
-    /// <summary>End angle in degrees. Default: 45° (semi) or 90° (full).</summary>
+    /// <summary>End angle in degrees. Default: 0° (semi-circle, right side) or 90° (full circle, bottom).</summary>
     [Parameter] public double? EndAngle { get; set; }
 
     /// <summary>Arc stroke width in pixels. Default: 20.</summary>
@@ -317,8 +317,13 @@
         }
         if (_radius < 10) _radius = 10;
 
-        var defaultStart = FullCircle ? -270.0 : -225.0;
-        var defaultEnd = FullCircle ? 90.0 : 45.0;
+        // Semi-circle default: -180° (left, 9 o'clock) to 0° (right, 3 o'clock) — sweep 180°
+        // through the top of the circle (-90°). Endpoints lie on the horizontal diameter at _cy,
+        // which matches the "center at bottom, arc extends upward" layout assumption below.
+        // The previous default (-225° to 45°) produced a 270° sweep that extended both above
+        // AND below the center, causing the arc to clip out of the SVG on the sides and bottom.
+        var defaultStart = FullCircle ? -270.0 : -180.0;
+        var defaultEnd = FullCircle ? 90.0 : 0.0;
         var startDeg = StartAngle ?? defaultStart;
         var endDeg = EndAngle ?? defaultEnd;
 
@@ -336,12 +341,26 @@
 
     private string BuildArcPath(double fromAngle, double toAngle)
     {
-        var start = PointOnArc(fromAngle, _radius);
-        var end = PointOnArc(toAngle, _radius);
         var sweep = toAngle - fromAngle;
+
+        // A full 360° arc (common for FullCircle=true track) has identical start and end
+        // points in SVG, which renders nothing. Split it into two 180° half-arcs.
+        if (Math.Abs(Math.Abs(sweep) - 2 * Math.PI) < 0.001)
+        {
+            var midAngle = fromAngle + sweep / 2;
+            var start = PointOnArc(fromAngle, _radius);
+            var mid = PointOnArc(midAngle, _radius);
+            var sweepDirFull = sweep > 0 ? 1 : 0;
+            return $"M {F(start.X)} {F(start.Y)} " +
+                   $"A {F(_radius)} {F(_radius)} 0 0 {sweepDirFull} {F(mid.X)} {F(mid.Y)} " +
+                   $"A {F(_radius)} {F(_radius)} 0 0 {sweepDirFull} {F(start.X)} {F(start.Y)}";
+        }
+
+        var startPt = PointOnArc(fromAngle, _radius);
+        var endPt = PointOnArc(toAngle, _radius);
         var largeArc = Math.Abs(sweep) > Math.PI ? 1 : 0;
         var sweepDir = sweep > 0 ? 1 : 0;
-        return $"M {F(start.X)} {F(start.Y)} A {F(_radius)} {F(_radius)} 0 {largeArc} {sweepDir} {F(end.X)} {F(end.Y)}";
+        return $"M {F(startPt.X)} {F(startPt.Y)} A {F(_radius)} {F(_radius)} 0 {largeArc} {sweepDir} {F(endPt.X)} {F(endPt.Y)}";
     }
 
     private string BuildValueRangeArc(double fromValue, double toValue)
