@@ -153,6 +153,12 @@ public class VisualRegressionTests : PageTest
         var content = Page.Locator(".gallery__content").First;
         await Expect(content).ToBeVisibleAsync();
 
+        // Remove focus + hover state before snapshotting — both render with subpixel
+        // antialiasing that varies run-to-run, causing nondeterministic pixel diffs.
+        await Page.EvaluateAsync("() => (document.activeElement instanceof HTMLElement) && document.activeElement.blur()");
+        await Page.Mouse.MoveAsync(0, 0);
+        await Page.WaitForTimeoutAsync(100);
+
         await AssertPageScreenshot("ui-components.png", content);
     }
 

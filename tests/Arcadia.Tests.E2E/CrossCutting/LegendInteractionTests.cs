@@ -21,6 +21,13 @@ public class LegendInteractionTests : ChartTestBase
 
         // Button should now have the hidden class
         await Expect(firstBtn).ToHaveClassAsync(new System.Text.RegularExpressions.Regex("legend-btn--hidden"));
+
+        // Remove focus + hover state before snapshotting — both render with subpixel
+        // antialiasing that varies run-to-run, causing nondeterministic pixel diffs.
+        await Page.EvaluateAsync("() => (document.activeElement instanceof HTMLElement) && document.activeElement.blur()");
+        await Page.Mouse.MoveAsync(0, 0);
+        await Page.WaitForTimeoutAsync(100);
+
         await AssertChartScreenshot("line-legend-toggled.png");
     }
 
