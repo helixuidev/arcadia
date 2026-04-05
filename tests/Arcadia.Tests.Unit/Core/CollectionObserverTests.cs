@@ -28,6 +28,22 @@ public class CollectionObserverTests : IDisposable
         // No-op; individual tests dispose their observers.
     }
 
+    /// <summary>
+    /// Polls until <paramref name="predicate"/> is true or <paramref name="timeoutMs"/> elapses.
+    /// Replaces bare Task.Delay waits which were flaky on loaded CI runners —
+    /// the debounced observer fires via thread-pool continuation and scheduling
+    /// can take 100ms+ under load, so fixed 50ms waits were inherently racy.
+    /// </summary>
+    private static async Task WaitFor(Func<bool> predicate, int timeoutMs = 2000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (predicate()) return;
+            await Task.Delay(10);
+        }
+    }
+
     [Fact]
     public void Attach_NonObservable_NoSubscription()
     {
@@ -66,7 +82,7 @@ public class CollectionObserverTests : IDisposable
 
         // Act
         collection.Add(42);
-        await Task.Delay(50);
+        await WaitFor(() => _callbackCount >= 1);
 
         // Assert
         _callbackCount.Should().BeGreaterOrEqualTo(1);
@@ -82,7 +98,7 @@ public class CollectionObserverTests : IDisposable
 
         // Act
         collection.Remove(2);
-        await Task.Delay(50);
+        await WaitFor(() => _callbackCount >= 1);
 
         // Assert
         _callbackCount.Should().BeGreaterOrEqualTo(1);
@@ -157,7 +173,7 @@ public class CollectionObserverTests : IDisposable
 
         // Modify B → should fire callback
         collectionB.Add(1);
-        await Task.Delay(50);
+        await WaitFor(() => _callbackCount >= 1);
         var countAfterB = _callbackCount;
         countAfterB.Should().BeGreaterOrEqualTo(1);
 
@@ -186,7 +202,7 @@ public class CollectionObserverTests : IDisposable
         // Resume, add another item, verify callback fires
         observer.Resume();
         collection.Add(2);
-        await Task.Delay(50);
+        await WaitFor(() => _callbackCount >= 1);
         _callbackCount.Should().BeGreaterOrEqualTo(1);
     }
 
