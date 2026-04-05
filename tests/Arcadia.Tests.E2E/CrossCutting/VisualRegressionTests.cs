@@ -134,7 +134,14 @@ public class VisualRegressionTests : PageTest
     public async Task UIComponents_VisualRegression()
     {
         await Page.SetViewportSizeAsync(1280, 800);
+        // UI components gallery contains continuously-animating elements (Spinner,
+        // CircularProgress, animated progress bars). Freeze them before snapshotting.
+        await Page.EmulateMediaAsync(new PageEmulateMediaOptions { ReducedMotion = ReducedMotion.Reduce });
         await NavigateAndWait("/");
+        await Page.AddStyleTagAsync(new PageAddStyleTagOptions
+        {
+            Content = "*,*::before,*::after{animation-duration:0s !important;animation-delay:0s !important;transition-duration:0s !important;transition-delay:0s !important;}"
+        });
 
         // Navigate to UI tab
         var uiButton = Page.Locator("button:has-text('Dialog / Tabs / Tooltip')");
