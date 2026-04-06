@@ -2,21 +2,22 @@
 @using Arcadia.DashboardKit.Components
 @using Arcadia.DashboardKit.Models
 
+<link href="_content/Arcadia.DashboardKit/css/arcadia-draggrid.css" rel="stylesheet" />
 
-<div style="padding: 32px; background: linear-gradient(135deg, #0f0a1e 0%, #1a1040 50%, #0d1b2a 100%); min-height: 100vh;">
+<div style="padding: 32px;">
 
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
-        <h2 style="color: #fff; margin: 0;">Drag Grid Dashboard</h2>
+        <h2 style="color: var(--arcadia-color-text, #fff); margin: 0;">Drag Grid Dashboard</h2>
         <div style="display: flex; align-items: center; gap: 16px;">
-            <label style="color: #9490b3; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.875rem;">
+            <label style="color: var(--arcadia-color-text-muted, #9490b3); display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.875rem;">
                 <input type="radio" name="dragmode" value="direct" checked="@(_dragMode == "direct")" @onchange="@(() => _dragMode = "direct")" /> Direct
             </label>
-            <label style="color: #9490b3; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.875rem;">
+            <label style="color: var(--arcadia-color-text-muted, #9490b3); display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.875rem;">
                 <input type="radio" name="dragmode" value="longpress" checked="@(_dragMode == "longpress")" @onchange="@(() => _dragMode = "longpress")" /> iOS Mode
             </label>
             @if (_dragMode == "direct")
             {
-                <label style="color: #9490b3; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.875rem;">
+                <label style="color: var(--arcadia-color-text-muted, #9490b3); display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.875rem;">
                     <input type="checkbox" @bind="_editMode" /> Edit Mode
                 </label>
             }
@@ -29,32 +30,32 @@
 
         <ArcadiaDragGridItem Id="revenue" ColSpan="2" RowSpan="1">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">Total Revenue</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">$142,580</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">Total Revenue</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">$142,580</div>
                 <div style="color: #16a34a; font-size: 0.875rem; margin-top: 4px;">+12.3% vs last month</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="users">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">Active Users</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">8,429</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">Active Users</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">8,429</div>
                 <div style="color: #16a34a; font-size: 0.875rem; margin-top: 4px;">+5.2%</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="orders">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">Orders</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">1,284</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">Orders</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">1,284</div>
                 <div style="color: #ef4444; font-size: 0.875rem; margin-top: 4px;">-2.1%</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="chart" ColSpan="2" RowSpan="2">
             <div style="padding: 20px; height: 100%;">
-                <div style="color: #fff; font-weight: 600; margin-bottom: 12px;">Revenue Over Time</div>
-                <div style="background: rgba(139,92,246,0.08); border-radius: 8px; height: calc(100% - 40px); display: flex; align-items: center; justify-content: center; color: #6b6890;">
+                <div style="color: var(--arcadia-color-text, #fff); font-weight: 600; margin-bottom: 12px;">Revenue Over Time</div>
+                <div style="background: var(--arcadia-color-primary-subtle, rgba(139,92,246,0.08)); border-radius: 8px; height: calc(100% - 40px); display: flex; align-items: center; justify-content: center; color: var(--arcadia-color-text-muted, #6b6890);">
                     Chart placeholder
                 </div>
             </div>
@@ -62,24 +63,24 @@
 
         <ArcadiaDragGridItem Id="conversion">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">Conversion Rate</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">3.24%</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">Conversion Rate</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">3.24%</div>
                 <div style="color: #f59e0b; font-size: 0.875rem; margin-top: 4px;">+0.3%</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="sessions">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">Avg. Session</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">4m 32s</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">Avg. Session</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">4m 32s</div>
                 <div style="color: #16a34a; font-size: 0.875rem; margin-top: 4px;">+18s</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="table" ColSpan="3" RowSpan="2">
             <div style="padding: 20px; height: 100%;">
-                <div style="color: #fff; font-weight: 600; margin-bottom: 12px;">Recent Transactions</div>
-                <div style="background: rgba(139,92,246,0.08); border-radius: 8px; height: calc(100% - 40px); display: flex; align-items: center; justify-content: center; color: #6b6890;">
+                <div style="color: var(--arcadia-color-text, #fff); font-weight: 600; margin-bottom: 12px;">Recent Transactions</div>
+                <div style="background: var(--arcadia-color-primary-subtle, rgba(139,92,246,0.08)); border-radius: 8px; height: calc(100% - 40px); display: flex; align-items: center; justify-content: center; color: var(--arcadia-color-text-muted, #6b6890);">
                     DataGrid placeholder
                 </div>
             </div>
@@ -87,37 +88,37 @@
 
         <ArcadiaDragGridItem Id="locked" Locked="true">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">System Status</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">System Status</div>
                 <div style="color: #16a34a; font-size: 1.5rem; font-weight: 700;">Healthy</div>
-                <div style="color: #6b6890; font-size: 0.75rem; margin-top: 4px;">Locked panel</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.75rem; margin-top: 4px;">Locked panel</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="bounce">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">Bounce Rate</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">32.1%</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">Bounce Rate</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">32.1%</div>
                 <div style="color: #16a34a; font-size: 0.875rem; margin-top: 4px;">-4.7%</div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="funnel" ColSpan="2">
             <div style="padding: 20px;">
-                <div style="color: #fff; font-weight: 600; margin-bottom: 12px;">Conversion Funnel</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-weight: 600; margin-bottom: 12px;">Conversion Funnel</div>
                 <div style="display: flex; gap: 8px; align-items: flex-end; height: 60px;">
-                    <div style="flex:1; background: #8b5cf6; border-radius: 4px 4px 0 0; height: 100%;"></div>
-                    <div style="flex:1; background: #8b5cf6; border-radius: 4px 4px 0 0; height: 75%; opacity: 0.8;"></div>
-                    <div style="flex:1; background: #8b5cf6; border-radius: 4px 4px 0 0; height: 50%; opacity: 0.6;"></div>
-                    <div style="flex:1; background: #8b5cf6; border-radius: 4px 4px 0 0; height: 30%; opacity: 0.4;"></div>
-                    <div style="flex:1; background: #8b5cf6; border-radius: 4px 4px 0 0; height: 15%; opacity: 0.3;"></div>
+                    <div style="flex:1; background: var(--arcadia-color-primary, #8b5cf6); border-radius: 4px 4px 0 0; height: 100%;"></div>
+                    <div style="flex:1; background: var(--arcadia-color-primary, #8b5cf6); border-radius: 4px 4px 0 0; height: 75%; opacity: 0.8;"></div>
+                    <div style="flex:1; background: var(--arcadia-color-primary, #8b5cf6); border-radius: 4px 4px 0 0; height: 50%; opacity: 0.6;"></div>
+                    <div style="flex:1; background: var(--arcadia-color-primary, #8b5cf6); border-radius: 4px 4px 0 0; height: 30%; opacity: 0.4;"></div>
+                    <div style="flex:1; background: var(--arcadia-color-primary, #8b5cf6); border-radius: 4px 4px 0 0; height: 15%; opacity: 0.3;"></div>
                 </div>
             </div>
         </ArcadiaDragGridItem>
 
         <ArcadiaDragGridItem Id="nps">
             <div style="padding: 20px;">
-                <div style="color: #6b6890; font-size: 0.8125rem; margin-bottom: 8px;">NPS Score</div>
-                <div style="color: #fff; font-size: 2rem; font-weight: 700;">72</div>
+                <div style="color: var(--arcadia-color-text-muted, #6b6890); font-size: 0.8125rem; margin-bottom: 8px;">NPS Score</div>
+                <div style="color: var(--arcadia-color-text, #fff); font-size: 2rem; font-weight: 700;">72</div>
                 <div style="color: #16a34a; font-size: 0.875rem; margin-top: 4px;">Excellent</div>
             </div>
         </ArcadiaDragGridItem>
@@ -126,8 +127,8 @@
 
     @if (_lastReorder is not null)
     {
-        <div style="margin-top: 16px; padding: 12px 16px; background: rgba(139,92,246,0.1); border-radius: 8px; color: #9490b3; font-size: 0.8125rem;">
-            Last reorder: <strong style="color: #fff;">@_lastReorder.ItemId</strong> moved from index @_lastReorder.OldIndex to @_lastReorder.NewIndex
+        <div style="margin-top: 16px; padding: 12px 16px; background: var(--arcadia-color-primary-subtle, rgba(139,92,246,0.1)); border-radius: 8px; color: var(--arcadia-color-text-muted, #9490b3); font-size: 0.8125rem;">
+            Last reorder: <strong style="color: var(--arcadia-color-text, #fff);">@_lastReorder.ItemId</strong> moved from index @_lastReorder.OldIndex to @_lastReorder.NewIndex
         </div>
     }
 </div>
