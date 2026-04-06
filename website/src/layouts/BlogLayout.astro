@@ -50,10 +50,14 @@ const displayDate = new Date(publishDate).toLocaleDateString('en-US', { month: '
   <meta property="article:author" content={author} />
   {tags.map(tag => <meta property="article:tag" content={tag} />)}
 
+  <meta property="og:image" content="https://arcadiaui.com/og-image.png" />
+  <meta property="og:locale" content="en_US" />
+
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="https://arcadiaui.com/og-image.png" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
