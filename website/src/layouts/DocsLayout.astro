@@ -183,6 +183,26 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
 const siteUrl = 'https://arcadiaui.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).href;
 const fullDescription = description || `${title} — Arcadia Controls Documentation`;
+
+// Build breadcrumb trail from URL path segments + nav structure
+const segments = currentPath.split('/').filter(Boolean); // e.g. ['docs', 'charts', 'line-chart']
+const breadcrumbs: Array<{ name: string; url: string }> = [
+  { name: 'Home', url: siteUrl },
+  { name: 'Docs', url: `${siteUrl}/docs` },
+];
+if (segments.length > 1) {
+  // Find the nav group title for the section (e.g. 'charts' → 'Charts')
+  const sectionSlug = segments[1]; // 'charts', 'datagrid', 'forms', 'ui', etc.
+  const sectionGroup = nav.find(g => g.items.some(i => i.href.startsWith(`/docs/${sectionSlug}`)));
+  if (sectionGroup) {
+    const sectionHref = sectionGroup.items[0]?.href ?? `/docs/${sectionSlug}`;
+    breadcrumbs.push({ name: sectionGroup.title, url: `${siteUrl}${sectionHref}` });
+  }
+}
+// Final crumb is the current page
+if (segments.length > 1) {
+  breadcrumbs.push({ name: title, url: canonicalUrl });
+}
 ---
 
 <!DOCTYPE html>
@@ -230,7 +250,7 @@ const fullDescription = description || `${title} — Arcadia Controls Documentat
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-  <!-- JSON-LD -->
+  <!-- JSON-LD: TechArticle -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "TechArticle",
@@ -242,6 +262,18 @@ const fullDescription = description || `${title} — Arcadia Controls Documentat
       "name": "Arcadia Controls",
       "url": siteUrl
     }
+  })} />
+
+  <!-- JSON-LD: BreadcrumbList -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": breadcrumbs.map((crumb, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": crumb.name,
+      "item": crumb.url
+    }))
   })} />
 </head>
 <body>
